@@ -1,0 +1,76 @@
+/* Localized.strings
+  Shift SDK Demo
+
+  Created by Ivan Oliver Martínez on 27/08/16.
+  Copyright © 2016 CocoaPods. All rights reserved. */
+
+/* * ./Example/ViewController.swift */
+"launcher.title.initial-values" = "Valores Iniciales";
+
+"launcher.amount" = "Importe";
+
+"launcher.first-name" = "Nombre";
+
+"launcher.last-name" = "Apellido";
+
+"launcher.email" = "Email";
+
+"launcher.phone" = "Teléfono";
+
+"launcher.address" = "Dirección";
+
+"launcher.apt-unit" = "Apt / Puerta";
+
+"launcher.city" = "Ciudad";
+
+"launcher.state" = "Estado";
+
+"launcher.zip-code" = "Código Postal";
+
+"launcher.income" = "Ingresos";
+
+"launcher.monthly-income" = "Ingresos/Mes";
+
+"launcher.credit-score" = "Credit Score";
+
+"launcher.birthday" = "Nacimiento";
+
+"launcher.user-token" = "User Token";
+
+"launcher.switch.skip-steps" = "Omitir Pasos";
+
+"launcher.switch.address-check" = "Comprobar Dir.";
+
+"launcher.switch.verify-phone" = "Perm. Login";
+
+"launcher.switch.clear-token" = "Modo POS";
+
+"launcher.switch.skip-disclaimer" = "Skip Disclaimer";
+
+"launcher.button.clear-data" = "Limpiar";
+
+"launcher.button.example-data" = "Datos Ejemplo";
+
+"launcher.button.get-offers" = "Obtener ofertas!";
+
+"launcher.purpose" = "Objetivo";
+
+"launcher.purpose.placeholder" = "¿Para qué es el préstamo?";
+
+"launcher.residence" = "Residencia";
+
+"launcher.employment-status" = "Empleo";
+
+"launcher.salary-frequency" = "Salario";
+
+"launcher.team-name" = "Organización";
+
+"launcher.project-name" = "Proyecto";
+
+"launcher.launch-link-flow-button.title" = "Lanzar Link Flow";
+
+"launcher.launch-card-flow-button.title" = "Lanzar Card Flow";
+
+"launcher.team-key" = "Team Key";
+
+"launcher.project-key" = "Project Key";

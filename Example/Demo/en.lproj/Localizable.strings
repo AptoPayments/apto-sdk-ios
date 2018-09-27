@@ -1,0 +1,76 @@
+/* Localized.strings
+  Shift SDK Demo
+
+  Created by Ivan Oliver Martínez on 27/08/16.
+  Copyright © 2016 CocoaPods. All rights reserved. */
+
+/* * ./Example/ViewController.swift */
+"launcher.title.initial-values" = "Initial Values";
+
+"launcher.amount" = "Amount";
+
+"launcher.first-name" = "Name";
+
+"launcher.last-name" = "Last Name";
+
+"launcher.email" = "Email";
+
+"launcher.phone" = "Phone";
+
+"launcher.address" = "Address";
+
+"launcher.apt-unit" = "Apt / Unit";
+
+"launcher.city" = "City";
+
+"launcher.state" = "State";
+
+"launcher.zip-code" = "Zip Code";
+
+"launcher.income" = "Income";
+
+"launcher.monthly-income" = "Monthly Income";
+
+"launcher.credit-score" = "Credit Score";
+
+"launcher.birthday" = "Birthdate";
+
+"launcher.user-token" = "User Token";
+
+"launcher.switch.skip-steps" = "Skip Steps";
+
+"launcher.switch.address-check" = "Address Check";
+
+"launcher.switch.verify-phone" = "Allow User Login";
+
+"launcher.switch.clear-token" = "POS Mode";
+
+"launcher.switch.skip-disclaimer" = "Skip Disclaimer";
+
+"launcher.button.clear-data" = "Clear Data";
+
+"launcher.button.example-data" = "Example Data";
+
+"launcher.button.get-offers" = "Get Offers!";
+
+"launcher.purpose" = "Purpose";
+
+"launcher.purpose.placeholder" = "What is it for?";
+
+"launcher.residence" = "Residence";
+
+"launcher.employment-status" = "Income Source";
+
+"launcher.salary-frequency" = "Salary Frequency";
+
+"launcher.team-name" = "Organization";
+
+"launcher.project-name" = "Project";
+
+"launcher.launch-link-flow-button.title" = "Launch Link Flow";
+
+"launcher.launch-card-flow-button.title" = "Launch Card Flow";
+
+"launcher.team-key" = "Team Key";
+
+"launcher.project-key" = "Project Key";

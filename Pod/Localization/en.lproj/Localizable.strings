@@ -1,0 +1,953 @@
+/*
+   @LANGUAGE Translation
+   @DIRECTORY
+   @FILE Localizable.strings
+*/
+
+/* * ./Pod/Classes/Shiftlinekit/OfferList/ApplicationDetailsForm.swift */
+"application-details.loan-purpose" = "Loan Purpose";
+
+"application-details.first-name" = "First Name";
+
+"application-details.last-name" = "Last Name";
+
+"application-details.email" = "Email";
+
+"application-details.phone" = "Phone";
+
+"application-details.address" = "Address";
+
+"application-details.apt-unit" = "Apt/Unit";
+
+"application-details.city" = "City";
+
+"application-details.state" = "State";
+
+"application-details.zip-code" = "ZIP Code";
+
+"application-details.housing-status" = "Housing Status";
+
+"application-details.annual-pretax-income" = "Annual Pretax Income";
+
+"application-details.employment-status" = "Income Source";
+
+"application-details.salary-frequency" = "Salary Frequency";
+
+"application-details.monthly-net-income" = "Monthly Net Income";
+
+"application-details.credit-score" = "Credit Score";
+
+"application-details.birthday" = "Birthdate";
+
+"application-details.SSN" = "SSN";
+
+/* * ./Pod/Classes/Shiftlinekit/DocUploader/DocUploaderViewController.swift */
+"doc-uploader.title" = "Add Documents";
+
+"doc-uploader.nav.button.done" = "Done";
+
+"doc-uploader.view-files" = "View Files";
+
+"doc-uploader.button.upload-additional-files" = "Upload Additional Files";
+
+"doc-uploader.button.cancel" = "Cancel";
+
+"doc-uploader.button.take-photo" = "Take a Photo";
+
+"doc-uploader.button.choose-existing-photo" = "Choose Existing";
+
+/* * ./Pod/Classes/Shiftlinekit/FileCommander/FileCommanderViewController.swift */
+"file-commander.title" = "Files";
+
+"file-commander.nav.button.back" = "Back";
+
+"file-commander.nav.button.next" = "Next";
+
+"file-commander.delete-file" = "Delete File";
+
+/* * ./Pod/Classes/Shiftlinekit/Base/UIAlertControllerLocalization.swift */
+"general.info" = "Info";
+
+"general.button.ok" = "Ok";
+
+"general.error" = "Error";
+
+"general.button.cancel" = "Cancel";
+
+/* * ./Pod/Classes/Shiftlinekit/ApplicationDetails/ApplicationDetailsPresenter.swift */
+"application-details.processing-application" = "Processing Application...";
+
+"application-details.application-rejected" = "Rejected";
+
+"application-details.application-pending-borrower-action" = "Pending borrower action";
+
+"application-details.application-cancelled" = "Cancelled";
+
+"application-details.application-approved" = "Application Approved";
+
+/* * ./Pod/Classes/Shiftlinekit/OfferList/Cells/OfferListCell.swift */
+"offer-list.cell.interest-rate" = "Interest Rate";
+
+"offer-list.cell.amount-financed" = "Amount Financed";
+
+"offer-list.cell.monthly-payment" = "Monthly Payment";
+
+"offer-list.cell.more-info" = "More Info";
+
+"offer-list.cell.less-info" = "Less Info";
+
+"offer-list.cell.button.apply-now" = "Apply Now";
+
+/* * ./Pod/Classes/Shiftlinekit/ApplicationDetails/Strategy/ApplicationDetailsPresenterStrategy.swift */
+"application-details.interest-rate" = "Interest Rate";
+
+"application-details.amount-financed" = "Amount Financed";
+
+"application-details.Mmonthly-payment" = "Monthly Payment";
+
+"application-details.term" = "Term";
+
+/* * ./Pod/Classes/Shiftlinekit/OfferLoader/OfferLoaderViewController.swift */
+"offer-loader.title" = "My Loan Offers";
+
+"offer-loader.loading-offers" = "Hang Tight! We're finding you the best loan offers :)";
+
+"offer-loader.button.update-loan-request" = "Update Loan Request";
+
+"offer-loader.text.no-offers-found" = "No offers found";
+
+/* * ./Pod/Classes/Shiftlinekit/FileCommander/FileViewController/Strategy/FilePresenterStrategyPNG.swift */
+"file.camera-capture" = "Camera Capture";
+
+/* * ./Pod/Classes/Shiftlinekit/Disclaimer/DisclaimerViewController.swift */
+"disclaimer.title" = "Find a Loan";
+
+"disclaimer.explanation" = "Find the perfect loan,\nfrom your phone.";
+
+"disclaimer.button.find-loan" = "Find a Loan";
+
+/* * ./Pod/Classes/Shiftlinekit/LoanConsent/LoanConsentViewController.swift */
+"loan-consent.title" = "Confirm Loan";
+
+"loan-consent.button.scroll-down-to-confirm" = "Scroll Down to Confirm";
+
+"loan-consent.button.agree-and-fund-loan" = "Agree and Fund Loan";
+
+"loan-consent.borrower-agreement.title" = "BORROWER AGREEMENT";
+
+"loan-consent.sign-label" = "I agree to the electronic communications agreement specified here and understand that clicking \"Agree and Fund Loan\" constitutes a binding signature";
+
+/* * ./Pod/Classes/Shiftlinekit/ApplicationDetails/Strategy/ApplicationDetailsPresenterStrategyPendingBorrowerAction.swift */
+"application-details.button.upload-docs" = "Upload Docs";
+
+"application-details.additional-docs-required" = "Additional Docs Required";
+
+"application-details.button.add-info" = "Add Info";
+
+"application-details.button.confirm-loan" = "Confirm Loan";
+
+"application-details.button.select-funding-account" = "Select Funding Account";
+
+"application-details.button.continue" = "Continue";
+
+"application-details.button.open-url" = "Open URL";
+
+"application-details.button.cancel" = "Cancel";
+
+/* * ./Pod/Classes/Shiftlinekit/Components/RangeSlider.swift */
+"range-slider.warning.minimum-lower-than-maximum" = "MinimumValue should be lower than maximumValue";
+
+"range-slider.warning.maximumValue-greater-than-minimum" = "MaximumValue should be greater than minimumValue";
+
+/* * ./Pod/Classes/Shiftlinekit/OfferList/OfferListCarouselViewController.swift */
+"offer-list-carousel.title" = "My Loan Offer";
+
+"offer-list-carousel.button.apply-now" = "Apply Now";
+
+"offer-list-carousel.preapproved" = "Congrats! You are pre-approved for a loan from (%lender_name%)";
+
+"offer-list-carousel.continue-application-in-web-browser" = "Continue application in a web browser?";
+
+"offer-list-carousel.button.yes" = "Yes";
+
+"offer-list-carousel.button.no" = "No";
+
+/* * ./Pod/Classes/Shiftlinekit/ApplicationFeedback/Strategy/ApplicationFeedbackPresenterStrategyLoanApproved.swift */
+"application-feedback.application-approved" = "Your loan application with (%lender_name%) is being funded";
+
+/* * ./Pod/Classes/Shiftlinekit/Components/NavigatioMenu.swift */
+"navigation-menu.button.refresh-offers" = "Refresh Offers";
+
+"navigation-menu.button.info-terms" = "Info & Terms";
+
+/* * ./Pod/Classes/Shiftlinekit/OfferList/OfferDetailsForm.swift */
+"order-details-form.interest-rate" = "Interest Rate";
+
+"order-details-form.amount-financed" = "Amount Financed";
+
+"order-details-form.monthly-payment" = "Monthly Payment";
+
+"order-details-form.term" = "Term";
+
+/* * ./Pod/Classes/ledgeuserkit/AuthModule/AuthPresenter.swift */
+
+"auth-presenter.next" = "Next";
+
+/* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorPhoneStep.swift */
+"phone-collector.title" = "Get Started";
+
+"phone-collector.phone" = "Enter your phone number";
+
+"phone-collector.phone.warning.empty" = "Invalid phone number";
+
+/* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorPhoneStep.swift */
+"email-collector.title" = "Get Started";
+
+"email-collector.email" = "Enter your email address";
+
+"email-collector.placeholder" = "example@domain.com";
+
+"email-collector.phone.warning.empty" = "Invalid email address";
+
+/* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorInfoStep.swift */
+"info-collector.title" = "Info";
+
+"info-collector.subtitle" = "Nice to meet you ;)";
+
+"info-collector.first-name" = "First Name";
+
+"info-collector.first-name.warning.empty" = "You must provide your first name.";
+
+"info-collector.last-name" = "Last Name";
+
+"info-collector.last-name.warning.empty" = "You must provide your last name.";
+
+"info-collector.email" = "Email";
+
+"info-collector.email.warning.empty" = "This email is not correct.";
+
+"info-collector.email.not-specified.title" = "I don't have an email.";
+
+/* * ./Pod/Classes/Shiftlinekit/DocUploader/Views/RequiredDocumentView.swift */
+"doc-uploader.file-count" = "(%file_count%) files";
+
+/* * ./Pod/Classes/Shiftlinekit/ApplicationFeedback/Strategy/ApplicationFeedbackPresenterStrategyPendingBorrowerAction.swift */
+"application-feedback.button.upload-docs" = "Upload Docs";
+
+"application-feedback.additional-docs-required" = "Additional Docs Required";
+
+"application-feedback.button.add-info" = "Add Info";
+
+"application-feedback.button.confirm-loan" = "Confirm Loan";
+
+"application-feedback.button.continue" = "Continue";
+
+"application-feedback.button.open-url" = "Open URL";
+
+"application-feedback.button.cancel" = "Cancel";
+
+/* * ./Pod/Classes/Shiftlinekit/ApplicationFeedback/ApplicationFeedbackViewController.swift */
+"application-feedback.nav.button.done" = "Done";
+
+"application-feedback.applying-to-offer" = "Hang Tight! Applying to the offer :)";
+
+"application-feedback.button.retry" = "Retry";
+
+/* * ./Pod/Classes/Shiftlinekit/LoanDataCollector/LoanDataCollectorPresenter.swift */
+"data-collector.no-pending-applications" = "No pending applications";
+
+/* * ./Pod/Classes/Shiftlinekit/OfferList/ApplicationSummaryPresenter.swift */
+"application-summary.section.loan-terms" = "LOAN TERMS";
+
+"application-summary.section.application-info" = "APPLICATION INFO";
+
+"application-summary.section.disclosures" = "DISCLOSURES";
+
+/* * ./Pod/Classes/Shiftlinebase/Manager/ShiftLink.swift */
+"file-import.select-application-receive-file" = "Select the application that will receive this file:";
+
+"file-import.button.cancel" = "Cancel";
+
+"file-import.select-document-receive-file" = "Select the document that will receive this file:";
+
+/* * ./Pod/Classes/Shiftlinekit/OfferList/OfferListPresenter.swift */
+"offer-list.invalid-application-code" = "Invalid application code";
+
+/* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorBirthdaySSNStep.swift */
+"birthday-collector.get-offers.title" = "Get Offers";
+
+"birthday-collector.button.update-profile" = "Update Profile";
+
+"birthday-collector.subtitle" = "Ready for loan offers?";
+
+"birthday-collector.birthday" = "Birthdate";
+
+"birthday-collector.birthday.placeholder" = "month / day / year";
+
+"birthday-collector.birthday.warning.minimum-age" = "You must be 18 years old to get offers.";
+
+"birthday-collector.ssn" = "Your Social Security number";
+
+"birthday-collector.ssn.warning.invalid-ssn" = "This doesn't look line a Social Security Number";
+
+"birthday-collector.ssn.not-specified.title" = "I don't have SSN/ITIN";
+
+"birthday-collector.information-private" = "Don't be afraid, your information is private and secure.";
+
+"birthday-collector.button.get-offers" = "Get Offers";
+
+"birthday-collector.button.get-card" = "Get Card";
+
+"birthday-collector.disclosures" = "Disclosures:";
+
+"birthday-collector.update-user.title" = "Update account";
+
+"birthday-collector.update-user.subtitle" = "Update data";
+
+"birthday-collector.get-offers.title" = "Get Offers";
+
+"birthday-collector.get-offers.subtitle" = "Ready for loan offers?";
+
+"birthday-collector.get-card.title" = "Get card";
+
+"birthday-collector.get-card.subtitle" = "Ready for your new card?";
+
+/* * ./Pod/Classes/Shiftlinekit/About/AboutViewController.swift */
+"about-link.title" = "About Link";
+
+"about-link.terms-of-service" = "Terms of Service";
+
+"about-link.privacy-policy" = "Privacy Policy";
+
+"about-link.FAQ" = "FAQ";
+
+"about-link.contact-us" = "Contact Us";
+
+/* * ./Pod/Classes/Shiftlinebase/Model/LoanOffer.swift */
+"general.weeks" = "(%count%) Weeks";
+
+"general.week" = "Week";
+
+"general.months" = "(%count%) Months";
+
+"general.month" = "Month";
+
+"required-document.photo-id" = "Photo Id";
+
+"required-document.bank-statement" = "Bank Statement";
+
+"required-document.proof-of-address" = "Proof od Address";
+
+"required-document.other-documents" = "Other Documents";
+
+/* * ./Pod/Classes/Shiftlinekit/LoanConsent/LoanConsentPresenter.swift */
+"loan-consent.must-accent-conditions" = "You must accept the loan conditions.";
+
+/* * ./Pod/Classes/Shiftlinekit/DocUploader/DocUploaderPresenter.swift */
+"doc-uploader.documents-sent" = "Documents sent";
+
+/* * ./Pod/Classes/Shiftlinekit/FormBuilder/FormRowTextInputView.swift */
+"input-field.button.show" = "Show";
+
+"input-field.button.hide" = "Hide";
+
+"input-field.validation" = "Validation";
+
+"input-field.button.done" = "Done";
+
+/* * ./Pod/Classes/Shiftlinekit/ApplicationList/ApplicationListViewController.swift */
+"application-list.title" = "My Applications";
+
+"application-list.nav.button.back" = "Back";
+
+"application-list.nav.button.next" = "Next";
+
+"application-list.no-applications" = "There are no pending loan applications";
+
+/* * ./Pod/Classes/ledgeuserkit/UserDataCollectorModule/UserDataCollectorViewController.swift  */
+
+"user-data-collector.next-button.title" = "Next";
+
+/* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorHomeStep.swift */
+"home-collector.title" = "Address";
+
+"home-collector.subtitle" = "Where do you live?";
+
+"home-collector.residence" = "Residence";
+
+"home-collector.residence.placeholder" = "Select";
+
+"home-collector.residence.warning.empty" = "Please select a housing type.";
+
+"home-collector.zip-code" = "ZIP";
+
+"home-collector.zip-code.warning.invalid" = "The zip is not correct.";
+
+/* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorAmountStep.swift */
+"amount-collector.title" = "Amount";
+
+"amount-collector.subtitle" = "How much do you want to borrow?";
+
+"amount-collector.amount.warning.empty" = "The amount must be greater than zero.";
+
+"amount-collector.purpose" = "Purpose";
+
+"amount-collector.purpose.placeholder" = "What's it for?";
+
+"amount-collector.purpose.warning.empty" = "Please select a purpose.";
+
+"amount-collector.private-information" = "Your information is private and secure.";
+
+"amount-collector.button.get-offers" = "Get Offers";
+
+"amount-collector.will-not-affect-credit-score" = "This will NOT affect your credit score";
+
+"amount-collector.disclosures" = "Disclosures:";
+
+/* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorIncomeStep.swift */
+"income-collector.title" = "Income";
+
+"income-collector.subtitle" = "What's your Annual Pretax Income?";
+
+"income-collector.income.warning.empty" = "You must provide your monthly income.";
+
+"income-collector.employment-status" = "Income Source";
+
+"income-collector.employment-status.placeholder" = "Please select a value ⌄";
+
+"income-collector.employment-status.warning.empty" = "Please select your employment status.";
+
+"income-collector.salary-frequency" = "Salary Frequency";
+
+"income-collector.salary-frequency.placeholder" = "Please select a value ⌄";
+
+"income-collector.salary-frequency.warning.empty" = "Please select your salary frequency.";
+
+/* * ./Pod/Classes/Shiftlinekit/OfferList/OfferListViewController.swift */
+"offer-list.title" = "My Loan Offers";
+
+"offer-list.continue-application-in-web-browser" = "Continue application in a web browser?";
+
+"alert-controller.button.no" = "No";
+
+"alert-controller.button.yes" = "Yes";
+
+/* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorAddressStep.swift */
+"address-collector.title" = "Address";
+
+"address-collector.subtitle" = "What's your address?";
+
+"address-collector.address" = "Address";
+
+"address-collector.address.warning.empty" = "The address can not be empty.";
+
+"address-collector.apt-unit" = "Apt/Unit #";
+
+"address-collector.city" = "City";
+
+"address-collector.city.warning.empty" = "The city can not be empty.";
+
+"address-collector.state" = "State";
+
+"address-collector.state.warning.empty" = "Please select a state.";
+
+"address-collector.zip-code" = "ZIP";
+
+"address-collector.zip-code.warning.incorrect" = "The zip is not correct.";
+
+/* * ./Example/ShiftlineExample/AppDelegate.swift */
+"app-delegate.alert.no-additional-documentation-required" = "There are no applications requiring additional documentation";
+
+"app-delegate.alert.file-added-to-application" = "The file has been added to the application";
+
+"app-delegate.alert.unsupported-file-format" = "Unsupported file format";
+
+"app-delegate.alert.invalid-session" = "Session not initialized";
+
+/* * ./Pod/Classes/Shiftlinekit/OfferList/ApplicationSummaryViewController.swift */
+"application-summary.title" = "Confirm Application";
+
+"application-summary.loans-provided-by" = "All loans are provided and serviced by (%lenderName%)";
+
+"application-summary.button.scroll-down-to-confirm" = "Scroll Down to Confirm";
+
+"application-summary.button.i-agree" = "I Agree";
+
+/* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorCreditScoreStep.swift */
+"credit-score-collector.title" = "Credit Score";
+
+"credit-score-collector.subtitle" = "What's your credit score?";
+
+"credit-score-collector.placeholder" = "Please select a value ⌄";
+
+"credit-score-collector.credit-score.warning.empty" = "You must indicate your credit score.";
+
+"general.something-went-wrong" = "Something went wrong";
+
+"application-feedback.application-rejected" = "Your loan application with (%lender_name%) was rejected";
+
+"application-feedback.application-processing-by-lender" = "(%lender_name%) is processing your application";
+
+"credit-score.excellent" = "Excellent (760+)";
+
+"credit-score.good" = "Good (700-759)";
+
+"credit-score.fair" = "Fair (640-699)";
+
+"credit-score.poor" = "Poor (<640)";
+
+"offer-list-carousel.borrower_preapproved" = "Congrats (%borrower_name%)! You are pre-approved for a loan from (%lender_name%)";
+
+"amount-collector.there-are-pending-applications" = "(%count%) pending loan applications";
+
+/* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorMonthlyIncomeStep.swift */
+
+"monthly-income-collector.title" = "Income";
+
+"monthly-income-collector.subtitle" = "What's your Monthly Net Income?";
+
+"monthly-income-collector.income.warning.empty" = "You must provide your monthly income.";
+
+/* * ./Pod/Classes/Shiftverificationkit/VerifyPhoneViewController.swift */
+
+"verify_phone.title" = "Verify phone number";
+
+"verify_phone.label.title" = "Enter the code sent to";
+
+"verify_phone.submit_button.title" = "Submit";
+
+"verify_phone.resend_button.title" = "Re-send Code";
+
+"error.transport.verifyPhone.incorrectPin" = "This pin is incorrect";
+
+/* * ./Pod/Classes/Shiftverificationkit/VerifyEmailViewController.swift */
+
+"verify_email.title" = "Verify email";
+
+"verify_email.label.title" = "Enter the code sent to";
+
+"verify_email.submit_button.title" = "Submit";
+
+"verify_email.resend_button.title" = "Re-send Code";
+
+"error.transport.emailNotVerified" = "This pin is incorrect";
+
+/* * ./Pod/Classes/Shiftverificationkit/VerifyBirthDateViewController.swift */
+
+"verify_birthdate.title" = "Security check";
+
+"verify_birthdate.birthday" = "Please enter your birthdate";
+
+"verify_birthdate.birthday.placeholder" = "month / day / year";
+
+"verify_birthdate.birthday.warning.minimum-date" = "Future dates not allowed.";
+
+"verify_birthdate.submit_button.title" = "Submit";
+
+"error.transport.verifyBirthDate" = "This birthdate is incorrect";
+
+/* * ./Pod/Classes/Shiftlinkkit/LinkLoanFunded/Strategy/LinkLoanFundedPresenterStrategyCard.swift */
+
+"loan-funded.description.card" = "Your loan is being disbursed to the card you've selected: {{financial_account}}\n\nShow this card to an agent to make your purchase";
+
+"loan-funded.button.view-virtual-card" = "View Virtual Card";
+
+"loan-funded.button.view-card" = "View Card";
+
+"loan-funded.button.send-card-sms" = "Send via SMS";
+
+/* * ./Pod/Classes/Shiftlinkkit/LinkLoanFunded/Strategy/LinkLoanFundedPresenterStrategyBankAccount.swift */
+
+"loan-funded.description.bank-account" = "Your loan is being disbursed to the account you've selected: {{financial_account}}";
+
+/* * ./Pod/Classes/Shiftlinkkit/LinkLoanFunded/Strategy/LinkLoanFundedPresenterStrategyVirtualCard.swift */
+
+"loan-funded.description.virtual-card" = "Your loan has been funded to a virtual card. Show this card to an agent to make your purchase";
+
+/* * ./Pod/Classes/Shiftlinkkit/LinkLoanFunded/Strategy/LinkLoanFundedPresenterStrategyAutopayEnabled.swift */
+
+"loan-funded.description.autopay-enabled" = "Auto-pay has been enabled for your loan.\n\nYour monthly payment of {{monthly_payment}} will be debited from your account: {{financial_account}}";
+
+"payday-loan-collector.title" = "Additional information";
+
+"payday-loan-collector.subtitle" = "Have you used a payday loan in the last 6 months?";
+
+"payday-loan-collector.no" = "No";
+
+"payday-loan-collector.yes" = "Yes";
+
+"payday-loan-collector.time-at-address.warning.empty" = "You must answer this question.";
+
+"time-at-address-collector.title" = "Address";
+
+"time-at-address-collector.subtitle" = "How long have you been at this address?";
+
+"time-at-address-collector.placeholder" = "Please select a value ⌄";
+
+"time-at-address-collector.time-at-address.warning.empty" = "You must answer this question.";
+
+"member-of-armed-forces-collector.title" = "Additional information";
+
+"member-of-armed-forces-collector.subtitle" = "Are you, your spouse, or your head of household an active member of the armed forces?";
+
+"member-of-armed-forces-collector.no" = "No";
+
+"member-of-armed-forces-collector.yes" = "Yes";
+
+"member-of-armed-forces-collector.time-at-address.warning.empty" = "You must answer this question.";
+
+"agree.button.title" = "I Agree";
+
+/* * ./Pod/Classes/Shiftlinkkit/LinkApplicationLisr/LinkApplicationListViewController.swift */
+
+"link-application-list.subtitle" = "Select an existing application to continue or select New Application";
+
+"link-application-list.title" = "Select Application";
+
+"link-application-list.button.new-application" = "New Application";
+
+/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/ManageShiftCardViewController.swift */
+
+"manage.shift.card.title" = "Card";
+
+"manage.shift.card.current-balance" = "Current balance";
+
+"manage.shift.card.spendable-today" = "Spendable today";
+
+"manage.shift.card.tap-to-manage-card" = "Tap to manage card";
+
+"manage.shift.card.tap-to-manage-card-copy-card" = "Tap to manage card or Tap on the number to copy to clipboard";
+
+"manage.shift.card.refresh.title" = "Scroll or tap to show more";
+
+"manage.shift.card.refresh.loading" = "Loading...";
+
+"manage.shift.card.most-recents" = "Most recent";
+
+"manage.shift.card.no.transactions" = "You have no transactions yet.\nStart now!";
+
+"manage.shift.card.activate-card-button.title" = "Activate my Card";
+
+"manage.shift.card.activate-card.title" = "Your Card is ready to run!";
+
+"manage.shift.card.activate-card.explanation" = "Once your Card is enabled, tap on it to manage Funding sources, Set a new PIN, Lock the Card and more.";
+
+/* * ./Pod/Classes/ledgeaccountskit/SelectFinancialAccountModule/Add Card/CreditCardView.swift */
+
+"credit.card-number-copied" = "Copied to clipboard";
+
+/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ManageShiftCardBottomMenu/ManageShiftCardSettingsViewController.swift */
+
+"manage.shift.card.bottom.menu.title" = "Card settings";
+
+"manage.shift.card.bottom.menu.enable-card.title" = "Enable Card";
+
+"manage.shift.card.bottom.menu.show-card-info.title" = "Show Card Info";
+
+/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/ManageShiftCardBottomMenu/ChangePinView.swift */
+
+"change.pin.title" = "Change Card PIN";
+
+"change.pin.type-pin" = "Please type the new PIN";
+
+"change.pin.type-pin.confirm" = "Confirm PIN";
+
+"change.pin.error.pins-does-not-match" = "PIN does not match.";
+
+/* Input Document */
+
+"input_document.title" = "Scan Document";
+
+"input_document.explanation" = "Please take a picture of your ID Document";
+
+"input_document.note" = "Your data is private";
+
+"input_document.get_document_button.title" = "Scan Document";
+
+"input_document.skip_button.title" = "skip";
+
+"input_document.error.no_access_to_camera" = "No access to the phone's camera";
+
+"input_document.error.no_document_found" = "Please take a picture of a document.";
+
+"input_document.error.no_face_found" = "Please take a selfie.";
+
+/* Verify Document */
+
+"verify_document.explanation.processing" = "Hold on a moment...";
+
+"verify_document.explanation.success" = "Yay!\n Everything looks great";
+
+"verify_document.explanation.error" = "Ooops!\nSeems something went wrong";
+
+"verify_document.title" = "Scanning Document";
+
+"verify_document.explanation.selfie_do_not_match" = "Wrong selfie!\nMake sure it is centered and clear, with no blur or glare";
+
+"verify_document.continue_button.title" = "CONTINUE";
+
+"verify_document.retake_pictures_button.title" = "RETAKE PICTURES";
+
+"verify_document.retake_selfie_button.title" = "RETAKE SELFIE";
+
+/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/KYC/KYCViewController.swift */
+
+"kyc.title" = "Application Status";
+
+"kyc.refresh_button.title" = "Refresh";
+
+"kyc.state.resubmitDetails" = "Your application is under review";
+
+"kyc.state.uploadFile" = "Your application is under review";
+
+"kyc.state.underReview" = "Your application is under review";
+
+"kyc.state.passed" = "";
+
+"kyc.state.rejected" = "Your application is under review";
+
+"kyc.state.temporaryError" = "Your application is under review";
+
+/* * ./Pod/Classes/shiftcardkit/ShiftCardSettingsModule/ShitCardSettings/ShitCardSettingsViewController.swift */
+
+"card.settings.title" = "Card settings";
+
+"account.settings.title" = "Account settings";
+
+"card.settings.funding_sources.title" = "Funding Sources";
+
+"card.settings.add-funding-source.button.title" = "Add funding source";
+
+"card.settings.report-lost-card.title" = "My card got stolen or lost";
+
+"card.settings.report-lost-card.subtitle" = "Report missing or stolen card";
+
+"card.settings.faq.title" = "FAQ";
+
+"card.settings.faq.subtitle" = "Some answers to your questions";
+
+"card.settings.legal.title" = "Legal";
+
+"card.settings.cardholder-agreement.title" = "Cardholder agreement";
+
+"card.settings.cardholder-agreement.subtitle" = "Terms and conditions of the Card";
+
+"card.settings.terms-and-conditions.title" = "Terms and conditions";
+
+"card.settings.terms-and-conditions.subtitle" = "User agreement";
+
+"card.settings.privacy-policy.title" = "Privacy policy";
+
+"card.settings.privacy-policy.subtitle" = "Information we collect";
+
+"card.settings.settings.title" = "Settings";
+
+"card.settings.contact-support.title" = "Help center";
+
+"card.settings.contact-support.subtitle" = "Contact directly with customer support";
+
+"card.settings.logout.button.title" = "Logout";
+
+"card.settings.logout.dialog.title" = "Close session";
+
+"card.settings.logout.dialog.message" = "Do you want to close your session?";
+
+"card.settings.change-pin.title" = "Reset PIN";
+
+"card.settings.change-pin.subtitle" = "Reset the PIN code of the card";
+
+"card.settings.enable-card.title" = "Lock Card";
+
+"card.settings.enable-card.subtitle" = "Freeze the card";
+
+"card.settings.show-card.title" = "Card Info";
+
+"card.settings.show-card.subtitle" = "Show card number and CVV";
+
+"card.settings.support.title" = "Get help";
+
+/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/TransactionDetails/ShitCardTransactionDetailsViewController.swift */
+
+"transation.details.title" = "Transaction Details";
+
+"transaction-details.address.title" = "Address";
+
+"transaction-details.details.title" = "Details";
+
+"transaction-details.transaction-info.title" = "Transaction info";
+
+"transaction-details.category.title" = "Category";
+
+"transaction-details.hold-amount.title" = "Hold amount";
+
+"transaction-details.shift-atm-fee.title" = "Shift ATM Fee";
+
+"transaction-details.shift-int-atm-fee.title" = "Shift Int. ATM Fee";
+
+"transaction-details.shift-int-fee.title" = "Shift Int. Fee";
+
+"transaction-details.transaction-date.title" = "Transaction date";
+
+"transaction-details.transaction-type.title" = "Transaction type";
+
+"transaction-details.transfer-from.text" = "Transfer from %@";
+
+"transaction-details.transfer-to.text" = "Transfer to %@";
+
+"transaction-details.external-id.text" = "ID: %@";
+
+"transaction-details.shift-id.title" = "Transaction ID";
+
+"transaction-details.declined.text" = "Declined";
+
+"transaction-details.pending.text" = "Pending";
+
+"transaction-details.unavailable.text" = "Unavailable";
+
+/* Support */
+
+"email.support.subject" = "Support";
+
+"email.lost-card.subject" = "Lost Card";
+
+/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Views/ManageShiftCardView.swift */
+
+"card.main.current-balance" = "CURRENT BALANCE";
+
+"card.main.tap-to-manage" = "TAP TO MANAGE CARD";
+
+"card.main.activate-card.button.title" = "Activate Virtual Card";
+
+/* * ./Pod/Classes/ledgeuserkit/UserDataVerification/VerifyDocument/InputDocument/InputDocumentViewController.swift */
+
+"verify-document.title.id-document-authentication" = "Document authentication";
+
+"verify-document.title.selfie" = "Selfie";
+
+"verify-document.frame-note" = "Take a photo of a government issued document. Verification keeps our platform secure.";
+
+"verify-document.action.front-card.title" = "Front of card";
+
+"verify-document.action.front-card.description" = "Please, position the front of your card in the frame";
+
+"verify-document.action.back-card.title" = "Back of card";
+
+"verify-document.action.back-card.description" = "Please, position the back of your card in the frame";
+
+"verify-document.action.check-readability.title" = "Check readability";
+
+"verify-document.action.check-readability.description" = "Please, make sure all details are clear to read with no blur or glare";
+
+"verify-document.action.selfie.description" = "Please, position your face in the oval";
+
+"verify-document.ok-button.title" = "MY CARD IS OK!";
+
+"verify-document.ok-button-selfie.title" = "MY SELFIE IS OK!";
+
+"verify-document.retake-button.title" = "Retake Picture";
+
+/* * ./Pod/Classes/ledgekit/NetworkNotReachableError/NetworkNotReachableErrorViewController.swift */
+
+"network-not-reachable.error.title" = "Hey!";
+
+"network-not-reachable.error.message" = "There is no internet connection";
+
+/* * ./Pod/Classes/ledgekit/ServerMaintenanceError/ServerMaintenanceErrorViewController.swift */
+
+"server-maintenance.error.title" = "Error";
+
+"server-maintenance.error.message" = "We’re currently undergoing system maintenance. Please check back later";
+
+"server-maintenance.action.retry" = "Try again";
+
+/* * ./Pod/Classes/shiftcardkit/IssueCardModule/IssueCardViewController.swift */
+
+"issue-card.navigationBar.title" = "Card";
+
+"issue-card.error.title" = "Error";
+
+"issue-card.error.message" = "There was an error issuing your card. Please check back later";
+
+"issue-card.action.retry" = "Try again";
+
+/* API Error Messages */
+
+"error.transport.undefined" = "Something went wrong.";
+
+"error.transport.sessionExpired" = "User session has expired. Please sign in with your credentials.";
+
+"error.transport.sessionExpired.title" = "Session Expired";
+
+"error.transport.serviceUnavailable" = "Something went wrong.";
+
+"error.transport.networkNotAvailable" = "There is no internet connection";
+
+"error.transport.incorrectParameters" = "Something went wrong<<ERROR_CODE>>.";
+
+"error.transport.invalidSession" = "For your security, your session has timed out due to inactivity.";
+
+"error.transport.emptySession" = "For your security, your session has timed out due to inactivity.";
+
+"error.transport.agentSessionExpired" = "For your security, your session has timed out due to inactivity.";
+
+"error.transport.agentInvalidSession" = "For your security, your session has timed out due to inactivity.";
+
+"error.transport.agentEmptySession" = "For your security, your session has timed out due to inactivity.";
+
+"error.transport.loginErrorInvalidCredentials" = "Error. Please re-enter your credentials.";
+
+"error.transport.loginErrorUnverifiedDatapoints" = "Error. Please verify your login information.";
+
+"error.transport.shiftCardActivateError" = "Oops! There was a problem activating your card.";
+
+"error.transport.shiftCardEnableError" = "Oops! There was a problem enabling your card.";
+
+"error.transport.shiftCardDisableError" = "Oops! There was a problem disabling your card.";
+
+"error.transport.primaryFundingSourceNotFound" = "Error reading card's balance";
+
+"error.transport.sdkDeprecated" = "This version has been deprecated, please update the app.";
+
+/* * ./Pod/Classes/ledgeaccountskit/SelectBalanceStoreModule/SelectBalanceStoreModule.swift */
+
+"select-balance-store.title" = "Link your account";
+
+"external-oauth.coinbase.connect" = "Coinbase Connect";
+
+"external-oauth.coinbase.access" = "Link your Coinbase account with your Card.";
+
+"external-oauth.coinbase.action" = "Connect to Coinbase";
+
+"external-oauth.coinbase.description" = "Connect Coinbase to spend online and offline at over 38 million merchants worldwide.";
+
+/* * ./Pod/Classes/ledgeaccountskit/SelectFinancialAccountModule/Add Card/AddCardViewController.swift */
+
+"select-financial-account.add-card-button.title" = "Add Card";
+
+"select-financial-account.scan-card-button.title" = "Scan Card";
+
+"select-financial-account.bank-deposit.title" = "Bank Deposit";
+
+"select-financial-account.bank-deposit.subtitle" = "We'll ask you to link a bank account. Transfers may take up to 3 business days";
+
+"select-financial-account.virtual-card.title" = "Virtual Card";
+
+"select-financial-account.virtual-card.subtitle" = "We'll send an SMS with a link to your card";
+
+"select-financial-account.card-support.text" = "We support most major debit and pre-pay cards";
+
+/* * Pod/Classes/ledgeaccountskit/SelectBalanceStoreModule/SelectBalanceStoreResult.swift */
+
+"balance.validations.address.country.unsupported" = "Country not supported";
+
+"balance.validations.address.region.unsupported" = "Region not supported";
+
+"balance.validations.address.unverified" = "Address not verified";
+
+"balance.validations.currency.unsupported" = "Currency not supported";
+
+"balance.validations.funds.cannot.capture" = "Cannot retrieve the balance";
+
+"balance.validations.funds.insuficient" = "Insufficient balance";
+
+"balance.validations.unknown" = "An error occurred, please try again or contact support (Error: <<ERROR_CODE>>)";

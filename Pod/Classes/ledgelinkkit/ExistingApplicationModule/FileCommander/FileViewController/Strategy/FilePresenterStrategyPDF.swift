@@ -1,0 +1,25 @@
+//
+//  FilePresenterStrategyPDF.swift
+//  Pods
+//
+//  Created by Ivan Oliver Martínez on 01/04/16.
+//
+//
+
+import Foundation
+
+class FilePresenterStrategyPDF: FilePresenterStrategy {
+  
+  let file: File
+  
+  init(file: File) {
+    self.file = file
+  }
+  
+  func setup(_ viewModel: FileViewModel) {
+    viewModel.fullScreenImage.next(false)
+    viewModel.fileName.next(self.file.name)
+    viewModel.image.next(UIImage.imageFromPodBundle("PDF_File.png")!)
+  }
+
+}

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Main View Controller-->
+        <scene sceneID="ufC-wZ-h7g">
+            <objects>
+                <viewController id="vXZ-lx-hvc" customClass="MainViewController" customModule="Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
+                        <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" image="LauncherIcon" translatesAutoresizingMaskIntoConstraints="NO" id="avX-nc-BtL">
+                                <rect key="frame" x="87" y="300" width="200" height="66"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="avX-nc-BtL" secondAttribute="height" multiplier="400:132" id="Rju-Ao-sgJ"/>
+                                    <constraint firstAttribute="width" constant="200" id="g6e-E8-gKG"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wPS-1x-cKs" userLabel="Explanation Label">
+                                <rect key="frame" x="97.5" y="445" width="180" height="19.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="pCq-e9-wi7"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Dob-42-R2M">
+                                <rect key="frame" x="16" y="464.5" width="343" height="148"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="148" id="Qre-S0-Ykc"/>
+                                </constraints>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OFX-oV-CJ7">
+                                <rect key="frame" x="20" y="632.5" width="335" height="14.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" red="0.43529411759999997" green="0.4431372549" blue="0.47450980390000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Dob-42-R2M" firstAttribute="top" secondItem="wPS-1x-cKs" secondAttribute="bottom" id="3Wm-Je-9M3"/>
+                            <constraint firstAttribute="trailing" secondItem="OFX-oV-CJ7" secondAttribute="trailing" constant="20" id="4ZG-5i-oo1"/>
+                            <constraint firstItem="avX-nc-BtL" firstAttribute="centerY" secondItem="kh9-bI-dsS" secondAttribute="centerY" id="6gl-3X-o98"/>
+                            <constraint firstItem="avX-nc-BtL" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="C9l-JA-G0B"/>
+                            <constraint firstItem="wPS-1x-cKs" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="IuI-6R-2TL"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Dob-42-R2M" secondAttribute="trailing" id="QRs-Af-0jL"/>
+                            <constraint firstItem="OFX-oV-CJ7" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="20" id="aCA-d3-nEC"/>
+                            <constraint firstItem="OFX-oV-CJ7" firstAttribute="top" secondItem="Dob-42-R2M" secondAttribute="bottom" constant="20" id="ahS-5x-J1F"/>
+                            <constraint firstItem="Dob-42-R2M" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="s4r-Pz-E5y"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="OFX-oV-CJ7" secondAttribute="bottom" constant="20" id="sNI-Wo-CKY"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="bottomView" destination="Dob-42-R2M" id="oZQ-sV-vnU"/>
+                        <outlet property="explanationLabel" destination="wPS-1x-cKs" id="XZ3-d7-5lP"/>
+                        <outlet property="projectLogo" destination="avX-nc-BtL" id="U1e-U3-H6P"/>
+                        <outlet property="versionLabel" destination="OFX-oV-CJ7" id="VZS-F1-z9X"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="366" y="263"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="LauncherIcon" width="200" height="66"/>
+    </resources>
+</document>

@@ -1,0 +1,161 @@
+default_platform(:ios)
+
+WORKSPACE = "ShiftSDK.xcworkspace"
+SCHEME = {
+  :unit => "ShiftSDK Demo Local",
+  :ui => "ShiftSDK Automation Tests"
+}
+POD_SPEC = "../../ShiftSDK.podspec"
+
+platform :ios do
+  before_all do
+    setup_circle_ci
+  end
+
+  desc "Run unit tests"
+  lane :unit_tests do
+    scan(
+      workspace: WORKSPACE,
+      device: "iPhone X",
+      scheme: SCHEME[:unit],
+      clean: true,
+      output_style: "rspec",
+      output_types: "junit",
+      output_files: "rspec/results.xml",
+      code_coverage: true
+    )
+  end
+
+  desc "Run automation test"
+  lane :automation_tests do
+    scan(
+      workspace: WORKSPACE,
+      device: "iPhone X",
+      scheme: SCHEME[:ui],
+      clean: true,
+      output_style: "rspec",
+      output_types: "junit",
+      output_files: "rspec/results.xml"
+    )
+  end
+
+  desc "Run all tests"
+  lane :tests do
+    unit_tests
+    automation_tests
+  end
+
+  desc "Publish SDK"
+  lane :release do
+
+    # We will modify, commit and push files, better to start clean
+    ensure_git_status_clean
+
+    # Current branch
+    current_branch = git_branch
+
+    # If not in the integration branch. Double check!!
+    if current_branch != "integration"
+      should_continue = prompt(text: "Are you in the release branch? (Current branch: #{current_branch})", boolean: true)
+      UI.user_error!("Checkout the release branch to continue") unless should_continue
+    end
+
+    # Ensure we have the latest changes
+    git_pull
+
+    # Verify tests pass before releasing.
+    # TODO: Replace by tests lane when Automation test are fixed
+    unit_tests
+    
+    reset_current_branch_changes(current_branch)
+
+    # New version
+    version = prompt(text: "New version (Current version #{current_pod_version}): ")
+    
+    # Push to release and reversion Podspec
+    push_to_release_branch(version)
+
+    # Push to github_master
+    push_to_github_master(version)
+    
+    # Update public repo
+    update_public_repo
+    
+    # Merge back from public_repo to release branch
+    pop_to_release_branch
+    
+    # Merge back from release branch to the current branch
+    pop_to_current_branch
+    
+    # Update cocoapods
+    update_cocoapods
+    
+  end
+end
+
+def current_pod_version()
+  text = File.read(POD_SPEC)
+  current_version = text.scan(/version.+".+"/).first
+  current_version.scan(/".+"/).first
+end
+
+def reset_current_branch_changes(current_branch)
+  sh ("git reset --hard origin/#{current_branch}")
+end
+
+def push_to_release_branch(version)
+
+  # Checkout Release Branch
+  sh("git checkout release")
+  
+  # Update Podspec file
+  text = File.read(POD_SPEC)
+  new_contents = text.gsub(/version\s+=\s".+"/, "version          = \"#{version}\"")
+  new_contents = new_contents.gsub(/tag\s=>\s".+"/, "tag => \"#{version}\"")
+  File.open(POD_SPEC, "w") {|file| file.puts new_contents }
+
+  # Verify Podspec file
+  sh("pod lib lint #{POD_SPEC} --allow-warnings")
+
+  # Push new Podspec to release branch
+  sh("git add #{POD_SPEC}")
+  sh("git commit -m \"Bump podspecs to version #{version}\"")
+  sh("git push origin release")
+end
+
+def push_to_github_master (version)
+  # Squash merge from release to github_master branch
+  sh("git checkout github_master")
+  sh("git merge --squash release")
+  sh("git commit -m \"#{version}\"")
+  sh("git tag #{version} -m \"#{version}\"")
+  sh("git push origin github_master")
+  sh("git push github --tags")
+end
+
+def update_public_repo
+  # Push github master to public repo
+  sh("git push public HEAD:master")
+  sh("git push public --tags")
+end
+
+def pop_to_release_branch
+  # Merge back to release branch
+  sh("git checkout release")
+  sh("git merge github_master")
+  sh("git push origin release")
+end
+
+def pop_to_current_branch(current_branch)
+  # Merge back to the original branch
+  sh("git co #{current_branch}")
+  sh("git merge release")
+  sh("git push origin #{current_branch}")
+end
+
+def update_cocoapods
+  # This step requires that you first:
+  # pod trunk register user@server.com 'Your Full Name' --description='macbook pro'
+  sh("pod trunk push #{POD_SPEC}")
+end
+

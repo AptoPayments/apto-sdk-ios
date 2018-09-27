@@ -1,0 +1,49 @@
+//
+//  GenericError.swift
+//  ShiftSDK
+//
+//  Created by Ivan Oliver Martínez on 25/01/16.
+//  Copyright © 2018 Shift. All rights reserved.
+//
+
+import Foundation
+
+public let kServiceErrorDomain = "com.ledge.ledgelink.service"
+
+public final class ServiceError: NSError {
+
+  public enum ErrorCodes: Int {
+    case internalIncosistencyError
+    case jsonError
+    case notInitialized
+    case wrongSessionState
+    case invalidAddress
+    case incompleteApplicationData
+    case aborted
+
+    var descriptionKey: String {
+      switch self {
+      case .internalIncosistencyError:  return "error.service.internalIncosistency"
+      case .jsonError:                  return "error.service.jsonError"
+      case .notInitialized:             return "error.service.notInitialized"
+      case .wrongSessionState:          return "error.service.wrongSessionState"
+      case .invalidAddress:             return "error.service.invalidAddress"
+      case .incompleteApplicationData:  return "error.service.incompleteApplicationData"
+      case .aborted:                    return "error.service.aborted"
+      }
+    }
+  }
+
+  public init(code: ErrorCodes,
+              reason: String? = nil) {
+    var userInfo = [NSLocalizedDescriptionKey: NSLocalizedString(code.descriptionKey, comment: "")]
+    if let reason = reason {
+      userInfo[NSLocalizedFailureReasonErrorKey] = reason
+    }
+    super.init(domain: kServiceErrorDomain, code: code.rawValue, userInfo: userInfo)
+  }
+
+  public required init(coder aDecoder: NSCoder) {
+    fatalError("Not implemented")
+  }
+}
