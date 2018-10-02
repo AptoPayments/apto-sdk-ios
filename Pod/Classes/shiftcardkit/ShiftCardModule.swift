@@ -328,6 +328,7 @@ open class ShiftCardModule: UIModule {
 extension ShiftSession {
   public func startCardFlow(from: UIViewController,
                             mode: ShiftCardModuleMode,
+                            initialUserData: DataPointList? = nil,
                             options: ShiftCardOptions? = nil,
                             completion: @escaping (Result<UIModule, NSError>.Callback)) {
     self.contextConfiguration(false) { result in
@@ -335,7 +336,7 @@ extension ShiftSession {
       case .failure(let error):
         completion(.failure(error))
       case .success(let contextConfiguration):
-        let shiftCardModule = ShiftCardModule(mode: mode, options: options)
+        let shiftCardModule = ShiftCardModule(mode: mode, initialUserData: initialUserData, options: options)
         self.initialModule = shiftCardModule
         shiftCardModule.onClose = { [unowned self] module in
           from.dismiss(animated: true) {}
@@ -357,9 +358,10 @@ extension ShiftSession {
 
   @objc public func startCardFlow(from: UIViewController,
                                   mode: ShiftCardModuleMode,
-                                  options: ShiftCardOptions? = nil,
+                                  initialUserData: DataPointList?,
+                                  options: ShiftCardOptions?,
                                   completion: @escaping (_ module: UIModule?, _ error: NSError?) -> Void) {
-    startCardFlow(from: from, mode: mode, options: options) { result in
+    startCardFlow(from: from, mode: mode, initialUserData: initialUserData, options: options) { result in
       switch result {
       case .failure(let error):
         completion(nil, error)
