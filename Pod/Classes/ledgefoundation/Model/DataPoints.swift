@@ -113,6 +113,10 @@ import ReactiveKit
     self.lastName.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 
+  @objc convenience public init(firstName: String?, lastName: String?, verified: Bool) {
+    self.init(firstName: firstName, lastName: lastName, verified: verified as Bool?)
+  }
+
   convenience public init() {
     self.init(firstName: nil, lastName: nil, verified: false)
   }
@@ -158,6 +162,10 @@ import ReactiveKit
     self.phoneNumber.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 
+  @objc convenience public init(countryCode: Int, phoneNumber: String?, verified: Bool) {
+    self.init(countryCode: countryCode, phoneNumber: phoneNumber, verified: verified as Bool?)
+  }
+
   convenience public init() {
     self.init(countryCode: -1, phoneNumber: nil, verified: false)
   }
@@ -185,6 +193,10 @@ import ReactiveKit
     self.init(type: .email, verified: verified, notSpecified: notSpecified)
     self.email.next(email)
     self.email.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+  }
+
+  @objc convenience public init(email: String?, verified: Bool, notSpecified: Bool) {
+    self.init(email: email, verified: verified as Bool?, notSpecified: notSpecified as Bool?)
   }
 
   convenience public init() {
@@ -219,6 +231,10 @@ import ReactiveKit
     self.date.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 
+  @objc convenience public init(date: Date?, verified: Bool) {
+    self.init(date: date, verified: verified as Bool?)
+  }
+
   convenience public init() {
     self.init(date: nil, verified: false)
   }
@@ -245,6 +261,10 @@ import ReactiveKit
     self.init(type: .ssn, verified: verified, notSpecified: notSpecified)
     self.ssn.next(ssn)
     self.ssn.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+  }
+
+  @objc convenience public init(ssn: String?, verified: Bool, notSpecified: Bool) {
+    self.init(ssn: ssn, verified: verified as Bool?, notSpecified: notSpecified as Bool?)
   }
 
   convenience public init() {
@@ -297,6 +317,30 @@ import ReactiveKit
     self.country.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.city.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.zip.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+  }
+
+  @objc public convenience init(address: String?,
+                                apUnit: String?,
+                                countryCode: String?,
+                                countryName: String?,
+                                city: String?,
+                                stateCode: String?,
+                                zip: String?,
+                                verified: Bool) {
+    let country: Country?
+    if let countryCode = countryCode, let countryName = countryName {
+      country = Country(isoCode: countryCode, name: countryName)
+    }
+    else {
+      country = nil
+    }
+    self.init(address: address,
+              apUnit: apUnit,
+              country: country,
+              city: city,
+              stateCode: stateCode,
+              zip: zip,
+              verified: verified)
   }
 
   convenience public init() {

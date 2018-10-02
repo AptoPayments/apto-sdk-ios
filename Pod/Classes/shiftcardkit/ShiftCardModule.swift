@@ -96,7 +96,6 @@ open class ShiftCardModule: UIModule {
             switch result {
             case .failure:
               // There's no current user.
-              self.userDataPoints = DataPointList()
               ShiftPlatform.defaultManager().clearUserToken()
             case .success (let user):
               self.userDataPoints = user.userData
