@@ -45,4 +45,9 @@ class InteractorLocatorFake: InteractorLocatorProtocol {
   func contentPresenterInteractor(content: Content) -> ContentPresenterInteractorProtocol {
     return contentProviderInteractorFake
   }
+
+  lazy var dataConfirmationInteractorFake = DataConfirmationInteractorFake()
+  func dataConfirmationInteractor(userData: DataPointList) -> DataConfirmationInteractorProtocol {
+    return dataConfirmationInteractorFake
+  }
 }

@@ -44,6 +44,7 @@ import Foundation
   open lazy var textPrimaryColor = UIColor.colorFromHex(0x2b2d35)
   open lazy var textPrimaryColorDisabled = textPrimaryColor.withAlphaComponent(0.3)
   open lazy var textSecondaryColor = UIColor.colorFromHex(0x54565f)
+  open lazy var textSecondaryColorDisabled = textSecondaryColor.withAlphaComponent(0.3)
   open lazy var textTertiaryColor = UIColor.colorFromHex(0xbbbdbd)
   open lazy var textTopBarColor = UIColor.white
   open lazy var disabledTextTopBarColor = textTopBarColor.withAlphaComponent(0.4)

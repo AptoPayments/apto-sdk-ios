@@ -15,8 +15,9 @@ class AuthModuleTest: XCTestCase {
   // Collaborators
   private let serviceLocator: ServiceLocatorFake = ServiceLocatorFake()
   private let dataProvider: ModelDataProvider = ModelDataProvider.provider
-  private let authModuleConfig: AuthModuleConfig = AuthModuleConfig(primaryAuthCredential: .phoneNumber,
-                                                                    secondaryAuthCredential: .email)
+  private lazy var authModuleConfig: AuthModuleConfig = AuthModuleConfig(primaryAuthCredential: .phoneNumber,
+                                                                         secondaryAuthCredential: .email,
+                                                                         allowedCountries: [dataProvider.usa])
   private lazy var uiConfig: ShiftUIConfig = dataProvider.uiConfig
   private lazy var initialUserData: DataPointList = dataProvider.phoneNumberDataPointList
 

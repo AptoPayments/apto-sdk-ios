@@ -35,4 +35,8 @@ final class PresenterLocator: PresenterLocatorProtocol {
   func contentPresenterPresenter() -> ContentPresenterPresenterProtocol {
     return ContentPresenterPresenter()
   }
+
+  func dataConfirmationPresenter() -> DataConfirmationPresenterProtocol {
+    return DataConfirmationPresenter()
+  }
 }

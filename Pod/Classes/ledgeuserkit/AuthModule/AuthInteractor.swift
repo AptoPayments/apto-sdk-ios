@@ -39,8 +39,6 @@ class AuthInteractor: AuthInteractorProtocol {
         dataReceiver.show(error: ServiceError(code: .internalIncosistencyError, reason: "Phone not available"))
         return
       }
-      // US phone by default
-      phoneDataPoint.countryCode.value = 1
       dataReceiver.showPhoneVerification(verificationType: .datapoint(phoneDataPoint))
     case .email:
       guard let emailDataPoint = internalUserData.getDataPointsOf(type: .email)?.first as? Email else {

@@ -1,45 +1,74 @@
 //
 //  DataCollectorAddressStep.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 06/03/16.
 //
 //
 
 import Bond
+import ReactiveKit
 
 class AddressStep: DataCollectorBaseStep, DataCollectorStepProtocol {
   var title = "address-collector.title".podLocalized()
+  private var disposeBag = DisposeBag()
+  private let requiredData: RequiredDataPointList
+  private let userData: DataPointList
   private let address: Address
-  private let googleGeocodingApiKey: String?
+  private let allowedCountries: [Country]
+  private let addressManager: AddressManager
+  private var aptUnitField: FormRowTextInputView?
 
-  init(address: Address, uiConfig: ShiftUIConfig, googleGeocodingApiKey: String?) {
-    self.address = address
-    self.googleGeocodingApiKey = googleGeocodingApiKey
+  init(requiredData: RequiredDataPointList,
+       userData: DataPointList,
+       uiConfig: ShiftUIConfig,
+       googleGeocodingApiKey: String?) {
+    self.requiredData = requiredData
+    self.userData = userData
+    self.address = userData.addressDataPoint
+    self.addressManager = AddressManager(apiKey: googleGeocodingApiKey)
+    if let country = userData.currentCountry() {
+      self.allowedCountries = [country]
+    }
+    else if let dateDataPoint = requiredData.getRequiredDataPointOf(type: .address),
+            let config = dateDataPoint.configuration as? AllowedCountriesConfiguration,
+            !config.allowedCountries.isEmpty {
+      self.allowedCountries = config.allowedCountries
+    }
+    else {
+      self.allowedCountries = [Country.defaultCountry]
+    }
     super.init(uiConfig: uiConfig)
   }
 
   override func setupRows() -> [FormRowView] {
     return [
-      FormBuilder.separatorRow(height: 48),
+      FormBuilder.separatorRow(height: 32),
       createAddressField(),
-      createAptUnitField(),
-      createCityField(),
-      createStateField(),
-      createZipField()
+      createAptUnitField()
     ]
   }
 
-  private func createAddressField() -> FormRowTextInputView {
-    let validator = NonEmptyTextValidator(failReasonMessage: "address-collector.address.warning.empty".podLocalized())
-    let addressField = FormBuilder.standardTextInputRowWith(label: "address-collector.address".podLocalized(),
-                                                            placeholder: "123 Main St.",
-                                                            value: "",
-                                                            accessibilityLabel: "Address Input Field",
-                                                            validator: validator,
-                                                            firstFormField: true,
-                                                            uiConfig: uiConfig)
-    address.address.bidirectionalBind(to: addressField.bndValue)
+  private func createAddressField() -> FormRowAddressView {
+    let placeholder = "address-collector.address.placeholder".podLocalized()
+    let addressField = FormBuilder.addressInputRowWith(label: "address-collector.address".podLocalized(),
+                                                       placeholder: placeholder,
+                                                       value: "",
+                                                       accessibilityLabel: "Address Input Field",
+                                                       addressManager: addressManager,
+                                                       allowedCountries: allowedCountries,
+                                                       uiConfig: uiConfig)
+    addressField.address.observeNext { [unowned self] address in
+      self.address.address.next(address?.address.value)
+      self.address.apUnit.next(address?.apUnit.value)
+      self.address.country.next(address?.country.value)
+      self.address.city.next(address?.city.value)
+      self.address.region.next(address?.region.value)
+      self.address.zip.next(address?.zip.value)
+    }.dispose(in: disposeBag)
+    addressField.valid.observeNext { [unowned self] valid in
+      self.aptUnitField?.isHidden = !valid
+    }.dispose(in: disposeBag)
     validatableRows.append(addressField)
     return addressField
   }
@@ -50,62 +79,8 @@ class AddressStep: DataCollectorBaseStep, DataCollectorStepProtocol {
                                                             value: "",
                                                             uiConfig: uiConfig)
     address.apUnit.bidirectionalBind(to: aptUnitField.bndValue)
+    self.aptUnitField = aptUnitField
+    aptUnitField.isHidden = true
     return aptUnitField
-  }
-
-  private func createCityField() -> FormRowTextInputView {
-    let validator = NonEmptyTextValidator(failReasonMessage: "address-collector.city.warning.empty".podLocalized())
-    let cityField = FormBuilder.standardTextInputRowWith(label: "address-collector.city".podLocalized(),
-                                                         placeholder: "Smalltown",
-                                                         value: "",
-                                                         accessibilityLabel: "City Input Field",
-                                                         validator: validator,
-                                                         uiConfig: uiConfig)
-    address.city.bidirectionalBind(to: cityField.bndValue)
-    validatableRows.append(cityField)
-    return cityField
-  }
-
-  private func createStateField() -> FormRowValuePickerView {
-    let pickerValues: [FormValuePickerValue]
-    if let states = AddressManager.defaultManager(apiKey: googleGeocodingApiKey).statesFor(country: "US") {
-      pickerValues = states.sorted { (firstState, secondState) -> Bool in
-        return firstState.name.compare(secondState.name) == ComparisonResult.orderedAscending
-      }.map { state in
-        return FormValuePickerValue(id: state.isoCode, text: state.name)
-      }
-    }
-    else {
-      pickerValues = []
-    }
-    let validator = NonEmptyTextValidator(failReasonMessage: "address-collector.state.warning.empty".podLocalized())
-    let stateField = FormBuilder.valuePickerRowWith(label: "address-collector.state".podLocalized(),
-                                                    placeholder: "CA",
-                                                    value: "",
-                                                    values: pickerValues,
-                                                    accessibilityLabel: "State Input Field",
-                                                    validator: validator,
-                                                    uiConfig: uiConfig)
-    address.stateCode.bidirectionalBind(to: stateField.bndValue)
-    validatableRows.append(stateField)
-    return stateField
-  }
-
-  private func createZipField() -> FormRowTextInputView {
-    let validator = ZipCodeValidator(failReasonMessage: "address-collector.zip-code.warning.incorrect".podLocalized())
-    let zipField = FormBuilder.formattedTextInputRowWith(label: "address-collector.zip-code".podLocalized(),
-                                                         placeholder: "90210",
-                                                         format: "*****-****",
-                                                         keyboardType: .numberPad,
-                                                         value: "",
-                                                         accessibilityLabel: "ZIP Input Field",
-                                                         validator: validator,
-                                                         hiddenText: false,
-                                                         lastFormField: true,
-                                                         uiConfig: uiConfig)
-    zipField.showSplitter = false
-    address.zip.bidirectionalBind(to: zipField.bndValue)
-    validatableRows.append(zipField)
-    return zipField
   }
 }

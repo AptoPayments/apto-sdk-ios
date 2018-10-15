@@ -43,4 +43,9 @@ class PresenterLocatorFake: PresenterLocatorProtocol {
   func contentPresenterPresenter() -> ContentPresenterPresenterProtocol {
     return contentPresenterPresenterSpy
   }
+
+  lazy var dataConfirmationPresenterSpy = DataConfirmationPresenterSpy()
+  func dataConfirmationPresenter() -> DataConfirmationPresenterProtocol {
+    return dataConfirmationPresenterSpy
+  }
 }

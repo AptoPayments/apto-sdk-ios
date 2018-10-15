@@ -13,16 +13,15 @@ import Alamofire_Synchronous
 import ShiftSDK
 
 class TestProvisioner {
-  
+
   static let apiBaseURL = "https://dev.ledge.me"
-  static let teamApiKey = "TE+MyDdBlblvk53s7Wh43YtK4s2dq/SyL/VvkqRbMxE4/7IZ4HGXMKiMPm45WfBP"
-  static let projectKey = "iNn5MxxgDnKyFZ4tFNYKGBtAOKHxlTkI0Ob7wca+s2EXaqhBGzQRyT/T/S0nELdx"
+  static let apiKey = "iNn5MxxgDnKyFZ4tFNYKGBtAOKHxlTkI0Ob7wca+s2EXaqhBGzQRyT/T/S0nELdx"
   static let adminUserKey = "F0b6IfLrSpJq2/G3sWzZ5/jlGRQnfcKXK+Ll1S11AyFmDaDB9cBqfqvoU2TJeYP9jd/ytwTFwl0/IqhMUJi/2d5hPgorg0aSrnqaHF3aWG4="
 
   // MARK: - Provisioning
-  
+
   func provisionTeam(name: String) -> JSON? {
-    
+
     let payload: [String:Any] = [
       "name": name,
       "isolated_team": true,
@@ -31,7 +30,7 @@ class TestProvisioner {
     let result = self.post("/v1/dashboard/teams",
                            parameters: payload,
                            headers: buildRequestHeaders())
-    
+
     switch result {
     case .failure(let error):
       print(error)
@@ -39,12 +38,12 @@ class TestProvisioner {
     case .success(let json):
       return json
     }
-    
+
   }
-  
+
   func provisionProject(teamId: String,
                         name: String) -> JSON? {
-    
+
     let payload: [String:Any] = [
       "name": name,
       "isolated_project": false
@@ -52,7 +51,7 @@ class TestProvisioner {
     let result = self.post("/v1/dashboard/teams/" + teamId + "/projects",
                            parameters: payload,
                            headers: buildRequestHeaders())
-    
+
     switch result {
     case .failure(let error):
       print(error)
@@ -60,16 +59,16 @@ class TestProvisioner {
     case .success(let json):
       return json
     }
-    
+
   }
-  
+
   func provisionRandomTestUser(teamKey: String? = nil,
                                projectKey: String? = nil,
                                countryCode: Int = 1,
                                phoneNumber: String = "9366669999",
                                email: String = "test@shiftpayments.com",
                                verifiedPhone: Bool = false) -> JSON? {
-    
+
     return self.provisionUserWith(teamKey:teamKey,
                                   projectKey:projectKey,
                                   firstName: "Test",
@@ -78,9 +77,9 @@ class TestProvisioner {
                                   countryCode: countryCode,
                                   phoneNumber: phoneNumber,
                                   verifiedPhone: verifiedPhone)
-    
+
   }
-  
+
   func provisionUserWith(teamKey: String? = nil,
                          projectKey: String? = nil,
                          firstName: String,
@@ -90,7 +89,7 @@ class TestProvisioner {
                          phoneNumber: String,
                          verifiedPhone: Bool = false,
                          verifiedEmail: Bool = false) -> JSON? {
-    
+
     var phoneDatapoint: [String:Any] = [
       "data_type": "phone",
       "country_code": countryCode,
@@ -103,7 +102,7 @@ class TestProvisioner {
         "secret": phoneVerification?["secret"].string
       ]
     }
-    
+
     var emailDatapoint: [String:Any] = [
       "data_type": "email",
       "email": email
@@ -115,7 +114,7 @@ class TestProvisioner {
         "secret": emailVerification?["secret"].string
       ]
     }
-    
+
     let payload: [String:Any] = [
       "data_points": [
         "data": [
@@ -126,11 +125,11 @@ class TestProvisioner {
         "type": "list"
       ]
     ]
-    
+
     let result = self.post("/v1/user",
                            parameters: payload,
                            headers: buildRequestHeaders(teamApiKey: teamKey, projectKey: projectKey))
-    
+
     switch result {
     case .failure(let error):
       print(error)
@@ -138,25 +137,25 @@ class TestProvisioner {
     case .success(let json):
       return json
     }
-    
+
   }
-  
+
   // MARK: - Verifications
-  
+
   func provisionPhoneVerificationWith(countryCode: Int,
                                       phoneNumber: String,
                                       verified: Bool = true) -> JSON? {
-    
+
     let payload: [String:Any] = [
       "country_code": countryCode,
       "phone_number": phoneNumber,
       "show_verification_secret": true
     ]
-    
+
     let result = self.post("/v1/verifications/phone",
                            parameters: payload,
                            headers: buildRequestHeaders())
-    
+
     switch result {
     case .failure(let error):
       print(error)
@@ -172,20 +171,20 @@ class TestProvisioner {
         return json
       }
     }
-    
+
   }
-  
+
   func provisionEmailVerificationWith(email: String,
                                       verified: Bool = true) -> JSON? {
     let payload: [String:Any] = [
       "email": email,
       "show_verification_secret": true
     ]
-    
+
     let result = self.post("/v1/verifications/email",
                            parameters: payload,
                            headers: buildRequestHeaders())
-    
+
     switch result {
     case .failure(let error):
       print(error)
@@ -202,7 +201,7 @@ class TestProvisioner {
       }
     }
   }
-  
+
   func finishVerificationWith(verificationId: String,
                               secret: String) -> JSON? {
     let payload: [String:Any] = [
@@ -219,16 +218,16 @@ class TestProvisioner {
     case .success(let json):
       return json
     }
-    
+
   }
-  
+
   // MARK: - Get Info
-  
+
   func getKeys(teamId: String, projectId: String) -> JSON? {
-    
+
     let result = self.get("/v1/dashboard/teams/" + teamId + "/projects/" + projectId + "/keys",
                           headers: buildRequestHeaders())
-    
+
     switch result {
     case .failure(let error):
       print(error)
@@ -236,28 +235,28 @@ class TestProvisioner {
     case .success(let json):
       return json
     }
-    
+
   } // end getKeys
-  
+
   // MARK: - Deleting
-  
+
   func deleteTeam(teamId: String) {
-    
+
     let _ = self.delete("/v1/dashboard/teams/" + teamId,
                         parameters: nil,
                         headers: buildRequestHeaders())
-    
+
   }
-  
+
   func deleteProject(teamId: String,
                      projectId: String) {
-    
+
     let _ = self.delete("/v1/dashboard/teams/" + teamId + "/projects/" + projectId,
                         parameters: nil,
                         headers: buildRequestHeaders())
-    
+
   }
-  
+
   @discardableResult func deleteUserWith(countryCode: Int,
                                          phoneNumber: String) -> JSON? {
     let payload: [String:Any] = [
@@ -275,47 +274,47 @@ class TestProvisioner {
       return json
     }
   }
-  
-  
+
+
 }
 
 extension TestProvisioner {
-  
+
   func countryCodeOf(_ user:JSON) -> Int? {
     if let dataPoint = userDataPoint(user: user, datapointType: "phone") {
       return dataPoint["country_code"].int
     }
     return nil
   }
-  
+
   func phoneNumberOf(_ user:JSON) -> String? {
     if let dataPoint = userDataPoint(user: user, datapointType: "phone") {
       return dataPoint["phone_number"].string
     }
     return nil
   }
-  
+
   func emailOf(_ user:JSON) -> String? {
     if let dataPoint = userDataPoint(user: user, datapointType: "email") {
       return dataPoint["email"].string
     }
     return nil
   }
-  
+
   func firstNameOf(_ user:JSON) -> String? {
     if let dataPoint = userDataPoint(user: user, datapointType: "name") {
       return dataPoint["first_name"].string
     }
     return nil
   }
-  
+
   func lastNameOf(_ user:JSON) -> String? {
     if let dataPoint = userDataPoint(user: user, datapointType: "name") {
       return dataPoint["last_name"].string
     }
     return nil
   }
-  
+
   fileprivate func userDataPoint(user:JSON, datapointType:String) -> JSON? {
     for dataPoint in (user["user_data"]["data"].array!) {
       if dataPoint["type"].string == datapointType {
@@ -324,11 +323,11 @@ extension TestProvisioner {
     }
     return nil
   }
-  
+
 }
 
 extension TestProvisioner {
-  
+
   fileprivate func get(
     _ url: String,
     baseURL: String = TestProvisioner.apiBaseURL,
@@ -347,9 +346,9 @@ extension TestProvisioner {
     else {
       return .success(JSON(response.result.value ?? ""))
     }
-    
+
   }
-  
+
   fileprivate func post(
     _ url: String,
     baseURL: String = TestProvisioner.apiBaseURL,
@@ -369,9 +368,9 @@ extension TestProvisioner {
     else {
       return .success(JSON(response.result.value ?? ""))
     }
-    
+
   }
-  
+
   fileprivate func put(
     _ url: String,
     baseURL: String = TestProvisioner.apiBaseURL,
@@ -392,7 +391,7 @@ extension TestProvisioner {
       return .success(JSON(response.result.value ?? ""))
     }
   }
-  
+
   fileprivate func delete(
     _ url: String,
     baseURL: String = TestProvisioner.apiBaseURL,
@@ -412,18 +411,17 @@ extension TestProvisioner {
     else {
       return .success(JSON(response.result.value ?? ""))
     }
-    
+
   }
-  
-  func buildRequestHeaders(teamApiKey: String? = nil, projectKey: String? = nil, userKey: String = TestProvisioner.adminUserKey) -> [String:String] {
+
+  func buildRequestHeaders(apiKey: String? = nil, userKey: String = TestProvisioner.adminUserKey) -> [String:String] {
     return [
       "X-Api-Version": "1.0",
       "X-Device": "Chome/BogusUA/0.0.1",
       "X-Device-Version": "blah",
-      "Developer-Authorization": "Bearer " + (teamApiKey ?? TestProvisioner.teamApiKey),
-      "Project": "Bearer " + (projectKey ?? TestProvisioner.projectKey),
+      "Api-Key": "Bearer " + (apiKey ?? TestProvisioner.apiKey),
       "Authorization": "Bearer " + userKey
     ]
   }
-  
+
 }

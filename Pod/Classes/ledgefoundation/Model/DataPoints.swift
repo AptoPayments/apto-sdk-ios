@@ -17,7 +17,7 @@ import ReactiveKit
   case phoneNumber
   case email
   case birthDate
-  case ssn
+  case idDocument
   case address
   case housing
   case incomeSource
@@ -36,7 +36,7 @@ import ReactiveKit
     case "name": return .personalName
     case "address": return .address
     case "birthdate": return .birthDate
-    case "ssn": return .ssn
+    case "id_document": return .idDocument
     case "income_source": return .incomeSource
     case "housing": return .housing
     case "income": return .income
@@ -56,7 +56,7 @@ import ReactiveKit
     case .email: return "email"
     case .address: return "address"
     case .birthDate: return "birthdate"
-    case .ssn: return "ssn"
+    case .idDocument: return "id_document"
     case .incomeSource: return "income_source"
     case .housing: return "housing"
     case .income: return "income"
@@ -67,6 +67,10 @@ import ReactiveKit
     case .financialAccount: return "financial_account"
     }
   }
+}
+
+public protocol CountryRestrictedDataPoint {
+  var country: Observable<Country?> { get }
 }
 
 @objc open class DataPoint: NSObject {
@@ -149,16 +153,21 @@ import ReactiveKit
   }
 }
 
-@objc open class PhoneNumber: DataPoint {
+@objc open class PhoneNumber: DataPoint, CountryRestrictedDataPoint {
   private var disposeBag = DisposeBag()
-  open var countryCode: Observable<Int> = Observable(-1)
+  open var countryCode: Observable<Int?> = Observable(nil)
   open var phoneNumber: Observable<String?> = Observable(nil)
+  public let country: Observable<Country?> = Observable(nil)
 
-  public init(countryCode: Int, phoneNumber: String?, verified: Bool? = false) {
+  public init(countryCode: Int?, phoneNumber: String?, verified: Bool? = false) {
     self.countryCode.value = countryCode
     self.phoneNumber.value = phoneNumber
     super.init(type: .phoneNumber, verified: verified)
-    self.countryCode.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+    self.countryCode.observeNext { [weak self] countryCode in
+      self?.invalidateVerification()
+      guard let countryCode = countryCode else { return }
+      self?.country.next(Country(isoCode: PhoneHelper.sharedHelper().region(for: countryCode)))
+    }.dispose(in: disposeBag)
     self.phoneNumber.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 
@@ -167,11 +176,11 @@ import ReactiveKit
   }
 
   convenience public init() {
-    self.init(countryCode: -1, phoneNumber: nil, verified: false)
+    self.init(countryCode: nil, phoneNumber: nil, verified: false)
   }
 
   override open func complete() -> Bool {
-    return countryCode.value != -1 && phoneNumber.value != nil
+    return countryCode.value != nil && phoneNumber.value != nil
   }
 
   override func copyWithZone(_ zone: NSZone?) -> AnyObject {
@@ -253,35 +262,97 @@ import ReactiveKit
   }
 }
 
-@objc open class SSN: DataPoint {
-  private var disposeBag = DisposeBag()
-  open var ssn: Observable<String?> = Observable(nil)
+@objc public enum IdDocumentType: Int {
+  case ssn
+  case identityCard
+  case passport
+  case driversLicense
 
-  convenience public init(ssn: String?, verified: Bool? = false, notSpecified: Bool? = false) {
-    self.init(type: .ssn, verified: verified, notSpecified: notSpecified)
-    self.ssn.next(ssn)
-    self.ssn.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+  public var description: String {
+    switch self {
+    case .ssn:
+      return "ssn"
+    case .identityCard:
+      return "identity_card"
+    case .passport:
+      return "passport"
+    case .driversLicense:
+      return "drivers_license"
+    }
   }
 
-  @objc convenience public init(ssn: String?, verified: Bool, notSpecified: Bool) {
-    self.init(ssn: ssn, verified: verified as Bool?, notSpecified: notSpecified as Bool?)
+  public static func from(string documentType: String?) -> IdDocumentType? {
+    switch documentType {
+    case "ssn": return .ssn
+    case "identity_card": return .identityCard
+    case "passport": return .passport
+    case "drivers_license": return .driversLicense
+    default: return nil
+    }
+  }
+
+  public var localizedDescription: String {
+    switch self {
+    case .ssn:
+      return "birthday-collector.id-document.type.ssn".podLocalized()
+    case .identityCard:
+      return "birthday-collector.id-document.type.identity-card".podLocalized()
+    case .passport:
+      return "birthday-collector.id-document.type.passport".podLocalized()
+    case .driversLicense:
+      return "birthday-collector.id-document.type.drivers-license".podLocalized()
+    }
+  }
+}
+
+@objc open class IdDocument: DataPoint {
+  private var disposeBag = DisposeBag()
+  open var documentType: Observable<IdDocumentType?> = Observable(nil)
+  open var value: Observable<String?> = Observable(nil)
+  open var country: Observable<Country?> = Observable(nil)
+
+  convenience public init(documentType: IdDocumentType?,
+                          value: String?,
+                          country: Country?,
+                          verified: Bool? = false,
+                          notSpecified: Bool? = false) {
+    self.init(type: .idDocument, verified: verified, notSpecified: notSpecified)
+    self.documentType.next(documentType)
+    self.value.next(value)
+    self.country.next(country)
+    self.documentType.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+    self.value.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+    self.country.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+  }
+
+  @objc convenience public init(documentType: IdDocumentType,
+                                value: String?,
+                                verified: Bool,
+                                notSpecified: Bool) {
+    self.init(documentType: documentType as IdDocumentType?,
+              value: value,
+              country: nil,
+              verified: verified as Bool?,
+              notSpecified: notSpecified as Bool?)
   }
 
   convenience public init() {
-    self.init(ssn: nil, verified: false)
+    self.init(documentType: nil, value: nil, country: nil)
   }
 
   override open func complete() -> Bool {
     if let notSpecified = self.notSpecified, notSpecified == true {
       return true
     }
-    return ssn.value != nil
+    return value.value != nil
   }
 
   override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = SSN(ssn: self.ssn.value,
-                     verified: self.verified,
-                     notSpecified: self.notSpecified)
+    let retVal = IdDocument(documentType: self.documentType.value,
+                            value: self.value.value,
+                            country: self.country.value,
+                            verified: self.verified,
+                            notSpecified: self.notSpecified)
     if let verification = self.verification {
       retVal.verification = verification.copy() as? Verification
     }
@@ -289,20 +360,21 @@ import ReactiveKit
   }
 }
 
-@objc open class Address: DataPoint {
+@objc open class Address: DataPoint, CountryRestrictedDataPoint {
   private var disposeBag = DisposeBag()
   open var address: Observable<String?> = Observable(nil)
   open var apUnit: Observable<String?> = Observable(nil)
   open var country: Observable<Country?> = Observable(nil)
   open var city: Observable<String?> = Observable(nil)
-  open var stateCode: Observable<String?> = Observable(nil)
+  open var region: Observable<String?> = Observable(nil)
   open var zip: Observable<String?> = Observable(nil)
+  open var formattedAddress: String?
 
   public convenience init(address: String?,
                           apUnit: String?,
                           country: Country?,
                           city: String?,
-                          stateCode: String?,
+                          region: String?,
                           zip: String?,
                           verified: Bool? = false) {
     self.init(type: .address, verified: verified)
@@ -310,7 +382,7 @@ import ReactiveKit
     self.apUnit.next(apUnit)
     self.country.next(country)
     self.city.next(city)
-    self.stateCode.next(stateCode)
+    self.region.next(region)
     self.zip.next(zip)
     self.address.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.apUnit.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
@@ -324,7 +396,7 @@ import ReactiveKit
                                 countryCode: String?,
                                 countryName: String?,
                                 city: String?,
-                                stateCode: String?,
+                                region: String?,
                                 zip: String?,
                                 verified: Bool) {
     let country: Country?
@@ -338,17 +410,17 @@ import ReactiveKit
               apUnit: apUnit,
               country: country,
               city: city,
-              stateCode: stateCode,
+              region: region,
               zip: zip,
               verified: verified)
   }
 
   convenience public init() {
-    self.init(address: nil, apUnit: nil, country: nil, city: nil, stateCode: nil, zip: nil, verified: false)
+    self.init(address: nil, apUnit: nil, country: nil, city: nil, region: nil, zip: nil, verified: false)
   }
 
   override open func complete() -> Bool {
-    return address.value != nil && city.value != nil && stateCode.value != nil && zip.value != nil
+    return address.value != nil && city.value != nil && region.value != nil && zip.value != nil
   }
 
   open func addressDescription() -> String? {
@@ -360,7 +432,7 @@ import ReactiveKit
       if let city = self.city.value {
         addressComponents.append(city)
       }
-      if let stateCode = self.stateCode.value {
+      if let stateCode = self.region.value {
         addressComponents.append(stateCode)
       }
       if let zip = self.zip.value {
@@ -376,7 +448,7 @@ import ReactiveKit
                          apUnit: self.apUnit.value,
                          country: self.country.value,
                          city: self.city.value,
-                         stateCode: self.stateCode.value,
+                         region: self.region.value,
                          zip: self.zip.value,
                          verified: self.verified)
     if let verification = self.verification {
@@ -638,7 +710,7 @@ func ==(lhs: Address, rhs: Address) -> Bool {
     && lhs.apUnit.value == rhs.apUnit.value
     && lhs.country.value == rhs.country.value
     && lhs.city.value == rhs.city.value
-    && lhs.stateCode.value == rhs.stateCode.value
+    && lhs.region.value == rhs.region.value
     && lhs.zip.value == rhs.zip.value
 }
 
@@ -647,9 +719,11 @@ func ==(lhs: BirthDate, rhs: BirthDate) -> Bool {
     && lhs.date.value == rhs.date.value
 }
 
-func ==(lhs: SSN, rhs: SSN) -> Bool {
+func ==(lhs: IdDocument, rhs: IdDocument) -> Bool {
   return lhs as DataPoint == rhs as DataPoint
-    && lhs.ssn.value == rhs.ssn.value
+    && lhs.documentType.value == rhs.documentType.value
+    && lhs.value.value == rhs.value.value
+    && lhs.country.value == rhs.country.value
 }
 
 func ==(lhs: Housing, rhs: Housing) -> Bool {

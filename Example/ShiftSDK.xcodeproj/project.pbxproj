@@ -57,6 +57,10 @@
 		2CFD38481FA8959500ADD20E /* SDKSettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFD38471FA8959500ADD20E /* SDKSettingsScreen.swift */; };
 		2CFD384C1FA8962E00ADD20E /* LedgeUITestSuite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFD384B1FA8962E00ADD20E /* LedgeUITestSuite.swift */; };
 		2CFD384E1FA8BA1500ADD20E /* InputPhoneScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFD384D1FA8BA1500ADD20E /* InputPhoneScreen.swift */; };
+		3CEBF048215A871500B077BD /* DataConfirmationTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEBF047215A871500B077BD /* DataConfirmationTestDoubles.swift */; };
+		3CEBF04A215A896900B077BD /* DataConfirmationInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEBF049215A896900B077BD /* DataConfirmationInteractorTest.swift */; };
+		3CEBF04E215A908000B077BD /* DataConfirmationPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEBF04D215A908000B077BD /* DataConfirmationPresenterTest.swift */; };
+		3CEBF054215A94D400B077BD /* DataConfirmationModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEBF053215A94D400B077BD /* DataConfirmationModuleTest.swift */; };
 		6D2CB00674B36430AC59868C /* Pods_Demo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FF9B834E332FB32D51CA509 /* Pods_Demo.framework */; };
 		8C14CC3D14244FB6501D3E8E /* Pods_AutomationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CF91A53207D598E008F0786 /* Pods_AutomationTests.framework */; };
 		A84D8538568516E8C78356BF /* Pods_AutomationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B45F2957E27CE6A1407A11B4 /* Pods_AutomationTests.framework */; };
@@ -212,6 +216,10 @@
 		2FD9B79683F0323F267BEC7B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		3A416E664DA23FB4D803A70A /* Pods_LedgeAutomationTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LedgeAutomationTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CB1E242D7BF2DA7660FAF84 /* Pods-AutomationTests.dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutomationTests.dev.xcconfig"; path = "Pods/Target Support Files/Pods-AutomationTests/Pods-AutomationTests.dev.xcconfig"; sourceTree = "<group>"; };
+		3CEBF047215A871500B077BD /* DataConfirmationTestDoubles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConfirmationTestDoubles.swift; sourceTree = "<group>"; };
+		3CEBF049215A896900B077BD /* DataConfirmationInteractorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConfirmationInteractorTest.swift; sourceTree = "<group>"; };
+		3CEBF04D215A908000B077BD /* DataConfirmationPresenterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConfirmationPresenterTest.swift; sourceTree = "<group>"; };
+		3CEBF053215A94D400B077BD /* DataConfirmationModuleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConfirmationModuleTest.swift; sourceTree = "<group>"; };
 		43B59768FD5045E662D60208 /* Pods-Demo.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Demo.local.xcconfig"; path = "Pods/Target Support Files/Pods-Demo/Pods-Demo.local.xcconfig"; sourceTree = "<group>"; };
 		4FF9B834E332FB32D51CA509 /* Pods_Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		53AADFDC269B7B832C1CC1C5 /* Pods-AutomationTests.local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutomationTests.local.xcconfig"; path = "Pods/Target Support Files/Pods-AutomationTests/Pods-AutomationTests.local.xcconfig"; sourceTree = "<group>"; };
@@ -476,6 +484,17 @@
 			path = Base/Helpers;
 			sourceTree = "<group>";
 		};
+		3CEBF046215A86E900B077BD /* DataConfirmationModule */ = {
+			isa = PBXGroup;
+			children = (
+				3CEBF047215A871500B077BD /* DataConfirmationTestDoubles.swift */,
+				3CEBF049215A896900B077BD /* DataConfirmationInteractorTest.swift */,
+				3CEBF04D215A908000B077BD /* DataConfirmationPresenterTest.swift */,
+				3CEBF053215A94D400B077BD /* DataConfirmationModuleTest.swift */,
+			);
+			path = DataConfirmationModule;
+			sourceTree = "<group>";
+		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
@@ -659,6 +678,7 @@
 		D99BD902F96A4CBF719FF524 /* ExternalOAuthModule */ = {
 			isa = PBXGroup;
 			children = (
+				3CEBF046215A86E900B077BD /* DataConfirmationModule */,
 				D99BD718BDAD72E2E8C61D11 /* ExternalOAuthModuleTestDoubles.swift */,
 				D99BD4ED0CB0C5B41A5ECC71 /* ExternalOAuthModuleTest.swift */,
 				D99BDDF38E2B5EE55621A6EE /* ExternalOAuthInteractorTest.swift */,
@@ -1030,6 +1050,7 @@
 				"${BUILT_PRODUCTS_DIR}/Down/Down.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleKit/GoogleKit.framework",
 				"${BUILT_PRODUCTS_DIR}/HTAutocompleteTextField/HTAutocompleteTextField.framework",
+				"${BUILT_PRODUCTS_DIR}/PhoneNumberKit/PhoneNumberKit.framework",
 				"${PODS_ROOT}/Plaid/ios/LinkKit.framework",
 				"${BUILT_PRODUCTS_DIR}/PullToRefreshKit/PullToRefreshKit.framework",
 				"${BUILT_PRODUCTS_DIR}/ReactiveKit/ReactiveKit.framework",
@@ -1041,7 +1062,6 @@
 				"${BUILT_PRODUCTS_DIR}/TTTAttributedLabel/TTTAttributedLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/TrustKit/TrustKit.framework",
 				"${BUILT_PRODUCTS_DIR}/UIScrollView-InfiniteScroll/UIScrollView_InfiniteScroll.framework",
-				"${BUILT_PRODUCTS_DIR}/libPhoneNumber-iOS/libPhoneNumber_iOS.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -1051,6 +1071,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Down.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HTAutocompleteTextField.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PhoneNumberKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LinkKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PullToRefreshKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveKit.framework",
@@ -1062,7 +1083,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TTTAttributedLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TrustKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIScrollView_InfiniteScroll.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libPhoneNumber_iOS.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1115,9 +1135,11 @@
 				2CF426071E80859C00ABAB94 /* NSDateTests.swift in Sources */,
 				2CF425FC1E7FF1D100ABAB94 /* ResultTest.swift in Sources */,
 				2C9357441F444DD300E95F40 /* XCTestCase+ProgrammerAssertions.swift in Sources */,
+				3CEBF048215A871500B077BD /* DataConfirmationTestDoubles.swift in Sources */,
 				2C11277A1EC66ED500567792 /* Mocks.swift in Sources */,
 				2CF425FE1E7FF25800ABAB94 /* ServiceErrorTests.swift in Sources */,
 				2C1127761EC6508100567792 /* DataPointsTests.swift in Sources */,
+				3CEBF04A215A896900B077BD /* DataConfirmationInteractorTest.swift in Sources */,
 				2CF426041E807A2200ABAB94 /* BackendErrorTests.swift in Sources */,
 				2C11277C1EC7B3F800567792 /* VerificationTests.swift in Sources */,
 				2C0CEEF91E6EFD1D0095DA3A /* LinkTests.swift in Sources */,
@@ -1127,6 +1149,7 @@
 				D99BD249397C573CA4FD2382 /* InteractorLocatorFake.swift in Sources */,
 				D99BD87CD9142422A2ED7FA4 /* ViewLocatorFake.swift in Sources */,
 				D99BD4119BE5F49FB1D31A51 /* FullScreenDisclaimerInteractorTest.swift in Sources */,
+				3CEBF04E215A908000B077BD /* DataConfirmationPresenterTest.swift in Sources */,
 				D99BD19670282880C2D4670B /* FullScreenDisclaimerTestDoubles.swift in Sources */,
 				D99BD62AFD7D84FCA5EAB0ED /* FullScreenDisclaimerPresenterTest.swift in Sources */,
 				D99BD66D0E10456D1329D316 /* ShiftSessionTestDoubles.swift in Sources */,
@@ -1150,6 +1173,7 @@
 				D99BD2EEFBD3110DAC190C0F /* ExternalOAuthModuleTestDoubles.swift in Sources */,
 				D99BDA2694F6E9769381BE7D /* ExternalOAuthModuleTest.swift in Sources */,
 				D99BDB56D5589E314E12E900 /* ExternalOAuthInteractorTest.swift in Sources */,
+				3CEBF054215A94D400B077BD /* DataConfirmationModuleTest.swift in Sources */,
 				D99BDE1E2A95F86112A63746 /* ExternalOAuthPresenterTest.swift in Sources */,
 				D99BD6D836E171312774F482 /* SelectBalanceStoreModuleTest.swift in Sources */,
 				D99BD2137BA65D58FF6DEA55 /* NetworkLocatorFake.swift in Sources */,

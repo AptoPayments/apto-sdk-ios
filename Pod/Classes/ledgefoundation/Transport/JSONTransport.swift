@@ -12,8 +12,8 @@ import SwiftyJSON
 
 public enum JSONTransportAuthorization {
   case none
-  case accessToken(token: String, projectToken: String)
-  case accessAndUserToken(token: String, projectToken: String, userToken: String)
+  case accessToken(projectToken: String)
+  case accessAndUserToken(projectToken: String, userToken: String)
 }
 
 public enum JSONTransportEnvironment {

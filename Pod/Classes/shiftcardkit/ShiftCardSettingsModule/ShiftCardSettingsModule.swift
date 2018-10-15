@@ -85,15 +85,17 @@ extension ShiftCardSettingsModule: ShiftCardSettingsRouterProtocol {
     guard let uiConfig = self.uiConfig else {
       return
     }
+    let oauthModuleConfig = ExternalOAuthModuleConfig(title: "Coinbase")
     let externalOAuthModule = ExternalOAuthModule(serviceLocator: serviceLocator,
-                                                  config: ExternalOAuthModuleConfig(title: "Coinbase"),
+                                                  config: oauthModuleConfig,
                                                   uiConfig: uiConfig)
     externalOAuthModule.onOAuthSucceeded = { [weak self] _, custodian in
       guard let wself = self else {
         return
       }
       wself.showLoadingSpinner()
-      wself.shiftSession.addUserFundingSource(custodian: custodian) { result in
+      wself.shiftSession.addFinancialAccountFundingSource(accountId: wself.card.accountId,
+                                                          custodian: custodian) { result in
         switch result {
         case .failure(let error):
           UIApplication.topViewController()?.show(error: error)

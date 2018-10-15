@@ -57,6 +57,15 @@ class ShiftSessionSpy: ShiftSession {
     lastVerifyOauthCustodianType = custodianType
     lastVerifyOauthAttemptStatusCallback = callback
   }
+
+  private(set) var updateUserDataCalled = false
+  private(set) var lastUserDataToUpdate: DataPointList?
+  private(set) var lastUpdateUserDataCallback: Result<ShiftUser, NSError>.Callback?
+  override func updateUserData(_ userData: DataPointList, callback: @escaping Result<ShiftUser, NSError>.Callback) {
+    updateUserDataCalled = true
+    lastUserDataToUpdate = userData
+    lastUpdateUserDataCallback = callback
+  }
 }
 
 class ShiftSessionFake: ShiftSessionSpy {
@@ -112,6 +121,15 @@ class ShiftSessionFake: ShiftSessionSpy {
     super.verifyOauthAttemptStatus(attempt, custodianType: custodianType, callback: callback)
 
     if let result = nextVerifyOauthAttemptStatusResult {
+      callback(result)
+    }
+  }
+
+  var nextUpdateUserDataResult: Result<ShiftUser, NSError>?
+  override func updateUserData(_ userData: DataPointList, callback: @escaping Result<ShiftUser, NSError>.Callback) {
+    super.updateUserData(userData, callback: callback)
+
+    if let result = nextUpdateUserDataResult {
       callback(result)
     }
   }

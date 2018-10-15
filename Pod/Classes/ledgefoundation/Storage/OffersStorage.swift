@@ -9,14 +9,12 @@
 import Foundation
 
 protocol OffersStorageProtocol {
-  func requestOffers(_ developerKey: String,
-                     projectKey: String,
+  func requestOffers(_ apiKey: String,
                      userToken: String,
                      loanData: AppLoanData,
                      merchantData: MerchantData?,
                      callback: @escaping Result<OfferRequest, NSError>.Callback)
-  func nextOffers(_ developerKey: String,
-                  projectKey: String,
+  func nextOffers(_ apiKey: String,
                   userToken: String,
                   applicationId: String,
                   page: Int,
@@ -32,16 +30,13 @@ class OffersStorage: OffersStorageProtocol {
     self.transport = transport
   }
 
-  func requestOffers(_ developerKey: String,
-                     projectKey: String,
+  func requestOffers(_ apiKey: String,
                      userToken: String,
                      loanData: AppLoanData,
                      merchantData: MerchantData?,
                      callback: @escaping Result<OfferRequest, NSError>.Callback) {
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.requestOffers)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
-                                                             userToken: userToken)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     var data = loanData.jsonSerialize()
     if merchantData != nil {
       for (k, v) in merchantData!.jsonSerialize() {
@@ -60,8 +55,7 @@ class OffersStorage: OffersStorageProtocol {
     }
   }
 
-  func nextOffers(_ developerKey: String,
-                  projectKey: String,
+  func nextOffers(_ apiKey: String,
                   userToken: String,
                   applicationId: String,
                   page: Int,
@@ -71,9 +65,7 @@ class OffersStorage: OffersStorageProtocol {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.nextOffers,
                          urlTrailing: urlTrailing)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
-                                                             userToken: userToken)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     transport.get(url,
                   authorization: auth,
                   parameters: nil,

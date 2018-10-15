@@ -8,23 +8,20 @@
 import Foundation
 
 extension ShiftPlatform {
-
   // MARK: - Public Methods
-
   func issueCard(_ accessToken: AccessToken,
                  issuer: CardIssuer,
                  custodian: Custodian? = nil,
                  callback: @escaping Result<Card, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.financialAccountsStorage.issueCard(developerKey,
-                                            projectKey: projectKey,
-                                            userToken: accessToken.token,
-                                            issuer: issuer,
-                                            custodian: custodian,
-                                            callback: callback)
+    financialAccountsStorage.issueCard(projectKey,
+                                       userToken: accessToken.token,
+                                       issuer: issuer,
+                                       custodian: custodian,
+                                       callback: callback)
   }
 
   func activateCard(_ accessToken: AccessToken,
@@ -49,16 +46,14 @@ extension ShiftPlatform {
                      accountId: String,
                      pin: String,
                      callback: @escaping Result<Card, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-
-    self.financialAccountsStorage.updateFinancialAccountPIN(developerKey,
-                                                            projectKey: projectKey,
-                                                            userToken: accessToken.token,
-                                                            accountId: accountId,
-                                                            pin: pin) { result in
+    financialAccountsStorage.updateFinancialAccountPIN(projectKey,
+                                                       userToken: accessToken.token,
+                                                       accountId: accountId,
+                                                       pin: pin) { result in
       callback(result.flatMap { financialAccount -> Result<Card, NSError> in
         guard let card = financialAccount as? Card else {
           return .failure(ServiceError(code: .jsonError))
@@ -74,35 +69,31 @@ extension ShiftPlatform {
                         rows: Int?,
                         lastTransactionId: String?,
                         callback: @escaping Result<[Transaction], NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-
-    self.financialAccountsStorage.getFinancialAccountTransactions(developerKey,
-                                                                  projectKey: projectKey,
-                                                                  userToken: accessToken.token,
-                                                                  accountId: accountId,
-                                                                  page: page,
-                                                                  rows: rows,
-                                                                  lastTransactionId: lastTransactionId,
-                                                                  callback: callback)
+    financialAccountsStorage.getFinancialAccountTransactions(projectKey,
+                                                             userToken: accessToken.token,
+                                                             accountId: accountId,
+                                                             page: page,
+                                                             rows: rows,
+                                                             lastTransactionId: lastTransactionId,
+                                                             callback: callback)
   }
 
   fileprivate func changeCardState(_ accessToken: AccessToken,
                                    accountId: String,
                                    state: FinancialAccountState,
                                    callback: @escaping Result<Card, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-
-    self.financialAccountsStorage.updateFinancialAccountState(developerKey,
-                                                              projectKey: projectKey,
-                                                              userToken: accessToken.token,
-                                                              accountId: accountId,
-                                                              state: state) { result in
+    financialAccountsStorage.updateFinancialAccountState(projectKey,
+                                                         userToken: accessToken.token,
+                                                         accountId: accountId,
+                                                         state: state) { result in
       callback(result.flatMap { financialAccount -> Result<Card, NSError> in
         guard let card = financialAccount as? Card else {
           return .failure(ServiceError(code: .jsonError))
@@ -112,157 +103,144 @@ extension ShiftPlatform {
     }
   }
 
-  func userFundingSources(_ accessToken: AccessToken,
-                          page: Int?,
-                          rows: Int?,
-                          callback: @escaping Result<[FundingSource], NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+  func financialAccountFundingSources(_ accessToken: AccessToken,
+                                      accountId: String,
+                                      page: Int?,
+                                      rows: Int?,
+                                      callback: @escaping Result<[FundingSource], NSError>.Callback) {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-
-    self.financialAccountsStorage.userFundingSources(developerKey,
-                                                     projectKey: projectKey,
-                                                     userToken: accessToken.token,
-                                                     page: page,
-                                                     rows: rows,
-                                                     callback: callback)
+    financialAccountsStorage.financialAccountFundingSources(projectKey,
+                                                            userToken: accessToken.token,
+                                                            accountId: accountId,
+                                                            page: page,
+                                                            rows: rows,
+                                                            callback: callback)
   }
 
   func getCardFundingSource(accessToken: AccessToken,
                             accountId: String,
                             callback: @escaping Result<FundingSource?, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-
-    self.financialAccountsStorage.getFinancialAccountFundingSource(developerKey,
-                                                                   projectKey: projectKey,
-                                                                   userToken: accessToken.token,
-                                                                   accountId: accountId,
-                                                                   callback: callback)
+    financialAccountsStorage.getFinancialAccountFundingSource(projectKey,
+                                                              userToken: accessToken.token,
+                                                              accountId: accountId,
+                                                              callback: callback)
   }
 
   func setCardFundingSource(accessToken: AccessToken,
                             fundingSourceId: String,
                             accountId: String,
                             callback: @escaping Result<FundingSource, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-
-    self.financialAccountsStorage.setFinancialAccountFundingSource(developerKey,
-                                                                   projectKey: projectKey,
-                                                                   userToken: accessToken.token,
-                                                                   accountId: accountId,
-                                                                   fundingSourceId: fundingSourceId,
-                                                                   callback: callback)
+    financialAccountsStorage.setFinancialAccountFundingSource(projectKey,
+                                                              userToken: accessToken.token,
+                                                              accountId: accountId,
+                                                              fundingSourceId: fundingSourceId,
+                                                              callback: callback)
   }
 
-  func addUserFundingSource(_ accessToken: AccessToken,
-                            custodian: Custodian,
-                            callback: @escaping Result<FundingSource, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+  func addFinancialAccountFundingSource(_ accessToken: AccessToken,
+                                        accountId: String,
+                                        custodian: Custodian,
+                                        callback: @escaping Result<FundingSource, NSError>.Callback) {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-
-    self.financialAccountsStorage.addUserFundingSource(developerKey,
-                                                       projectKey: projectKey,
-                                                       userToken: accessToken.token,
-                                                       custodian: custodian,
-                                                       callback: callback)
+    financialAccountsStorage.addFinancialAccountFundingSource(projectKey,
+                                                              userToken: accessToken.token,
+                                                              accountId: accountId,
+                                                              custodian: custodian,
+                                                              callback: callback)
   }
 
   func cardConfiguration(forceRefresh: Bool = false,
                          callback: @escaping Result<ShiftCardConfiguration, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-
-    self.configurationStorage.cardConfiguration(developerKey,
-                                                projectKey: projectKey,
-                                                forceRefresh: forceRefresh,
-                                                callback: callback)
+    configurationStorage.cardConfiguration(projectKey, forceRefresh: forceRefresh, callback: callback)
   }
 
   func setShiftCardOptions(shiftCardOptions: ShiftCardOptions) {
-    self.configurationStorage.setShiftCardOptions(shiftCardOptions: shiftCardOptions)
+    configurationStorage.setShiftCardOptions(shiftCardOptions: shiftCardOptions)
   }
 
   func nextCardApplications(_ accessToken: AccessToken,
                             page: Int,
                             rows: Int,
                             callback: @escaping Result<[CardApplication], NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.cardApplicationsStorage.nextApplications(developerKey,
-                                                  projectKey: projectKey,
-                                                  userToken: accessToken.token,
-                                                  page: page,
-                                                  rows: rows,
-                                                  callback: callback)
+    cardApplicationsStorage.nextApplications(projectKey,
+                                             userToken: accessToken.token,
+                                             page: page,
+                                             rows: rows,
+                                             callback: callback)
   }
 
   func applyToCard(_ accessToken: AccessToken,
                    cardProduct: ShiftCardProduct,
                    callback: @escaping Result<CardApplication, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.cardApplicationsStorage.createApplication(developerKey,
-                                                   projectKey: projectKey,
-                                                   userToken: accessToken.token,
-                                                   cardProduct: cardProduct,
-                                                   callback: callback)
+    cardApplicationsStorage.createApplication(projectKey,
+                                              userToken: accessToken.token,
+                                              cardProduct: cardProduct,
+                                              callback: callback)
   }
 
   func cardApplicationStatus(_ accessToken: AccessToken,
                              applicationId: String,
                              callback: @escaping Result<CardApplication, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.cardApplicationsStorage.applicationStatus(developerKey,
-                                                   projectKey: projectKey,
-                                                   userToken: accessToken.token,
-                                                   applicationId: applicationId,
-                                                   callback: callback)
+    cardApplicationsStorage.applicationStatus(projectKey,
+                                              userToken: accessToken.token,
+                                              applicationId: applicationId,
+                                              callback: callback)
   }
 
   func setBalanceStore(_ accessToken: AccessToken,
                        applicationId: String,
                        custodian: Custodian,
                        callback: @escaping Result<SelectBalanceStoreResult, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.cardApplicationsStorage.setBalanceStore(developerKey,
-                                                 projectKey: projectKey,
-                                                 userToken: accessToken.token,
-                                                 applicationId: applicationId,
-                                                 custodian: custodian,
-                                                 callback: callback)
+    cardApplicationsStorage.setBalanceStore(projectKey,
+                                            userToken: accessToken.token,
+                                            applicationId: applicationId,
+                                            custodian: custodian,
+                                            callback: callback)
   }
 
   func acceptDisclaimer(_ accessToken: AccessToken,
                         workflowObject: WorkflowObject,
                         workflowAction: WorkflowAction,
                         callback: @escaping Result<Void, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    cardApplicationsStorage.acceptDisclaimer(developerKey,
-                                             projectKey: projectKey,
+    cardApplicationsStorage.acceptDisclaimer(projectKey,
                                              userToken: accessToken.token,
                                              workflowObject: workflowObject,
                                              workflowAction: workflowAction,
@@ -273,12 +251,11 @@ extension ShiftPlatform {
                  applicationId: String,
                  balanceVersion: BalanceVersion,
                  callback: @escaping Result<Card, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    cardApplicationsStorage.issueCard(developerKey,
-                                      projectKey: projectKey,
+    cardApplicationsStorage.issueCard(projectKey,
                                       userToken: accessToken.token,
                                       applicationId: applicationId,
                                       balanceVersion: balanceVersion,
@@ -298,13 +275,16 @@ extension ShiftSession {
                                              callback: callback)
   }
 
-  func addUserFundingSource(custodian: Custodian, callback: @escaping Result<FundingSource, NSError>.Callback) {
+  func addFinancialAccountFundingSource(accountId: String,
+                                        custodian: Custodian,
+                                        callback: @escaping Result<FundingSource, NSError>.Callback) {
     guard let accessToken = ShiftPlatform.defaultManager().currentToken() else {
       callback(.failure(BackendError(code: .invalidSession, reason: nil)))
       return
     }
-    ShiftPlatform.defaultManager().addUserFundingSource(accessToken,
-                                                        custodian: custodian,
-                                                        callback: callback)
+    ShiftPlatform.defaultManager().addFinancialAccountFundingSource(accessToken,
+                                                                    accountId: accountId,
+                                                                    custodian: custodian,
+                                                                    callback: callback)
   }
 }

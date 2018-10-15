@@ -7,36 +7,30 @@
 //
 
 protocol CardApplicationsStorageProtocol {
-  func nextApplications(_ developerKey: String,
-                        projectKey: String,
+  func nextApplications(_ apiKey: String,
                         userToken: String,
                         page: Int,
                         rows: Int,
                         callback: @escaping Result<[CardApplication], NSError>.Callback)
-  func createApplication(_ developerKey: String,
-                         projectKey: String,
+  func createApplication(_ apiKey: String,
                          userToken: String,
                          cardProduct: ShiftCardProduct,
                          callback: @escaping Result<CardApplication, NSError>.Callback)
-  func applicationStatus(_ developerKey: String,
-                         projectKey: String,
+  func applicationStatus(_ apiKey: String,
                          userToken: String,
                          applicationId: String,
                          callback: @escaping Result<CardApplication, NSError>.Callback)
-  func setBalanceStore(_ developerKey: String,
-                       projectKey: String,
+  func setBalanceStore(_ apiKey: String,
                        userToken: String,
                        applicationId: String,
                        custodian: Custodian,
                        callback: @escaping Result<SelectBalanceStoreResult, NSError>.Callback)
-  func acceptDisclaimer(_ developerKey: String,
-                        projectKey: String,
+  func acceptDisclaimer(_ apiKey: String,
                         userToken: String,
                         workflowObject: WorkflowObject,
                         workflowAction: WorkflowAction,
                         callback: @escaping Result<Void, NSError>.Callback)
-  func issueCard(_ developerKey: String,
-                 projectKey: String,
+  func issueCard(_ apiKey: String,
                  userToken: String,
                  applicationId: String,
                  balanceVersion: BalanceVersion,
@@ -50,8 +44,7 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     self.transport = transport
   }
 
-  func nextApplications(_ developerKey: String,
-                        projectKey: String,
+  func nextApplications(_ apiKey: String,
                         userToken: String,
                         page: Int,
                         rows: Int,
@@ -59,15 +52,13 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     // TODO: Pending server side implementation
   }
 
-  func createApplication(_ developerKey: String,
-                         projectKey: String,
+  func createApplication(_ apiKey: String,
                          userToken: String,
                          cardProduct: ShiftCardProduct,
                          callback: @escaping Result<CardApplication, NSError>.Callback) {
     let parameters = ["card_product_id": cardProduct.id as AnyObject]
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .applyToCard)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
     transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<CardApplication, NSError> in
@@ -79,8 +70,7 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     }
   }
 
-  func applicationStatus(_ developerKey: String,
-                         projectKey: String,
+  func applicationStatus(_ apiKey: String,
                          userToken: String,
                          applicationId: String,
                          callback: @escaping Result<CardApplication, NSError>.Callback) {
@@ -90,8 +80,7 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.cardApplicationStatus,
                          urlParameters: urlParameters)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
     self.transport.get(url,
                        authorization: auth,
@@ -108,8 +97,7 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     }
   }
 
-  func setBalanceStore(_ developerKey: String,
-                       projectKey: String,
+  func setBalanceStore(_ apiKey: String,
                        userToken: String,
                        applicationId: String,
                        custodian: Custodian,
@@ -132,8 +120,7 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(),
                          url: JSONRouter.setBalanceStore,
                          urlParameters: urlParameters)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
     transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<SelectBalanceStoreResult, NSError> in
@@ -145,8 +132,7 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     }
   }
 
-  func acceptDisclaimer(_ developerKey: String,
-                        projectKey: String,
+  func acceptDisclaimer(_ apiKey: String,
                         userToken: String,
                         workflowObject: WorkflowObject,
                         workflowAction: WorkflowAction,
@@ -156,8 +142,7 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
       "action_id": workflowAction.actionId as AnyObject
     ]
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.acceptDisclaimer)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
     transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<Void, NSError> in
@@ -171,8 +156,7 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     }
   }
 
-  func issueCard(_ developerKey: String,
-                 projectKey: String,
+  func issueCard(_ apiKey: String,
                  userToken: String,
                  applicationId: String,
                  balanceVersion: BalanceVersion,
@@ -182,8 +166,7 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
       "balance_version": balanceVersion.rawValue as AnyObject
     ]
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.issueCard)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
     transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<Card, NSError> in

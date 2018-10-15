@@ -8,9 +8,11 @@
 
 import UIKit
 import Bond
+import ReactiveKit
 import SnapKit
 
 class PINVerificationViewController: ShiftViewController, PINVerificationView {
+  private var disposeBag = DisposeBag()
   private unowned let eventHandler: PINVerificationPresenter
   // swiftlint:disable implicitly_unwrapped_optional
   private var titleLabel: UILabel!
@@ -38,18 +40,18 @@ class PINVerificationViewController: ShiftViewController, PINVerificationView {
 
   private func setupViewModelSubscriptions() {
     let viewModel = eventHandler.viewModel
-    _ = viewModel.datapointValue.observeNext { phoneNumber in
+    viewModel.datapointValue.observeNext { phoneNumber in
       self.datapointValueLabel.text = phoneNumber
-    }
-    _ = viewModel.title.observeNext { title in
+    }.dispose(in: disposeBag)
+    viewModel.title.observeNext { title in
       self.title = title
-    }
-    _ = viewModel.subtitle.observeNext { subtitle in
+    }.dispose(in: disposeBag)
+    viewModel.subtitle.observeNext { subtitle in
       self.titleLabel.text = subtitle
-    }
-    _ = viewModel.resendButtonTitle.ignoreNil().observeNext { resendButtonTitle in
+    }.dispose(in: disposeBag)
+    viewModel.resendButtonTitle.ignoreNil().observeNext { resendButtonTitle in
       self.set(resendButtonTitle: resendButtonTitle)
-    }
+    }.dispose(in: disposeBag)
   }
 
   private func set(resendButtonTitle: String) {

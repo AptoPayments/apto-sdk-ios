@@ -1,17 +1,32 @@
 //
 //  PhoneHelper.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 09/02/16.
 //
 //
 
 import Foundation
-import libPhoneNumber_iOS
+import PhoneNumberKit
+
+public enum PhoneFormat: Int, Equatable {
+  case national
+  case international
+  case nationalWithPrefix
+
+  public var phoneNumberKitFormat: PhoneNumberFormat {
+    switch self {
+    case .national, .nationalWithPrefix:
+      return .national
+    case .international:
+      return .international
+    }
+  }
+}
 
 public class PhoneHelper {
-  
   let defaultRegionCode = "US"
+  let defaultCountryCode = 1
 
   static var sharedInstance: PhoneHelper?
   public static func sharedHelper() -> PhoneHelper {
@@ -21,59 +36,69 @@ public class PhoneHelper {
     }
     return sharedInstance
   }
-  
-  let phoneValidator: NBPhoneNumberUtil! = NBPhoneNumberUtil.sharedInstance()
 
-  func examplePhoneWith(countryCode:Int? = nil) -> String {
-    do {
-      let parsedPhone = try phoneValidator?.getExampleNumber(defaultRegionCode)
-      let formattedPhone = try phoneValidator.format(parsedPhone, numberFormat: .NATIONAL)
-      return formattedPhone
-    } catch _ {
-      return ""
-    }
-  }
-  
-  public func validatePhoneWith(countryCode:Int? = nil, nationalNumber:String?) -> Bool {
-    guard let nationalNumber = nationalNumber, let phoneValidator = phoneValidator else {
+  let phoneValidator = PhoneNumberKit()
+
+  public func validatePhoneWith(countryCode: Int? = nil, nationalNumber: String?) -> Bool {
+    guard let nationalNumber = nationalNumber else {
       return false
     }
-    do {
-      let parsedPhone = try phoneValidator.parse(nationalNumber, defaultRegion: defaultRegionCode)
-      return phoneValidator.isValidNumber(parsedPhone)
-    } catch _ {
-      return false
+    let regionCode: String
+    if let countryCode = countryCode {
+      regionCode = region(for: countryCode)
     }
+    else {
+      regionCode = defaultRegionCode
+    }
+    return !phoneValidator.parse([nationalNumber],
+                                 withRegion: regionCode,
+                                 shouldReturnFailedEmptyNumbers: false).isEmpty
   }
-  
-  public func formatPhoneWith(countryCode:Int? = nil, nationalNumber:String?) -> String {
-    guard let nationalNumber = nationalNumber, let phoneValidator = phoneValidator else {
+
+  public func formatPhoneWith(countryCode: Int? = nil,
+                              nationalNumber: String?,
+                              numberFormat: PhoneFormat = .national) -> String {
+    guard let nationalNumber = nationalNumber else {
       return ""
     }
     do {
-      let parsedPhone = try phoneValidator.parse(nationalNumber, defaultRegion: defaultRegionCode)
-      let formattedPhone = try phoneValidator.format(parsedPhone, numberFormat: .NATIONAL)
-      return formattedPhone
-    } catch _ {
+      let countryCode = countryCode ?? defaultCountryCode
+      let parsedPhone = try phoneValidator.parse(nationalNumber, withRegion: region(for: countryCode))
+      let formattedPhone = phoneValidator.format(parsedPhone, toType: numberFormat.phoneNumberKitFormat)
+      return numberFormat == .nationalWithPrefix ? "+\(countryCode) " + formattedPhone : formattedPhone
+    }
+    catch _ {
       return nationalNumber
     }
   }
-  
-  public func parsePhoneWith(countryCode:Int? = nil, nationalNumber:String?) -> PhoneNumber? {
+
+  public func region(for countryCode: Int) -> String {
+    guard let country = phoneValidator.mainCountry(forCode: UInt64(countryCode)) else {
+      return defaultRegionCode
+    }
+    return country
+  }
+
+  public func countryCode(for region: String) -> Int {
+    guard let code = phoneValidator.countryCode(for: region) else {
+      return defaultCountryCode
+    }
+    return Int(code)
+  }
+
+  public func parsePhoneWith(countryCode: Int? = nil, nationalNumber: String?) -> PhoneNumber? {
     guard let nationalNumber = nationalNumber else {
       return nil
     }
     do {
-      if let parsedPhone = try phoneValidator?.parse(nationalNumber, defaultRegion: defaultRegionCode), let nationalNumber = parsedPhone.nationalNumber {
-        let phoneNumber = PhoneNumber(
-          countryCode:parsedPhone.countryCode.intValue,
-          phoneNumber:"\(nationalNumber)")
-        return phoneNumber
-      }
-      return nil
-    } catch _ {
+      let countryCode = countryCode ?? defaultCountryCode
+      let parsedPhone = try phoneValidator.parse(nationalNumber, withRegion: region(for: countryCode))
+      let phoneNumber = PhoneNumber(countryCode: Int(parsedPhone.countryCode),
+                                    phoneNumber: parsedPhone.adjustedNationalNumber())
+      return phoneNumber
+    }
+    catch _ {
       return nil
     }
   }
-  
 }

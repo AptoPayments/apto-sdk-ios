@@ -8,20 +8,30 @@
 
 import Foundation
 
+public protocol RequiredDataPointConfigProtocol {}
+
 @objc open class RequiredDataPoint: NSObject {
   public let type: DataPointType
   public let verificationRequired: Bool
   public let optional: Bool
+  public let configuration: RequiredDataPointConfigProtocol?
 
-  public init(type: DataPointType, verificationRequired: Bool, optional: Bool) {
+  public init(type: DataPointType,
+              verificationRequired: Bool,
+              optional: Bool,
+              configuration: RequiredDataPointConfigProtocol? = nil) {
     self.type = type
     self.verificationRequired = verificationRequired
     self.optional = optional
+    self.configuration = configuration
     super.init()
   }
 
   @objc func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    return RequiredDataPoint(type: self.type, verificationRequired: self.verificationRequired, optional: self.optional)
+    return RequiredDataPoint(type: self.type,
+                             verificationRequired: self.verificationRequired,
+                             optional: self.optional,
+                             configuration: self.configuration)
   }
 }
 

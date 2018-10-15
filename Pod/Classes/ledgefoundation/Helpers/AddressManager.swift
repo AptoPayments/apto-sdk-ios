@@ -10,6 +10,8 @@ import Foundation
 import GoogleKit
 
 open class AddressManager {
+  private var queries = [GKQuery]()
+
   public static func defaultManager(apiKey: String? = nil) -> AddressManager {
     guard let sharedValidator = AddressManager.sharedValidator else {
       let addressManager = AddressManager(apiKey: apiKey)
@@ -105,6 +107,75 @@ open class AddressManager {
     return self.stateStorage.getStateBy(country, name: name)
   }
 
+  open func autoComplete(address: String,
+                         countries: [Country],
+                         completion: @escaping Result<[Place], NSError>.Callback) {
+    queries.forEach { $0.cancel() }
+
+    let query = GKPlaceAutocompleteQuery()
+    query.input = address
+    query.types = ["address"]
+    var countriesParam = [String]()
+    countries.forEach {
+      countriesParam.append("country:\($0.isoCode.lowercased())")
+    }
+    var components = countriesParam.joined(separator: "%7C")
+    if let uuid = UIDevice.current.identifierForVendor?.uuidString {
+      components.append("&sessiontoken=" + uuid)
+    }
+    query.components = [components]
+    if let languageCode = Locale.current.languageCode {
+      query.language = languageCode
+    }
+
+    queries.append(query)
+
+    query.fetchPlaces { places, error in
+      if let places = places as? [GKPlaceAutocomplete], !places.isEmpty {
+        let retVal = places.compactMap {
+          return Place(id: $0.placeId, name: $0.textDescription)
+        }
+        completion(.success(retVal))
+      }
+      else {
+        if let error = error {
+          completion(.failure(error as NSError))
+        }
+        else {
+          completion(.failure(BackendError(code: .other)))
+        }
+      }
+    }
+  }
+
+  open func placeDetails(placeId: String, completion: @escaping Result<Address, NSError>.Callback) {
+    let placeQuery = PlaceDetailsQuery()
+    placeQuery.placeId = placeId
+    if let languageCode = Locale.current.languageCode {
+      placeQuery.language = languageCode
+    }
+    placeQuery.fetchDetails { placeDetails, error in
+      if let placeDetails = placeDetails as? PlaceDetails {
+        let address = Address(address: placeDetails.name,
+                              apUnit: nil,
+                              country: Country(isoCode: placeDetails.country),
+                              city: placeDetails.locality ?? placeDetails.postalTown,
+                              region: placeDetails.administrativeAreaLevel1,
+                              zip: placeDetails.postalCode)
+        address.formattedAddress = placeDetails.formattedAddress
+        completion(.success(address))
+      }
+      else {
+        if let error = error {
+          completion(.failure(error as NSError))
+        }
+        else {
+          completion(.failure(BackendError(code: .other)))
+        }
+      }
+    }
+  }
+
   // MARK: - Private methods and attributes
 
   static var sharedValidator: AddressManager?
@@ -169,5 +240,72 @@ open class ShiftGeocoderQuery: GKGeocoderQuery {
     DispatchQueue.main.async {
       self.completionHandler?(places, nil)
     }
+  }
+}
+
+public struct Place {
+  public let id: String
+  public let name: String
+}
+
+class PlaceDetailsQuery: GKPlaceDetailsQuery {
+  // We need to use the short_name returned by the Google Maps API for the country and for the
+  // administrative_area_level_1. Instead of rewriting the full feature we are modifying the response to set the
+  // long_name equal to the short_name for those two attributes.
+  override func handleQueryResponse(_ response: [AnyHashable: Any]!, error: Error!) {
+    if let error = error {
+      super.handleQueryResponse(nil, error: error)
+      return
+    }
+
+    guard var dictionary = response["result"] as? [String: Any] else {
+      super.handleQueryResponse(nil, error: BackendError(code: .other))
+      return
+    }
+    var components = [Any]()
+    if let addressComponents = dictionary["address_components"] as? [Dictionary<String, Any>] {
+      for addressComponent in addressComponents {
+        guard let types = addressComponent["types"] as? [String],
+              let type = types.first,
+              let shortName = addressComponent["short_name"] as? String else {
+          continue
+        }
+        if type == "administrative_area_level_1" || type == "country" {
+          var component = addressComponent
+          component["long_name"] = shortName
+          components.append(component)
+        }
+        else {
+          components.append(addressComponent)
+        }
+      }
+    }
+    dictionary["address_components"] = components
+    DispatchQueue.main.async {
+      if let completionHandler = self.completionHandler {
+        completionHandler(PlaceDetails(dictionary: dictionary), nil)
+      }
+    }
+  }
+}
+
+class PlaceDetails: GKPlaceDetails {
+  let postalTown: String?
+
+  override init!(dictionary: [AnyHashable: Any]!) {
+    var postalTown: String? = nil
+    if let addressComponents = dictionary["address_components"] as? [Dictionary<String, Any>] {
+      for addressComponent in addressComponents {
+        guard let types = addressComponent["types"] as? [String],
+              types.first == "postal_town",
+              let name = addressComponent["long_name"] as? String else {
+          continue
+        }
+        postalTown = name
+        break
+      }
+    }
+    self.postalTown = postalTown
+    super.init(dictionary: dictionary)
   }
 }

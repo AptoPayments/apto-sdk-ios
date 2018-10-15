@@ -123,12 +123,10 @@ extension JSONTransportImpl: JSONTransport {
     switch authorization {
     case .none:
       return [String: String]()
-    case .accessToken(let token, let projectToken):
-      return ["Developer-Authorization": "Bearer " + token, "Project": "Bearer " + projectToken]
-    case .accessAndUserToken(let token, let projectToken, let userToken):
-      return ["Developer-Authorization": "Bearer " + token,
-              "Project": "Bearer " + projectToken,
-              "Authorization": "Bearer " + userToken]
+    case .accessToken(let projectToken):
+      return ["Api-Key": "Bearer " + projectToken]
+    case .accessAndUserToken(let projectToken, let userToken):
+      return ["Api-Key": "Bearer " + projectToken, "Authorization": "Bearer " + userToken]
     }
   }
 

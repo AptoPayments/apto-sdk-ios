@@ -9,7 +9,7 @@
 import Foundation
 
 public extension String {
-  
+
   func urlsIn() -> [URL] {
     let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
     let matches = detector.matches(in: self, options: [], range: NSMakeRange(0, self.count))
@@ -22,11 +22,11 @@ public extension String {
     }
     return retVal
   }
-  
+
   func insert(_ string:String,ind:Int) -> String {
     return  String(self.prefix(ind)) + string + String(self.suffix(self.count-ind))
   }
-  
+
   func formattedHtmlString(font:UIFont, color:UIColor, linkColor:UIColor) -> NSMutableAttributedString? {
     let htmlData = self.data(using: String.Encoding.utf8)
     guard let data = htmlData else {
@@ -42,17 +42,17 @@ public extension String {
       return nil
     }
   }
-  
+
   public func localized()
     -> String
   {
     return getBundleTranslation(Bundle.main)
   }
-  
+
   func podLocalized(_ bundleClass:AnyClass) -> String {
     return getBundleTranslation(Bundle(for:bundleClass))
   }
-  
+
   fileprivate func getBundleTranslation(_ bundle:Bundle) -> String {
     var language = LocalLanguage.language.lowercased()
     let path = bundle.path(forResource: language, ofType: "lproj")
@@ -72,7 +72,7 @@ public extension String {
       }
     }
   }
-  
+
   public func replace(_ occurrences: [String:String]) -> String {
     var retVal = self
     for key in occurrences.keys {
@@ -80,15 +80,15 @@ public extension String {
     }
     return retVal
   }
-  
+
   func prefixOf(_ size:Int) -> String? {
     return String(self.prefix(size))
   }
-  
+
   func suffixOf(_ size:Int) -> String? {
     return String(self.suffix(size))
   }
-  
+
   func prefixUntil(_ string:String) -> String {
     if let range = self.range(of: string) {
       let intIndex: Int = self.distance(from: self.startIndex, to: range.lowerBound)
@@ -96,7 +96,7 @@ public extension String {
     }
     return self
   }
-  
+
   func startsWith(_ string:String) -> Bool {
     return self.prefixOf(string.count) == string
   }
@@ -120,10 +120,11 @@ public extension String {
     return count
   }
 
+  public static let dropDownCharacter = "▾"
 }
 
 public final class LocalLanguage {
-  
+
   static var language = Locale.preferredLanguages[0]
-  
+
 }

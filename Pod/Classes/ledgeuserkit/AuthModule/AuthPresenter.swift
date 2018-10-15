@@ -38,7 +38,9 @@ class AuthPresenter: AuthPresenterProtocol {
            secondaryCredentialType: DataPointType) {
     switch primaryCredentialType {
     case .phoneNumber:
-      primaryCredentialStep = AuthPhoneStep(userData: userData, uiConfig: uiConfig)
+      primaryCredentialStep = AuthPhoneStep(userData: userData,
+                                            allowedCountries: config.allowedCountries,
+                                            uiConfig: uiConfig)
     case .email:
       primaryCredentialStep = AuthEmailStep(userData: userData, uiConfig: uiConfig)
     default:

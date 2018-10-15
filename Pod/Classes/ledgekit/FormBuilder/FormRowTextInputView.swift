@@ -35,11 +35,12 @@ open class FormRowTextInputView: FormRowLeftLabelView, UITextFieldDelegate {
         button.isEnabled = self.isEnabled
       }
       if !self.isEnabled {
-        self.textField.textColor = UIColor.lightGray
-        self.label?.textColor = UIColor.lightGray
+        self.textField.textColor = uiConfig.textSecondaryColorDisabled
+        self.label?.textColor = uiConfig.textPrimaryColorDisabled
       }
       else {
         self.textField.textColor = self.textColor
+        self.label?.textColor = uiConfig.textPrimaryColor
         self.presentNonFocusedState()
       }
       self.validateText(self.textValidator, text: self.textField.text)

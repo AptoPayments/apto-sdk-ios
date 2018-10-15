@@ -198,6 +198,8 @@
 
 "phone-collector.phone" = "Enter your phone number";
 
+"phone-collector.phone.placeholder" = "phone number";
+
 "phone-collector.phone.warning.empty" = "Invalid phone number";
 
 /* * ./Pod/Classes/Shiftlinekit/BorrowerDataCollector/Steps/DataCollectorPhoneStep.swift */
@@ -286,11 +288,25 @@
 
 "birthday-collector.birthday.warning.minimum-age" = "You must be 18 years old to get offers.";
 
-"birthday-collector.ssn" = "Your Social Security number";
+"birthday-collector.id-document.country" = "Citizenship";
 
-"birthday-collector.ssn.warning.invalid-ssn" = "This doesn't look line a Social Security Number";
+"birthday-collector.id-document.type" = "Type of document";
 
-"birthday-collector.ssn.not-specified.title" = "I don't have SSN/ITIN";
+"birthday-collector.id-document.type.ssn" = "SSN";
+
+"birthday-collector.id-document.type.identity-card" = "Identity card";
+
+"birthday-collector.id-document.type.passport" = "Passport";
+
+"birthday-collector.id-document.type.drivers-license" = "Driver's license";
+
+"birthday-collector.id-document.number" = "Document number";
+
+"birthday-collector.id-document.number.placeholder" = "the document number";
+
+"birthday-collector.id-document.invalid" = "The document number is required";
+
+"birthday-collector.id-document.not-specified.title" = "I don't have a document";
 
 "birthday-collector.information-private" = "Don't be afraid, your information is private and secure.";
 
@@ -437,7 +453,9 @@
 
 "address-collector.subtitle" = "What's your address?";
 
-"address-collector.address" = "Address";
+"address-collector.address" = "Where do you live?";
+
+"address-collector.address.placeholder" = "your current address";
 
 "address-collector.address.warning.empty" = "The address can not be empty.";
 
@@ -951,3 +969,25 @@
 "balance.validations.funds.insuficient" = "Insufficient balance";
 
 "balance.validations.unknown" = "An error occurred, please try again or contact support (Error: <<ERROR_CODE>>)";
+
+/* * Pod/Classes/ledgeaccountskit/ExternalOAuthModule/DataConfirmationModule/DataConfirmationViewController.swift */
+
+"data.confirmation.title" = "Nice to meet you :)";
+
+"data.confirmation.confirm" = "Confirm";
+
+/* * Pod/Classes/ledgefoundation/Model/Formatter/DataPointFormatter.swift */
+
+"data-point.formatter.phone.title" = "Phone number";
+
+"data-point.formatter.email.title" = "Email";
+
+"data-point.formatter.first-name.title" = "First name";
+
+"data-point.formatter.last-name.title" = "Last name";
+
+"data-point.formatter.address.title" = "Where do you live?";
+
+"data-point.formatter.birth-date.title" = "Date of birth";
+
+"data-point.formatter.id-document.title" = "ID document";

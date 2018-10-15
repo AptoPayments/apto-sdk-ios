@@ -198,6 +198,8 @@
 
 "phone-collector.phone" = "Entre su número de teléfono";
 
+"phone-collector.phone.placeholder" = "número de teléfono";
+
 "phone-collector.phone.warning.empty" = "Número de teléfono inválido";
 
 /* * ./Pod/Classes/shiftsdk/BorrowerDataCollector/Steps/DataCollectorPhoneStep.swift */
@@ -286,11 +288,25 @@
 
 "birthday-collector.birthday.warning.minimum-age" = "You must be 18 years old to get offers.";
 
-"birthday-collector.ssn" = "Tu número de la seguridad social";
+"birthday-collector.id-document.country" = "Ciudadanía";
 
-"birthday-collector.ssn.warning.invalid-ssn" = "Eso no parece un número de la seguridad social";
+"birthday-collector.id-document.type" = "Tipo de documento";
 
-"birthday-collector.ssn.not-specified.title" = "No dispongo de SSN/ITIN";
+"birthday-collector.id-document.type.ssn" = "SSN";
+
+"birthday-collector.id-document.type.identity-card" = "Carné de identidad";
+
+"birthday-collector.id-document.type.passport" = "Pasaporte";
+
+"birthday-collector.id-document.type.drivers-license" = "Licencia de conducir";
+
+"birthday-collector.id-document.number" = "Número de documento";
+
+"birthday-collector.id-document.number.placeholder" = "número de documento";
+
+"birthday-collector.id-document.invalid" = "El número de documento es obligatorio";
+
+"birthday-collector.id-document.not-specified.title" = "No tengo documento";
 
 "birthday-collector.information-private" = "No temas, tu información es privada y segura.";
 
@@ -449,7 +465,9 @@
 
 "address-collector.subtitle" = "¿Cual es tu dirección?";
 
-"address-collector.address" = "Dirección";
+"address-collector.address" = "Donde vives?";
+
+"address-collector.address.placeholder" = "tu dirección actual";
 
 "address-collector.address.warning.empty" = "La dirección no puede estar vacía.";
 
@@ -957,3 +975,25 @@
 "balance.validations.funds.insuficient" = "Saldo insuficiente";
 
 "balance.validations.unknown" = "Ha ocurrido un error, por favor inténtalo de nuevo o contacta con nosotros (Error: <<ERROR_CODE>>)";
+
+/* * Pod/Classes/ledgeaccountskit/ExternalOAuthModule/DataConfirmationModule/DataConfirmationViewController.swift */
+
+"data.confirmation.title" = "Encantado de conocerte :)";
+
+"data.confirmation.confirm" = "Confirmar";
+
+/* * Pod/Classes/ledgefoundation/Model/Formatter/DataPointFormatter.swift */
+
+"data-point.formatter.phone.title" = "Número de teléfono";
+
+"data-point.formatter.email.title" = "Correo electrónico";
+
+"data-point.formatter.first-name.title" = "Nombre";
+
+"data-point.formatter.last-name.title" = "Apellidos";
+
+"data-point.formatter.address.title" = "¿Donde vives?";
+
+"data-point.formatter.birth-date.title" = "Fecha de nacimiento";
+
+"data-point.formatter.id-document.title" = "Identificación";

@@ -1,12 +1,13 @@
 //
 //  DataCollectorBirthdaySSNStep.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 06/03/16.
 //
 //
 
 import Bond
+import ReactiveKit
 import SnapKit
 
 class BirthdaySSNStep: DataCollectorBaseStep, DataCollectorStepProtocol {
@@ -19,16 +20,23 @@ class BirthdaySSNStep: DataCollectorBaseStep, DataCollectorStepProtocol {
   fileprivate let shiftSession: ShiftSession
   fileprivate let subTitle: String
   fileprivate var birthdayField: FormRowDatePickerView! // swiftlint:disable:this implicitly_unwrapped_optional
-  fileprivate var ssnField: FormRowTextInputView! // swiftlint:disable:this implicitly_unwrapped_optional
+  fileprivate var numberField: FormRowTextInputView! // swiftlint:disable:this implicitly_unwrapped_optional
   fileprivate var getOffersButton: FormRowButtonView?
   fileprivate var callToActionButton: FormRowButtonView?
+  private var countryField: FormRowCountryPickerView?
+  private var documentTypeField: FormRowIdDocumentTypePickerView?
 
+  private var disposeBag = DisposeBag()
   private let userData: DataPointList
   private let requiredData: RequiredDataPointList
   private let secondaryCredentialType: DataPointType
   private var showBirthdate = true
-  private var showSSN = true
-  private var showOptionalSSN = false
+  private var showIdDocument = true
+  private var showOptionalIdDocument = false
+  private let allowedDocuments: [Country: [IdDocumentType]]
+  private lazy var allowedCountries: [Country] = {
+    return Array(allowedDocuments.keys)
+  }()
 
   init(requiredData: RequiredDataPointList,
        secondaryCredentialType: DataPointType,
@@ -51,6 +59,14 @@ class BirthdaySSNStep: DataCollectorBaseStep, DataCollectorStepProtocol {
     self.shiftSession = shiftSession
     self.subTitle = subTitle
     self.secondaryCredentialType = secondaryCredentialType
+    if let dataPoint = requiredData.getRequiredDataPointOf(type: .idDocument),
+       let config = dataPoint.configuration as? AllowedIdDocumentTypesConfiguration,
+       !config.allowedDocumentTypes.isEmpty {
+      self.allowedDocuments = config.allowedDocumentTypes
+    }
+    else {
+      self.allowedDocuments = [Country.defaultCountry: [IdDocumentType.ssn]]
+    }
     super.init(uiConfig: uiConfig)
     if mode == .updateUser {
       self.title = "birthday-collector.button.update-profile".podLocalized()
@@ -61,60 +77,26 @@ class BirthdaySSNStep: DataCollectorBaseStep, DataCollectorStepProtocol {
   }
 
   override func setupRows() -> [FormRowView] {
-    var retVal: [FormRowView] = []
-    retVal.append(FormRowSeparatorView(backgroundColor: UIColor.clear, height: 48))
-
     calculateFieldsVisibility()
 
-    if showBirthdate {
-      let birthDateDataPoint = userData.birthDateDataPoint
-      createBirthdayField(birthDateDataPoint: birthDateDataPoint)
-      birthDateDataPoint.date.bidirectionalBind(to: birthdayField.bndDate)
-      retVal.append(birthdayField)
-      validatableRows.append(birthdayField)
-      _ = birthdayField.becomeFirstResponder()
-    }
-
-    if showSSN {
-      var initiallyReadOnly = false
-      if mode == .updateUser {
-        initiallyReadOnly = true
-      }
-
-      let SSNDataPoint = userData.SSNDataPoint
-      createSSNField(initiallyReadOnly: initiallyReadOnly)
-      SSNDataPoint.ssn.bidirectionalBind(to: ssnField.bndValue)
-      retVal.append(ssnField)
-      validatableRows.append(ssnField)
-
-      if !showBirthdate {
-        _ = ssnField.becomeFirstResponder()
-      }
-
-      if self.showOptionalSSN {
-        let ssnNotSpecified = setUpOptionalSSN(SSNDataPoint: SSNDataPoint)
-        retVal.append(ssnNotSpecified)
-      }
-    }
-    retVal.append(FormRowSeparatorView(backgroundColor: UIColor.clear, height: 72))
-    let callToActionButton = createCallToActionButton()
-    retVal.append(callToActionButton)
-    let privateInfoLabel = createInfoLabel()
-    retVal.append(privateInfoLabel)
-
-    // Filter non text-only disclaimers
-    let disclosureText = createDisclosureText()
-    if let richText = disclosureText, richText.string != "" {
-      let disclosureLabel = createDisclosureLabel(richText: richText)
-      retVal.append(disclosureLabel)
-    }
-
-    return retVal
+    return [
+      FormRowSeparatorView(backgroundColor: UIColor.clear, height: CGFloat(48)),
+      createBirthdayField(),
+      createCountryPickerField(),
+      createDocumentTypePickerField(),
+      createNumberField(),
+      setUpOptionalIdDocument(),
+      FormRowSeparatorView(backgroundColor: UIColor.clear, height: CGFloat(72)),
+      createCallToActionButton(),
+      createInfoLabel(),
+      createDisclosureLabel(),
+      FormRowSeparatorView(backgroundColor: UIColor.clear, height: CGFloat(20)),
+    ].compactMap { return $0 }
   }
 
   fileprivate func handleCallToActionButtonClick() {
-    if self.ssnField != nil {
-      _ = self.ssnField.resignFirstResponder()
+    if self.numberField != nil {
+      _ = self.numberField.resignFirstResponder()
     }
     if self.birthdayField != nil {
       _ = self.birthdayField.resignFirstResponder()
@@ -125,7 +107,7 @@ class BirthdaySSNStep: DataCollectorBaseStep, DataCollectorStepProtocol {
   override func setupStepValidation() {
     super.setupStepValidation()
 
-    _ = self.valid.observeNext { [weak self] valid in
+    self.valid.observeNext { [weak self] valid in
       self?.callToActionButton?.isEnabled = valid
       if valid {
         self?.callToActionButton?.button.backgroundColor = self?.uiConfig.uiPrimaryColor
@@ -133,25 +115,28 @@ class BirthdaySSNStep: DataCollectorBaseStep, DataCollectorStepProtocol {
       else {
         self?.callToActionButton?.button.backgroundColor = self?.uiConfig.uiPrimaryColorDisabled
       }
-    }
+    }.dispose(in: disposeBag)
   }
 
   fileprivate func calculateFieldsVisibility() {
-    // Calculate if the SSN Field should be shown
-    if let showSSNRequiredDataPoint = requiredData.getRequiredDataPointOf(type: .ssn) {
-      showSSN = true
-      showOptionalSSN = showSSNRequiredDataPoint.optional
+    // Calculate if the Id Document Fields should be shown
+    if let showSSNRequiredDataPoint = requiredData.getRequiredDataPointOf(type: .idDocument) {
+      showIdDocument = true
+      showOptionalIdDocument = showSSNRequiredDataPoint.optional
     }
     else {
-      showSSN = false
-      showOptionalSSN = false
+      showIdDocument = false
+      showOptionalIdDocument = false
     }
     showBirthdate = requiredData.getRequiredDataPointOf(type: .birthDate) != nil
   }
 }
 
 private extension BirthdaySSNStep {
-  private func createBirthdayField(birthDateDataPoint: BirthDate) {
+  func createBirthdayField() -> FormRowDatePickerView? {
+    guard showBirthdate == true else { return nil }
+
+    let birthDateDataPoint = userData.birthDateDataPoint
     let failReason = "birthday-collector.birthday.warning.minimum-age".podLocalized()
     let dateValidator = MaximumDateValidator(maximumDate: Date().add(-18, units: .year)!,
                                              failReasonMessage: failReason)
@@ -163,53 +148,117 @@ private extension BirthdaySSNStep {
                                                   validator: dateValidator,
                                                   firstFormField: true,
                                                   uiConfig: uiConfig)
+    birthDateDataPoint.date.bidirectionalBind(to: birthdayField.bndDate).dispose(in: disposeBag)
+    validatableRows.append(birthdayField)
+    return birthdayField
   }
 
-  private func createSSNField(initiallyReadOnly: Bool) {
-    let ssnValidator = SSNTextValidator(failReasonMessage: "birthday-collector.ssn.warning.invalid-ssn".podLocalized())
-    ssnField = FormBuilder.formattedTextInputRowWith(label: "birthday-collector.ssn".podLocalized(),
-                                                     placeholder: "XXX-XX-XXXX",
-                                                     format: "***-**-****",
-                                                     keyboardType: .numberPad,
-                                                     value: "",
-                                                     accessibilityLabel: "SSN Input Field",
-                                                     validator: ssnValidator,
-                                                     hiddenText: true,
-                                                     initiallyReadOnly: initiallyReadOnly,
-                                                     lastFormField: true,
-                                                     uiConfig: uiConfig)
-    ssnField.textField.keyboardType = .numberPad
-    ssnField.showSplitter = false
+  func createCountryPickerField() -> FormRowCountryPickerView? {
+    guard showIdDocument == true else { return nil }
+
+    let idDocumentDataPoint = userData.IdDocumentDataPoint
+    guard allowedCountries.count > 1 else {
+      idDocumentDataPoint.country.next(allowedCountries.first)
+      return nil
+    }
+
+    let countryField = FormBuilder.countryPickerRow(label: "birthday-collector.id-document.country".podLocalized(),
+                                                    allowedCountries: allowedCountries,
+                                                    uiConfig: uiConfig)
+    countryField.bndValue.observeNext { [unowned self] country in
+      idDocumentDataPoint.country.next(country)
+      guard let allowedDocumentTypes = self.allowedDocuments[country] else {
+        fatalError("No document types configured for country \(country.name)")
+      }
+      self.documentTypeField?.allowedDocumentTypes = allowedDocumentTypes
+    }.dispose(in: disposeBag)
+    self.countryField = countryField
+    return countryField
   }
 
-  private func setUpOptionalSSN(SSNDataPoint: SSN) -> FormRowCheckView {
-    let label = ComponentCatalog.formListLabelWith(text: "birthday-collector.ssn.not-specified.title".podLocalized(),
+  func createDocumentTypePickerField() -> FormRowIdDocumentTypePickerView? {
+    guard showIdDocument == true else { return nil }
+
+    let idDocumentDataPoint = userData.IdDocumentDataPoint
+    let currentCountry = idDocumentDataPoint.country.value ?? allowedCountries[0]
+    guard let allowedDocumentTypes = allowedDocuments[currentCountry] else {
+      fatalError("No document types configured for country \(currentCountry.name)")
+    }
+    let label = "birthday-collector.id-document.type".podLocalized()
+    let documentTypeField = FormBuilder.idDocumentTypePickerRow(label: label,
+                                                                allowedDocumentTypes: allowedDocumentTypes,
+                                                                uiConfig: uiConfig)
+    documentTypeField.bndValue.observeNext { documentType in
+      idDocumentDataPoint.documentType.next(documentType)
+    }.dispose(in: disposeBag)
+    self.documentTypeField = documentTypeField
+    return documentTypeField
+  }
+
+  func createNumberField() -> FormRowTextInputView? {
+    guard showIdDocument == true else { return nil }
+
+    let initiallyReadOnly = mode == .updateUser
+    let validator = NonEmptyTextValidator(failReasonMessage: "birthday-collector.id-document.invalid".podLocalized())
+    let placeholder = "birthday-collector.id-document.number.placeholder".podLocalized()
+    numberField = FormBuilder.standardTextInputRowWith(label: "birthday-collector.id-document.number".podLocalized(),
+                                                       placeholder: placeholder,
+                                                       value: "",
+                                                       accessibilityLabel: "Id document Input Field",
+                                                       validator: validator,
+                                                       initiallyReadonly: initiallyReadOnly,
+                                                       uiConfig: uiConfig)
+    let idDocumentDataPoint = userData.IdDocumentDataPoint
+    idDocumentDataPoint.value.bidirectionalBind(to: numberField.bndValue)
+    validatableRows.append(numberField)
+
+    return numberField
+  }
+
+  func setUpOptionalIdDocument() -> FormRowCheckView? {
+    guard showOptionalIdDocument == true else { return nil }
+    let idDocumentDataPoint = userData.IdDocumentDataPoint
+    let text = "birthday-collector.id-document.not-specified.title".podLocalized()
+    let label = ComponentCatalog.formListLabelWith(text: text,
                                                    uiConfig: uiConfig)
-    let ssnNotSpecified = FormRowCheckView(label: label, height: 20)
-    ssnNotSpecified.checkIcon.tintColor = uiConfig.uiPrimaryColor
-    rows.append(ssnNotSpecified)
-    if let notSpecified = SSNDataPoint.notSpecified {
-      ssnNotSpecified.bndValue.next(notSpecified)
-      ssnField.bndValue.next(nil)
-      self.validatableRows = self.validatableRows.compactMap { ($0 == self.ssnField) ? nil : $0 }
+    let documentNotSpecified = FormRowCheckView(label: label, height: 20)
+    documentNotSpecified.checkIcon.tintColor = uiConfig.uiPrimaryColor
+    rows.append(documentNotSpecified)
+    if let notSpecified = idDocumentDataPoint.notSpecified {
+      documentNotSpecified.bndValue.next(notSpecified)
+      numberField.bndValue.next(nil)
+      self.validatableRows = self.validatableRows.compactMap { ($0 == self.numberField) ? nil : $0 }
       self.setupStepValidation()
     }
-    _ = ssnNotSpecified.bndValue.observeNext { checked in
-      SSNDataPoint.notSpecified = checked
-      self.ssnField.isEnabled = !checked
+    documentNotSpecified.bndValue.observeNext { checked in
+      idDocumentDataPoint.notSpecified = checked
+      idDocumentDataPoint.country.next(nil)
+      idDocumentDataPoint.value.next(nil)
+      idDocumentDataPoint.documentType.next(nil)
+      self.numberField.isEnabled = !checked
+      self.countryField?.isEnabled = !checked
+      self.documentTypeField?.isEnabled = !checked
       if checked {
-        self.ssnField.bndValue.next(nil)
-        self.validatableRows = self.validatableRows.compactMap { ($0 == self.ssnField) ? nil : $0 }
+        self.numberField.bndValue.next(nil)
+        self.validatableRows = self.validatableRows.compactMap {
+          ($0 == self.numberField || $0 == self.countryField || $0 == self.documentTypeField) ? nil : $0
+        }
       }
       else {
-        self.validatableRows.append(self.ssnField)
+        self.validatableRows.append(self.numberField)
+        if let countryField = self.countryField {
+          self.validatableRows.append(countryField)
+        }
+        if let documentTypeField = self.documentTypeField {
+          self.validatableRows.append(documentTypeField)
+        }
       }
       self.setupStepValidation()
-    }
-    return ssnNotSpecified
+    }.dispose(in: disposeBag)
+    return documentNotSpecified
   }
 
-  private func createCallToActionButton() -> FormRowButtonView {
+  func createCallToActionButton() -> FormRowButtonView {
     let callToActionButton = FormBuilder.buttonRowWith(title: callToAction.title,
                                                        tapHandler: handleCallToActionButtonClick,
                                                        uiConfig: uiConfig)
@@ -217,7 +266,7 @@ private extension BirthdaySSNStep {
     return callToActionButton
   }
 
-  private func createInfoLabel() -> FormRowLabelView {
+  func createInfoLabel() -> FormRowLabelView {
     let privateInfoLabel = FormBuilder.itemDescriptionRowWith(
       text: "birthday-collector.information-private".podLocalized(),
       uiConfig: uiConfig)
@@ -230,7 +279,26 @@ private extension BirthdaySSNStep {
     return privateInfoLabel
   }
 
-  private func createDisclosureText() -> NSAttributedString? {
+  func createDisclosureLabel() -> FormRowRichTextLabelView? {
+    // Filter non text-only disclaimers
+    guard let richText = createDisclosureText(), !richText.string.isEmpty else {
+      return nil
+    }
+    let text = "\n\n" + "birthday-collector.disclosures".podLocalized() + "\n\n"
+    let titledDisclosures = NSMutableAttributedString.createFrom(string: text,
+                                                                 font: uiConfig.fonth6,
+                                                                 color: uiConfig.noteTextColor)
+    titledDisclosures.append(richText)
+    let disclosureLabel = FormBuilder.richTextNoteRowWith(text: titledDisclosures,
+                                                          textAlignment: .left,
+                                                          position: .top,
+                                                          uiConfig: uiConfig,
+                                                          linkHandler: self.linkHandler)
+    disclosureLabel.label.numberOfLines = 0
+    return disclosureLabel
+  }
+
+  func createDisclosureText() -> NSAttributedString? {
     let textPrequalificationDisclaimers = disclaimers.filter { $0 != nil ? $0!.isPlainText : false }
     let disclosureText = textPrequalificationDisclaimers.reduce(nil) { (src, disclaimer) -> NSAttributedString? in
       let optDisclosureString = disclaimer.attributedString(font: uiConfig.fonth6,
@@ -247,20 +315,5 @@ private extension BirthdaySSNStep {
       return retVal
     }
     return disclosureText
-  }
-
-  private func createDisclosureLabel(richText: NSAttributedString) -> FormRowRichTextLabelView {
-    let text = "\n\n" + "birthday-collector.disclosures".podLocalized() + "\n\n"
-    let titledDisclosures = NSMutableAttributedString.createFrom(string: text,
-                                                                 font: uiConfig.fonth6,
-                                                                 color: uiConfig.noteTextColor)
-    titledDisclosures.append(richText)
-    let disclosureLabel = FormBuilder.richTextNoteRowWith(text: titledDisclosures,
-                                                          textAlignment: .left,
-                                                          position: .top,
-                                                          uiConfig: uiConfig,
-                                                          linkHandler: self.linkHandler)
-    disclosureLabel.label.numberOfLines = 0
-    return disclosureLabel
   }
 }

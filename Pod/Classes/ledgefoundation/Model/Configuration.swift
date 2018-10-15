@@ -63,6 +63,7 @@ open class ProjectConfiguration {
   public let secondaryAuthCredential: DataPointType
   public let supportEmailAddress: String?
   public let branding: ProjectBranding
+  public let allowedCountries: [Country]
   let welcomeScreenAction: WorkflowAction
   let googleGeocodingAPIKey: String
   let defaultCountryCode: Int
@@ -86,7 +87,8 @@ open class ProjectConfiguration {
        grossIncomeRange: AmountRangeConfiguration,
        welcomeScreenAction: WorkflowAction,
        supportEmailAddress: String?,
-       branding: ProjectBranding) {
+       branding: ProjectBranding,
+       allowedCountries: [Country]?) {
     self.name = name
     self.summary = summary
     self.allowUserLogin = allowUserLogin
@@ -106,6 +108,12 @@ open class ProjectConfiguration {
     self.welcomeScreenAction = welcomeScreenAction
     self.supportEmailAddress = supportEmailAddress
     self.branding = branding
+    if let allowedCountries = allowedCountries, !allowedCountries.isEmpty {
+      self.allowedCountries = allowedCountries
+    }
+    else {
+      self.allowedCountries = [Country.defaultCountry]
+    }
   }
 }
 

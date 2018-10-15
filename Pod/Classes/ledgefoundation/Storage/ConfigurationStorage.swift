@@ -16,58 +16,46 @@ protocol ConfigurationStorageProtocol {
   var cardConfigurationCache: ShiftCardConfiguration? { get }
   var shiftCardOptions: ShiftCardOptions { get }
 
-  func contextConfiguration(_ developerKey: String,
-                            projectKey: String,
+  func contextConfiguration(_ apiKey: String,
                             forceRefresh: Bool,
                             callback: @escaping Result<ContextConfiguration, NSError>.Callback)
-  func linkConfiguration(_ developerKey: String,
-                         projectKey: String,
+  func linkConfiguration(_ apiKey: String,
                          forceRefresh: Bool,
                          callback: @escaping Result<LinkConfiguration, NSError>.Callback)
-  func bankOauthConfiguration(_ developerKey: String,
-                              projectKey: String,
+  func bankOauthConfiguration(_ apiKey: String,
                               userToken: String,
                               forceRefresh: Bool,
                               callback: @escaping Result<BankOauthConfiguration, NSError>.Callback)
-  func cardConfiguration(_ developerKey: String,
-                         projectKey: String,
+  func cardConfiguration(_ apiKey: String,
                          forceRefresh: Bool,
                          callback: @escaping Result<ShiftCardConfiguration, NSError>.Callback)
   func setShiftCardOptions(shiftCardOptions: ShiftCardOptions)
 }
 
 extension ConfigurationStorageProtocol {
-  func contextConfiguration(_ developerKey: String,
-                            projectKey: String,
+  func contextConfiguration(_ apiKey: String,
                             forceRefresh: Bool = false,
                             callback: @escaping Result<ContextConfiguration, NSError>.Callback) {
-    contextConfiguration(developerKey, projectKey: projectKey, forceRefresh: forceRefresh, callback: callback)
+    contextConfiguration(apiKey, forceRefresh: forceRefresh, callback: callback)
   }
 
-  func linkConfiguration(_ developerKey: String,
-                         projectKey: String,
+  func linkConfiguration(_ apiKey: String,
                          forceRefresh: Bool = false,
                          callback: @escaping Result<LinkConfiguration, NSError>.Callback) {
-    linkConfiguration(developerKey, projectKey: projectKey, forceRefresh: forceRefresh, callback: callback)
+    linkConfiguration(apiKey, forceRefresh: forceRefresh, callback: callback)
   }
 
-  func bankOauthConfiguration(_ developerKey: String,
-                              projectKey: String,
+  func bankOauthConfiguration(_ apiKey: String,
                               userToken: String,
                               forceRefresh: Bool = false,
                               callback: @escaping Result<BankOauthConfiguration, NSError>.Callback) {
-    bankOauthConfiguration(developerKey,
-                           projectKey: projectKey,
-                           userToken: userToken,
-                           forceRefresh: forceRefresh,
-                           callback: callback)
+    bankOauthConfiguration(apiKey, userToken: userToken, forceRefresh: forceRefresh, callback: callback)
   }
 
-  func cardConfiguration(_ developerKey: String,
-                         projectKey: String,
+  func cardConfiguration(_ apiKey: String,
                          forceRefresh: Bool = false,
                          callback: @escaping Result<ShiftCardConfiguration, NSError>.Callback) {
-    cardConfiguration(developerKey, projectKey: projectKey, forceRefresh: forceRefresh, callback: callback)
+    cardConfiguration(apiKey, forceRefresh: forceRefresh, callback: callback)
   }
 }
 
@@ -83,13 +71,12 @@ class ConfigurationStorage: ConfigurationStorageProtocol {
     self.transport = transport
   }
 
-  func contextConfiguration(_ developerKey: String,
-                            projectKey: String,
+  func contextConfiguration(_ apiKey: String,
                             forceRefresh: Bool = false,
                             callback: @escaping Result<ContextConfiguration, NSError>.Callback) {
     if contextConfigurationCache == nil || forceRefresh {
       let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.contextConfig)
-      let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+      let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
       transport.get(url,
                     authorization: auth,
                     parameters: nil,
@@ -116,13 +103,12 @@ class ConfigurationStorage: ConfigurationStorageProtocol {
     }
   }
 
-  func linkConfiguration(_ developerKey: String,
-                         projectKey: String,
+  func linkConfiguration(_ apiKey: String,
                          forceRefresh: Bool = false,
                          callback: @escaping Result<LinkConfiguration, NSError>.Callback) {
     if linkConfigurationCache == nil || forceRefresh {
       let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.linkConfig)
-      let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+      let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
       transport.get(url,
                     authorization: auth,
                     parameters: nil,
@@ -149,16 +135,13 @@ class ConfigurationStorage: ConfigurationStorageProtocol {
     }
   }
 
-  func bankOauthConfiguration(_ developerKey: String,
-                              projectKey: String,
+  func bankOauthConfiguration(_ apiKey: String,
                               userToken: String,
                               forceRefresh: Bool = false,
                               callback: @escaping Result<BankOauthConfiguration, NSError>.Callback) {
     if bankOauthConfigurationCache == nil || forceRefresh {
       let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.bankOauthConfig)
-      let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                               projectToken: projectKey,
-                                                               userToken: userToken)
+      let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
       transport.get(url,
                     authorization: auth,
                     parameters: nil,
@@ -185,13 +168,12 @@ class ConfigurationStorage: ConfigurationStorageProtocol {
     }
   }
 
-  func cardConfiguration(_ developerKey: String,
-                         projectKey: String,
+  func cardConfiguration(_ apiKey: String,
                          forceRefresh: Bool = false,
                          callback: @escaping Result<ShiftCardConfiguration, NSError>.Callback) {
     if cardConfigurationCache == nil || forceRefresh {
       let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.cardConfig)
-      let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+      let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
       transport.get(url,
                     authorization: auth,
                     parameters: nil,
@@ -207,10 +189,10 @@ class ConfigurationStorage: ConfigurationStorageProtocol {
             guard let cardConfiguration = json.linkObject as? ShiftCardConfiguration else {
               return .failure(ServiceError(code: .jsonError))
             }
-            
+
             // Store locally defined options in the same configuration object
             cardConfiguration.features = self.shiftCardOptions.features
-            
+
             self.cardConfigurationCache = cardConfiguration
             return .success(cardConfiguration)
           })
@@ -221,7 +203,7 @@ class ConfigurationStorage: ConfigurationStorageProtocol {
       callback(.success(cardConfigurationCache!)) // swiftlint:disable:this force_unwrapping
     }
   }
-  
+
   func setShiftCardOptions(shiftCardOptions: ShiftCardOptions) {
     for featureKey in shiftCardOptions.features.keys {
       self.shiftCardOptions.features[featureKey] = shiftCardOptions.features[featureKey]

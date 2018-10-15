@@ -389,7 +389,7 @@ private extension UserDataCollectorPresenter {
     case .housing:
       return [.home]
     case .address:
-      return [.home, .address]
+      return [.address]
     case .timeAtAddress:
       return [.timeAtAddress]
     case .incomeSource:
@@ -402,7 +402,7 @@ private extension UserDataCollectorPresenter {
       return [.memberOfArmedForces]
     case .creditScore:
       return [.creditScore]
-    case .birthDate, .ssn:
+    case .birthDate, .idDocument:
       return [.birthDaySSN]
     case .financialAccount:
       fatalError("Unsupported data point type financialAccount")
@@ -447,7 +447,7 @@ private extension UserDataCollectorPresenter {
   }
 
   func birthdaySSNComplete(_ userData: DataPointList) -> Bool {
-    return userData.birthDateDataPoint.complete() && userData.SSNDataPoint.complete()
+    return userData.birthDateDataPoint.complete() && userData.IdDocumentDataPoint.complete()
   }
 
   func borrowerDataComplete(_ userData: DataPointList) -> Bool {

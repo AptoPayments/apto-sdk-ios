@@ -173,12 +173,19 @@ class ShiftCardSession {
                                                     callback: callback)
   }
 
-  func userFundingSources(page: Int?, rows: Int?, callback: @escaping Result<[FundingSource], NSError>.Callback) {
+  func cardFundingSources(card: Card,
+                          page: Int?,
+                          rows: Int?,
+                          callback: @escaping Result<[FundingSource], NSError>.Callback) {
     guard let accessToken = ShiftPlatform.defaultManager().currentToken() else {
       callback(.failure(BackendError(code: .invalidSession, reason: nil)))
       return
     }
-    ShiftPlatform.defaultManager().userFundingSources(accessToken, page: page, rows: rows, callback: callback)
+    ShiftPlatform.defaultManager().financialAccountFundingSources(accessToken,
+                                                                  accountId: card.accountId,
+                                                                  page: page,
+                                                                  rows: rows,
+                                                                  callback: callback)
   }
 
   func getCardFundingSource(card: Card, callback: @escaping Result<FundingSource?, NSError>.Callback) {

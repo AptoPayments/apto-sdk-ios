@@ -40,4 +40,9 @@ final class ViewLocator: ViewLocatorProtocol {
                             presenter: ContentPresenterPresenterProtocol) -> ContentPresenterViewController {
     return ContentPresenterViewController(uiConfiguration: uiConfig, presenter: presenter)
   }
+
+  func dataConfirmationView(uiConfig: ShiftUIConfig,
+                            presenter: DataConfirmationPresenterProtocol) -> DataConfirmationViewController {
+    return DataConfirmationViewController(uiConfiguration: uiConfig, presenter: presenter)
+  }
 }

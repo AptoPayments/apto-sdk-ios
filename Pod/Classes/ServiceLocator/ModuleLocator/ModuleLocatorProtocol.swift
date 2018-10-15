@@ -39,4 +39,5 @@ protocol ModuleLocatorProtocol {
 
   func accountSettingsModule() -> UIModuleProtocol
   func contentPresenterModule(content: Content, title: String) -> ContentPresenterModuleProtocol
+  func dataConfirmationModule(userData: DataPointList) -> DataConfirmationModuleProtocol
 }

@@ -18,9 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
     // SDK initialization
-    ShiftPlatform.defaultManager().initializeWithDeveloperKey("<Organization Key>",
-                                                              projectKey: "<Project Key>",
-                                                              environment: .staging)
+    ShiftPlatform.defaultManager().initializeWithApiKey("<Api Key>",
+                                                        environment: .development)
 
     ShiftPlatform.defaultManager().initializePushNotifications()
     ShiftPlatform.defaultManager().handle(launchOptions:launchOptions)

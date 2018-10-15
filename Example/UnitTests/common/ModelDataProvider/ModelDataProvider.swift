@@ -68,7 +68,8 @@ class ModelDataProvider {
                                 grossIncomeRange: amountRangeConfiguration,
                                 welcomeScreenAction: workflowAction,
                                 supportEmailAddress: nil,
-                                branding: projectBranding)
+                                branding: projectBranding,
+                                allowedCountries: [Country(isoCode: "US", name: "United States")])
   }()
 
   lazy var uiConfig: ShiftUIConfig = ShiftUIConfig(projectConfiguration: projectConfiguration)
@@ -96,7 +97,7 @@ class ModelDataProvider {
   }()
   lazy var ssnDataPointList: DataPointList = {
     let list = DataPointList()
-    _ = list.getForcingDataPointOf(type:.ssn, defaultValue:SSN())
+    _ = list.getForcingDataPointOf(type: .idDocument, defaultValue: IdDocument())
 
     return list
   }()
@@ -132,4 +133,6 @@ class ModelDataProvider {
                                        status: .passed,
                                        url: URL(string: "https://shiftpayments.com"),
                                        credentials: oauthCredential)
+
+  lazy var usa = Country(isoCode: "US", name: "United States")
 }

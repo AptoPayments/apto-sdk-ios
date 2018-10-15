@@ -7,10 +7,12 @@
 //
 
 import Bond
+import ReactiveKit
 
 class InfoStep: DataCollectorBaseStep, DataCollectorStepProtocol {
   var title = "info-collector.title".podLocalized()
 
+  private let disposeBag = DisposeBag()
   private let requiredData: RequiredDataPointList
   private let userData: DataPointList
   private let primaryCredentialType: DataPointType
@@ -175,27 +177,37 @@ private extension InfoStep {
     }
   }
 
-  func createPhoneField() -> FormRowPhoneView {
-    let phoneField = FormBuilder.phoneRowWith(label: "phone-collector.phone".podLocalized(),
-                                              failReasonMessage: "phone-collector.phone.warning.empty".podLocalized(),
-                                              lastFormField: true,
-                                              accessibilityLabel: "Phone Number Input Field",
-                                              uiConfig: uiConfig)
-    phoneField.textField.keyboardType = .phonePad
-    phoneField.showSplitter = false
+  func createPhoneField() -> FormRowPhoneFieldView {
     let phoneDataPoint = userData.phoneDataPoint
-    // TODO: Assign US as the country code.
-    if phoneDataPoint.countryCode.value == -1 {
-      phoneDataPoint.countryCode.next(1)
+    let number = InternationalPhoneNumber(countryCode: phoneDataPoint.countryCode.value,
+                                          phoneNumber: phoneDataPoint.phoneNumber.value)
+    let allowedCountries: [Country]
+    if let country = userData.currentCountry() {
+      allowedCountries = [country]
     }
-    let phoneHelper = PhoneHelper.sharedHelper()
-    phoneField.bndValue.next(phoneHelper.formatPhoneWith(nationalNumber: phoneDataPoint.phoneNumber.value))
-    _ = phoneField.bndValue.observeNext { text in
-      if let formattedPhone = phoneHelper.parsePhoneWith(countryCode: phoneDataPoint.countryCode.value,
-                                                         nationalNumber: text) {
+    else if let phoneNumber = requiredData.getRequiredDataPointOf(type: .phoneNumber),
+            let config = phoneNumber.configuration as? AllowedCountriesConfiguration,
+            !config.allowedCountries.isEmpty {
+      allowedCountries = config.allowedCountries
+    }
+    else {
+      allowedCountries = [Country.defaultCountry]
+    }
+    let phoneField = FormBuilder.phoneTextFieldRow(label: "phone-collector.phone".podLocalized(),
+                                                   allowedCountries: allowedCountries,
+                                                   placeholder: "phone-collector.phone.placeholder".podLocalized(),
+                                                   value: number,
+                                                   accessibilityLabel: "Phone Number Input Field",
+                                                   uiConfig: uiConfig)
+    phoneField.bndValue.observeNext { phoneNumber in
+      if let countryCode = phoneNumber?.countryCode {
+        phoneDataPoint.countryCode.next(countryCode)
+      }
+      if let formattedPhone = PhoneHelper.sharedHelper().parsePhoneWith(countryCode: phoneNumber?.countryCode,
+                                                                        nationalNumber: phoneNumber?.phoneNumber) {
         phoneDataPoint.phoneNumber.next(formattedPhone.phoneNumber.value)
       }
-    }
+    }.dispose(in: disposeBag)
     return phoneField
   }
 }

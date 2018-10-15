@@ -7,6 +7,8 @@
 
 import Foundation
 import TTTAttributedLabel
+import Bond
+import ReactiveKit
 
 class FormBuilder {
 
@@ -95,6 +97,7 @@ class FormBuilder {
                                        value: String?,
                                        accessibilityLabel: String? = nil,
                                        validator: DataValidator<String>? = nil,
+                                       initiallyReadonly: Bool = false,
                                        firstFormField: Bool = false,
                                        lastFormField: Bool = false,
                                        uiConfig: ShiftUIConfig) -> FormRowTextInputView {
@@ -106,10 +109,35 @@ class FormBuilder {
     let retVal = FormRowTextInputView(label: uiLabel,
                                       labelWidth: nil,
                                       textField: textField,
+                                      initiallyReadOnly: initiallyReadonly,
                                       firstFormField: firstFormField,
                                       lastFormField: lastFormField,
                                       validator: validator,
                                       uiConfig: uiConfig)
+    retVal.unfocusedColor = uiConfig.textPrimaryColor
+    retVal.focusedColor = uiConfig.textPrimaryColor
+    retVal.backgroundColor = uiConfig.backgroundColor
+    retVal.showSplitter = false
+    return retVal
+  }
+
+  static func addressInputRowWith(label: String,
+                                  placeholder: String,
+                                  value: String?,
+                                  accessibilityLabel: String? = nil,
+                                  addressManager: AddressManager,
+                                  allowedCountries: [Country],
+                                  uiConfig: ShiftUIConfig) -> FormRowAddressView {
+    let uiLabel = ComponentCatalog.formLabelWith(text: label, uiConfig: uiConfig)
+    let textField = ComponentCatalog.formFieldWith(placeholder: placeholder,
+                                                   value: value,
+                                                   accessibilityLabel: accessibilityLabel,
+                                                   uiConfig: uiConfig)
+    let retVal = FormRowAddressView(label: uiLabel,
+                                    textField: textField,
+                                    addressManager: addressManager,
+                                    allowedCountries: allowedCountries,
+                                    uiConfig: uiConfig)
     retVal.unfocusedColor = uiConfig.textPrimaryColor
     retVal.focusedColor = uiConfig.textPrimaryColor
     retVal.backgroundColor = uiConfig.backgroundColor
@@ -228,29 +256,53 @@ class FormBuilder {
     return retVal
   }
 
-  static func phoneRowWith(label: String,
-                           failReasonMessage: String,
-                           firstFormField: Bool = false,
-                           lastFormField: Bool = false,
-                           accessibilityLabel: String? = nil,
-                           uiConfig: ShiftUIConfig) -> FormRowPhoneView {
+  static func phoneTextFieldRow(label: String,
+                                allowedCountries: [Country],
+                                placeholder: String,
+                                value: InternationalPhoneNumber?,
+                                accessibilityLabel: String? = nil,
+                                uiConfig: ShiftUIConfig) -> FormRowPhoneFieldView {
     let uiLabel = ComponentCatalog.formLabelWith(text: label, uiConfig: uiConfig)
-    let examplePhone = PhoneHelper.sharedHelper().examplePhoneWith(countryCode: 1)
-    let textField = ComponentCatalog.formFieldWith(placeholder: examplePhone,
+    let phoneField = ComponentCatalog.formPhoneFieldWith(placeholder: placeholder,
+                                                         value: value,
+                                                         allowedCountries: allowedCountries,
+                                                         accessibilityLabel: accessibilityLabel,
+                                                         uiConfig: uiConfig)
+    return FormRowPhoneFieldView(label: uiLabel, phoneTextField: phoneField)
+  }
+
+  static func countryPickerRow(label: String,
+                               allowedCountries: [Country],
+                               value: Country? = nil,
+                               accessibilityLabel: String? = nil,
+                               uiConfig: ShiftUIConfig) -> FormRowCountryPickerView {
+    let uiLabel = ComponentCatalog.formLabelWith(text: label, uiConfig: uiConfig)
+    let textField = ComponentCatalog.formFieldWith(placeholder: "",
                                                    value: nil,
                                                    accessibilityLabel: accessibilityLabel,
                                                    uiConfig: uiConfig)
-    let retVal = FormRowPhoneView(label: uiLabel,
-                                  labelWidth: nil,
-                                  textField: textField,
-                                  failReasonMessage: failReasonMessage,
-                                  firstFormField: firstFormField,
-                                  lastFormField: lastFormField,
-                                  uiConfig: uiConfig)
-    retVal.unfocusedColor = uiConfig.textPrimaryColor
-    retVal.focusedColor = uiConfig.textPrimaryColor
-    retVal.backgroundColor = uiConfig.backgroundColor
-    return retVal
+    return FormRowCountryPickerView(label: uiLabel,
+                                    textField: textField,
+                                    allowedCountries: allowedCountries,
+                                    value: value,
+                                    uiConfig: uiConfig)
+  }
+
+  static func idDocumentTypePickerRow(label: String,
+                                      allowedDocumentTypes: [IdDocumentType],
+                                      value: IdDocumentType? = nil,
+                                      accessibilityLabel: String? = nil,
+                                      uiConfig: ShiftUIConfig) -> FormRowIdDocumentTypePickerView {
+    let uiLabel = ComponentCatalog.formLabelWith(text: label, uiConfig: uiConfig)
+    let textField = ComponentCatalog.formFieldWith(placeholder: "",
+                                                   value: nil,
+                                                   accessibilityLabel: accessibilityLabel,
+                                                   uiConfig: uiConfig)
+    return FormRowIdDocumentTypePickerView(label: uiLabel,
+                                           textField: textField,
+                                           allowedDocumentTypes: allowedDocumentTypes,
+                                           value: value,
+                                           uiConfig: uiConfig)
   }
 
   static func buttonRowWith(title: String,
@@ -545,4 +597,18 @@ class FormBuilder {
     return FormRowSeparatorView(backgroundColor: .clear, height: 1, showTopLine: true, showBottomLine: false)
   }
 
+  static func formLabelRowWith(text: String, uiConfig: ShiftUIConfig) -> FormRowLabelView {
+    let label = ComponentCatalog.formLabelWith(text: text, uiConfig: uiConfig)
+    return FormRowLabelView(label: label, showSplitter: false, height: 40, position: .bottom)
+  }
+
+  static func formAnswerRowWith(text: String, uiConfig: ShiftUIConfig) -> FormRowMultilineLabelView {
+    let label = UILabel()
+    label.text = text
+    label.textColor = uiConfig.textSecondaryColor
+    label.font = uiConfig.formFieldFont
+    label.numberOfLines = 0
+    label.textAlignment = .left
+    return FormRowMultilineLabelView(label: label)
+  }
 }

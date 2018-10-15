@@ -38,7 +38,7 @@ Pod::Spec.new do |s|
   s.dependency 'Bond'
   s.dependency 'HTAutocompleteTextField'
   s.dependency 'GoogleKit'
-  s.dependency 'libPhoneNumber-iOS'
+  s.dependency 'PhoneNumberKit'
   s.dependency 'TTTAttributedLabel'
   s.dependency 'UIScrollView-InfiniteScroll'
   s.dependency 'TrustKit'

@@ -10,15 +10,12 @@ import Foundation
 extension ShiftPlatform {
   public func linkConfiguration(_ forceRefresh: Bool = false,
                                 callback: @escaping Result<LinkConfiguration, NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.configurationStorage.linkConfiguration(accessToken,
-                                                projectKey: projectKey,
-                                                forceRefresh: forceRefresh,
-                                                callback: callback)
+    configurationStorage.linkConfiguration(apiKey, forceRefresh: forceRefresh, callback: callback)
   }
 
   public func loanPurposeDetails(loanPurposeId: Int) -> LoanPurpose? {
@@ -34,15 +31,14 @@ extension ShiftPlatform {
                      loanData: AppLoanData,
                      merchantData: MerchantData?,
                      callback: @escaping Result<OfferRequest, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.offersStorage.requestOffers(developerKey,
-                                     projectKey: projectKey,
-                                     userToken: accessToken.token,
-                                     loanData: loanData,
-                                     merchantData: merchantData) { result in
+    offersStorage.requestOffers(apiKey,
+                                userToken: accessToken.token,
+                                loanData: loanData,
+                                merchantData: merchantData) { result in
       switch result {
       case .success(let offerRequest):
         callback(.success(offerRequest))
@@ -57,61 +53,57 @@ extension ShiftPlatform {
                   page: Int,
                   rows: Int,
                   callback: @escaping Result<[LoanOffer], NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.offersStorage.nextOffers(developerKey,
-                                  projectKey: projectKey,
-                                  userToken: accessToken.token,
-                                  applicationId: applicationId,
-                                  page: page,
-                                  rows: rows,
-                                  callback: callback)
+    offersStorage.nextOffers(apiKey,
+                             userToken: accessToken.token,
+                             applicationId: applicationId,
+                             page: page,
+                             rows: rows,
+                             callback: callback)
   }
 
   func applyToOffer(_ accessToken: AccessToken,
                     offer: LoanOffer,
                     callback: @escaping Result<LoanApplication, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.loanApplicationsStorage.createApplication(developerKey,
-                                                   projectKey: projectKey,
-                                                   userToken: accessToken.token,
-                                                   offer: offer,
-                                                   callback: callback)
+    loanApplicationsStorage.createApplication(apiKey,
+                                              userToken: accessToken.token,
+                                              offer: offer,
+                                              callback: callback)
   }
 
   func applicationStatus(_ accessToken: AccessToken,
                          applicationId: String,
                          callback: @escaping Result<LoanApplication, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.loanApplicationsStorage.applicationStatus(developerKey,
-                                                   projectKey: projectKey,
-                                                   userToken: accessToken.token,
-                                                   applicationId: applicationId,
-                                                   callback: callback)
+    loanApplicationsStorage.applicationStatus(apiKey,
+                                              userToken: accessToken.token,
+                                              applicationId: applicationId,
+                                              callback: callback)
   }
 
   func nextLoanApplications(_ accessToken: AccessToken,
                             page: Int,
                             rows: Int,
                             callback: @escaping Result<[LoanApplicationSummary], NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.loanApplicationsStorage.nextApplications(developerKey,
-                                                  projectKey: projectKey,
-                                                  userToken: accessToken.token,
-                                                  page: page,
-                                                  rows: rows,
-                                                  callback: callback)
+    loanApplicationsStorage.nextApplications(apiKey,
+                                             userToken: accessToken.token,
+                                             page: page,
+                                             rows: rows,
+                                             callback: callback)
   }
 
   func setApplicationAccount(_ accessToken: AccessToken,
@@ -119,17 +111,16 @@ extension ShiftPlatform {
                              accountType: ApplicationAccountType,
                              application: LoanApplication,
                              callback: @escaping Result<LoanApplication, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.loanApplicationsStorage.setApplicationAccount(developerKey,
-                                                       projectKey: projectKey,
-                                                       userToken: accessToken.token,
-                                                       financialAccount: financialAccount,
-                                                       accountType: accountType,
-                                                       application: application,
-                                                       callback: callback)
+    loanApplicationsStorage.setApplicationAccount(apiKey,
+                                                  userToken: accessToken.token,
+                                                  financialAccount: financialAccount,
+                                                  accountType: accountType,
+                                                  application: application,
+                                                  callback: callback)
   }
 
   func getExternalApplicationURL(_ offer: LoanOffer,

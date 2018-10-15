@@ -37,7 +37,7 @@ public enum JSONRouter {
   case issueVirtualCard
   case updateFinancialAccountState
   case updateFinancialAccountPIN
-  case userFundingSources
+  case financialAccountFundingSources
   case pushDevice
   case documentOCR
   case documentOCRStatus
@@ -79,7 +79,7 @@ public enum JSONRouter {
     case .issueVirtualCard: return "/user/accounts/issuecard"
     case .updateFinancialAccountState: return "/user/accounts/:accountId/:action"
     case .updateFinancialAccountPIN: return "/user/accounts/:accountId/pin"
-    case .userFundingSources: return "/user/accounts/balances"
+    case .financialAccountFundingSources: return "/user/accounts/:accountId/balances"
     case .pushDevice: return "/user/pushdevice"
     case .documentOCR: return "/documents/ocr"
     case .documentOCRStatus: return "/documents/ocr/:verificationId"

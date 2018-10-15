@@ -14,9 +14,10 @@ class AuthInteractorTest: XCTestCase {
 
   // Collaborators
   private let serviceLocator: ServiceLocatorFake = ServiceLocatorFake()
-  private lazy var dataProvider: ModelDataProvider = ModelDataProvider.provider
-  private let authConfig: AuthModuleConfig = AuthModuleConfig(primaryAuthCredential: .phoneNumber,
-                                                              secondaryAuthCredential: .email)
+  private let dataProvider: ModelDataProvider = ModelDataProvider.provider
+  private lazy var authConfig: AuthModuleConfig = AuthModuleConfig(primaryAuthCredential: .phoneNumber,
+                                                                   secondaryAuthCredential: .email,
+                                                                   allowedCountries: [dataProvider.usa])
   private let dataReceiver: AuthDataReceiverSpy = AuthDataReceiverSpy()
 
   override func setUp() {
@@ -455,28 +456,36 @@ private extension AuthInteractorTest {
   func givenEmailPrimaryCredential() {
     sut = AuthInteractor(session: serviceLocator.session,
                          initialUserData: dataProvider.emailDataPointList,
-                         config: AuthModuleConfig(primaryAuthCredential: .email, secondaryAuthCredential: .phoneNumber),
+                         config: AuthModuleConfig(primaryAuthCredential: .email,
+                                                  secondaryAuthCredential: .phoneNumber,
+                                                  allowedCountries: [dataProvider.usa]),
                          dataReceiver: dataReceiver)
   }
 
   func givenBirthDatePrimaryCredential() {
     sut = AuthInteractor(session: serviceLocator.session,
                          initialUserData: dataProvider.birthDateDataPointList,
-                         config: AuthModuleConfig(primaryAuthCredential: .birthDate, secondaryAuthCredential: .email),
+                         config: AuthModuleConfig(primaryAuthCredential: .birthDate,
+                                                  secondaryAuthCredential: .email,
+                                                  allowedCountries: [dataProvider.usa]),
                          dataReceiver: dataReceiver)
   }
 
   func givenBirthDateSecondaryCredential() {
     sut = AuthInteractor(session: serviceLocator.session,
                          initialUserData: dataProvider.birthDateDataPointList,
-                         config: AuthModuleConfig(primaryAuthCredential: .email, secondaryAuthCredential: .birthDate),
+                         config: AuthModuleConfig(primaryAuthCredential: .email,
+                                                  secondaryAuthCredential: .birthDate,
+                                                  allowedCountries: [dataProvider.usa]),
                          dataReceiver: dataReceiver)
   }
 
   func givenSSNPrimaryCredential() {
     sut = AuthInteractor(session: serviceLocator.session,
                          initialUserData: dataProvider.ssnDataPointList,
-                         config: AuthModuleConfig(primaryAuthCredential: .ssn, secondaryAuthCredential: .email),
+                         config: AuthModuleConfig(primaryAuthCredential: .idDocument,
+                                                  secondaryAuthCredential: .email,
+                                                  allowedCountries: [dataProvider.usa]),
                          dataReceiver: dataReceiver)
   }
 }

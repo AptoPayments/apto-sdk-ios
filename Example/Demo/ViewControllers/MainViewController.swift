@@ -71,6 +71,8 @@ class MainViewController: UIViewController {
 
     self.explanationLabel.text = "Shift SDK Demo App"
     self.versionLabel.text = "Shift SDK Demo App (\(buildType))\nversion \(BuildInformation.version!), build \(BuildInformation.build!)"
+
+    ShiftPlatform.defaultManager().delegate = self
   }
 
   override func didReceiveMemoryWarning() {
@@ -124,4 +126,20 @@ class MainViewController: UIViewController {
       }
     }
   }
+}
+
+extension MainViewController: ShiftPlatformDelegate {
+
+  func shiftSDKInitialized(apiKey: String) {
+    print ("shiftSDKInitialized")
+  }
+
+  func sdkDeprecated() {
+    print ("sdkDeprecated")
+  }
+
+  func newUserTokenReceived(_ userToken: String?) {
+    print ("newUserTokenReceived")
+  }
+
 }

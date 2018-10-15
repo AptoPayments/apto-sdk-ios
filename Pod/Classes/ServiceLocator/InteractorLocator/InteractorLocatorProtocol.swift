@@ -17,4 +17,5 @@ protocol InteractorLocatorProtocol {
   func serverMaintenanceErrorInteractor() -> ServerMaintenanceErrorInteractorProtocol
   func accountSettingsInteractor() -> AccountSettingsInteractorProtocol
   func contentPresenterInteractor(content: Content) -> ContentPresenterInteractorProtocol
+  func dataConfirmationInteractor(userData: DataPointList) -> DataConfirmationInteractorProtocol
 }

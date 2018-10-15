@@ -37,9 +37,9 @@ class ExternalOAuthPresenter: ExternalOAuthPresenterProtocol {
   }
 
   func show(url: URL) {
-    router.show(url: url) {
-      self.router.showLoadingSpinner()
-      self.interactor.custodianAuthenticationSucceed()
+    router.show(url: url) { [weak self] in
+      self?.router.showLoadingSpinner()
+      self?.interactor.custodianAuthenticationSucceed()
     }
   }
 
@@ -47,5 +47,4 @@ class ExternalOAuthPresenter: ExternalOAuthPresenterProtocol {
     router.hideLoadingSpinner()
     router.oauthSucceeded(custodian)
   }
-
 }

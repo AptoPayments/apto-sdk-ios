@@ -12,6 +12,8 @@ protocol SelectBalanceStoreModuleProtocol: UIModuleProtocol {
 class SelectBalanceStoreModule: UIModule, SelectBalanceStoreModuleProtocol {
   private let externalOAuthModuleConfig = ExternalOAuthModuleConfig(title: "select-balance-store.title".podLocalized())
   private let application: CardApplication
+  private var dataConfirmationModule: DataConfirmationModuleProtocol?
+  private var projectConfiguration: ProjectConfiguration! // swiftlint:disable:this implicitly_unwrapped_optional
 
   private var shiftCardSession: ShiftCardSession {
     return shiftSession.shiftCardSession
@@ -28,6 +30,7 @@ class SelectBalanceStoreModule: UIModule, SelectBalanceStoreModuleProtocol {
       case .failure (let error):
         completion(.failure(error))
       case .success(let contextConfiguration):
+        self.projectConfiguration = contextConfiguration.projectConfiguration
         let uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
         self.uiConfig = uiConfig
         let module = self.buildExternalOAuthModule(uiConfig: uiConfig)
@@ -45,20 +48,54 @@ class SelectBalanceStoreModule: UIModule, SelectBalanceStoreModuleProtocol {
     externalOAuthModule.onBack = { [unowned self] _ in
       self.back()
     }
-    externalOAuthModule.onOAuthSucceeded = { _, custodian in
-      self.showLoadingSpinner()
-      self.shiftCardSession.setBalanceStore(self.application.id, custodian: custodian) { result in
-        self.hideLoadingSpinner()
-        switch result {
-        case .failure(let error):
-          self.show(error: error)
-        case .success(let balanceStoreResult):
-          self.process(result: balanceStoreResult)
-        }
-      }
+    externalOAuthModule.onOAuthSucceeded = { [unowned self] _, custodian in
+      self.showDataConfirmationIfNeededAndConfirm(custodian: custodian)
     }
 
     return externalOAuthModule
+  }
+
+  private func showDataConfirmationIfNeededAndConfirm(custodian: Custodian) {
+    guard let credentials = custodian.externalCredentials,
+          case let .oauth(oauthCredentials) = credentials,
+          let userData = oauthCredentials.userData else {
+      // If no data to confirm we just succeed
+      saveBalanceStore(custodian: custodian)
+      return
+    }
+    let module = serviceLocator.moduleLocator.dataConfirmationModule(userData: userData)
+    module.onClose = { [unowned self] _ in
+      self.popModule {
+        self.dataConfirmationModule = nil
+      }
+    }
+    module.onBack = { [unowned self] _ in
+      self.popModule {
+        self.dataConfirmationModule = nil
+      }
+    }
+    module.onFinish = { [unowned self] _ in
+      self.dataConfirmationModule = nil
+      userData.removeDataPointsOf(type: self.projectConfiguration.primaryAuthCredential)
+      self.shiftSession.updateUserData(userData) { _ in
+        self.saveBalanceStore(custodian: custodian)
+      }
+    }
+    self.dataConfirmationModule = module
+    push(module: module) { _ in }
+  }
+
+  private func saveBalanceStore(custodian: Custodian) {
+    showLoadingSpinner()
+    shiftCardSession.setBalanceStore(self.application.id, custodian: custodian) { [weak self] result in
+      self?.hideLoadingSpinner()
+      switch result {
+      case .failure(let error):
+        self?.show(error: error)
+      case .success(let balanceStoreResult):
+        self?.process(result: balanceStoreResult)
+      }
+    }
   }
 
   private func process(result: SelectBalanceStoreResult) {

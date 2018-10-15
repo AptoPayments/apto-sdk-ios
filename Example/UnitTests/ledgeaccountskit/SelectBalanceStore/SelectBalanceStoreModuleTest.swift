@@ -60,12 +60,14 @@ class SelectBalanceStoreModuleTest: XCTestCase {
     XCTAssertTrue(externalOauthModule.initializeCalled)
   }
 
-  func testExternalOauthSucceededCallSetBalanceStore() {
+  func testExternalOauthSucceededNoDataToConfirmCallSetBalanceStore() {
     // Given
     let externalOauthModule = givenExternalOauthModulePresented()
+    let custodian = dataProvider.custodian
+    custodian.externalCredentials = .oauth(OauthCredential(oauthToken: "token", refreshToken: "token", userData: nil))
 
     // When
-    externalOauthModule.oauthSucceeded(dataProvider.custodian)
+    externalOauthModule.oauthSucceeded(custodian)
 
     // Then
     XCTAssertTrue(shiftCardSession.setBalanceStoreCalled)
@@ -79,9 +81,11 @@ class SelectBalanceStoreModuleTest: XCTestCase {
     sut.onFinish = { _ in
       onFinishCalled = true
     }
+    let custodian = dataProvider.custodian
+    custodian.externalCredentials = .oauth(OauthCredential(oauthToken: "token", refreshToken: "token", userData: nil))
 
     // When
-    externalOauthModule.oauthSucceeded(dataProvider.custodian)
+    externalOauthModule.oauthSucceeded(custodian)
 
     // Then
     XCTAssertTrue(onFinishCalled)
@@ -101,6 +105,109 @@ class SelectBalanceStoreModuleTest: XCTestCase {
 
     // Then
     XCTAssertFalse(onFinishCalled)
+  }
+
+  func testExternalOauthSucceededDataConfirmationRequiredDoNotCallSetBalanceStore() {
+    // Given
+    let externalOauthModule = givenExternalOauthModulePresented()
+    let custodian = dataProvider.custodian
+    custodian.externalCredentials = .oauth(OauthCredential(oauthToken: "token",
+                                                           refreshToken: "token",
+                                                           userData: dataProvider.emailDataPointList))
+
+    // When
+    externalOauthModule.oauthSucceeded(custodian)
+
+    // Then
+    XCTAssertFalse(shiftCardSession.setBalanceStoreCalled)
+  }
+
+  func testExternalOauthSucceededDataConfirmationPresentDataConfirmation() {
+    // Given
+    let externalOauthModule = givenExternalOauthModulePresented()
+    let custodian = dataProvider.custodian
+    custodian.externalCredentials = .oauth(OauthCredential(oauthToken: "token",
+                                                           refreshToken: "token",
+                                                           userData: dataProvider.emailDataPointList))
+
+    // When
+    externalOauthModule.oauthSucceeded(custodian)
+
+    // Then
+    let dataConfirmationModule = serviceLocator.moduleLocatorFake.dataConfirmationModuleSpy
+    XCTAssertTrue(dataConfirmationModule.initializeCalled)
+    XCTAssertNotNil(dataConfirmationModule.onFinish)
+    XCTAssertNotNil(dataConfirmationModule.onBack)
+    XCTAssertNotNil(dataConfirmationModule.onClose)
+  }
+
+  func testDataConfirmationPresentedOnFinishUpdateUserData() {
+    // Given
+    let externalOauthModule = givenExternalOauthModulePresented()
+    let custodian = dataProvider.custodian
+    custodian.externalCredentials = .oauth(OauthCredential(oauthToken: "token",
+                                                           refreshToken: "token",
+                                                           userData: dataProvider.emailDataPointList))
+    externalOauthModule.oauthSucceeded(custodian)
+    let dataConfirmationModule = serviceLocator.moduleLocatorFake.dataConfirmationModuleSpy
+
+    // When
+    dataConfirmationModule.onFinish?(dataConfirmationModule)
+
+    // Then
+    XCTAssertTrue(serviceLocator.sessionFake.updateUserDataCalled)
+  }
+
+  func testDataConfirmationPresentedUpdateUserSetBalanceStore() {
+    // Given
+    let externalOauthModule = givenExternalOauthModulePresented()
+    let custodian = dataProvider.custodian
+    custodian.externalCredentials = .oauth(OauthCredential(oauthToken: "token",
+                                                           refreshToken: "token",
+                                                           userData: dataProvider.emailDataPointList))
+    externalOauthModule.oauthSucceeded(custodian)
+    let dataConfirmationModule = serviceLocator.moduleLocatorFake.dataConfirmationModuleSpy
+    serviceLocator.sessionFake.nextUpdateUserDataResult = .success(dataProvider.user)
+
+    // When
+    dataConfirmationModule.onFinish?(dataConfirmationModule)
+
+    // Then
+    XCTAssertTrue(shiftCardSession.setBalanceStoreCalled)
+  }
+
+  func testDataConfirmationPresentOnBackDoNotSetBalanceStore() {
+    // Given
+    let externalOauthModule = givenExternalOauthModulePresented()
+    let custodian = dataProvider.custodian
+    custodian.externalCredentials = .oauth(OauthCredential(oauthToken: "token",
+                                                           refreshToken: "token",
+                                                           userData: dataProvider.emailDataPointList))
+    externalOauthModule.oauthSucceeded(custodian)
+    let dataConfirmationModule = serviceLocator.moduleLocatorFake.dataConfirmationModuleSpy
+
+    // When
+    dataConfirmationModule.onBack?(dataConfirmationModule)
+
+    // Then
+    XCTAssertFalse(shiftCardSession.setBalanceStoreCalled)
+  }
+
+  func testDataConfirmationPresentOnCloseDoNotSetBalanceStore() {
+    // Given
+    let externalOauthModule = givenExternalOauthModulePresented()
+    let custodian = dataProvider.custodian
+    custodian.externalCredentials = .oauth(OauthCredential(oauthToken: "token",
+                                                           refreshToken: "token",
+                                                           userData: dataProvider.emailDataPointList))
+    externalOauthModule.oauthSucceeded(custodian)
+    let dataConfirmationModule = serviceLocator.moduleLocatorFake.dataConfirmationModuleSpy
+
+    // When
+    dataConfirmationModule.onClose?(dataConfirmationModule)
+
+    // Then
+    XCTAssertFalse(shiftCardSession.setBalanceStoreCalled)
   }
 
   private func givenExternalOauthModulePresented() -> ExternalOAuthModuleFake {

@@ -11,13 +11,11 @@ protocol PushTokenStorageProtocol {
   func setCurrent(pushToken: String)
   func currentPushToken() -> String?
   func clearCurrentPushToken()
-  func registerPushToken(_ developerKey: String,
-                         projectKey: String,
+  func registerPushToken(_ apiKey: String,
                          userToken: String,
                          pushToken: String,
                          callback: @escaping Result<Void, NSError>.Callback)
-  func unregisterPushToken(_ developerKey: String,
-                           projectKey: String,
+  func unregisterPushToken(_ apiKey: String,
                            userToken: String,
                            pushToken: String,
                            callback: @escaping Result<Void, NSError>.Callback)
@@ -43,15 +41,12 @@ class PushTokenStorage: PushTokenStorageProtocol {
     currentPushTokenCache = nil
   }
 
-  func registerPushToken(_ developerKey: String,
-                         projectKey: String,
+  func registerPushToken(_ apiKey: String,
                          userToken: String,
                          pushToken: String,
                          callback: @escaping Result<Void, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.pushDevice)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
-                                                             userToken: userToken)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     let data: [String: AnyObject] = [
       "device_type": "ios" as AnyObject,
       "push_token": pushToken as AnyObject
@@ -63,13 +58,12 @@ class PushTokenStorage: PushTokenStorageProtocol {
     }
   }
 
-  func unregisterPushToken(_ developerKey: String,
-                           projectKey: String,
+  func unregisterPushToken(_ apiKey: String,
                            userToken: String,
                            pushToken: String,
                            callback: @escaping Result<Void, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.pushDevice)
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     let data: [String: AnyObject] = [
       "device_type": "ios" as AnyObject,
       "push_token": pushToken as AnyObject

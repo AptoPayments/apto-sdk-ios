@@ -104,8 +104,8 @@ extension JSON {
       return self.address
     case "birthdate":
       return self.birthDate
-    case "ssn":
-      return self.ssn
+    case "id_document":
+      return self.idDocument
     case "income_source":
       return self.income_source
     case "housing":
@@ -142,6 +142,12 @@ extension JSON {
       return self.store
     case "mcc":
       return self.mcc
+    case "phone_datapoint_configuration":
+      return self.allowedCountriesRequiredDataPointConfig
+    case "address_datapoint_configuration":
+      return self.allowedCountriesRequiredDataPointConfig
+    case "id_document_datapoint_configuration":
+      return self.allowedIdDocumentTypesRequiredDataPointConfig
     default:
       return nil
     }
@@ -245,17 +251,18 @@ extension JSON {
   }
 
   var requiredDatapoint: RequiredDataPoint? {
-    guard let
-      dataPointType = DataPointType.from(typeName:self["datapoint_type"].string),
-      let verificationRequired = self["verification_required"].bool,
-      let optional = self["not_specified_allowed"].bool
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse required datapoint \(self)"))
-        return nil
+    guard let dataPointType = DataPointType.from(typeName: self["datapoint_type"].string),
+          let verificationRequired = self["verification_required"].bool,
+          let optional = self["not_specified_allowed"].bool else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse required datapoint \(self)"))
+      return nil
     }
+    let dataPointConfiguration = self["datapoint_configuration"].linkObject as? RequiredDataPointConfigProtocol
     return RequiredDataPoint(type: dataPointType,
                              verificationRequired: verificationRequired,
-                             optional: optional)
+                             optional: optional,
+                             configuration: dataPointConfiguration)
   }
 
   var income_source: IncomeSource? {
@@ -425,6 +432,12 @@ extension JSON {
                            logoUrl: logoUrl)
   }
 
+  var allowedCountries: [Country]? {
+    return self.arrayValue.map {
+      return Country(isoCode: $0.stringValue)
+    }
+  }
+
   var projectConfiguration: ProjectConfiguration? {
     guard let name = self["name"].string,
           let salaryFrequencies = self["salary_frequencies"].linkObject as? [Any],
@@ -471,12 +484,13 @@ extension JSON {
       }
       products = parsedProducts
     }
+    let allowedCountries = self["allowed_countries"].allowedCountries
 
     // TODO: Receive these parameters from the server
     let allowUserLogin = true
     let skipSteps = false
     let strictAddressValidation = true
-    let googleGeocodingAPIKey = "AIzaSyBQuKFxmTO8gmxBwnXZlgG3TJY50KpbS-0"
+    let googleGeocodingAPIKey = "AIzaSyAj21pmvNCyCzFqYq2D3nL4FwYPCzpHwRA"
     let defaultCountryCode = 1
     let grossIncomeRange = AmountRangeConfiguration(min: grossIncomeMin,
                                                     max: grossIncomeMax,
@@ -507,7 +521,8 @@ extension JSON {
                                 grossIncomeRange: grossIncomeRange,
                                 welcomeScreenAction: welcomeScreenAction,
                                 supportEmailAddress: supportEmailAddress,
-                                branding: branding)
+                                branding: branding,
+                                allowedCountries: allowedCountries)
   }
 
   var linkConfiguration: LinkConfiguration? {
@@ -901,61 +916,26 @@ extension JSON {
   }
 
   var address: Address? {
-    var address = self["address"].string
-    if self["street"].string != nil {
-      address = self["street"].string
-    }
-    let city = self["city"].string
-    let state = self["state"].string
-    let zip_code = self["zip"].string
-    let apt = self["apt"].string
+    let address = self["street_one"].string
+    let city = self["locality"].string
+    let region = self["region"].string
+    let postalCode = self["postal_code"].string
+    let apt = self["street_two"].string
     let verified = self["verified"].bool
-
-    let countryCode = "US"
-
-    let countries = AddressManager.defaultManager(apiKey: nil).countryList()
-    let countryIdx = countries.index { $0.isoCode == countryCode }
-    guard let _ = countryIdx else {
-      return Address(address: address,
-                     apUnit: apt,
-                     country: nil,
-                     city: city,
-                     stateCode: nil,
-                     zip: zip_code,
-                     verified: verified)
+    let country: Country?
+    if let countryCode = self["country"].string {
+      country = Country(isoCode: countryCode)
     }
-
-    let states = AddressManager.defaultManager(apiKey: nil).statesFor(country: countryCode)
-    guard let _ = states else {
-      return Address(
-        address: address,
-        apUnit:apt,
-        country:countries[countryIdx!],
-        city:city,
-        stateCode:nil,
-        zip:zip_code)
+    else {
+      country = nil
     }
-
-    let stateIdx = states?.index { $0.isoCode == state }
-    guard let _ = stateIdx else {
-      return Address(
-        address: address,
-        apUnit:apt,
-        country:countries[countryIdx!],
-        city:city,
-        stateCode:nil,
-        zip:zip_code)
-    }
-
-    let stateObj = states![stateIdx!]
-    return Address(
-      address: address,
-      apUnit:apt,
-      country:countries[countryIdx!],
-      city:city,
-      stateCode:stateObj.isoCode,
-      zip:zip_code)
-
+    return Address(address: address,
+                   apUnit: apt,
+                   country: country,
+                   city: city,
+                   region: region,
+                   zip: postalCode,
+                   verified: verified)
   }
 
   var verification: Verification? {
@@ -1015,36 +995,33 @@ extension JSON {
   }
 
   var phone: PhoneNumber? {
-    guard let
-      countryCode = self["country_code"].string,
-      let phoneNumber = self["phone_number"].string
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse phone number \(self)"))
-        return nil
+    guard let countryCode = Int(self["country_code"].string) ?? self["country_code"].int,
+          let phoneNumber = self["phone_number"].string else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse phone number \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
-    let countryCodeAsNumber = Int(countryCode) ?? 1
-    return PhoneNumber(countryCode: countryCodeAsNumber, phoneNumber: phoneNumber, verified:verified)
+    return PhoneNumber(countryCode: countryCode, phoneNumber: phoneNumber, verified: verified)
   }
 
   var email: Email? {
-    guard let
-      notSpecified = self["not_specified"].bool
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse email \(self)"))
-        return nil
+    guard let notSpecified = self["not_specified"].bool else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse email \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
     if notSpecified {
-      return Email(email:nil, verified:verified, notSpecified: notSpecified)
+      return Email(email: nil, verified: verified, notSpecified: notSpecified)
     }
     else {
-      guard let email = self["email"].string
-        else {
-          ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse email \(self)"))
-          return nil
+      guard let email = self["email"].string else {
+        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                              reason: "Can't parse email \(self)"))
+        return nil
       }
-      return Email(email:email, verified:verified, notSpecified:false)
+      return Email(email: email, verified: verified, notSpecified: false)
     }
   }
 
@@ -1060,9 +1037,22 @@ extension JSON {
     return PersonalName(firstName: firstName, lastName: lastName, verified:verified)
   }
 
-  var ssn: SSN? {
+  var idDocument: IdDocument? {
+    let documentType = IdDocumentType.from(string: self["doc_type"].string)
+    let value = self["value"].string ?? SSNTextValidator.unknownValidSSN
+    let country: Country?
+    if let countryCode = self["country"].string {
+      country = Country(isoCode: countryCode)
+    }
+    else {
+      country = nil
+    }
     let notSpecified = self["not_specified"].bool
-    return SSN(ssn: SSNTextValidator.unknownValidSSN, verified: false, notSpecified:notSpecified)
+    return IdDocument(documentType: documentType,
+                      value: value,
+                      country: country,
+                      verified: false,
+                      notSpecified: notSpecified)
   }
 
   var birthDate: BirthDate? {
@@ -1075,7 +1065,6 @@ extension JSON {
     let verified = self["verified"].bool
     return BirthDate(date: date, verified:verified)
   }
-
 
   var store: Store? {
     let storeId = self["id"].string
@@ -1337,14 +1326,12 @@ extension JSON {
   }
 
   var custodian: Custodian? {
-    guard
-      let rawCustodianType = self["custodian_type"].string,
-      let name = self["name"].string,
-      let custodianType = CustodianType(rawValue: rawCustodianType)
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                              reason: "Can't parse custodian \(self)"))
-        return nil
+    guard let rawCustodianType = self["custodian_type"].string,
+          let name = self["name"].string,
+          let custodianType = CustodianType(rawValue: rawCustodianType) else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse custodian \(self)"))
+      return nil
     }
 
     return Custodian(custodianType: custodianType, name: name)
@@ -1365,7 +1352,16 @@ extension JSON {
     }
     var credentials: OauthCredential? = nil
     if let accessToken = self["tokens"]["access"].string, let refreshToken = self["tokens"]["refresh"].string {
-      credentials = OauthCredential(oauthToken: accessToken, refreshToken: refreshToken)
+      let dataPointList = DataPointList()
+      if let dataPointFields = self["user_data"]["data"].array {
+        dataPointFields.compactMap {
+          return $0.linkObject as? DataPoint
+        }.forEach {
+          dataPointList.add(dataPoint: $0)
+        }
+      }
+      let userData = !dataPointList.isEmpty ? dataPointList : nil
+      credentials = OauthCredential(oauthToken: accessToken, refreshToken: refreshToken, userData: userData)
     }
 
     return OauthAttempt(id: id, status: status, url: url, credentials: credentials)

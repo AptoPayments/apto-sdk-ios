@@ -9,13 +9,11 @@
 import SwiftyJSON
 
 protocol OauthStorageProtocol {
-  func startOauthAuthentication(_ developerKey: String,
-                                projectKey: String,
+  func startOauthAuthentication(_ apiKey: String,
                                 userToken: String,
                                 custodianType: CustodianType,
                                 callback: @escaping Result<OauthAttempt, NSError>.Callback)
-  func waitForOauthAuthenticationConfirmation(_ developerKey: String,
-                                              projectKey: String,
+  func waitForOauthAuthenticationConfirmation(_ apiKey: String,
                                               userToken: String,
                                               attempt: OauthAttempt,
                                               custodianType: CustodianType,
@@ -29,8 +27,7 @@ class OauthStorage: OauthStorageProtocol {
     self.transport = transport
   }
 
-  func startOauthAuthentication(_ developerKey: String,
-                                projectKey: String,
+  func startOauthAuthentication(_ apiKey: String,
                                 userToken: String,
                                 custodianType: CustodianType,
                                 callback: @escaping Result<OauthAttempt, NSError>.Callback) {
@@ -39,9 +36,7 @@ class OauthStorage: OauthStorageProtocol {
       "redirect_url": "shift-sdk://oauth-finish" as AnyObject
     ]
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .startOauth)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
-                                                             userToken: userToken)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<OauthAttempt, NSError> in
         guard let oauthAttempt = json.linkObject as? OauthAttempt else {
@@ -52,16 +47,12 @@ class OauthStorage: OauthStorageProtocol {
     }
   }
 
-  func waitForOauthAuthenticationConfirmation(_ developerKey: String,
-                                              projectKey: String,
+  func waitForOauthAuthenticationConfirmation(_ apiKey: String,
                                               userToken: String,
                                               attempt: OauthAttempt,
                                               custodianType: CustodianType,
                                               callback: @escaping Result<Custodian, NSError>.Callback) {
-    checkAttemptStatus(developerKey,
-                       projectKey: projectKey,
-                       userToken: userToken,
-                       attempt: attempt) { result in
+    checkAttemptStatus(apiKey, userToken: userToken, attempt: attempt) { result in
       switch result {
       case .failure(let error):
         callback(.failure(error))
@@ -77,8 +68,7 @@ class OauthStorage: OauthStorageProtocol {
         }
         else {
           DispatchQueue.global().asyncAfter(deadline: .now() + .milliseconds(3000)) {
-            self.waitForOauthAuthenticationConfirmation(developerKey,
-                                                        projectKey: projectKey,
+            self.waitForOauthAuthenticationConfirmation(apiKey,
                                                         userToken: userToken,
                                                         attempt: attempt,
                                                         custodianType: custodianType,
@@ -89,16 +79,13 @@ class OauthStorage: OauthStorageProtocol {
     }
   }
 
-  private func checkAttemptStatus(_ developerKey: String,
-                                  projectKey: String,
+  private func checkAttemptStatus(_ apiKey: String,
                                   userToken: String,
                                   attempt: OauthAttempt,
                                   callback: @escaping Result<OauthAttempt, NSError>.Callback) {
     let urlParameters = [":attemptId": attempt.id]
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .oauthStatus, urlParameters: urlParameters)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
-                                                             userToken: userToken)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     transport.get(url,
                   authorization: auth,
                   parameters: nil,

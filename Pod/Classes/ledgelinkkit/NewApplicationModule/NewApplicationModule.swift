@@ -236,7 +236,7 @@ class NewApplicationModule: UIModule {
     }
 
     // Replace the State and Language in the disclaimer url
-    let state = user.userData.addressDataPoint.stateCode.value?.uppercased()
+    let state = user.userData.addressDataPoint.region.value?.uppercased()
     disclaimer.replaceInURL(string: "%5Bstate%5D", with: state)
     disclaimer.replaceInURL(string: "%5Blanguage%5D", with: LocalLanguage.language)
 

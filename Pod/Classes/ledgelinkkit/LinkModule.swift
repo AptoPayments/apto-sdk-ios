@@ -14,7 +14,7 @@ open class LinkModule: UIModule {
     return shiftSession.linkSession
   }
   var offerApplierViewController: UIViewController?
-  var authModule: AuthModule?
+  var authModule: AuthModuleProtocol?
   var applicationListModule: LinkApplicationListModule?
   var newApplicationModule: NewApplicationModule?
   var workflowModule: WorkflowModule?
@@ -194,16 +194,14 @@ open class LinkModule: UIModule {
 
   // MARK: - Auth Module Handling
 
-  fileprivate func buildAuthModule() -> AuthModule {
+  fileprivate func buildAuthModule() -> AuthModuleProtocol {
 
     // Build the user data collector's config
-    let authModuleConfig = self.buildAuthModuleConfig(contextConfiguration: self.contextConfiguration,
-                                                      linkConfiguration: self.linkConfiguration)
+    let authModuleConfig = self.buildAuthModuleConfig(contextConfiguration: self.contextConfiguration)
     // Prepare the current user's data
-    let authModule = AuthModule(serviceLocator: serviceLocator,
-                                config: authModuleConfig,
-                                uiConfig: uiConfig!,
-                                initialUserData: userDataPoints)
+    let authModule = serviceLocator.moduleLocator.authModule(authConfig: authModuleConfig,
+                                                             uiConfig: uiConfig!,
+                                                             initialUserData: userDataPoints)
     authModule.onBack = { [weak self] module in
       self?.popModule {
         self?.authModule = nil
@@ -243,11 +241,8 @@ open class LinkModule: UIModule {
     return authModule
   }
 
-  fileprivate func buildAuthModuleConfig(contextConfiguration: ContextConfiguration,
-                                         linkConfiguration: LinkConfiguration) -> AuthModuleConfig {
-    return AuthModuleConfig(
-      primaryAuthCredential: contextConfiguration.projectConfiguration.primaryAuthCredential,
-      secondaryAuthCredential: contextConfiguration.projectConfiguration.secondaryAuthCredential)
+  fileprivate func buildAuthModuleConfig(contextConfiguration: ContextConfiguration) -> AuthModuleConfig {
+    return AuthModuleConfig(projectConfiguration: contextConfiguration.projectConfiguration)
   }
 
   // MARK: - Loan Application List Handling

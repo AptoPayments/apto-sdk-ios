@@ -9,8 +9,7 @@
 import Foundation
 
 protocol StoreStorageProtocol {
-  func validateStoreKey(_ developerKey: String,
-                        projectKey: String,
+  func validateStoreKey(_ apiKey: String,
                         partnerKey: String,
                         merchantKey: String,
                         storeKey: String,
@@ -25,8 +24,7 @@ class StoreStorage: StoreStorageProtocol {
   }
 
   // MARK: Single location info
-  func validateStoreKey(_ developerKey: String,
-                        projectKey: String,
+  func validateStoreKey(_ apiKey: String,
                         partnerKey: String,
                         merchantKey: String,
                         storeKey: String,
@@ -35,7 +33,7 @@ class StoreStorage: StoreStorageProtocol {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.storeInfo,
                          urlTrailing: urlTrailing)
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     self.transport.get(url,
                        authorization: auth,
                        parameters: nil,

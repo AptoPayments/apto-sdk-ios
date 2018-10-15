@@ -95,4 +95,8 @@ final class ModuleLocator: ModuleLocatorProtocol {
   func contentPresenterModule(content: Content, title: String) -> ContentPresenterModuleProtocol {
     return ContentPresenterModule(serviceLocator: serviceLocator, content: content, title: title)
   }
+
+  func dataConfirmationModule(userData: DataPointList) -> DataConfirmationModuleProtocol {
+    return DataConfirmationModule(serviceLocator: serviceLocator, userData: userData)
+  }
 }

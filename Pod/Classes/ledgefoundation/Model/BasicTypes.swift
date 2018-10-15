@@ -145,13 +145,39 @@ public func ==(lhs: CreditScoreOption, rhs: CreditScoreOption) -> Bool {
   return lhs.creditScoreId == rhs.creditScoreId
 }
 
-public struct Country : Equatable {
+public struct Country : Hashable {
   public var isoCode: String
   public var name: String
+
+  public var flag: String {
+    let lowercasedCode = isoCode.lowercased()
+    guard lowercasedCode.count == 2 else { return "" }
+
+    let indicatorSymbols = lowercasedCode.unicodeScalars.map{ regionalIndicatorSymbol(for: $0) }
+    return String(indicatorSymbols.map{ Character($0) })
+  }
+
+  public static var defaultCountry = Country(isoCode: "US")
+
+  private func regionalIndicatorSymbol(for scalar: Unicode.Scalar) -> Unicode.Scalar {
+    // 0x1F1E6 marks the start of the Regional Indicator Symbol range and corresponds to 'A'
+    // 0x61 marks the start of the lowercase ASCII alphabet: 'a'
+    return Unicode.Scalar(scalar.value + (0x1F1E6 - 0x61))! // swiftlint:disable:this force_unwrapping
+  }
 }
 
 public func ==(lhs: Country, rhs: Country) -> Bool {
   return lhs.isoCode == rhs.isoCode
+}
+
+public extension Country {
+  public init(isoCode: String) {
+    let currentLocale = NSLocale.current as NSLocale
+    guard let name = currentLocale.localizedString(forCountryCode: isoCode) else {
+      fatalError("Wrong country code: \(isoCode)")
+    }
+    self.init(isoCode: isoCode, name: name)
+  }
 }
 
 public struct State {

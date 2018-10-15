@@ -81,14 +81,15 @@ extension BirthDate {
   }
 }
 
-extension SSN {
+extension IdDocument {
   override func modifiedFrom(dataPoint: DataPoint) -> Bool {
-    guard let rhs = dataPoint as? SSN else {
+    guard let rhs = dataPoint as? IdDocument else {
       return true
     }
     return (self as DataPoint).verificationModifiedFrom(dataPoint: dataPoint as DataPoint)
       || (self as DataPoint).notSpecifiedModifiedFrom(dataPoint: dataPoint as DataPoint)
-      || self.ssn.value != rhs.ssn.value
+      || self.documentType.value != rhs.documentType.value
+      || self.value.value != rhs.value.value
   }
 }
 
@@ -103,7 +104,7 @@ extension Address {
       || self.apUnit.value != rhs.apUnit.value
       || self.country.value != rhs.country.value
       || self.city.value != rhs.city.value
-      || self.stateCode.value != rhs.stateCode.value
+      || self.region.value != rhs.region.value
       || self.zip.value != rhs.zip.value
   }
 }

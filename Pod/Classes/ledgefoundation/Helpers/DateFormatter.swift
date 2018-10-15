@@ -61,13 +61,13 @@ extension Date {
     return retVal
   }
   func formatForJSONAPI() -> String {
-    return self.format(dateFormat: "MM-dd-yyyy")
+    return self.format(dateFormat: "yyyy-MM-dd")
   }
   public static func dateFromJSONAPIFormat(_ date:String?) -> Date? {
     guard let date = date else {
       return nil
     }
-    return Date.parse(dateFormat: "MM-dd-yyyy", dateValue: date)
+    return Date.parse(dateFormat: "yyyy-MM-dd", dateValue: date)
   }
   public static func timeFromISO8601(_ time:String?) -> Date? {
     guard let time = time else {

@@ -70,10 +70,10 @@ class UserDataCollectorStepFactory {
       return HomeStep(requiredData: requiredData,
                       userData: userData,
                       availableHousingTypes: availableHousingTypes,
-                      uiConfig: uiConfig,
-                      googleGeocodingAPIKey: googleGeocodingAPIKey)
+                      uiConfig: uiConfig)
     case .address:
-      return AddressStep(address: userData.addressDataPoint,
+      return AddressStep(requiredData: requiredData,
+                         userData: userData,
                          uiConfig: uiConfig,
                          googleGeocodingApiKey: googleGeocodingAPIKey)
     case .timeAtAddress:

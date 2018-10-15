@@ -87,7 +87,7 @@ final class NetworkManager: NetworkManagerProtocol {
         case .success(_):
           request.callback(processedResponse)
         }
-      }
+    }
   }
 
   func runPendingRequests() {
@@ -119,6 +119,12 @@ final class NetworkManager: NetworkManagerProtocol {
 
     if case .some(500..<600) = response.response?.statusCode {
       let error = BackendError(code: .serviceUnavailable, reason: response.error?.localizedDescription)
+      return .failure(error)
+    }
+
+    if response.response?.statusCode == 412 {
+      let error = BackendError(code: .sdkDeprecated)
+      ErrorLogger.defaultInstance().log(error: error)
       return .failure(error)
     }
 

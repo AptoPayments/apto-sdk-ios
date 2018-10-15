@@ -16,19 +16,16 @@ import UIKit
 protocol ViewLocatorProtocol {
   func fullScreenDisclaimerView(uiConfig: ShiftUIConfig,
                                 eventHandler: FullScreenDisclaimerEventHandler) -> UIViewController
-
   func authView(uiConfig: ShiftUIConfig, eventHandler: AuthEventHandler) -> AuthViewControllerProtocol
   func externalOAuthView(uiConfiguration: ShiftUIConfig,
                          eventHandler: ExternalOAuthPresenterProtocol) -> UIViewController
-
   func issueCardView(uiConfig: ShiftUIConfig, eventHandler: IssueCardPresenterProtocol) -> UIViewController
-
   func serverMaintenanceErrorView(uiConfig: ShiftUIConfig?,
                                   eventHandler: ServerMaintenanceErrorEventHandler) -> UIViewController
-
   func accountsSettingsView(uiConfig: ShiftUIConfig,
                             presenter: AccountSettingsPresenterProtocol) -> AccountSettingsViewProtocol
-
   func contentPresenterView(uiConfig: ShiftUIConfig,
                             presenter: ContentPresenterPresenterProtocol) -> ContentPresenterViewController
+  func dataConfirmationView(uiConfig: ShiftUIConfig,
+                            presenter: DataConfirmationPresenterProtocol) -> DataConfirmationViewController
 }

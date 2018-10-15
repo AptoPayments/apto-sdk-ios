@@ -46,4 +46,8 @@ final class InteractorLocator: InteractorLocatorProtocol {
   func contentPresenterInteractor(content: Content) -> ContentPresenterInteractorProtocol {
     return ContentPresenterInteractor(content: content)
   }
+
+  func dataConfirmationInteractor(userData: DataPointList) -> DataConfirmationInteractorProtocol {
+    return DataConfirmationInteractor(userData: userData)
+  }
 }

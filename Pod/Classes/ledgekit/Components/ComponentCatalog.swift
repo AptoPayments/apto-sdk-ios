@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PhoneNumberKit
 
 class ComponentCatalog {
 
@@ -105,6 +106,29 @@ class ComponentCatalog {
     return retVal
   }
 
+  static func formPhoneTextFieldWith(placeholder: String,
+                                     value: String?,
+                                     accessibilityLabel: String? = nil,
+                                     uiConfig: ShiftUIConfig) -> PhoneNumberTextField {
+    let retVal = PhoneNumberTextField()
+    retVal.placeholder = placeholder
+    retVal.text = value
+    retVal.keyboardType = .phonePad
+    retVal.autocapitalizationType = .none
+    retVal.spellCheckingType = .no
+    retVal.autocorrectionType = .no
+    retVal.clearsOnInsertion = false
+    retVal.clearsOnBeginEditing = false
+    retVal.returnKeyType = .next
+    retVal.enablesReturnKeyAutomatically = true
+    retVal.backgroundColor = .clear
+    retVal.font = uiConfig.formFieldFont
+    retVal.textColor = uiConfig.textSecondaryColor
+    retVal.accessibilityLabel = accessibilityLabel
+    retVal.tintColor = uiConfig.uiPrimaryColor
+    return retVal
+  }
+
   static func formFormattedFieldWith(placeholder: String,
                                      value: String?,
                                      format: String,
@@ -128,6 +152,18 @@ class ComponentCatalog {
     retVal.accessibilityLabel = accessibilityLabel
     retVal.tintColor = uiConfig.uiPrimaryColor
     return retVal
+  }
+
+  static func formPhoneFieldWith(placeholder: String,
+                                 value: InternationalPhoneNumber?,
+                                 allowedCountries: [Country],
+                                 accessibilityLabel: String? = nil,
+                                 uiConfig: ShiftUIConfig) -> PhoneTextField {
+    return PhoneTextField(allowedCountries: allowedCountries,
+                          placeholder: placeholder,
+                          value: value,
+                          accessibilityLabel: accessibilityLabel,
+                          uiConfig: uiConfig)
   }
 
   static func formTextLinkButtonWith(title: String,

@@ -112,6 +112,13 @@ class ModuleLocatorFake: ModuleLocatorProtocol {
   func contentPresenterModule(content: Content, title: String) -> ContentPresenterModuleProtocol {
     return contentPresenterModuleSpy
   }
+
+  lazy var dataConfirmationModuleSpy: DataConfirmationModuleSpy = {
+    return DataConfirmationModuleSpy(serviceLocator: serviceLocator)
+  }()
+  func dataConfirmationModule(userData: DataPointList) -> DataConfirmationModuleProtocol {
+    return dataConfirmationModuleSpy
+  }
 }
 
 class UIModuleSpy: UIModule {

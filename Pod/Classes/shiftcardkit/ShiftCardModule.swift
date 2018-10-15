@@ -1,6 +1,6 @@
 //
 //  ShiftCardModule.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 02/18/2018.
 //
@@ -21,16 +21,16 @@ open class ShiftCardModule: UIModule {
   let mode: ShiftCardModuleMode
   let options: ShiftCardOptions?
   var welcomeScreenModule: ShowGenericMessageModule?
-  var authModule: AuthModule?
+  var authModule: AuthModuleProtocol?
   var existingShiftCardModule: ManageShiftCardModule?
   var newShiftCardModule: NewShiftCardModule?
   var documentCaptureModule: VerifyDocumentModule?
 
-  var contextConfiguration:ContextConfiguration!
+  var contextConfiguration: ContextConfiguration! // swiftlint:disable:this implicitly_unwrapped_optional
   var projectConfiguration: ProjectConfiguration {
     return contextConfiguration.projectConfiguration
   }
-  var shiftCardConfiguration:ShiftCardConfiguration!
+  var shiftCardConfiguration: ShiftCardConfiguration! // swiftlint:disable:this implicitly_unwrapped_optional
   var userDataPoints: DataPointList
 
   public init(mode: ShiftCardModuleMode,
@@ -38,7 +38,7 @@ open class ShiftCardModule: UIModule {
               merchantData: MerchantData? = nil,
               options: ShiftCardOptions? = nil) {
     if let initialUserData = initialUserData {
-      self.userDataPoints = initialUserData.copy() as! DataPointList
+      self.userDataPoints = initialUserData.copy() as! DataPointList // swiftlint:disable:this force_cast
     }
     else {
       self.userDataPoints = DataPointList()
@@ -92,12 +92,12 @@ open class ShiftCardModule: UIModule {
         }
         else {
           // try to get info about the current user
-          self.shiftSession.currentUser (filterInvalidTokenResult:false) { result in
+          self.shiftSession.currentUser(filterInvalidTokenResult: false) { result in
             switch result {
             case .failure:
               // There's no current user.
               ShiftPlatform.defaultManager().clearUserToken()
-            case .success (let user):
+            case .success(let user):
               self.userDataPoints = user.userData
             }
             // Prepare the initial screen
@@ -124,9 +124,9 @@ open class ShiftCardModule: UIModule {
       self.addChild(module: welcomeScreenModule, completion: completion)
     }
     else {
-      guard let _ = self.shiftSession.currentUserToken() else {
+      guard self.shiftSession.currentUserToken() != nil else {
         // There's no user. Show the auth module
-        self.showAuthModule(addChild: true, completion:completion)
+        self.showAuthModule(addChild: true, completion: completion)
         return
       }
       // There's a user. Check if he has already cards.
@@ -144,13 +144,13 @@ open class ShiftCardModule: UIModule {
       guard let wself = self else {
         return
       }
-      guard let _ = wself.shiftSession.currentUserToken() else {
+      guard wself.shiftSession.currentUserToken() != nil else {
         // There's no user. Show the auth module
-        wself.showAuthModule() { result in }
+        wself.showAuthModule { _ in }
         return
       }
       // There's a user. Check if he has already cards.
-      wself.showExistingOrNewCardModule() { result in }
+      wself.showExistingOrNewCardModule { _ in }
     }
     welcomeScreenModule.onClose = { [weak self] module in
       self?.close()
@@ -163,10 +163,10 @@ open class ShiftCardModule: UIModule {
   fileprivate func showAuthModule(addChild: Bool = false,
                                   completion: @escaping Result<UIViewController, NSError>.Callback) {
     // Prepare the current user's data
-    let authModule = AuthModule(serviceLocator: serviceLocator,
-                                config: AuthModuleConfig(projectConfiguration: projectConfiguration),
-                                uiConfig: uiConfig!,
-                                initialUserData: userDataPoints)
+    let authModuleConfig = AuthModuleConfig(projectConfiguration: projectConfiguration)
+    let authModule = serviceLocator.moduleLocator.authModule(authConfig: authModuleConfig,
+                                                             uiConfig: uiConfig!,
+                                                             initialUserData: userDataPoints)
     authModule.onBack = { [unowned self] module in
       self.popModule {
         self.authModule = nil
@@ -180,9 +180,9 @@ open class ShiftCardModule: UIModule {
       guard let wself = self else {
         return
       }
-      wself.userDataPoints = user.userData.copy() as! DataPointList
+      wself.userDataPoints = user.userData.copy() as! DataPointList // swiftlint:disable:this force_cast
       // There's a user. Check if he has already cards.
-      wself.showExistingOrNewCardModule() { result in
+      wself.showExistingOrNewCardModule { _ in
         wself.authModule = nil
       }
     }
@@ -201,78 +201,86 @@ open class ShiftCardModule: UIModule {
                                                pushModule: Bool = false,
                                                completion: @escaping Result<UIViewController, NSError>.Callback) {
     showLoadingSpinner(position: .bottomCenter)
-    shiftCardSession.getCards(0, rows: 100, callback: { result in
+    shiftCardSession.getCards(0, rows: 100) { [unowned self] result in
       switch result {
       case .failure(let error):
         self.show(error: error)
       case .success(let cards):
         if let card = cards.first {
           self.hideLoadingSpinner()
-          let existingCardModule = ManageShiftCardModule(serviceLocator: self.serviceLocator,
-                                                         card: card,
-                                                         mode: self.mode)
-          existingCardModule.onClose = { module in
-            self.close()
-          }
-          existingCardModule.onBack = { _ in
-            self.popModule {}
-          }
-          self.existingShiftCardModule = existingCardModule
-          let leftButtonMode: UIViewControllerLeftButtonMode = self.mode == .standalone ? .none : .close
-          if addChild {
-            self.addChild(module: existingCardModule, leftButtonMode: leftButtonMode, completion: completion)
-          }
-          else {
-            if pushModule {
-              self.push(module: existingCardModule,
-                        animated: true,
-                        leftButtonMode: leftButtonMode,
-                        completion: completion)
-            }
-            else {
-              self.present(module: existingCardModule,
-                           animated: true,
-                           leftButtonMode: leftButtonMode,
-                           completion: completion)
-            }
-          }
+          self.showManageCardModule(card: card, addChild: addChild, pushModule: pushModule, completion: completion)
         }
         else {
-          let newShiftCardModule = NewShiftCardModule(serviceLocator: self.serviceLocator,
-                                                      initialDataPoints: self.userDataPoints,
-                                                      mode: self.mode)
-          newShiftCardModule.onClose = { [unowned self] _ in
-            self.close()
-          }
-          newShiftCardModule.onBack = { [unowned self] _ in
-            self.popModule {}
-          }
-          self.newShiftCardModule = newShiftCardModule
-          if addChild {
-            newShiftCardModule.onFinish = { module in
-              self.remove(module: module) {
-                self.newShiftCardModule = nil
-                self.showExistingOrNewCardModule(addChild: addChild, completion: completion)
-              }
-            }
-            self.addChild(module: newShiftCardModule) { result in
-              self.hideLoadingSpinner()
-              completion(result)
-            }
-          }
-          else {
-            newShiftCardModule.onFinish = { module in
-              self.newShiftCardModule = nil
-              self.showExistingOrNewCardModule(addChild: false, pushModule: true, completion: completion)
-            }
-            self.hideLoadingSpinner()
-            self.push(module: newShiftCardModule) { result in
-              completion(result)
-            }
+          self.showNewCardModule(addChild: addChild, completion: completion)
+        }
+      }
+    }
+  }
+
+  private func showManageCardModule(card: Card,
+                                    addChild: Bool,
+                                    pushModule: Bool,
+                                    completion: @escaping Result<UIViewController, NSError>.Callback) {
+    let existingCardModule = ManageShiftCardModule(serviceLocator: self.serviceLocator,
+                                             card: card,
+                                             mode: self.mode)
+    existingCardModule.onClose = { [unowned self] _ in
+      self.close()
+    }
+    existingCardModule.onBack = { [unowned self] _ in
+      self.popModule {}
+    }
+    self.existingShiftCardModule = existingCardModule
+    let leftButtonMode: UIViewControllerLeftButtonMode = self.mode == .standalone ? .none : .close
+    if addChild {
+      self.addChild(module: existingCardModule, leftButtonMode: leftButtonMode, completion: completion)
+    }
+    else {
+      if pushModule {
+        push(module: existingCardModule, animated: true, leftButtonMode: leftButtonMode, completion: completion)
+      }
+      else {
+        present(module: existingCardModule, animated: true, leftButtonMode: leftButtonMode, completion: completion)
+      }
+    }
+  }
+
+  private func showNewCardModule(addChild: Bool, completion: @escaping Result<UIViewController, NSError>.Callback) {
+    let newShiftCardModule = NewShiftCardModule(serviceLocator: self.serviceLocator,
+                                                initialDataPoints: self.userDataPoints,
+                                                mode: self.mode)
+    newShiftCardModule.onClose = { [unowned self] _ in
+      self.close()
+    }
+    newShiftCardModule.onBack = { [unowned self] _ in
+      self.popModule {}
+    }
+    self.newShiftCardModule = newShiftCardModule
+    if addChild {
+      newShiftCardModule.onFinish = { [unowned self] module in
+        self.showExistingOrNewCardModule { [unowned self] _ in
+          self.remove(module: module) { [unowned self] in
+            self.newShiftCardModule = nil
           }
         }
       }
-    })
+      self.addChild(module: newShiftCardModule) { [unowned self] result in
+        self.hideLoadingSpinner()
+        completion(result)
+      }
+    }
+    else {
+      newShiftCardModule.onFinish = { module in
+        self.showExistingOrNewCardModule(addChild: false, pushModule: true) { [unowned self] result in
+          self.newShiftCardModule = nil
+          completion(result)
+        }
+      }
+      hideLoadingSpinner()
+      push(module: newShiftCardModule) { result in
+        completion(result)
+      }
+    }
   }
 
   // MARK: - Configuration HandlingApplication
@@ -304,9 +312,9 @@ open class ShiftCardModule: UIModule {
     DispatchQueue.main.async {
       UIAlertController.confirm(title: "error.transport.sessionExpired.title".podLocalized(),
                                 message: "error.transport.sessionExpired".podLocalized(),
-                                okTitle: "general.button.ok".podLocalized(), handler: { action in
+                                okTitle: "general.button.ok".podLocalized()) { _ in
                                   self.close()
-      })
+      }
     }
   }
 
@@ -348,7 +356,6 @@ extension ShiftSession {
             completion(.failure(error))
           case .success:
             completion(.success(shiftCardModule))
-            break
           }
         }
       }

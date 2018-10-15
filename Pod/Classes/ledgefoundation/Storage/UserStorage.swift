@@ -10,62 +10,50 @@ import Foundation
 import SwiftyJSON
 
 protocol UserStorageProtocol {
-  func createUser(_ developerKey: String,
-                  projectKey: String,
+  func createUser(_ apiKey: String,
                   userData: DataPointList,
                   callback: @escaping Result<ShiftUser, NSError>.Callback)
-  func loginWith(_ developerKey: String,
-                 projectKey: String,
+  func loginWith(_ apiKey: String,
                  verifications: [Verification],
                  callback: @escaping Result<ShiftUser, NSError>.Callback)
-  func getUserData(_ developerKey: String,
-                   projectKey: String,
+  func getUserData(_ apiKey: String,
                    userToken: String,
                    availableHousingTypes: [HousingType],
                    availableIncomeTypes: [IncomeType],
                    availableSalaryFrequencies: [SalaryFrequency],
                    filterInvalidTokenResult: Bool,
                    callback: @escaping Result<ShiftUser, NSError>.Callback)
-  func updateUserData(_ developerKey: String,
-                      projectKey: String,
+  func updateUserData(_ apiKey: String,
                       userToken: String,
                       userData: DataPointList,
                       callback: @escaping Result<ShiftUser, NSError>.Callback)
-  func startPhoneVerification(_ developerKey: String,
-                              projectKey: String,
+  func startPhoneVerification(_ apiKey: String,
                               phone: PhoneNumber,
                               callback: @escaping Result<Verification, NSError>.Callback)
-  func startEmailVerification(_ developerKey: String,
-                              projectKey: String,
+  func startEmailVerification(_ apiKey: String,
                               email: Email,
                               callback: @escaping Result<Verification, NSError>.Callback)
-  func startBirthDateVerification(_ developerKey: String,
-                                  projectKey: String,
+  func startBirthDateVerification(_ apiKey: String,
                                   birthDate: BirthDate,
                                   callback: @escaping Result<Verification, NSError>.Callback)
-  func startDocumentVerification(_ developerKey: String,
-                                 projectKey: String,
+  func startDocumentVerification(_ apiKey: String,
                                  userToken: String,
                                  documentImages: [UIImage],
                                  selfie: UIImage?,
                                  livenessData: [String: AnyObject]?,
                                  associatedTo workflowObject: WorkflowObject?,
                                  callback: @escaping Result<Verification, NSError>.Callback)
-  func documentVerificationStatus(_ developerKey: String,
-                                  projectKey: String,
+  func documentVerificationStatus(_ apiKey: String,
                                   verificationId: String,
                                   callback: @escaping Result<Verification, NSError>.Callback)
-  func completeVerification(_ developerKey: String,
-                            projectKey: String,
+  func completeVerification(_ apiKey: String,
                             verificationId: String,
                             secret: String?,
                             callback: @escaping Result<Verification, NSError>.Callback)
-  func verificationStatus(_ developerKey: String,
-                          projectKey: String,
+  func verificationStatus(_ apiKey: String,
                           verificationId: String,
                           callback: @escaping Result<Verification, NSError>.Callback)
-  func restartVerification(_ developerKey: String,
-                           projectKey: String,
+  func restartVerification(_ apiKey: String,
                            verificationId: String,
                            callback: @escaping Result<Verification, NSError>.Callback)
 }
@@ -77,12 +65,11 @@ class UserStorage: UserStorageProtocol {
     self.transport = transport
   }
 
-  func createUser(_ developerKey: String,
-                  projectKey: String,
+  func createUser(_ apiKey: String,
                   userData: DataPointList,
                   callback: @escaping Result<ShiftUser, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.createUser)
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     let data: [String: AnyObject] = ["data_points": userData.jsonSerialize() as AnyObject]
     self.transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<ShiftUser, NSError> in
@@ -94,8 +81,7 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func loginWith(_ developerKey: String,
-                 projectKey: String,
+  func loginWith(_ apiKey: String,
                  verifications: [Verification],
                  callback: @escaping Result<ShiftUser, NSError>.Callback) {
     guard let firstVerification = verifications.first, let secondVerification = verifications.last else {
@@ -103,7 +89,7 @@ class UserStorage: UserStorageProtocol {
       return
     }
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.login)
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     let verificationsArray = [
       firstVerification.jsonSerialize(),
       secondVerification.jsonSerialize()
@@ -122,8 +108,7 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func getUserData(_ developerKey: String,
-                   projectKey: String,
+  func getUserData(_ apiKey: String,
                    userToken: String,
                    availableHousingTypes: [HousingType],
                    availableIncomeTypes: [IncomeType],
@@ -131,8 +116,7 @@ class UserStorage: UserStorageProtocol {
                    filterInvalidTokenResult: Bool,
                    callback: @escaping Result<ShiftUser, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.userInfo)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
     self.transport.get(url,
                        authorization: auth,
@@ -176,14 +160,12 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func updateUserData(_ developerKey: String,
-                      projectKey: String,
+  func updateUserData(_ apiKey: String,
                       userToken: String,
                       userData: DataPointList,
                       callback: @escaping Result<ShiftUser, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.updateUserInfo)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
     let dataPointList = DataPointList()
     for dataPointBag in userData.dataPoints.values {
@@ -191,17 +173,17 @@ class UserStorage: UserStorageProtocol {
         dataPointList.add(dataPoint: dataPoint)
       }
     }
-    if let ssnDataPoint = dataPointList.getDataPointsOf(type: .ssn)?.first as? SSN {
+    if let ssnDataPoint = dataPointList.getDataPointsOf(type: .idDocument)?.first as? IdDocument {
       if let notSpecified = ssnDataPoint.notSpecified {
         if !notSpecified {
-          if ssnDataPoint.ssn.value == SSNTextValidator.unknownValidSSN {
-            dataPointList.removeDataPointsOf(type: .ssn)
+          if ssnDataPoint.value.value == SSNTextValidator.unknownValidSSN {
+            dataPointList.removeDataPointsOf(type: .idDocument)
           }
         }
       }
       else {
-        if ssnDataPoint.ssn.value == SSNTextValidator.unknownValidSSN {
-          dataPointList.removeDataPointsOf(type: .ssn)
+        if ssnDataPoint.value.value == SSNTextValidator.unknownValidSSN {
+          dataPointList.removeDataPointsOf(type: .idDocument)
         }
       }
     }
@@ -216,12 +198,11 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func startPhoneVerification(_ developerKey: String,
-                              projectKey: String,
+  func startPhoneVerification(_ apiKey: String,
                               phone: PhoneNumber,
                               callback: @escaping Result<Verification, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.verificationStart)
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     let data = [
       "datapoint_type": "phone" as AnyObject,
       "show_verification_secret": true as AnyObject,
@@ -241,12 +222,11 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func startEmailVerification(_ developerKey: String,
-                              projectKey: String,
+  func startEmailVerification(_ apiKey: String,
                               email: Email,
                               callback: @escaping Result<Verification, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.verificationStart)
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     let data = [
       "datapoint_type": "email" as AnyObject,
       "show_verification_secret": true as AnyObject,
@@ -265,12 +245,11 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func startBirthDateVerification(_ developerKey: String,
-                                  projectKey: String,
+  func startBirthDateVerification(_ apiKey: String,
                                   birthDate: BirthDate,
                                   callback: @escaping Result<Verification, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.verificationStart)
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     let data = [
       "datapoint_type": "birthDate" as AnyObject,
       "show_verification_secret": true as AnyObject,
@@ -289,8 +268,7 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func startDocumentVerification(_ developerKey: String,
-                                 projectKey: String,
+  func startDocumentVerification(_ apiKey: String,
                                  userToken: String,
                                  documentImages: [UIImage],
                                  selfie: UIImage?,
@@ -298,8 +276,7 @@ class UserStorage: UserStorageProtocol {
                                  associatedTo workflowObject: WorkflowObject?,
                                  callback: @escaping Result<Verification, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.documentOCR)
-    let auth = JSONTransportAuthorization.accessAndUserToken(token: developerKey,
-                                                             projectToken: projectKey,
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
     let imagesData = documentImages.map { image -> [String: String] in
       return ["image_array": image.toBase64()]
@@ -330,14 +307,13 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func documentVerificationStatus(_ developerKey: String,
-                                  projectKey: String,
+  func documentVerificationStatus(_ apiKey: String,
                                   verificationId: String,
                                   callback: @escaping Result<Verification, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.documentOCRStatus,
                          urlParameters: [":verificationId": verificationId])
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     self.transport.get(url,
                        authorization: auth,
                        parameters: nil,
@@ -353,15 +329,14 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func completeVerification(_ developerKey: String,
-                            projectKey: String,
+  func completeVerification(_ apiKey: String,
                             verificationId: String,
                             secret: String?,
                             callback: @escaping Result<Verification, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.verificationFinish,
                          urlParameters: [":verificationId": verificationId])
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     let data = [
       "secret": secret as AnyObject
     ]
@@ -375,14 +350,13 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func verificationStatus(_ developerKey: String,
-                          projectKey: String,
+  func verificationStatus(_ apiKey: String,
                           verificationId: String,
                           callback: @escaping Result<Verification, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.verificationStatus,
                          urlParameters: [":verificationId": verificationId])
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     self.transport.get(url,
                        authorization: auth,
                        parameters: nil,
@@ -398,14 +372,13 @@ class UserStorage: UserStorageProtocol {
     }
   }
 
-  func restartVerification(_ developerKey: String,
-                           projectKey: String,
+  func restartVerification(_ apiKey: String,
                            verificationId: String,
                            callback: @escaping Result<Verification, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.verificationRestart,
                          urlParameters: [":verificationId": verificationId])
-    let auth = JSONTransportAuthorization.accessToken(token: developerKey, projectToken: projectKey)
+    let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     self.transport.post(url, authorization: auth, parameters: nil, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<Verification, NSError> in
         guard let verification = json.verification else {

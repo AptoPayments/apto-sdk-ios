@@ -1,6 +1,6 @@
 //
 //  ExternalOAuthInteractor.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 03/06/2018.
 //

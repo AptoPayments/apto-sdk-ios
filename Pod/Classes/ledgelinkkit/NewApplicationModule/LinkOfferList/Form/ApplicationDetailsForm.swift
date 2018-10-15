@@ -60,7 +60,7 @@ class ApplicationDetailsForm {
     rows.append(rowWith(leftText:"application-details.address".podLocalized(), rightText:addressDataPoint.address.value))
     rows.append(rowWith(leftText:"application-details.apt-unit".podLocalized(), rightText:addressDataPoint.apUnit.value))
     rows.append(rowWith(leftText:"application-details.city".podLocalized(), rightText:addressDataPoint.city.value))
-    rows.append(rowWith(leftText:"application-details.state".podLocalized(), rightText:addressDataPoint.stateCode.value))
+    rows.append(rowWith(leftText:"application-details.state".podLocalized(), rightText:addressDataPoint.region.value))
     rows.append(rowWith(leftText:"application-details.zip-code".podLocalized(), rightText:addressDataPoint.zip.value))
     rows.append(rowWith(leftText:"application-details.housing-status".podLocalized(), rightText:housingDataPoint.housingType.value?.description ?? ""))
     rows.append(rowWith(leftText:"application-details.annual-pretax-income".podLocalized(), rightText:String(format: moneyPattern, arguments: [grossMonthlyIncome ?? 0])))

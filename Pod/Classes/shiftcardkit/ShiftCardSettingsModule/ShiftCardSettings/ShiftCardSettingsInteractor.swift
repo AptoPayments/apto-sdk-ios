@@ -18,7 +18,7 @@ class ShiftCardSettingsInteractor: ShiftCardSettingsInteractorProtocol {
   }
 
   func provideFundingSources(rows: Int, callback: @escaping Result<[FundingSource], NSError>.Callback) {
-    shiftSession.shiftCardSession.userFundingSources(page: nil, rows: rows, callback: callback)
+    shiftSession.shiftCardSession.cardFundingSources(card: card, page: nil, rows: rows, callback: callback)
   }
 
   func activeCardFundingSource(callback: @escaping Result<FundingSource?, NSError>.Callback) {

@@ -21,10 +21,9 @@ import TrustKit
    * Called once the SDK has been completely initialized.
    *
    * - Parameters:
-   *   - developerKey: developer API key
-   *   - projectKey: project API key
+   *   - apiKey: project API key
    */
-  func shiftSDKInitialized(developerKey: String, projectKey: String)
+  func shiftSDKInitialized(apiKey: String)
 
   /**
    * Called when a network request fails because the device is not connected to the Internet. The failed request will
@@ -80,8 +79,7 @@ public enum HandleFileResult {
   // MARK: Authentication attributes
 
   // swiftlint:disable implicitly_unwrapped_optional
-  public private(set) var developerKey: String!
-  public private(set) var projectKey: String!
+  public private(set) var apiKey: String!
   public private(set) var environment: ShiftPlatformEnvironment!
   public private(set) var initialized = false
   // swiftlint:enable implicitly_unwrapped_optional
@@ -113,7 +111,7 @@ public enum HandleFileResult {
   private lazy var serviceLocator = ServiceLocator.shared
 
   deinit {
-    self.removeNetworkChangesNotificationObservers()
+    self.removeNotificationObservers()
   }
 
   // MARK: Setup Manager
@@ -126,13 +124,11 @@ public enum HandleFileResult {
     return sharedManager
   }
 
-  @objc public func initializeWithDeveloperKey(_ developerKey: String,
-                                               projectKey: String,
-                                               environment: ShiftPlatformEnvironment,
-                                               setupCertPinning: Bool) {
+  @objc public func initializeWithApiKey(_ apiKey: String,
+                                         environment: ShiftPlatformEnvironment,
+                                         setupCertPinning: Bool) {
     let certPinningConfig: [String: [String: AnyObject]]? = nil
-    self.developerKey = developerKey
-    self.projectKey = projectKey
+    self.apiKey = apiKey
     self.environment = environment
     var allowSelfSignedCertificate = false
     switch environment {
@@ -165,24 +161,18 @@ public enum HandleFileResult {
 
     // Notify the delegate that the manager has already been initialized
     self.initialized = true
-    self.delegate?.shiftSDKInitialized(developerKey: developerKey,
-                                       projectKey: projectKey)
+    self.delegate?.shiftSDKInitialized(apiKey: apiKey)
 
     // Configure reachability notification observers
-    self.setUpNetworkChangesNotificationObservers()
+    self.setUpNotificationObservers()
   }
 
-  @objc public func initializeWithDeveloperKey(_ developerKey: String, projectKey: String) {
-    self.initializeWithDeveloperKey(developerKey, projectKey: projectKey, environment: .sandbox)
+  @objc public func initializeWithApiKey(_ apiKey: String) {
+    self.initializeWithApiKey(apiKey, environment: .sandbox)
   }
 
-  @objc public func initializeWithDeveloperKey(_ developerKey: String,
-                                               projectKey: String,
-                                               environment: ShiftPlatformEnvironment) {
-    self.initializeWithDeveloperKey(developerKey,
-                                    projectKey: projectKey,
-                                    environment: environment,
-                                    setupCertPinning: false)
+  @objc public func initializeWithApiKey(_ apiKey: String, environment: ShiftPlatformEnvironment) {
+    self.initializeWithApiKey(apiKey, environment: environment, setupCertPinning: false)
   }
 
   public func currentToken() -> AccessToken? {
@@ -204,18 +194,17 @@ public enum HandleFileResult {
     return self.pushTokenStorage.currentPushToken()
   }
 
-  public func validateStoreWith(_ projectKey: String,
+  public func validateStoreWith(_ apiKey: String,
                                 partnerKey: String,
                                 merchantKey: String,
                                 storeKey: String,
                                 callback: @escaping Result<Store?, NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.storeStorage.validateStoreKey(accessToken,
-                                       projectKey: projectKey,
+    self.storeStorage.validateStoreKey(apiKey,
                                        partnerKey: partnerKey,
                                        merchantKey: merchantKey,
                                        storeKey: storeKey,
@@ -230,21 +219,17 @@ public enum HandleFileResult {
 
   public func createUser(userData: DataPointList,
                          callback: @escaping Result<ShiftUser, NSError>.Callback) {
-
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
 
-    self.userStorage.createUser(developerKey,
-                                projectKey: projectKey,
-                                userData: userData) { result in
+    userStorage.createUser(apiKey, userData: userData) { result in
       switch result {
       case .failure(let error): callback(.failure(error))
       case .success(let user):
-        self.configurationStorage.contextConfiguration(developerKey,
-                                                       projectKey: projectKey) { result in
+        self.configurationStorage.contextConfiguration(apiKey) { result in
           switch result {
           case .failure(let error): callback(.failure(error))
           case .success(let contextConfiguration):
@@ -264,18 +249,17 @@ public enum HandleFileResult {
 
   public func loginUserWith(verifications: [Verification],
                             callback: @escaping Result<ShiftUser, NSError>.Callback) {
-
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
 
-    self.userStorage?.loginWith(developerKey, projectKey: projectKey, verifications: verifications) { result in
+    userStorage.loginWith(apiKey, verifications: verifications) { result in
       switch result {
       case .failure(let error): callback(.failure(error))
       case .success(let user):
-        self.configurationStorage.contextConfiguration(developerKey, projectKey: projectKey) { result in
+        self.configurationStorage.contextConfiguration(apiKey) { result in
           switch result {
           case .failure(let error): callback(.failure(error))
           case .success(let contextConfiguration):
@@ -295,36 +279,32 @@ public enum HandleFileResult {
 
   public func contextConfiguration(_ forceRefresh: Bool = false,
                                    callback: @escaping Result<ContextConfiguration, NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.configurationStorage.contextConfiguration(accessToken,
-                                                   projectKey: projectKey,
-                                                   forceRefresh: forceRefresh,
-                                                   callback: callback)
+    configurationStorage.contextConfiguration(apiKey, forceRefresh: forceRefresh, callback: callback)
   }
 
   public func bankOauthConfiguration(_ accessToken: AccessToken,
                                      forceRefresh: Bool = false,
                                      callback: @escaping Result<BankOauthConfiguration, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.configurationStorage.bankOauthConfiguration(developerKey,
-                                                     projectKey: projectKey,
-                                                     userToken: accessToken.token,
-                                                     forceRefresh: forceRefresh,
-                                                     callback: callback)
+    configurationStorage.bankOauthConfiguration(apiKey,
+                                                userToken: accessToken.token,
+                                                forceRefresh: forceRefresh,
+                                                callback: callback)
   }
 
   func currentUserInfo(_ accessToken: AccessToken,
                        filterInvalidTokenResult: Bool = true,
                        callback: @escaping Result<ShiftUser, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
@@ -334,8 +314,7 @@ public enum HandleFileResult {
         callback(.failure(error))
       case .success(let contextConfiguration):
         let projectConfiguration = contextConfiguration.projectConfiguration
-        self.userStorage.getUserData(developerKey,
-                                     projectKey: projectKey,
+        self.userStorage.getUserData(apiKey,
                                      userToken: accessToken.token,
                                      availableHousingTypes: projectConfiguration.housingTypes,
                                      availableIncomeTypes: projectConfiguration.incomeTypes,
@@ -363,16 +342,12 @@ public enum HandleFileResult {
   func updateUserInfo(_ accessToken: AccessToken,
                       userData: DataPointList,
                       callback: @escaping Result<ShiftUser, NSError>.Callback) {
-    guard let developerId = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.userStorage.updateUserData(developerId,
-                                    projectKey: projectKey,
-                                    userToken: accessToken.token,
-                                    userData: userData,
-                                    callback: callback)
+    userStorage.updateUserData(apiKey, userToken: accessToken.token, userData: userData, callback: callback)
   }
 
   func getPlaidURL(_ callback: Result<URL, NSError>.Callback) {
@@ -385,35 +360,32 @@ public enum HandleFileResult {
 
   func startPhoneVerification(_ phone: PhoneNumber,
                               callback: @escaping Result<Verification, NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.userStorage.startPhoneVerification(accessToken, projectKey: projectKey, phone: phone, callback: callback)
+    userStorage.startPhoneVerification(apiKey, phone: phone, callback: callback)
   }
 
   func startEmailVerification(_ email: Email,
                               callback: @escaping Result<Verification, NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.userStorage.startEmailVerification(accessToken, projectKey: projectKey, email: email, callback: callback)
+    userStorage.startEmailVerification(apiKey, email: email, callback: callback)
   }
 
   func startBirthDateVerification(_ birthDate: BirthDate,
                                   callback: @escaping Result<Verification, NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.userStorage.startBirthDateVerification(accessToken,
-                                                projectKey: projectKey,
-                                                birthDate: birthDate,
-                                                callback: callback)
+    userStorage.startBirthDateVerification(apiKey, birthDate: birthDate, callback: callback)
   }
 
   func startDocumentVerification(_ accessToken: AccessToken,
@@ -422,101 +394,86 @@ public enum HandleFileResult {
                                  livenessData: [String: AnyObject]?,
                                  associatedTo workflowObject: WorkflowObject?,
                                  callback: @escaping Result<Verification, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.userStorage.startDocumentVerification(developerKey,
-                                               projectKey: projectKey,
-                                               userToken: accessToken.token,
-                                               documentImages: documentImages,
-                                               selfie: selfie,
-                                               livenessData: livenessData,
-                                               associatedTo: workflowObject,
-                                               callback: callback)
+    userStorage.startDocumentVerification(apiKey,
+                                          userToken: accessToken.token,
+                                          documentImages: documentImages,
+                                          selfie: selfie,
+                                          livenessData: livenessData,
+                                          associatedTo: workflowObject,
+                                          callback: callback)
   }
 
   func documentVerificationStatus(_ verification: Verification,
                                   callback: @escaping Result<Verification, NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.userStorage.documentVerificationStatus(accessToken,
-                                                projectKey: projectKey,
-                                                verificationId: verification.verificationId,
-                                                 callback: callback)
+    userStorage.documentVerificationStatus(apiKey, verificationId: verification.verificationId, callback: callback)
   }
 
   func restartVerification(_ verification: Verification,
                            callback: @escaping Result<Verification, NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.userStorage.restartVerification(accessToken,
-                                         projectKey: projectKey,
-                                         verificationId: verification.verificationId,
-                                         callback: callback)
+    userStorage.restartVerification(apiKey, verificationId: verification.verificationId, callback: callback)
   }
 
   func addBankAccounts(_ userToken: AccessToken,
                        publicToken: String,
                        callback: @escaping Result<[BankAccount], NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
     self.financialAccountsStorage.addBankAccounts(userToken: userToken.token,
-                                                  developerKey: accessToken,
-                                                  projectKey: projectKey,
+                                                  apiKey: apiKey,
                                                   publicToken: publicToken,
                                                   callback: callback)
   }
 
   func completeVerification(_ verification: Verification,
                             callback:@escaping Result<Verification, NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.userStorage.completeVerification(accessToken,
-                                          projectKey: projectKey,
-                                          verificationId: verification.verificationId,
-                                          secret: verification.secret,
-                                          callback: callback)
+    userStorage.completeVerification(apiKey,
+                                     verificationId: verification.verificationId,
+                                     secret: verification.secret,
+                                     callback: callback)
   }
 
   func verificationStatus(_ verification: Verification,
                           callback: @escaping Result<Verification, NSError>.Callback) {
-    guard let accessToken = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
-    self.userStorage.verificationStatus(accessToken,
-                                        projectKey: projectKey,
-                                        verificationId: verification.verificationId,
-                                        callback: callback)
+    userStorage.verificationStatus(apiKey, verificationId: verification.verificationId, callback: callback)
   }
 
   func nextFinancialAccounts(_ accessToken: AccessToken,
                              page: Int,
                              rows: Int,
                              callback: @escaping Result<[FinancialAccount], NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.financialAccountsStorage.getFinancialAccounts(developerKey,
-                                                       projectKey: projectKey,
-                                                       userToken: accessToken.token,
-                                                       callback: callback)
+    financialAccountsStorage.getFinancialAccounts(apiKey, userToken: accessToken.token, callback: callback)
   }
 
   func next(financialAccountsOfType: FinancialAccountType,
@@ -524,13 +481,12 @@ public enum HandleFileResult {
             page: Int,
             rows: Int,
             callback: @escaping Result<[FinancialAccount], NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
     self.financialAccountsStorage.get(financialAccountsOfType: financialAccountsOfType,
-                                      developerKey: developerKey,
-                                      projectKey: projectKey,
+                                      apiKey: apiKey,
                                       userToken: accessToken.token,
                                       callback: callback)
   }
@@ -539,16 +495,15 @@ public enum HandleFileResult {
                            accountId: String,
                            retrieveBalance: Bool = true,
                            callback: @escaping Result<FinancialAccount, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    self.financialAccountsStorage.getFinancialAccount(developerKey,
-                                                      projectKey: projectKey,
-                                                      userToken: accessToken.token,
-                                                      accountId: accountId,
-                                                      retrieveBalance: retrieveBalance,
-                                                      callback: callback)
+    financialAccountsStorage.getFinancialAccount(apiKey,
+                                                 userToken: accessToken.token,
+                                                 accountId: accountId,
+                                                 retrieveBalance: retrieveBalance,
+                                                 callback: callback)
   }
 
   func addCard(_ accessToken: AccessToken,
@@ -558,34 +513,31 @@ public enum HandleFileResult {
                expirationYear: UInt,
                cvv: String,
                callback: @escaping Result<Card, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
 
-    self.financialAccountsStorage.addCard(developerKey,
-                                          projectKey: projectKey,
-                                          userToken: accessToken.token,
-                                          cardNumber: cardNumber,
-                                          cardNetwork: cardNetwork,
-                                          expirationYear: expirationYear,
-                                          expirationMonth: expirationMonth,
-                                          cvv: cvv,
-                                          callback: callback)
+    financialAccountsStorage.addCard(apiKey,
+                                     userToken: accessToken.token,
+                                     cardNumber: cardNumber,
+                                     cardNetwork: cardNetwork,
+                                     expirationYear: expirationYear,
+                                     expirationMonth: expirationMonth,
+                                     cvv: cvv,
+                                     callback: callback)
   }
 
   public func authorisationHeaders(_ result: Result<[String: String]?, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       result(.success(nil))
       return
     }
     guard let accessToken = self.currentToken() else {
-      result(.success(["Developer-Authorization: Bearer": developerKey, "Project: Bearer": projectKey]))
+      result(.success(["Api-Key: Bearer": apiKey]))
       return
     }
-    result(.success(["Developer-Authorization: Bearer": developerKey,
-                     "Project: Bearer": projectKey,
-                     "Authorization: Bearer": accessToken.token]))
+    result(.success(["Api-Key: Bearer": apiKey, "Authorization: Bearer": accessToken.token]))
   }
 
   public func runPendingNetworkRequests() {
@@ -596,7 +548,7 @@ public enum HandleFileResult {
 
   fileprivate static var sharedManager: ShiftPlatform?
 
-  private func setUpNetworkChangesNotificationObservers() {
+  private func setUpNotificationObservers() {
     NotificationCenter.default.addObserver(self,
                                            selector: #selector(self.didRestoreNetworkConnection),
                                            name: .NetworkReachableNotification,
@@ -615,10 +567,11 @@ public enum HandleFileResult {
                                            object: nil)
   }
 
-  private func removeNetworkChangesNotificationObservers() {
+  private func removeNotificationObservers() {
     NotificationCenter.default.removeObserver(self, name: .NetworkReachableNotification, object: nil)
     NotificationCenter.default.removeObserver(self, name: .NetworkNotReachableNotification, object: nil)
     NotificationCenter.default.removeObserver(self, name: .ServerMaintenanceNotification, object: nil)
+    NotificationCenter.default.removeObserver(self, name: .SDKDeprecatedNotification, object: nil)
   }
 
   private var shouldHandleNetworkRestore = false
@@ -718,31 +671,24 @@ extension ShiftPlatform {
 
   func notifyPushTokenIfNeeded() {
     if let accessToken = self.currentToken(), let pushToken = self.currentPushToken() {
-      self.pushTokenStorage.registerPushToken(developerKey,
-                                              projectKey: projectKey,
-                                              userToken: accessToken.token,
-                                              pushToken: pushToken) { _ in }
+      pushTokenStorage.registerPushToken(apiKey, userToken: accessToken.token, pushToken: pushToken) { _ in }
     }
   }
 
   func unregisterPushTokenIfNeeded() {
     if let accessToken = self.currentToken(), let pushToken = self.currentPushToken() {
-      self.pushTokenStorage.unregisterPushToken(developerKey,
-                                                projectKey: projectKey,
-                                                userToken: accessToken.token,
-                                                pushToken: pushToken) { _ in }
+      pushTokenStorage.unregisterPushToken(apiKey, userToken: accessToken.token, pushToken: pushToken) { _ in }
     }
   }
 
   func startOauthAuthentication(_ accessToken: AccessToken,
                                 custodianType: CustodianType,
                                 callback: @escaping Result<OauthAttempt, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else  {
+    guard let apiKey = self.apiKey else  {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    oauthStorage.startOauthAuthentication(developerKey,
-                                          projectKey: projectKey,
+    oauthStorage.startOauthAuthentication(apiKey,
                                           userToken: accessToken.token,
                                           custodianType: custodianType,
                                           callback: callback)
@@ -752,12 +698,11 @@ extension ShiftPlatform {
                                 attempt: OauthAttempt,
                                 custodianType: CustodianType,
                                 callback: @escaping Result<Custodian, NSError>.Callback) {
-    guard let developerKey = self.developerKey, let projectKey = self.projectKey else {
+    guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    oauthStorage.waitForOauthAuthenticationConfirmation(developerKey,
-                                                        projectKey: projectKey,
+    oauthStorage.waitForOauthAuthenticationConfirmation(apiKey,
                                                         userToken: accessToken.token,
                                                         attempt: attempt,
                                                         custodianType: custodianType,

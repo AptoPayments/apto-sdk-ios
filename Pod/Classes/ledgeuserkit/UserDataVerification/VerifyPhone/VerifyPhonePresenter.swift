@@ -54,7 +54,8 @@ class VerifyPhonePresenter: PINVerificationPresenter, VerifyPhoneDataReceiver {
       return
     }
     let phoneNumber = PhoneHelper.sharedHelper().formatPhoneWith(countryCode: phone.countryCode.value,
-                                                                 nationalNumber: nationalNumber)
+                                                                 nationalNumber: nationalNumber,
+                                                                 numberFormat: .nationalWithPrefix)
     viewModel.datapointValue.next(phoneNumber)
   }
 

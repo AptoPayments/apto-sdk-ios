@@ -15,4 +15,5 @@ protocol PresenterLocatorProtocol {
   func serverMaintenanceErrorPresenter() -> ServerMaintenanceErrorPresenterProtocol
   func accountSettingsPresenter() -> AccountSettingsPresenterProtocol
   func contentPresenterPresenter() -> ContentPresenterPresenterProtocol
+  func dataConfirmationPresenter() -> DataConfirmationPresenterProtocol
 }
