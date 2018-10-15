@@ -216,7 +216,7 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
       return
     }
     var transactions = transactions
-    let mostRecentItemsCount = 3
+    let mostRecentItemsCount = min(3, transactions.count)
     if viewModel.transactions.numberOfSections == 0 {
       let mostRecentSectionTitle = "manage.shift.card.most-recents".podLocalized()
       let section = Observable2DArraySection<String, Transaction>(metadata: mostRecentSectionTitle, items: [])
