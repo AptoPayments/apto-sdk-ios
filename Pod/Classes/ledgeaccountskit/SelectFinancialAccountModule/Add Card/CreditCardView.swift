@@ -1,6 +1,6 @@
 //
 //  CreditCardView.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 29/11/2016.
 //
@@ -31,6 +31,7 @@ class CreditCardView: UIView {
   private let expireDateText = UILabel()
   private let frontCvv = UIFormattedLabel()
   private let frontCvvText = UILabel()
+  private let lockedView = UIView()
   private let lockImageView = UIImageView(image: UIImage.imageFromPodBundle("card-locked-icon"))
 
   // MARK: - Back View
@@ -53,6 +54,7 @@ class CreditCardView: UIView {
   private var expirationYear: UInt?
   private var cvvText: String?
   private var cardNetwork: CardNetwork?
+  private var hasValidFundingSource = true
 
   // MARK: - Lifecycle
   init(uiConfiguration: ShiftUIConfig) {
@@ -111,6 +113,11 @@ class CreditCardView: UIView {
   func set(cardNetwork: CardNetwork?) {
     self.cardNetwork = cardNetwork
     updateCard()
+  }
+
+  func set(validFundingSource: Bool) {
+    self.hasValidFundingSource = validFundingSource
+    updateCardEnabledState()
   }
 
   func didBeginEditingCVC() {
@@ -177,7 +184,7 @@ private extension CreditCardView {
     setUpFrontCVV()
     setUpCardHolderView()
     setUpCardNumberView()
-    setUpLockImageView()
+    setUpLockView()
   }
 
   func setUpImageView() {
@@ -272,11 +279,24 @@ private extension CreditCardView {
     }
   }
 
+  func setUpLockView() {
+    lockedView.backgroundColor = .black
+    lockedView.alpha = 0.7
+    lockedView.layer.cornerRadius = layer.cornerRadius
+    addSubview(lockedView)
+    lockedView.snp.makeConstraints { make in
+      make.edges.equalToSuperview()
+    }
+    setUpLockImageView()
+  }
+
   func setUpLockImageView() {
-    lockImageView.contentMode = .center
     addSubview(lockImageView)
+    lockImageView.contentMode = .center
+    lockImageView.tintColor = .white
+    lockImageView.alpha = 1
     lockImageView.snp.makeConstraints { make in
-      make.left.top.right.bottom.equalToSuperview()
+      make.edges.equalToSuperview()
     }
   }
 
@@ -358,7 +378,7 @@ private extension CreditCardView {
       cardNumber.text = ""
     }
     if let expirationMonth = expirationMonth, let expirationYear = expirationYear {
-      expireDate.text = NSString(format: "%02ld", expirationMonth) as String + "/\(expirationYear)" as String
+      expireDate.text = String(format: "%02ld", expirationMonth) + "/\(expirationYear)"
     }
     else {
       expireDate.text = "MM/YY"
@@ -369,7 +389,7 @@ private extension CreditCardView {
   }
 
   func updateCardEnabledState() {
-    if cardState == .active {
+    if cardState == .active && hasValidFundingSource {
       setUpEnabledCard()
     }
     else {
@@ -379,31 +399,26 @@ private extension CreditCardView {
 
   func setUpEnabledCard() {
     backgroundColor = uiConfiguration.cardBackgroundColor
-    frontView.layer.borderWidth = 0
-    cardHolder.textColor = uiConfiguration.textTopBarColor
-    cardNumber.textColor = uiConfiguration.textTopBarColor
-    expireDateText.textColor = uiConfiguration.textTopBarColor
-    expireDate.textColor = uiConfiguration.textTopBarColor
-    frontCvv.textColor = uiConfiguration.textTopBarColor
-    frontCvvText.textColor = uiConfiguration.textTopBarColor
-    imageView.alpha = 1
+    lockedView.isHidden = true
     lockImageView.isHidden = true
   }
 
   func setUpDisabledCard() {
     backgroundColor = uiConfiguration.cardBackgroundColorDisabled
-    cardHolder.textColor = uiConfiguration.disabledTextTopBarColor
-    cardNumber.textColor = uiConfiguration.disabledTextTopBarColor
-    expireDateText.textColor = uiConfiguration.disabledTextTopBarColor
-    expireDate.textColor = uiConfiguration.disabledTextTopBarColor
-    frontCvv.textColor = uiConfiguration.disabledTextTopBarColor
-    frontCvvText.textColor = uiConfiguration.disabledTextTopBarColor
-    lockImageView.image = cardState == .created
-      ? UIImage.imageFromPodBundle("icon-card-activate")
-      : UIImage.imageFromPodBundle("card-locked-icon")
+    lockImageView.image = lockedImage()
+    lockedView.isHidden = false
     lockImageView.isHidden = false
-    imageView.alpha = 0.4
+    bringSubview(toFront: lockedView)
     bringSubview(toFront: lockImageView)
+  }
+
+  func lockedImage() -> UIImage? {
+    if !hasValidFundingSource {
+      return UIImage.imageFromPodBundle("error_backend")?.asTemplate()
+    }
+    return cardState == .created
+      ? UIImage.imageFromPodBundle("icon-card-activate")?.asTemplate()
+      : UIImage.imageFromPodBundle("card-locked-icon")?.asTemplate()
   }
 
   func updateCardNetwork() {

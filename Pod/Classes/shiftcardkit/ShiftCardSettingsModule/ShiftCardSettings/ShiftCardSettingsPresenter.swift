@@ -30,10 +30,12 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
   private let enableCardAction: EnableCardAction
   private let disableCardAction: DisableCardAction
   private let showCardInfoAction: ShowCardInfoAction
+  private let reportLostCardAction: ReportLostCardAction
 
   init(shiftCardSession: ShiftCardSession,
        card: Card,
        config: ShiftCardSettingsPresenterConfig,
+       emailRecipients: [String?],
        uiConfig: ShiftUIConfig) {
     self.card = card
     self.viewModel = ShiftCardSettingsViewModel()
@@ -43,6 +45,10 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
     self.disableCardAction = DisableCardAction(shiftCardSession: shiftCardSession,
                                                card: self.card,
                                                uiConfig: uiConfig)
+    self.reportLostCardAction = ReportLostCardAction(session: shiftCardSession,
+                                                         card: card,
+                                                         emailRecipients: emailRecipients,
+                                                         uiConfig: uiConfig)
     self.showCardInfoAction = ShowCardInfoAction()
     self.viewModel.showAddFundingSourceButton.next(config.showAddFundingSourceButton)
     self.viewModel.cardHolderAgreement.next(config.cardholderAgreement)
@@ -117,11 +123,9 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
             self.viewModel.activeFundingSource.next(activeFundingSource)
             if let idx = fundingSources.index(where: { $0.fundingSourceId == activeFundingSource?.fundingSourceId }) {
               self.viewModel.activeFundingSourceIdx.next(idx)
-              self.viewModel.expendableBalance.next(activeFundingSource?.amountSpendable)
             }
             else {
               self.viewModel.activeFundingSourceIdx.next(nil)
-              self.viewModel.expendableBalance.next(nil)
             }
           }
         }
@@ -156,7 +160,19 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
   }
 
   func lostCardTapped() {
-    router.reportLostCardTapped()
+    reportLostCardAction.run { [unowned self] result in
+      switch result {
+      case .failure(let error):
+        if let serviceError = error as? ServiceError, serviceError.code == ServiceError.ErrorCodes.aborted.rawValue {
+          // User aborted, do nothing
+          return
+        }
+        self.view.show(error: error)
+      case .success:
+        self.viewModel.locked.next(true)
+        self.router.cardStateChanged()
+      }
+    }
   }
 
   func changePinTapped() {

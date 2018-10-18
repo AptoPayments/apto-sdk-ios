@@ -117,40 +117,21 @@ final class NetworkManager: NetworkManagerProtocol {
       ErrorLogger.defaultInstance().log(error: originalError)
     }
 
-    if case .some(500..<600) = response.response?.statusCode {
-      let error = BackendError(code: .serviceUnavailable, reason: response.error?.localizedDescription)
-      return .failure(error)
+    switch response.response?.statusCode {
+    case 401:
+      return processInvalidSession(response: response)
+    case 412:
+      return processSDKDeprecated(response: response)
+    case .some(400..<500):
+      return process400(response: response)
+    case .some(500..<600):
+      return process500(response: response)
+    default:
+      return processSuccess(response: response)
     }
+  }
 
-    if response.response?.statusCode == 412 {
-      let error = BackendError(code: .sdkDeprecated)
-      ErrorLogger.defaultInstance().log(error: error)
-      return .failure(error)
-    }
-
-    if response.response?.statusCode == 401 {
-      let json = JSON(response.value ?? "")
-      let error = json.backendError ?? BackendError(code: .invalidSession)
-      if error.invalidSessionError() {
-        NotificationCenter.default.post(Notification(name: .UserTokenSessionInvalidNotification,
-                                                     object: nil,
-                                                     userInfo: ["error": error]))
-      }
-      else if error.sessionExpiredError() {
-        NotificationCenter.default.post(Notification(name: .UserTokenSessionExpiredNotification,
-                                                     object: nil,
-                                                     userInfo: ["error": error]))
-      }
-      ErrorLogger.defaultInstance().log(error: error)
-      return .failure(error)
-    }
-
-    if case .some(400..<500) = response.response?.statusCode {
-      let json = JSON(response.value ?? "")
-      let error = json.backendError ?? BackendError(code: .incorrectParameters)
-      return .failure(error)
-    }
-
+  private func processSuccess(response: DataResponse<Any>) -> Result<AnyObject, NSError> {
     if response.result.error != nil {
       debugPrint(response)
     }
@@ -160,6 +141,54 @@ final class NetworkManager: NetworkManagerProtocol {
       return .success(value as AnyObject)
     case .failure(let error):
       return .failure(error as NSError)
+    }
+  }
+
+  private func processInvalidSession(response: DataResponse<Any>) -> Result<AnyObject, NSError> {
+    let json = JSON(response.value ?? "")
+    let error = json.backendError ?? BackendError(code: .invalidSession)
+    if error.invalidSessionError() {
+      NotificationCenter.default.post(Notification(name: .UserTokenSessionInvalidNotification,
+                                                   object: nil,
+                                                   userInfo: ["error": error]))
+    }
+    else if error.sessionExpiredError() {
+      NotificationCenter.default.post(Notification(name: .UserTokenSessionExpiredNotification,
+                                                   object: nil,
+                                                   userInfo: ["error": error]))
+    }
+    ErrorLogger.defaultInstance().log(error: error)
+    return .failure(error)
+  }
+
+  private func processSDKDeprecated(response: DataResponse<Any>) -> Result<AnyObject, NSError> {
+    let error = BackendError(code: .sdkDeprecated)
+    ErrorLogger.defaultInstance().log(error: error)
+    return .failure(error)
+  }
+
+  private func process400(response: DataResponse<Any>) -> Result<AnyObject, NSError> {
+    let json = JSON(response.value ?? "")
+    let error = json.backendError ?? BackendError(code: .incorrectParameters)
+    return .failure(error)
+  }
+
+  private func process500(response: DataResponse<Any>) -> Result<AnyObject, NSError> {
+    switch response.result {
+    case .success(let data):
+      if let dict = data as? Dictionary<String, Any>,
+         let rawCode = dict["code"] as? Int,
+         let code = BackendError.ErrorCodes(rawValue: rawCode) {
+        let error = BackendError(code: code, reason: response.error?.localizedDescription)
+        return .failure(error)
+      }
+      else {
+        let error = BackendError(code: .serviceUnavailable, reason: response.error?.localizedDescription)
+        return .failure(error)
+      }
+    case .failure(_):
+      let error = BackendError(code: .serviceUnavailable, reason: response.error?.localizedDescription)
+      return .failure(error)
     }
   }
 

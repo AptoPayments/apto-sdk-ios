@@ -20,7 +20,6 @@ protocol ShiftCardSettingsRouterProtocol: class {
   func backFromShiftCardSettings()
   func closeFromShiftCardSettings()
   func addFundingSource(completion: @escaping (FundingSource) -> Void)
-  func reportLostCardTapped()
   func changeCardPin()
   func showCardInfo()
   func hideCardInfo()

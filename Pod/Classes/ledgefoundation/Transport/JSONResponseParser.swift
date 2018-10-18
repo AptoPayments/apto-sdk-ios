@@ -1,6 +1,6 @@
 //
 //  JSONResponseSerializer.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 29/02/16.
 //
@@ -1145,6 +1145,8 @@ extension JSON {
     let cardNetwork = self["card_network"].string
     let cardBrand = self["card_brand"].string
     let issuer = CardIssuer.issuerFrom(description: cardIssuer)
+    let spendableToday = self["spendable_today"].amount
+    let nativeSpendableToday = self["native_spendable_today"].amount
 
     let card = Card(accountId: id,
                     cardNetwork: CardNetwork.cardNetworkFrom(description: cardNetwork),
@@ -1153,6 +1155,8 @@ extension JSON {
                     state: cState,
                     lastFourDigits: lastFourDigits,
                     expiration: expiration,
+                    spendableToday: spendableToday,
+                    nativeSpendableToday: nativeSpendableToday,
                     kyc: self.kyc,
                     verified:verified)
 
@@ -1264,48 +1268,46 @@ extension JSON {
   }
 
   var fundingSource: FundingSource? {
-
-    guard let
-      fundingSourceId = self["id"].string,
-      let rawFundingSourceType = self["funding_source_type"].string
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse funding source \(self)"))
-        return nil
+    guard let fundingSourceId = self["id"].string,
+          let rawFundingSourceType = self["funding_source_type"].string,
+          let rawState = self["state"].string, let state = FundingSourceState(rawValue: rawState) else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse funding source \(self)"))
+      return nil
     }
 
-    var fundingSourceType: FundingSourceType? = nil
+    var fsType: FundingSourceType? = nil
     if rawFundingSourceType == "custodian_wallet" {
-      fundingSourceType = .custodianWallet
+      fsType = .custodianWallet
     }
-
-    if fundingSourceType == nil {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse funding source type \(self)"))
+    guard let fundingSourceType = fsType else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse funding source type \(self)"))
       return nil
     }
 
     var balance: Amount? = nil
-    if let _ = self["balance"].dictionary {
+    if self["balance"].dictionary != nil {
       balance = self["balance"].linkObject as? Amount
     }
 
     var amountSpendable: Amount? = nil
-    if let _ = self["amount_spendable"].dictionary {
+    if self["amount_spendable"].dictionary != nil {
       amountSpendable = self["amount_spendable"].linkObject as? Amount
     }
 
     var amountHeld: Amount? = nil
-    if let _ = self["amount_held"].dictionary {
+    if self["amount_held"].dictionary != nil {
       amountHeld = self["amount_held"].linkObject as? Amount
     }
 
-    switch fundingSourceType! {
+    switch fundingSourceType {
     case .custodianWallet:
-      guard let
-        nativeBalance = self["details"]["balance"].linkObject as? Amount,
-        let custodian = self["details"]["custodian"].linkObject as? Custodian
-        else {
-          ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse custodian wallet \(self)"))
-          return nil
+      guard let nativeBalance = self["details"]["balance"].linkObject as? Amount,
+            let custodian = self["details"]["custodian"].linkObject as? Custodian else {
+        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                              reason: "Can't parse custodian wallet \(self)"))
+        return nil
       }
 
       return CustodianWallet(fundingSourceId: fundingSourceId,
@@ -1313,9 +1315,9 @@ extension JSON {
                              usdBalance: balance,
                              usdAmountSpendable: amountSpendable,
                              usdAmountHold: amountHeld,
+                             state: state,
                              custodian: custodian)
     }
-
   }
 
   var kyc: KYCState? {

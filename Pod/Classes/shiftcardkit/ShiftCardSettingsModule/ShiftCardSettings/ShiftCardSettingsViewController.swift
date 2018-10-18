@@ -14,6 +14,7 @@ import SnapKit
 import PullToRefreshKit
 
 class ShiftCardSettingsViewController: ShiftViewController, ShiftCardSettingsViewProtocol {
+  private var disposeBag = DisposeBag()
   private unowned let presenter: ShiftCardSettingsPresenterHandler
   private let formView = MultiStepForm()
   private var lockCardRow: FormRowSwitchTitleSubtitleView?
@@ -57,6 +58,12 @@ class ShiftCardSettingsViewController: ShiftViewController, ShiftCardSettingsVie
   }
 }
 
+extension ShiftCardSettingsViewController: FundingSourceEmptyCaseViewDelegate {
+  func addFundingSourceTapped() {
+    self.presenter.addFundingSourceTapped()
+  }
+}
+
 // MARK: - Set up UI
 private extension ShiftCardSettingsViewController {
   func setUpUI() {
@@ -85,19 +92,18 @@ private extension ShiftCardSettingsViewController {
 private extension ShiftCardSettingsViewController {
   func setupViewModelSubscriptions() {
     let viewModel = presenter.viewModel
-
-    _ = combineLatest(viewModel.showAddFundingSourceButton,
-                      viewModel.fundingSources,
-                      viewModel.faq,
-                      viewModel.cardHolderAgreement,
-                      viewModel.termsAndConditions,
-                      viewModel.privacyPolicy).observeNext { [unowned self] showAddFundingSourceButton, fundingSources,
-                                                             faq, cardHolderAgreement, termsAndConditions,
-                                                             privacyPolicy in
+    combineLatest(viewModel.showAddFundingSourceButton,
+                  viewModel.fundingSources,
+                  viewModel.faq,
+                  viewModel.cardHolderAgreement,
+                  viewModel.termsAndConditions,
+                  viewModel.privacyPolicy).observeNext { [unowned self] showAddFundingSourceButton, fundingSources,
+                                                                        faq, cardHolderAgreement, termsAndConditions,
+                                                                        privacyPolicy in
       let rows = [
         self.createFundingSourceTitle(),
-        self.createFundingSourceSelector(fundingSources: fundingSources),
-        self.createAddFoundingSourceButton(showAddFundingSourceButton),
+        self.createFundingSourceView(fundingSources: fundingSources),
+        self.createAddFoundingSourceButton(showAddFundingSourceButton, fundingSources: fundingSources),
         self.createSettingsTitle(),
         self.createChangePinRow(),
         self.setUpShowCardInfoRow(),
@@ -111,25 +117,34 @@ private extension ShiftCardSettingsViewController {
         self.createPrivacyPolicyButton(privacyPolicy)
       ].compactMap { return $0 }
       self.formView.show(rows: rows)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.locked.observeNext { [unowned self] locked in
+    viewModel.locked.observeNext { [unowned self] locked in
       if let locked = locked {
         self.set(lockedSwitch: locked)
       }
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.showCardInfo.observeNext { [unowned self] showInfo in
+    viewModel.showCardInfo.observeNext { [unowned self] showInfo in
       if let showInfo = showInfo {
         self.set(showCardInfoSwitch: showInfo)
       }
-    }
+    }.dispose(in: disposeBag)
   }
 
   func createFundingSourceTitle() -> FormRowLabelView {
     return FormBuilder.sectionTitleRowWith(text: "card.settings.funding_sources.title".podLocalized(),
                                            textAlignment: .left,
                                            uiConfig: self.uiConfiguration)
+  }
+
+  func createFundingSourceView(fundingSources: [FundingSource]) -> FormRowView {
+    if !fundingSources.isEmpty {
+      return createFundingSourceSelector(fundingSources: fundingSources)
+    }
+    else {
+      return createFundingSourceEmptyCase()
+    }
   }
 
   func createFundingSourceSelector(fundingSources: [FundingSource]) -> FormRowBalanceRadioView {
@@ -140,13 +155,19 @@ private extension ShiftCardSettingsViewController {
     let selector = FormBuilder.balanceRadioRowWith(balances: rows,
                                                    values: values,
                                                    uiConfig: uiConfiguration)
-    _ = selector.bndValue.observeNext { [weak self] index in
+    selector.bndValue.observeNext { [weak self] index in
       if let index = index {
         self?.presenter.fundingSourceSelected(index: index)
       }
-    }
+    }.dispose(in: disposeBag)
     presenter.viewModel.activeFundingSourceIdx.bind(to: selector.bndValue)
     return selector
+  }
+
+  func createFundingSourceEmptyCase() -> FormRowCustomView {
+    let emptyCaseView = FundingSourceEmptyCaseView(uiConfig: uiConfiguration)
+    emptyCaseView.delegate = self
+    return FormRowCustomView(view: emptyCaseView, showSplitter: false)
   }
 
   func rowValuesFrom(fundingSources: [FundingSource]) -> [FormRowBalanceRadioViewValue] {
@@ -233,8 +254,9 @@ private extension ShiftCardSettingsViewController {
     }
   }
 
-  func createAddFoundingSourceButton(_ showAddFundingSourceButton: Bool?) -> FormRowLinkView? {
-    guard showAddFundingSourceButton == true else { return nil }
+  func createAddFoundingSourceButton(_ showAddFundingSourceButton: Bool?,
+                                     fundingSources: [FundingSource]) -> FormRowLinkView? {
+    guard showAddFundingSourceButton == true, !fundingSources.isEmpty else { return nil }
     let retVal = FormBuilder.linkRowWith(title: "card.settings.add-funding-source.button.title".podLocalized(),
                                          leftIcon: UIImage.imageFromPodBundle("add-icon")?.asTemplate(),
                                          uiConfig: self.uiConfiguration) { [unowned self] in

@@ -323,6 +323,8 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
                     state: .active,
                     lastFourDigits: lastFourDigits,
                     expiration: expiration,
+                    spendableToday: nil,
+                    nativeSpendableToday: nil,
                     kyc: nil,
                     panToken: cardNumber,
                     cvvToken: cvv)

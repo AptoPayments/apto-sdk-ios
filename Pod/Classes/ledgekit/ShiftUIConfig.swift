@@ -28,6 +28,7 @@ import Foundation
   open lazy var uiTertiaryColor = UIColor.colorFromHex(0xd5d5d7)
   open lazy var uiSuccessColor = UIColor.colorFromHex(0x161d24)
   open lazy var uiErrorColor = UIColor.colorFromHex(0xdb1d0e)
+  open lazy var uiToastMessagesColor = uiPrimaryColor.withAlphaComponent(0.15)
 
   open lazy var cardBackgroundColor = UIColor.colorFromHex(0x161d24)
   open lazy var cardBackgroundColorDisabled = cardBackgroundColor.withAlphaComponent(0.85)
@@ -70,6 +71,7 @@ import Foundation
   open lazy var formSectionTitleFont = UIFont.systemFont(ofSize: 14, weight: .medium)
 
   open lazy var primaryCallToActionFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+  open lazy var primaryCallToActionFontSmall = UIFont.systemFont(ofSize: 14, weight: .semibold)
 
   open lazy var amountBigFont = UIFont.systemFont(ofSize: 24, weight: .light)
   open lazy var amountMediumFont = UIFont.systemFont(ofSize: 20, weight: .regular)
@@ -92,6 +94,7 @@ import Foundation
 
   open lazy var errorTitleFont = UIFont.systemFont(ofSize: 24, weight: .medium)
   open lazy var errorMessageFont = UIFont.systemFont(ofSize: 16, weight: .regular)
+  open lazy var boldMessageFont = UIFont.systemFont(ofSize: 15, weight: .bold)
 
   // Cards
 

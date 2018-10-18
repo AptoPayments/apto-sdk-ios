@@ -1,6 +1,6 @@
 //
 //  ManageShiftCardMainView.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 18/03/2017.
 //
@@ -11,10 +11,12 @@ import SnapKit
 
 protocol ManageShiftCardMainViewDelegate: class {
   func cardTapped()
+  func needToUpdateUI(action: () -> (), completion: @escaping () -> ())
 }
 
 class ManageShiftCardMainView: UIView {
   private let balanceView: BalanceView
+  private let invalidBalanceView: InvalidBalanceMessageView
   private let tapToManageView = UILabel()
   private var isActivateCardFeatureEnabled = false {
     didSet {
@@ -31,6 +33,7 @@ class ManageShiftCardMainView: UIView {
   private var showBalance = false
   private var activeStateReceived = false
   private var balanceReceived = false
+  private var showInvalidBalance = false
   private let creditCardView: CreditCardView
   private unowned let delegate: ManageShiftCardMainViewDelegate
   private let uiConfiguration: ShiftUIConfig
@@ -40,6 +43,7 @@ class ManageShiftCardMainView: UIView {
     self.delegate = delegate
     self.balanceView = BalanceView(uiConfiguration: uiConfiguration)
     self.creditCardView = CreditCardView(uiConfiguration: uiConfiguration)
+    self.invalidBalanceView = InvalidBalanceMessageView(uiConfig: uiConfiguration)
     super.init(frame: .zero)
     setUpUI(uiConfiguration: uiConfiguration)
   }
@@ -88,28 +92,20 @@ class ManageShiftCardMainView: UIView {
   func set(fundingSource: FundingSource?) {
     balanceReceived = true
     if let fundingSource = fundingSource, fundingSource.balance != nil {
+      creditCardView.set(validFundingSource: fundingSource.state == .valid)
       balanceView.set(fundingSource: fundingSource)
       showBalance = true
+      showInvalidBalance = fundingSource.state == .invalid
     }
     else {
       showBalance = false
+      showInvalidBalance = false
     }
     refreshLayoutConstraints()
   }
 
-  private func nativeSpendableAmount(fundingSource: CustodianWallet) -> Amount {
-    let balanceAmount = fundingSource.balance?.amount.value ?? 0
-    let spendableAmount = fundingSource.amountSpendable?.amount.value ?? 0
-    let nativeAmount = fundingSource.nativeBalance.amount.value ?? 0
-    let nativeSpendableAmount: Double
-    if nativeAmount == 0 {
-      nativeSpendableAmount = 0
-    }
-    else {
-      nativeSpendableAmount = balanceAmount / nativeAmount * spendableAmount
-    }
-
-    return Amount(value: nativeSpendableAmount, currency: fundingSource.nativeBalance.currency.value)
+  func setSpendable(amount: Amount?, nativeAmount: Amount?) {
+    balanceView.set(spendableToday: amount, nativeSpendableToday: nativeAmount)
   }
 
   func set(cardState: FinancialAccountState?) {
@@ -163,6 +159,7 @@ private extension ManageShiftCardMainView {
     balanceView.backgroundColor = backgroundColor
     setUpCreditCardView(uiConfiguration: uiConfiguration)
     setUpTapToManageView(uiConfiguration: uiConfiguration)
+    setUpInvalidBalanceView(uiConfiguration: uiConfiguration)
   }
 
   func setUpCreditCardView(uiConfiguration: ShiftUIConfig) {
@@ -181,6 +178,10 @@ private extension ManageShiftCardMainView {
     tapToManageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(cardTapped)))
     tapToManageView.isHidden = true
   }
+
+  func setUpInvalidBalanceView(uiConfiguration: ShiftUIConfig) {
+    invalidBalanceView.delegate = self
+  }
 }
 
 // MARK: - Layout
@@ -190,9 +191,13 @@ private extension ManageShiftCardMainView {
       return
     }
     balanceView.snp.removeConstraints()
+    invalidBalanceView.snp.removeConstraints()
     creditCardView.snp.removeConstraints()
     tapToManageView.snp.removeConstraints()
-    if showBalance {
+    if showInvalidBalance {
+      layoutInvalidBalance()
+    }
+    else if showBalance {
       layoutBalance()
     }
     else {
@@ -201,8 +206,18 @@ private extension ManageShiftCardMainView {
     layoutTapToManageView()
   }
 
+  func layoutInvalidBalance() {
+    addSubview(invalidBalanceView)
+    balanceView.removeFromSuperview()
+    invalidBalanceView.snp.makeConstraints { make in
+      make.top.left.right.equalToSuperview()
+    }
+    layoutCreditCardView()
+  }
+
   func layoutBalance() {
     addSubview(balanceView)
+    invalidBalanceView.removeFromSuperview()
     balanceView.snp.makeConstraints { make in
       make.top.equalToSuperview().offset(24)
       make.left.right.equalTo(self).inset(16)
@@ -216,13 +231,20 @@ private extension ManageShiftCardMainView {
     creditCardView.snp.makeConstraints { make in
       make.left.right.equalToSuperview().inset(26)
       make.height.equalTo(creditCardView.snp.width).dividedBy(cardAspectRatio)
-      let topView = showBalance ? balanceView.snp.bottom : self.snp.top
-      make.top.equalTo(topView).offset(12)
+      make.top.equalTo(topView()).offset(12)
     }
+  }
+
+  func topView() -> ConstraintItem {
+    if showInvalidBalance {
+      return invalidBalanceView.snp.bottom
+    }
+    return showBalance ? balanceView.snp.bottom : self.snp.top
   }
 
   func layoutHiddenBalance() {
     balanceView.removeFromSuperview()
+    invalidBalanceView.removeFromSuperview()
     layoutCreditCardView()
   }
 
@@ -234,5 +256,23 @@ private extension ManageShiftCardMainView {
       make.height.equalTo(42)
       make.bottom.equalTo(self.snp.bottom)
     }
+  }
+}
+
+extension ManageShiftCardMainView: InvalidBalanceMessageViewDelegate {
+  func close() {
+    showInvalidBalance = false
+    self.delegate.needToUpdateUI(action: { [unowned self] in
+      self.balanceView.alpha = 0
+      refreshLayoutConstraints()
+    }) { [unowned self] in
+      self.animate(animations: {
+        self.balanceView.alpha = 1
+      })
+    }
+  }
+
+  func addFundingSource() {
+    self.delegate.cardTapped()
   }
 }

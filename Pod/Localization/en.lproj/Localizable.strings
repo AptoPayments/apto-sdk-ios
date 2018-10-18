@@ -628,6 +628,8 @@
 
 "manage.shift.card.title" = "Card";
 
+"manage.shift.card.empty-balance" = "-";
+
 "manage.shift.card.current-balance" = "Current balance";
 
 "manage.shift.card.spendable-today" = "Spendable today";
@@ -649,6 +651,14 @@
 "manage.shift.card.activate-card.title" = "Your Card is ready to run!";
 
 "manage.shift.card.activate-card.explanation" = "Once your Card is enabled, tap on it to manage Funding sources, Set a new PIN, Lock the Card and more.";
+
+/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Views/InvalidBalanceMessageView.swift */
+
+"invalid-balance.title" = "Invalid funding source";
+
+"invalid-balance.message" = "Your card will be disabled until you add a new funding source!";
+
+"invalid-balance.call-to-action" = "Fix it now";
 
 /* * ./Pod/Classes/ledgeaccountskit/SelectFinancialAccountModule/Add Card/CreditCardView.swift */
 
@@ -783,6 +793,12 @@
 "card.settings.show-card.subtitle" = "Show card number and CVV";
 
 "card.settings.support.title" = "Get help";
+
+/* * ./Pod/Classes/shiftcardkit/ShiftCardSettingsModule/ShiftCardSettings/FundingSourceEmptyCaseView.swift */
+
+"funding-source-empty-case.title" = "You have no Funding sources linked with your card.";
+
+"funding-source-empty-case.action" = "Add funding source";
 
 /* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/TransactionDetails/ShitCardTransactionDetailsViewController.swift */
 
@@ -991,3 +1007,11 @@
 "data-point.formatter.birth-date.title" = "Date of birth";
 
 "data-point.formatter.id-document.title" = "ID document";
+
+/* * Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Actions/ReportLostCardAction.swift */
+
+"report-lost-card-action.title" = "Report Lost or Stolen card";
+
+"report-lost-card-action.message" = "Just as a heads up, once you confirm your card is lost or stolen, it'll instantly be locked so no one can use it.";
+
+"report-lost-card-action.confirm" = "Confirm";

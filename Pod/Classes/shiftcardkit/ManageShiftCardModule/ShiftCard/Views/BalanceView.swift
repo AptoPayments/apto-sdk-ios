@@ -1,6 +1,6 @@
 //
 //  BalanceView.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Takeichi Kanzaki on 09/08/2018.
 //
@@ -18,20 +18,29 @@ class BalanceView: UIView {
   private let spendableBitCoins = UILabel()
   private var showBalance = false {
     didSet {
-      let showBalanceInfo = !showBalance
-      balanceExplanation.isHidden = showBalanceInfo
-      balanceLabel.isHidden = showBalanceInfo
+      let hideBalanceInfo = !showBalance
+      balanceExplanation.isHidden = hideBalanceInfo
+      balanceLabel.isHidden = hideBalanceInfo
     }
   }
-  private var isCustodianWallet = false {
+  private var showSpendable = false {
     didSet {
-      let showCustodianInfo = !isCustodianWallet
-      spendableExplanation.isHidden = showCustodianInfo
-      spendableLabel.isHidden = showCustodianInfo
-      balanceBitCoins.isHidden = showCustodianInfo
-      spendableBitCoins.isHidden = showCustodianInfo
+      let hideSpendableInfo = !showSpendable
+      spendableExplanation.isHidden = hideSpendableInfo
+      spendableLabel.isHidden = hideSpendableInfo
     }
   }
+  private var showNativeBalance = false {
+    didSet {
+      balanceBitCoins.isHidden = !showNativeBalance
+    }
+  }
+  private var showNativeSpendableBalance = false {
+    didSet {
+      spendableBitCoins.isHidden = !showNativeSpendableBalance
+    }
+  }
+
   private let uiConfiguration: ShiftUIConfig
 
   init(uiConfiguration: ShiftUIConfig) {
@@ -45,6 +54,21 @@ class BalanceView: UIView {
   }
 
   func set(fundingSource: FundingSource) {
+    guard fundingSource.state == .valid else {
+      showInvalidBalance()
+      return
+    }
+    showBalanceIfPresent(in: fundingSource)
+  }
+
+  func set(spendableToday: Amount?, nativeSpendableToday: Amount?) {
+    showSpendableIfPresent(spendableToday: spendableToday, nativeSpendableToday: nativeSpendableToday)
+  }
+}
+
+// MARK: - Update labels
+private extension BalanceView {
+  func showBalanceIfPresent(in fundingSource: FundingSource) {
     if let balance = fundingSource.balance {
       balanceLabel.text = balance.text
       showBalance = true
@@ -52,31 +76,40 @@ class BalanceView: UIView {
     else {
       showBalance = false
     }
-    if let fundingSource = fundingSource as? CustodianWallet, let spendable = fundingSource.amountSpendable {
-      spendableLabel.text = spendable.text
-      balanceBitCoins.text = fundingSource.nativeBalance.longText
-      let nativeSpendable = nativeSpendableAmount(fundingSource: fundingSource)
-      spendableBitCoins.text = nativeSpendable.longText
-      isCustodianWallet = true
+    if let custodianWallet = fundingSource as? CustodianWallet {
+      balanceBitCoins.text = custodianWallet.nativeBalance.longText
+      showNativeBalance = true
     }
     else {
-      isCustodianWallet = false
+      showNativeBalance = false
     }
   }
 
-  private func nativeSpendableAmount(fundingSource: CustodianWallet) -> Amount {
-    let balanceAmount: Double = fundingSource.balance?.amount.value ?? 0
-    let spendableAmount: Double = fundingSource.amountSpendable?.amount.value ?? 0
-    let nativeAmount: Double = fundingSource.nativeBalance.amount.value ?? 0
-    let nativeSpendableAmount: Double
-    if balanceAmount == 0 {
-      nativeSpendableAmount = 0
+  func showSpendableIfPresent(spendableToday: Amount?, nativeSpendableToday: Amount?) {
+    if let spendableToday = spendableToday {
+      showSpendable = true
+      spendableLabel.text = spendableToday.text
     }
     else {
-      nativeSpendableAmount = (nativeAmount * spendableAmount) / balanceAmount
+      showSpendable = false
     }
+    if let nativeSpendableToday = nativeSpendableToday {
+      spendableBitCoins.text = nativeSpendableToday.longText
+      showNativeSpendableBalance = true
+    }
+    else {
+      showNativeSpendableBalance = false
+    }
+  }
 
-    return Amount(value: nativeSpendableAmount, currency: fundingSource.nativeBalance.currency.value)
+  func showInvalidBalance() {
+    let emptyBalance = "manage.shift.card.empty-balance".podLocalized()
+    balanceLabel.text = emptyBalance
+    spendableLabel.text = emptyBalance
+    showBalance = true
+    showSpendable = true
+    showNativeBalance = false
+    showNativeSpendableBalance = false
   }
 }
 

@@ -43,6 +43,8 @@ open class ManageShiftCardViewModel {
   open var lastFour: Observable<String?> = Observable(nil)
   open var cardNetwork: Observable<CardNetwork?> = Observable(nil)
   open var fundingSource: Observable<FundingSource?> = Observable(nil)
+  open var spendableToday: Observable<Amount?> = Observable(nil)
+  open var nativeSpendableToday: Observable<Amount?> = Observable(nil)
   open var custodianLogo: Observable<UIImage?> = Observable(nil)
   open var custodianName: Observable<String?> = Observable(nil)
   open var transactions: MutableObservable2DArray<String, Transaction> = MutableObservable2DArray([])
@@ -162,6 +164,8 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
     viewModel.lastFour.next(card.lastFourDigits)
     viewModel.cardNetwork.next(card.cardNetwork)
     viewModel.fundingSource.next(card.fundingSource)
+    viewModel.spendableToday.next(card.spendableToday)
+    viewModel.nativeSpendableToday.next(card.nativeSpendableToday)
     if let imageUrl = config.imageUrl, let url = URL(string: imageUrl) {
       ImageCache.defaultCache().imageWithUrl(url) { result in
         if case let .success(image) = result {

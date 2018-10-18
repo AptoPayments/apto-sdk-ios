@@ -267,6 +267,27 @@ class ComponentCatalog {
     return button
   }
 
+  static func smallButtonWith(title: String,
+                              accessibilityLabel: String? = nil,
+                              uiConfig: ShiftUIConfig,
+                              tapHandler: @escaping() -> Void) -> UIButton {
+    let button = UIButton()
+    button.layer.cornerRadius = 18
+    button.backgroundColor = uiConfig.uiPrimaryColor
+    button.accessibilityLabel = accessibilityLabel
+    button.titleLabel?.font = uiConfig.primaryCallToActionFontSmall
+    button.setTitle(title, for: UIControlState())
+    button.layer.shadowOffset = CGSize(width: 0, height: 16)
+    button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
+    button.layer.shadowOpacity = 1
+    button.layer.shadowRadius = 16
+    button.snp.makeConstraints { make in
+      make.height.equalTo(36)
+    }
+    _ = button.reactive.tap.observeNext(with: tapHandler)
+    return button
+  }
+
   static func sectionTitleLabelWith(text: String,
                                     textAlignment: NSTextAlignment = .left,
                                     accessibilityLabel: String? = nil,
@@ -277,6 +298,23 @@ class ComponentCatalog {
     retVal.textColor = uiConfig.textSecondaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
+    return retVal
+  }
+
+  static func boldMessageLabelWith(text: String,
+                                   textAlignment: NSTextAlignment = .left,
+                                   accessibilityLabel: String? = nil,
+                                   multiline: Bool = true,
+                                   uiConfig: ShiftUIConfig) -> UILabel {
+    let retVal = UILabel()
+    retVal.text = text
+    retVal.font = uiConfig.boldMessageFont
+    retVal.textColor = uiConfig.textPrimaryColor
+    retVal.textAlignment = textAlignment
+    retVal.accessibilityLabel = accessibilityLabel
+    if multiline {
+      retVal.numberOfLines = 0
+    }
     return retVal
   }
 

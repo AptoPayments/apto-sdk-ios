@@ -191,6 +191,8 @@ public enum CardNetwork {
   let panToken: String?
   let cvvToken: String?
   let expiration: String
+  let spendableToday: Amount?
+  let nativeSpendableToday: Amount?
   var fundingSource: FundingSource?
   let kyc: KYCState?
 
@@ -204,6 +206,8 @@ public enum CardNetwork {
               cvv: String? = nil,
               lastFourDigits: String,
               expiration: String,
+              spendableToday: Amount?,
+              nativeSpendableToday: Amount?,
               kyc: KYCState?,
               panToken: String? = nil,
               cvvToken: String? = nil,
@@ -214,6 +218,8 @@ public enum CardNetwork {
     self.pan = pan
     self.cvv = cvv
     self.kyc = kyc
+    self.spendableToday = spendableToday
+    self.nativeSpendableToday = nativeSpendableToday
     self.lastFourDigits = lastFourDigits
     self.expiration = expiration
     self.panToken = panToken
@@ -236,23 +242,28 @@ public enum FundingSourceType: String {
   case custodianWallet
 }
 
+public enum FundingSourceState: String {
+  case valid
+  case invalid
+}
+
 @objc open class FundingSource: NSObject {
   public let fundingSourceId: String
   public let fundingSourceType: FundingSourceType
   public let balance: Amount?
-  public let amountSpendable: Amount?
   public let amountHold: Amount?
+  public let state: FundingSourceState
 
   public init(fundingSourceId: String,
               type: FundingSourceType,
               balance: Amount?,
-              amountSpendable: Amount?,
-              amountHold: Amount?) {
+              amountHold: Amount?,
+              state: FundingSourceState) {
     self.fundingSourceId = fundingSourceId
     self.fundingSourceType = type
     self.balance = balance
-    self.amountSpendable = amountSpendable
     self.amountHold = amountHold
+    self.state = state
     super.init()
   }
 
@@ -274,14 +285,15 @@ public enum FundingSourceType: String {
               usdBalance: Amount?,
               usdAmountSpendable: Amount?,
               usdAmountHold: Amount?,
+              state: FundingSourceState,
               custodian: Custodian) {
     self.nativeBalance = nativeBalance
     self.custodian = custodian
     super.init(fundingSourceId: fundingSourceId,
                type: .custodianWallet,
                balance: usdBalance,
-               amountSpendable: usdAmountSpendable,
-               amountHold: usdAmountHold)
+               amountHold: usdAmountHold,
+               state: state)
   }
 
   override public func quickDescription() -> String {

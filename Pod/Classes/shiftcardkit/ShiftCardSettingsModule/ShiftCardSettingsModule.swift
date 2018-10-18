@@ -10,7 +10,6 @@ import UIKit
 class ShiftCardSettingsModule: UIModule {
   private let card: Card
   private var projectConfiguration: ProjectConfiguration! // swiftlint:disable:this implicitly_unwrapped_optional
-  private var mailSender: MailSender?
   private var externalOAuthModule: ExternalOAuthModule?
   private var presenter: ShiftCardSettingsPresenter?
   private var changePinAction: ChangeCardPINAction?
@@ -61,6 +60,7 @@ class ShiftCardSettingsModule: UIModule {
     let presenter = ShiftCardSettingsPresenter(shiftCardSession: shiftSession.shiftCardSession,
                                                card: card,
                                                config: presenterConfig,
+                                               emailRecipients: [self.projectConfiguration.supportEmailAddress],
                                                uiConfig: uiConfig)
     let interactor = ShiftCardSettingsInteractor(shiftSession: shiftSession, card: card)
     let viewController = ShiftCardSettingsViewController(uiConfiguration: uiConfig, presenter: presenter)
@@ -115,14 +115,6 @@ extension ShiftCardSettingsModule: ShiftCardSettingsRouterProtocol {
     }
     self.externalOAuthModule = externalOAuthModule
     push(module: externalOAuthModule) { _ in }
-  }
-
-  func reportLostCardTapped() {
-    let mailSender = MailSender()
-    self.mailSender = mailSender
-    mailSender.sendMessageWith(subject: "email.lost-card.subject".podLocalized(),
-                               message: "",
-                               recipients: [self.projectConfiguration.supportEmailAddress])
   }
 
   func changeCardPin() {

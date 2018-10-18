@@ -39,6 +39,7 @@ class ManageShiftCardViewController: ShiftViewController, ManageShiftCardViewPro
   private let mode: ShiftCardModuleMode
   private let emptyCaseView = UIView()
   private var shouldShowActivation: Bool? = false
+  private let disposeBag = DisposeBag()
 
   init(mode: ShiftCardModuleMode, uiConfiguration: ShiftUIConfig, eventHandler: ManageShiftCardEventHandler) {
     self.eventHandler = eventHandler
@@ -85,6 +86,17 @@ extension ManageShiftCardViewController: ManageShiftCardMainViewDelegate, Activa
 
   func activateCardTapped() {
     eventHandler.activateCardTapped()
+  }
+
+  func needToUpdateUI(action: () -> (), completion: @escaping () -> ()) {
+    CATransaction.begin()
+    CATransaction.setCompletionBlock {
+      completion()
+    }
+    transactionsList.beginUpdates()
+    action()
+    transactionsList.endUpdates()
+    CATransaction.commit()
   }
 }
 
@@ -266,53 +278,58 @@ private extension ManageShiftCardViewController {
   func setupViewModelSubscriptions() {
     let viewModel = eventHandler.viewModel
 
-    _ = viewModel.cardHolder.observeNext { cardHolder in
+    viewModel.cardHolder.observeNext { cardHolder in
       self.mainView.set(cardHolder: cardHolder)
       self.updateUI()
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.pan.observeNext { pan in
+    viewModel.pan.observeNext { pan in
       self.mainView.set(cardNumber: pan)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.lastFour.observeNext { lastFour in
+    viewModel.lastFour.observeNext { lastFour in
       self.mainView.set(lastFour: lastFour)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.cvv.observeNext { cvv in
+    viewModel.cvv.observeNext { cvv in
       self.mainView.set(cvv: cvv)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.cardNetwork.observeNext { cardNetwork in
+    viewModel.cardNetwork.observeNext { cardNetwork in
       self.mainView.set(cardNetwork: cardNetwork)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = combineLatest(viewModel.expirationMonth,
-                      viewModel.expirationYear).observeNext { expirationMonth, expirationYear in
-      if let expirationMonth = expirationMonth, let expirationYear = expirationYear {
-        self.mainView.set(expirationMonth: expirationMonth, expirationYear: expirationYear)
-      }
-    }
+    combineLatest(viewModel.expirationMonth,
+                  viewModel.expirationYear).observeNext { expirationMonth, expirationYear in
+                    if let expirationMonth = expirationMonth, let expirationYear = expirationYear {
+                      self.mainView.set(expirationMonth: expirationMonth, expirationYear: expirationYear)
+                    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.fundingSource.observeNext { fundingSource in
+    viewModel.fundingSource.observeNext { fundingSource in
       self.mainView.set(fundingSource: fundingSource)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.state.observeNext { state in
+    combineLatest(viewModel.spendableToday,
+                  viewModel.nativeSpendableToday).observeNext { spendableToday, nativeSpendableToday in
+                    self.mainView.setSpendable(amount: spendableToday, nativeAmount: nativeSpendableToday)
+    }.dispose(in: disposeBag)
+
+    viewModel.state.observeNext { state in
       self.mainView.set(cardState: state)
       self.updateUI()
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.isActivateCardFeatureEnabled.observeNext { shouldShowActivation in
+    viewModel.isActivateCardFeatureEnabled.observeNext { shouldShowActivation in
       self.mainView.set(activateCardFeatureEnabled: shouldShowActivation)
       self.shouldShowActivation = shouldShowActivation
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.cardInfoVisible.observeNext { visible in
+    viewModel.cardInfoVisible.observeNext { visible in
       self.mainView.set(showInfo: visible)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.transactions.observeNext { event in
+    viewModel.transactions.observeNext { event in
       switch event.change {
       case .reset:
         break
@@ -321,7 +338,7 @@ private extension ManageShiftCardViewController {
         self.transactionsList.switchRefreshHeader(to: .normal(.success, 0.5))
         self.transactionsList.switchRefreshFooter(to: .normal)
       }
-    }
+    }.dispose(in: disposeBag)
   }
 
   func updateUI() {
@@ -331,8 +348,8 @@ private extension ManageShiftCardViewController {
     footer.isHidden = viewModel.transactions.numberOfSections == 0
     // Only show the empty case if we are all set
     if viewModel.state.value != .created
-         && viewModel.cardHolder.value != nil
-         && viewModel.isActivateCardFeatureEnabled.value != nil {
+      && viewModel.cardHolder.value != nil
+      && viewModel.isActivateCardFeatureEnabled.value != nil {
       emptyCaseView.isHidden = viewModel.transactions.numberOfSections != 0
     }
   }

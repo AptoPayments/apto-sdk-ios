@@ -30,7 +30,7 @@ open class BackendError: NSError {
     case shiftCardActivateError = 900173
     case shiftCardEnableError = 900174
     case shiftCardDisableError = 900175
-    case primaryFundingSourceNotFound = 90165
+    case primaryFundingSourceNotFound = 90197
     case sdkDeprecated = 415
     case other = 1005
     case serverMaintenance = -1004

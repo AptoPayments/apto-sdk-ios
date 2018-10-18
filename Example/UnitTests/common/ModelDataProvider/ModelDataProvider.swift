@@ -118,6 +118,8 @@ class ModelDataProvider {
                              cvv: "333",
                              lastFourDigits: "7890",
                              expiration: "03/99",
+                             spendableToday: Amount(value: 12.34, currency: "GBP"),
+                             nativeSpendableToday: Amount(value: 0.034, currency: "BTC"),
                              kyc: .passed,
                              panToken: "pan_token",
                              cvvToken: "cvv_token",
