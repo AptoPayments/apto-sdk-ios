@@ -50,9 +50,9 @@ class ShiftCardSettingsModule: UIModule {
   fileprivate func buildShiftCardSettingsViewController(_ uiConfig: ShiftUIConfig,
                                                         shiftCardConfiguration: ShiftCardConfiguration,
                                                         card: Card) -> ShiftCardSettingsViewController {
-    let showAddFundingSourceButton = shiftCardConfiguration.isFeatureEnabled(.showAddFundingSourceButton)
+    let showBalancesSection = shiftCardConfiguration.isFeatureEnabled(.showBalancesSection)
     let cardProduct = shiftCardConfiguration.cardProduct
-    let presenterConfig = ShiftCardSettingsPresenterConfig(showAddFundingSourceButton: showAddFundingSourceButton,
+    let presenterConfig = ShiftCardSettingsPresenterConfig(showBalancesSection: showBalancesSection,
                                                            cardholderAgreement: cardProduct.cardholderAgreement,
                                                            privacyPolicy: cardProduct.privacyPolicy,
                                                            termsAndCondition: cardProduct.termsAndConditions,

@@ -6,7 +6,7 @@
 //
 
 @objc public enum ShiftCardOptionsKeys: Int {
-  case showAddFundingSourceButton
+  case showBalancesSection
   case showActivateCardButton
   case useBalanceVersionV2
 }
@@ -15,7 +15,7 @@
   var features: [ShiftCardOptionsKeys: Bool]
   override init() {
     self.features = [
-      .showAddFundingSourceButton: true,
+      .showBalancesSection: true,
       .showActivateCardButton: true,
       .useBalanceVersionV2: false
     ]

@@ -52,6 +52,13 @@ let currencySymbols: [String: String] = [
     return true
   }
 
+  open func sameCurrencyThan(amount: Amount?) -> Bool {
+    if let otherAmount = amount {
+      return otherAmount.currency.value == currency.value
+    }
+    return false
+  }
+
   @objc func copyWithZone(_ zone: NSZone?) -> AnyObject {
     let retVal = Amount(value: self.amount.value, currency: self.currency.value)
     return retVal

@@ -92,18 +92,19 @@ private extension ShiftCardSettingsViewController {
 private extension ShiftCardSettingsViewController {
   func setupViewModelSubscriptions() {
     let viewModel = presenter.viewModel
-    combineLatest(viewModel.showAddFundingSourceButton,
+    combineLatest(viewModel.showBalancesSection,
                   viewModel.fundingSources,
                   viewModel.faq,
                   viewModel.cardHolderAgreement,
                   viewModel.termsAndConditions,
-                  viewModel.privacyPolicy).observeNext { [unowned self] showAddFundingSourceButton, fundingSources,
+                  viewModel.privacyPolicy).observeNext { [unowned self] showBalancesSection, fundingSources,
                                                                         faq, cardHolderAgreement, termsAndConditions,
                                                                         privacyPolicy in
+
       let rows = [
-        self.createFundingSourceTitle(),
-        self.createFundingSourceView(fundingSources: fundingSources),
-        self.createAddFoundingSourceButton(showAddFundingSourceButton, fundingSources: fundingSources),
+        self.createFundingSourceTitle(showBalancesSection),
+        self.createFundingSourceView(showBalancesSection, fundingSources: fundingSources),
+        self.createAddFoundingSourceButton(showBalancesSection, fundingSources: fundingSources),
         self.createSettingsTitle(),
         self.createChangePinRow(),
         self.setUpShowCardInfoRow(),
@@ -132,13 +133,15 @@ private extension ShiftCardSettingsViewController {
     }.dispose(in: disposeBag)
   }
 
-  func createFundingSourceTitle() -> FormRowLabelView {
+  func createFundingSourceTitle(_ showBalancesSection: Bool?) -> FormRowLabelView? {
+    guard showBalancesSection == true else { return nil }
     return FormBuilder.sectionTitleRowWith(text: "card.settings.funding_sources.title".podLocalized(),
                                            textAlignment: .left,
                                            uiConfig: self.uiConfiguration)
   }
 
-  func createFundingSourceView(fundingSources: [FundingSource]) -> FormRowView {
+  func createFundingSourceView(_ showBalancesSection: Bool?, fundingSources: [FundingSource]) -> FormRowView? {
+    guard showBalancesSection == true else { return nil }
     if !fundingSources.isEmpty {
       return createFundingSourceSelector(fundingSources: fundingSources)
     }
@@ -254,9 +257,9 @@ private extension ShiftCardSettingsViewController {
     }
   }
 
-  func createAddFoundingSourceButton(_ showAddFundingSourceButton: Bool?,
+  func createAddFoundingSourceButton(_ showBalancesSection: Bool?,
                                      fundingSources: [FundingSource]) -> FormRowLinkView? {
-    guard showAddFundingSourceButton == true, !fundingSources.isEmpty else { return nil }
+    guard showBalancesSection == true, !fundingSources.isEmpty else { return nil }
     let retVal = FormBuilder.linkRowWith(title: "card.settings.add-funding-source.button.title".podLocalized(),
                                          leftIcon: UIImage.imageFromPodBundle("add-icon")?.asTemplate(),
                                          uiConfig: self.uiConfiguration) { [unowned self] in
