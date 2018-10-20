@@ -76,7 +76,9 @@ private extension BalanceView {
     else {
       showBalance = false
     }
-    if let custodianWallet = fundingSource as? CustodianWallet {
+    if let custodianWallet = fundingSource as? CustodianWallet,
+      let balance = fundingSource.balance,
+      !balance.sameCurrencyThan(amount: custodianWallet.nativeBalance) {
       balanceBitCoins.text = custodianWallet.nativeBalance.longText
       showNativeBalance = true
     }
@@ -93,7 +95,9 @@ private extension BalanceView {
     else {
       showSpendable = false
     }
-    if let nativeSpendableToday = nativeSpendableToday {
+    if let spendableToday = spendableToday,
+      let nativeSpendableToday = nativeSpendableToday,
+      !spendableToday.sameCurrencyThan(amount: nativeSpendableToday) {
       spendableBitCoins.text = nativeSpendableToday.longText
       showNativeSpendableBalance = true
     }

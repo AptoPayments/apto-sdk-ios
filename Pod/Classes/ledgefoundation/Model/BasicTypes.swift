@@ -11,12 +11,13 @@ import Bond
 
 // MARK: - Basic Data Types
 
-let currencySymbols: [String: String] = [
-  "USD": "$",
-  "EUR": "€",
+var currencySymbols: [String: String] = [
   "BTC": "BTC",
+  "BTH": "BTH",
   "ETH": "ETH",
-  "BTH": "BTH"
+  "ETC": "ETC",
+  "LTC": "LTC",
+  "ZRX": "ZRX"
 ]
 
 @objc open class Amount: NSObject {
@@ -24,7 +25,16 @@ let currencySymbols: [String: String] = [
   open var currency: Observable<String?> = Observable("USD")
   open var currencySymbol: String? {
     if let currency = currency.value {
-      return currencySymbols[currency]
+      if let symbol = currencySymbols[currency] {
+        return symbol
+      }
+      else {
+        guard let identifier = Locale.availableIdentifiers.first(where: { Locale(identifier: $0).currencyCode == currency }) else {
+          return nil
+        }
+        currencySymbols[currency] = Locale(identifier: identifier).currencySymbol
+        return currencySymbols[currency]
+      }
     }
     return nil
   }
@@ -50,6 +60,13 @@ let currencySymbols: [String: String] = [
       return false
     }
     return true
+  }
+
+  open func sameCurrencyThan(amount: Amount?) -> Bool {
+    if let otherAmount = amount {
+      return otherAmount.currency.value == currency.value
+    }
+    return false
   }
 
   @objc func copyWithZone(_ zone: NSZone?) -> AnyObject {

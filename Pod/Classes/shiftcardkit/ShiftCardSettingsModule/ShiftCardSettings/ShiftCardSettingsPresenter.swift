@@ -11,7 +11,7 @@ import Stripe
 import Bond
 
 struct ShiftCardSettingsPresenterConfig {
-  let showAddFundingSourceButton: Bool?
+  let showBalancesSection: Bool?
   let cardholderAgreement: Content?
   let privacyPolicy: Content?
   let termsAndCondition: Content?
@@ -31,6 +31,7 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
   private let disableCardAction: DisableCardAction
   private let showCardInfoAction: ShowCardInfoAction
   private let reportLostCardAction: ReportLostCardAction
+  private let config: ShiftCardSettingsPresenterConfig
 
   init(shiftCardSession: ShiftCardSession,
        card: Card,
@@ -38,6 +39,7 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
        emailRecipients: [String?],
        uiConfig: ShiftUIConfig) {
     self.card = card
+    self.config = config
     self.viewModel = ShiftCardSettingsViewModel()
     self.enableCardAction = EnableCardAction(shiftCardSession: shiftCardSession,
                                              card: self.card,
@@ -50,7 +52,7 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
                                                          emailRecipients: emailRecipients,
                                                          uiConfig: uiConfig)
     self.showCardInfoAction = ShowCardInfoAction()
-    self.viewModel.showAddFundingSourceButton.next(config.showAddFundingSourceButton)
+    self.viewModel.showBalancesSection.next(config.showBalancesSection)
     self.viewModel.cardHolderAgreement.next(config.cardholderAgreement)
     self.viewModel.termsAndConditions.next(config.termsAndCondition)
     self.viewModel.privacyPolicy.next(config.privacyPolicy)
@@ -105,9 +107,12 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
   }
 
   fileprivate func refreshData() {
-    view.showLoadingSpinner()
     viewModel.locked.next(card.state != .active)
     viewModel.showCardInfo.next(router.isCardInfoVisible())
+    guard config.showBalancesSection == true else {
+      return
+    }
+    view.showLoadingSpinner()
     interactor.provideFundingSources(rows: rowsPerPage) { result in
       switch result {
       case .failure(let error):

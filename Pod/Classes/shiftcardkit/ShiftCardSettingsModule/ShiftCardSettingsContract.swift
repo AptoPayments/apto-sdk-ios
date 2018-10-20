@@ -44,7 +44,7 @@ open class ShiftCardSettingsViewModel {
   open var fundingSources: Observable<[FundingSource]> = Observable([])
   open var activeFundingSource: Observable<FundingSource?> = Observable(nil)
   open var activeFundingSourceIdx: Observable<Int?> = Observable(nil)
-  open var showAddFundingSourceButton: Observable<Bool?> = Observable(nil)
+  open var showBalancesSection: Observable<Bool?> = Observable(nil)
   open var locked: Observable<Bool?> = Observable(nil)
   open var showCardInfo: Observable<Bool?> = Observable(nil)
   open var cardHolderAgreement: Observable<Content?> = Observable(nil)
