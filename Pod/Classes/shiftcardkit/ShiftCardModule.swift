@@ -206,7 +206,8 @@ open class ShiftCardModule: UIModule {
       case .failure(let error):
         self.show(error: error)
       case .success(let cards):
-        if let card = cards.first {
+        let nonClosedCards = cards.filter { $0.state != .cancelled }
+        if let card = nonClosedCards.first {
           self.hideLoadingSpinner()
           self.showManageCardModule(card: card, addChild: addChild, pushModule: pushModule, completion: completion)
         }
