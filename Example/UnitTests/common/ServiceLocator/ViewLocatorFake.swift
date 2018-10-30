@@ -46,4 +46,10 @@ class ViewLocatorFake: ViewLocatorProtocol {
                             presenter: DataConfirmationPresenterProtocol) -> DataConfirmationViewController {
     return DataConfirmationViewController(uiConfiguration: uiConfig, presenter: presenter)
   }
+
+  func physicalCardActivationView(uiConfig: ShiftUIConfig,
+                                  presenter: PhysicalCardActivationSucceedPresenterProtocol)
+      -> PhysicalCardActivationSucceedViewController {
+    return PhysicalCardActivationSucceedViewController(uiConfiguration: uiConfig, presenter: presenter)
+  }
 }

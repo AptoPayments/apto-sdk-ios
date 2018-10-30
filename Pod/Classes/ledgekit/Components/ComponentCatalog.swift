@@ -16,7 +16,7 @@ class ComponentCatalog {
                                  uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.amountBigFont
+    retVal.font = uiConfig.fontProvider.amountBigFont
     retVal.textColor = uiConfig.textPrimaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -29,7 +29,7 @@ class ComponentCatalog {
                                     uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.amountMediumFont
+    retVal.font = uiConfig.fontProvider.amountMediumFont
     retVal.textColor = uiConfig.textSecondaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -42,7 +42,7 @@ class ComponentCatalog {
                                    uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.amountSmallFont
+    retVal.font = uiConfig.fontProvider.amountSmallFont
     retVal.textColor = uiConfig.textPrimaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -56,7 +56,7 @@ class ComponentCatalog {
                             uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.formLabelFont
+    retVal.font = uiConfig.fontProvider.formLabelFont
     retVal.textColor = uiConfig.textPrimaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -73,7 +73,7 @@ class ComponentCatalog {
                                 uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.formListFont
+    retVal.font = uiConfig.fontProvider.formListFont
     retVal.textColor = uiConfig.textSecondaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -99,7 +99,7 @@ class ComponentCatalog {
     retVal.returnKeyType = .next
     retVal.enablesReturnKeyAutomatically = true
     retVal.backgroundColor = .clear
-    retVal.font = uiConfig.formFieldFont
+    retVal.font = uiConfig.fontProvider.formFieldFont
     retVal.textColor = uiConfig.textSecondaryColor
     retVal.accessibilityLabel = accessibilityLabel
     retVal.tintColor = uiConfig.uiPrimaryColor
@@ -122,7 +122,7 @@ class ComponentCatalog {
     retVal.returnKeyType = .next
     retVal.enablesReturnKeyAutomatically = true
     retVal.backgroundColor = .clear
-    retVal.font = uiConfig.formFieldFont
+    retVal.font = uiConfig.fontProvider.formFieldFont
     retVal.textColor = uiConfig.textSecondaryColor
     retVal.accessibilityLabel = accessibilityLabel
     retVal.tintColor = uiConfig.uiPrimaryColor
@@ -147,7 +147,7 @@ class ComponentCatalog {
     retVal.returnKeyType = .next
     retVal.enablesReturnKeyAutomatically = true
     retVal.backgroundColor = .clear
-    retVal.font = uiConfig.formFieldFont
+    retVal.font = uiConfig.fontProvider.formFieldFont
     retVal.textColor = uiConfig.textSecondaryColor
     retVal.accessibilityLabel = accessibilityLabel
     retVal.tintColor = uiConfig.uiPrimaryColor
@@ -174,7 +174,7 @@ class ComponentCatalog {
     button.backgroundColor = .clear
     button.accessibilityLabel = accessibilityLabel
     let attributes: [NSAttributedStringKey: Any] = [
-      NSAttributedStringKey.font: uiConfig.formTextLink,
+      NSAttributedStringKey.font: uiConfig.fontProvider.formTextLink,
       NSAttributedStringKey.foregroundColor: uiConfig.textSecondaryColor,
       NSAttributedStringKey.underlineStyle: NSUnderlineStyle.styleSingle.rawValue,
       NSAttributedStringKey.underlineColor: uiConfig.textSecondaryColor
@@ -195,7 +195,7 @@ class ComponentCatalog {
                                     uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.instructionsFont
+    retVal.font = uiConfig.fontProvider.instructionsFont
     retVal.textColor = uiConfig.textTertiaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -209,7 +209,7 @@ class ComponentCatalog {
                                        uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.itemDescriptionFont
+    retVal.font = uiConfig.fontProvider.itemDescriptionFont
     retVal.textColor = uiConfig.textTertiaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -222,7 +222,7 @@ class ComponentCatalog {
                                      uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.mainItemLightFont
+    retVal.font = uiConfig.fontProvider.mainItemLightFont
     retVal.textColor = uiConfig.textPrimaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -236,7 +236,7 @@ class ComponentCatalog {
                                        uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.mainItemRegularFont
+    retVal.font = uiConfig.fontProvider.mainItemRegularFont
     retVal.textColor = uiConfig.textPrimaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -254,7 +254,7 @@ class ComponentCatalog {
     button.layer.cornerRadius = uiConfig.buttonCornerRadius
     button.backgroundColor = uiConfig.uiPrimaryColor
     button.accessibilityLabel = accessibilityLabel
-    button.titleLabel?.font = uiConfig.primaryCallToActionFont
+    button.titleLabel?.font = uiConfig.fontProvider.primaryCallToActionFont
     button.setTitle(title, for: UIControlState())
     button.layer.shadowOffset = CGSize(width: 0, height: 16)
     button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
@@ -275,7 +275,7 @@ class ComponentCatalog {
     button.layer.cornerRadius = 18
     button.backgroundColor = uiConfig.uiPrimaryColor
     button.accessibilityLabel = accessibilityLabel
-    button.titleLabel?.font = uiConfig.primaryCallToActionFontSmall
+    button.titleLabel?.font = uiConfig.fontProvider.primaryCallToActionFontSmall
     button.setTitle(title, for: UIControlState())
     button.layer.shadowOffset = CGSize(width: 0, height: 16)
     button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
@@ -294,7 +294,7 @@ class ComponentCatalog {
                                     uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.sectionTitleFont
+    retVal.font = uiConfig.fontProvider.sectionTitleFont
     retVal.textColor = uiConfig.textSecondaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -308,7 +308,7 @@ class ComponentCatalog {
                                    uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.boldMessageFont
+    retVal.font = uiConfig.fontProvider.boldMessageFont
     retVal.textColor = uiConfig.textPrimaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -324,7 +324,7 @@ class ComponentCatalog {
                                    uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.subCurrencyFont
+    retVal.font = uiConfig.fontProvider.subCurrencyFont
     retVal.textColor = uiConfig.textPrimaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -337,7 +337,7 @@ class ComponentCatalog {
                                  uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.timestampFont
+    retVal.font = uiConfig.fontProvider.timestampFont
     retVal.textColor = uiConfig.textTertiaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -350,7 +350,7 @@ class ComponentCatalog {
                                 uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.textLinkFont
+    retVal.font = uiConfig.fontProvider.textLinkFont
     retVal.textColor = uiConfig.textLinkColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -363,7 +363,7 @@ class ComponentCatalog {
                                     uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.topBarAmountFont
+    retVal.font = uiConfig.fontProvider.topBarAmountFont
     retVal.textColor = uiConfig.textTopBarColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -376,7 +376,7 @@ class ComponentCatalog {
                                    uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.topBarTitleFont
+    retVal.font = uiConfig.fontProvider.topBarTitleFont
     retVal.textColor = uiConfig.textTopBarColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -389,7 +389,7 @@ class ComponentCatalog {
                                       uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.topBarTitleBigFont
+    retVal.font = uiConfig.fontProvider.topBarTitleBigFont
     retVal.textColor = uiConfig.textTopBarColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -403,7 +403,7 @@ class ComponentCatalog {
                                   uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.largeTitleFont
+    retVal.font = uiConfig.fontProvider.largeTitleFont
     retVal.textColor = uiConfig.textPrimaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -420,7 +420,7 @@ class ComponentCatalog {
                               uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.errorTitleFont
+    retVal.font = uiConfig.fontProvider.errorTitleFont
     retVal.textColor = uiConfig.textPrimaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -437,7 +437,7 @@ class ComponentCatalog {
                                 uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
     retVal.text = text
-    retVal.font = uiConfig.errorMessageFont
+    retVal.font = uiConfig.fontProvider.errorMessageFont
     retVal.textColor = uiConfig.textPrimaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel

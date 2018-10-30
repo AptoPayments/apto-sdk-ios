@@ -30,6 +30,7 @@ class ServiceLocatorFake: ServiceLocatorProtocol {
   var session: ShiftSession {
     return sessionFake
   }
+  var uiConfig: ShiftUIConfig! = ShiftUIConfig(projectConfiguration: ModelDataProvider.provider.projectConfiguration)
 }
 
 // ShiftSession configuration methods

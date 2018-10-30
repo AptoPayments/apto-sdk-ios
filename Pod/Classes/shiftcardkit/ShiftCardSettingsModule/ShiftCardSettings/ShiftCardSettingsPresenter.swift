@@ -48,15 +48,16 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
                                                card: self.card,
                                                uiConfig: uiConfig)
     self.reportLostCardAction = ReportLostCardAction(session: shiftCardSession,
-                                                         card: card,
-                                                         emailRecipients: emailRecipients,
-                                                         uiConfig: uiConfig)
+                                                     card: card,
+                                                     emailRecipients: emailRecipients,
+                                                     uiConfig: uiConfig)
     self.showCardInfoAction = ShowCardInfoAction()
     self.viewModel.showBalancesSection.next(config.showBalancesSection)
-    self.viewModel.cardHolderAgreement.next(config.cardholderAgreement)
-    self.viewModel.termsAndConditions.next(config.termsAndCondition)
-    self.viewModel.privacyPolicy.next(config.privacyPolicy)
-    self.viewModel.faq.next(config.faq)
+    let legalDocuments = LegalDocuments(cardHolderAgreement: config.cardholderAgreement,
+                                        faq: config.faq,
+                                        termsAndConditions: config.termsAndCondition,
+                                        privacyPolicy: config.privacyPolicy)
+    self.viewModel.legalDocuments.next(legalDocuments)
   }
 
   func viewLoaded() {
@@ -107,6 +108,8 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
   }
 
   fileprivate func refreshData() {
+    viewModel.showChangePin.next(card.features?.changePin == .enabled)
+    viewModel.showGetPin.next(card.features?.ivr?.status == .enabled)
     viewModel.locked.next(card.state != .active)
     viewModel.showCardInfo.next(router.isCardInfoVisible())
     guard config.showBalancesSection == true else {
@@ -120,6 +123,9 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
       case .success(let fundingSources):
         self.interactor.activeCardFundingSource { result in
           self.view.hideLoadingSpinner()
+          if self.viewModel.fundingSourcesLoaded.value == false {
+            self.viewModel.fundingSourcesLoaded.next(true)
+          }
           switch result {
           case .failure(let error):
             self.view.show(error: error)
@@ -150,10 +156,20 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
     guard index != viewModel.activeFundingSourceIdx.value else {
       return
     }
-    if index < viewModel.fundingSources.value.count {
-      interactor.setActive(fundingSource: viewModel.fundingSources.value[index]) { _ in
-        self.refreshData()
-        self.router.fundingSourceChanged()
+    let fundingSources = viewModel.fundingSources.value
+    if index < fundingSources.count {
+      self.view.showLoadingSpinner()
+      interactor.setActive(fundingSource: fundingSources[index]) { [unowned self] result in
+        self.view.hideLoadingSpinner()
+        switch result {
+        case .failure(let error):
+          // If set new funding source fails restore the previous selection
+          self.viewModel.activeFundingSourceIdx.next(self.viewModel.activeFundingSourceIdx.value)
+          self.view.show(error: error)
+        case .success(_):
+          self.viewModel.activeFundingSourceIdx.next(index)
+          self.router.fundingSourceChanged()
+        }
       }
     }
   }
@@ -182,6 +198,16 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
 
   func changePinTapped() {
     router.changeCardPin()
+  }
+
+  func getPinTapped() {
+    guard let url = PhoneHelper.sharedHelper().callURL(from: card.features?.ivr?.phone) else {
+      return
+    }
+
+    router.call(url: url) { [unowned self] in
+      self.router.cardStateChanged()
+    }
   }
 
   func show(content: Content, title: String) {

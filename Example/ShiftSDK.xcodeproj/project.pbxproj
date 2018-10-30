@@ -57,6 +57,7 @@
 		2CFD38481FA8959500ADD20E /* SDKSettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFD38471FA8959500ADD20E /* SDKSettingsScreen.swift */; };
 		2CFD384C1FA8962E00ADD20E /* LedgeUITestSuite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFD384B1FA8962E00ADD20E /* LedgeUITestSuite.swift */; };
 		2CFD384E1FA8BA1500ADD20E /* InputPhoneScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFD384D1FA8BA1500ADD20E /* InputPhoneScreen.swift */; };
+		3C65E0BA217E10BB000207B1 /* PhysicalCardActivationSucceedTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C65E0B9217E10BB000207B1 /* PhysicalCardActivationSucceedTestDoubles.swift */; };
 		3CEBF048215A871500B077BD /* DataConfirmationTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEBF047215A871500B077BD /* DataConfirmationTestDoubles.swift */; };
 		3CEBF04A215A896900B077BD /* DataConfirmationInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEBF049215A896900B077BD /* DataConfirmationInteractorTest.swift */; };
 		3CEBF04E215A908000B077BD /* DataConfirmationPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEBF04D215A908000B077BD /* DataConfirmationPresenterTest.swift */; };
@@ -71,6 +72,7 @@
 		D99BD0D3B76E2A681556D3A1 /* ShiftPlatformTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDE8FA3C180E4E7030125 /* ShiftPlatformTestDoubles.swift */; };
 		D99BD106FA7689F59B3B745F /* IssueCardModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD042115A0913247DF648 /* IssueCardModuleTest.swift */; };
 		D99BD12A735EFE87609776FC /* AuthInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD4ACFC6276EC0D5F351E /* AuthInteractorTest.swift */; };
+		D99BD17D72A003D1EBBE47A1 /* PhysicalCardActivationSucceedPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD813C7BC793219B09E44 /* PhysicalCardActivationSucceedPresenterTest.swift */; };
 		D99BD18C7F82C6C36CC05F59 /* ModelDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDF58D71F168C290407FC /* ModelDataProvider.swift */; };
 		D99BD19670282880C2D4670B /* FullScreenDisclaimerTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD3C9A32F4272EDA6C9E2 /* FullScreenDisclaimerTestDoubles.swift */; };
 		D99BD1D9EF9E49B603764E57 /* ViewControllerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDA8B88C9D5375834E9D4 /* ViewControllerSpy.swift */; };
@@ -86,8 +88,10 @@
 		D99BD4119BE5F49FB1D31A51 /* FullScreenDisclaimerInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD56190C5C4551B635532 /* FullScreenDisclaimerInteractorTest.swift */; };
 		D99BD466641EDE6E07ABF939 /* ContentPresenterInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD5E15145A4AE8EB03459 /* ContentPresenterInteractorTest.swift */; };
 		D99BD4706AFF825E65A1784D /* ServerMaintenanceErrorTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD1C5C4E36F47B0A52BC5 /* ServerMaintenanceErrorTestDoubles.swift */; };
+		D99BD4A4D9B91A49FB0E498F /* UIModuleSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD8FBB7EC375FF455E37A /* UIModuleSpy.swift */; };
 		D99BD4B1C65D30B428CA97DD /* ServerMaintenanceErrorPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD4E2D1B5822248215826 /* ServerMaintenanceErrorPresenterTest.swift */; };
 		D99BD4D2A74CC4948F8AFD42 /* PresenterLocatorFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD0F4A245B34F36E3355E /* PresenterLocatorFake.swift */; };
+		D99BD57E029C8267620CF0F7 /* PhoneCallerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDE3142093307782DC7C3 /* PhoneCallerSpy.swift */; };
 		D99BD5DE2B51A91002A694EB /* ServerMaintenanceErrorModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDAD6274ACA8C47D46970 /* ServerMaintenanceErrorModuleTest.swift */; };
 		D99BD6233DCDEC877BB1FCF7 /* AuthModuleTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD12ED8909ACDE7F3A71B /* AuthModuleTestDoubles.swift */; };
 		D99BD62AFD7D84FCA5EAB0ED /* FullScreenDisclaimerPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDF21C640DE79B64E1579 /* FullScreenDisclaimerPresenterTest.swift */; };
@@ -97,11 +101,14 @@
 		D99BD6F54655FC463A608CDA /* ContentPresenterPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD22F5A0E6180A4D3B8F1 /* ContentPresenterPresenterTest.swift */; };
 		D99BD760B7BC6330BBC4C775 /* IssueCardViewControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD5B9342D84D54F7C3F0B /* IssueCardViewControllerTest.swift */; };
 		D99BD87CD9142422A2ED7FA4 /* ViewLocatorFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD2C5E0468692DE459066 /* ViewLocatorFake.swift */; };
+		D99BD88CD4E3FD4D66193BA8 /* ActionConfirmerFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD9D0B89C886FF66E9459 /* ActionConfirmerFake.swift */; };
 		D99BD99B174D90E4B8C97F85 /* FullScreenDisclaimerModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD011C1A46F756FF8093B /* FullScreenDisclaimerModuleTest.swift */; };
 		D99BDA2694F6E9769381BE7D /* ExternalOAuthModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD4ED0CB0C5B41A5ECC71 /* ExternalOAuthModuleTest.swift */; };
 		D99BDA8447A9328D3598DAFD /* VerifyEmailTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD22B8085FFA59A8FE39B /* VerifyEmailTestDoubles.swift */; };
 		D99BDAF0178946C15015F56F /* IssueCardTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD15DF029C42C8368ADA4 /* IssueCardTestDoubles.swift */; };
+		D99BDAF3D5B7458F0BBC74CD /* PhysicalCardActivationSucceedModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD17D7D29814E184641A3 /* PhysicalCardActivationSucceedModuleTest.swift */; };
 		D99BDB56D5589E314E12E900 /* ExternalOAuthInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDDF38E2B5EE55621A6EE /* ExternalOAuthInteractorTest.swift */; };
+		D99BDD0A5A0C772C4B461169 /* PhysicalCardActivationSucceedInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD65064FCEF555F8787FD /* PhysicalCardActivationSucceedInteractorTest.swift */; };
 		D99BDD2CCEDB1BFFFA95898B /* ServerMaintenanceErrorInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD365E662EBC2ADCB1131 /* ServerMaintenanceErrorInteractorTest.swift */; };
 		D99BDDB0ECA66C340B635B14 /* ServiceLocatorFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD3B9E1A2986ECFECFEBE /* ServiceLocatorFake.swift */; };
 		D99BDDFA7B0996FB54697F0A /* NetworkManagerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD86821F2C34BA8F94D62 /* NetworkManagerSpy.swift */; };
@@ -215,6 +222,7 @@
 		2CFD384D1FA8BA1500ADD20E /* InputPhoneScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputPhoneScreen.swift; sourceTree = "<group>"; };
 		2FD9B79683F0323F267BEC7B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		3A416E664DA23FB4D803A70A /* Pods_LedgeAutomationTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LedgeAutomationTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C65E0B9217E10BB000207B1 /* PhysicalCardActivationSucceedTestDoubles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicalCardActivationSucceedTestDoubles.swift; sourceTree = "<group>"; };
 		3CB1E242D7BF2DA7660FAF84 /* Pods-AutomationTests.dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutomationTests.dev.xcconfig"; path = "Pods/Target Support Files/Pods-AutomationTests/Pods-AutomationTests.dev.xcconfig"; sourceTree = "<group>"; };
 		3CEBF047215A871500B077BD /* DataConfirmationTestDoubles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConfirmationTestDoubles.swift; sourceTree = "<group>"; };
 		3CEBF049215A896900B077BD /* DataConfirmationInteractorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConfirmationInteractorTest.swift; sourceTree = "<group>"; };
@@ -242,6 +250,7 @@
 		D99BD0F4A245B34F36E3355E /* PresenterLocatorFake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresenterLocatorFake.swift; sourceTree = "<group>"; };
 		D99BD12ED8909ACDE7F3A71B /* AuthModuleTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthModuleTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD15DF029C42C8368ADA4 /* IssueCardTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IssueCardTestDoubles.swift; sourceTree = "<group>"; };
+		D99BD17D7D29814E184641A3 /* PhysicalCardActivationSucceedModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicalCardActivationSucceedModuleTest.swift; sourceTree = "<group>"; };
 		D99BD1C5C4E36F47B0A52BC5 /* ServerMaintenanceErrorTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerMaintenanceErrorTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD22B8085FFA59A8FE39B /* VerifyEmailTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyEmailTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD22F5A0E6180A4D3B8F1 /* ContentPresenterPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentPresenterPresenterTest.swift; sourceTree = "<group>"; };
@@ -261,12 +270,16 @@
 		D99BD5B9342D84D54F7C3F0B /* IssueCardViewControllerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IssueCardViewControllerTest.swift; sourceTree = "<group>"; };
 		D99BD5E15145A4AE8EB03459 /* ContentPresenterInteractorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentPresenterInteractorTest.swift; sourceTree = "<group>"; };
 		D99BD639C1E08F321E36C066 /* InteractorLocatorFake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InteractorLocatorFake.swift; sourceTree = "<group>"; };
+		D99BD65064FCEF555F8787FD /* PhysicalCardActivationSucceedInteractorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicalCardActivationSucceedInteractorTest.swift; sourceTree = "<group>"; };
 		D99BD6B194BF7F5FD9BD6B87 /* ExternalOAuthPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExternalOAuthPresenterTest.swift; sourceTree = "<group>"; };
 		D99BD6C432953070B1D34097 /* VerifyPhoneTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyPhoneTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD718BDAD72E2E8C61D11 /* ExternalOAuthModuleTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExternalOAuthModuleTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD7753DC33167295EF8BD /* ShiftSessionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShiftSessionTest.swift; sourceTree = "<group>"; };
+		D99BD813C7BC793219B09E44 /* PhysicalCardActivationSucceedPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicalCardActivationSucceedPresenterTest.swift; sourceTree = "<group>"; };
 		D99BD86821F2C34BA8F94D62 /* NetworkManagerSpy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManagerSpy.swift; sourceTree = "<group>"; };
+		D99BD8FBB7EC375FF455E37A /* UIModuleSpy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIModuleSpy.swift; sourceTree = "<group>"; };
 		D99BD9A62DB2E14989227464 /* ModuleLocatorFake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModuleLocatorFake.swift; sourceTree = "<group>"; };
+		D99BD9D0B89C886FF66E9459 /* ActionConfirmerFake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionConfirmerFake.swift; sourceTree = "<group>"; };
 		D99BDA8B88C9D5375834E9D4 /* ViewControllerSpy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerSpy.swift; sourceTree = "<group>"; };
 		D99BDAD6274ACA8C47D46970 /* ServerMaintenanceErrorModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerMaintenanceErrorModuleTest.swift; sourceTree = "<group>"; };
 		D99BDC0B3A3D17A6E28B3F3D /* AuthModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthModuleTest.swift; sourceTree = "<group>"; };
@@ -276,6 +289,7 @@
 		D99BDDD8406A82AD07D3B172 /* AuthPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthPresenterTest.swift; sourceTree = "<group>"; };
 		D99BDDEC7F89BAF6E9D29BCB /* ShowDisclaimerActionModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDisclaimerActionModuleTest.swift; sourceTree = "<group>"; };
 		D99BDDF38E2B5EE55621A6EE /* ExternalOAuthInteractorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExternalOAuthInteractorTest.swift; sourceTree = "<group>"; };
+		D99BDE3142093307782DC7C3 /* PhoneCallerSpy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneCallerSpy.swift; sourceTree = "<group>"; };
 		D99BDE8FA3C180E4E7030125 /* ShiftPlatformTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShiftPlatformTestDoubles.swift; sourceTree = "<group>"; };
 		D99BDF112F78AF668E19A23E /* VerifyBirthDateTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyBirthDateTestDoubles.swift; sourceTree = "<group>"; };
 		D99BDF21C640DE79B64E1579 /* FullScreenDisclaimerPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullScreenDisclaimerPresenterTest.swift; sourceTree = "<group>"; };
@@ -484,6 +498,17 @@
 			path = Base/Helpers;
 			sourceTree = "<group>";
 		};
+		3C65E0B8217E1083000207B1 /* PhysicalCardActivationSucceed */ = {
+			isa = PBXGroup;
+			children = (
+				3C65E0B9217E10BB000207B1 /* PhysicalCardActivationSucceedTestDoubles.swift */,
+				D99BD65064FCEF555F8787FD /* PhysicalCardActivationSucceedInteractorTest.swift */,
+				D99BD813C7BC793219B09E44 /* PhysicalCardActivationSucceedPresenterTest.swift */,
+				D99BD17D7D29814E184641A3 /* PhysicalCardActivationSucceedModuleTest.swift */,
+			);
+			path = PhysicalCardActivationSucceed;
+			sourceTree = "<group>";
+		};
 		3CEBF046215A86E900B077BD /* DataConfirmationModule */ = {
 			isa = PBXGroup;
 			children = (
@@ -577,6 +602,8 @@
 			isa = PBXGroup;
 			children = (
 				D99BDA8B88C9D5375834E9D4 /* ViewControllerSpy.swift */,
+				D99BD9D0B89C886FF66E9459 /* ActionConfirmerFake.swift */,
+				D99BD8FBB7EC375FF455E37A /* UIModuleSpy.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -639,6 +666,7 @@
 				D99BDF9112039F4A799F55AC /* FullScreenDisclaimer */,
 				D99BDB88F55A79DB8F64EFC4 /* ServerMaintenanceError */,
 				D99BDC137CEB9D88652E5702 /* ContentPresenter */,
+				D99BD7626B446FC612E69E82 /* Base */,
 			);
 			path = ledgekit;
 			sourceTree = "<group>";
@@ -665,6 +693,14 @@
 				D99BD86821F2C34BA8F94D62 /* NetworkManagerSpy.swift */,
 			);
 			path = NetworkManager;
+			sourceTree = "<group>";
+		};
+		D99BD7626B446FC612E69E82 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				D99BDE3142093307782DC7C3 /* PhoneCallerSpy.swift */,
+			);
+			path = Base;
 			sourceTree = "<group>";
 		};
 		D99BD7DC49993979DBF809FB /* Manager */ = {
@@ -767,6 +803,7 @@
 		D99BDE7810FD4CC74825371B /* shiftcardkit */ = {
 			isa = PBXGroup;
 			children = (
+				3C65E0B8217E1083000207B1 /* PhysicalCardActivationSucceed */,
 				D99BDCA9ED15BB20C3BD366B /* ShowDisclaimerActionModule */,
 				D99BD0CB375DFF6344BECB10 /* IssueCardModule */,
 			);
@@ -1152,6 +1189,7 @@
 				3CEBF04E215A908000B077BD /* DataConfirmationPresenterTest.swift in Sources */,
 				D99BD19670282880C2D4670B /* FullScreenDisclaimerTestDoubles.swift in Sources */,
 				D99BD62AFD7D84FCA5EAB0ED /* FullScreenDisclaimerPresenterTest.swift in Sources */,
+				3C65E0BA217E10BB000207B1 /* PhysicalCardActivationSucceedTestDoubles.swift in Sources */,
 				D99BD66D0E10456D1329D316 /* ShiftSessionTestDoubles.swift in Sources */,
 				D99BD99B174D90E4B8C97F85 /* FullScreenDisclaimerModuleTest.swift in Sources */,
 				D99BD23C6667DB4E1566431C /* AuthModuleTest.swift in Sources */,
@@ -1189,6 +1227,12 @@
 				D99BD466641EDE6E07ABF939 /* ContentPresenterInteractorTest.swift in Sources */,
 				D99BD6F54655FC463A608CDA /* ContentPresenterPresenterTest.swift in Sources */,
 				D99BDF698B2C2D89446637E1 /* ContentPresenterModuleTest.swift in Sources */,
+				D99BD88CD4E3FD4D66193BA8 /* ActionConfirmerFake.swift in Sources */,
+				D99BD4A4D9B91A49FB0E498F /* UIModuleSpy.swift in Sources */,
+				D99BDD0A5A0C772C4B461169 /* PhysicalCardActivationSucceedInteractorTest.swift in Sources */,
+				D99BD17D72A003D1EBBE47A1 /* PhysicalCardActivationSucceedPresenterTest.swift in Sources */,
+				D99BDAF3D5B7458F0BBC74CD /* PhysicalCardActivationSucceedModuleTest.swift in Sources */,
+				D99BD57E029C8267620CF0F7 /* PhoneCallerSpy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

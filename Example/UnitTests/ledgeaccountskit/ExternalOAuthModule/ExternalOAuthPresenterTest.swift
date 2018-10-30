@@ -14,7 +14,7 @@ class ExternalOAuthPresenterTest: XCTestCase {
 
   // Collaborators
   private lazy var dataProvider: ModelDataProvider = ModelDataProvider.provider
-  private let custodianType: CustodianType = .coinbase
+  private lazy var balanceType: AllowedBalanceType = dataProvider.coinbaseBalanceType
   private let url = URL(string: "https://shitfpayments.com")! // swiftlint:disable:this force_unwrapping
   private let interactor = ExternalOAuthInteractorSpy()
   private let router = ExternalOAuthModuleFake(serviceLocator: ServiceLocatorFake())
@@ -29,10 +29,10 @@ class ExternalOAuthPresenterTest: XCTestCase {
 
   func testCustodianTappedCallInteractor() {
     // When
-    sut.custodianTapped(custodianType: custodianType)
+    sut.balanceTypeTapped(balanceType)
 
     // Then
-    XCTAssertTrue(interactor.custodianSelectedCalled)
+    XCTAssertTrue(interactor.balanceTypeSelectedCalled)
   }
 
   func testBackTappedCallRouter() {

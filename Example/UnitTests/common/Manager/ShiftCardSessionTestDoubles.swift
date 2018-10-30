@@ -43,6 +43,13 @@ class ShiftCardSessionSpy: ShiftCardSession {
     lastSetBalanceStoreCustodian = custodian
     lastSetBalanceStoreCallback = callback
   }
+
+  private(set) var cancelCardApplicationCalled = false
+  private(set) var lastCancelCardApplicationId: String?
+  override func cancelCardApplication(_ applicationId: String, callback: @escaping Result<Void, NSError>.Callback) {
+    cancelCardApplicationCalled = true
+    lastCancelCardApplicationId = applicationId
+  }
 }
 
 class ShiftCardSessionFake: ShiftCardSessionSpy {
@@ -73,6 +80,15 @@ class ShiftCardSessionFake: ShiftCardSessionSpy {
     super.setBalanceStore(applicationId, custodian: custodian, callback: callback)
 
     if let result = nextSetBalanceStoreResult {
+      callback(result)
+    }
+  }
+
+  var nextCancelCardApplicationResult: Result<Void, NSError>?
+  override func cancelCardApplication(_ applicationId: String, callback: @escaping Result<Void, NSError>.Callback) {
+    super.cancelCardApplication(applicationId, callback: callback)
+
+    if let result = nextCancelCardApplicationResult {
       callback(result)
     }
   }

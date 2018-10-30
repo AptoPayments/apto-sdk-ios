@@ -20,16 +20,8 @@ class LinkApplicationListModule: UIModule {
   }
 
   override public func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure (let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        self.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        let viewController = self.buildApplicationListViewController(self.uiConfig!, initialApplications: self.initialApplications)
-        self.addChild(viewController: viewController, completion: completion)
-      }
-    }
+    let viewController = buildApplicationListViewController(uiConfig, initialApplications: initialApplications)
+    addChild(viewController: viewController, completion: completion)
   }
 
   func buildApplicationListViewController(_ uiConfig:ShiftUIConfig, initialApplications: [LoanApplicationSummary]) -> UIViewController {

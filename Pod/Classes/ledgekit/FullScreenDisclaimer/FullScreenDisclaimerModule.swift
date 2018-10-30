@@ -53,17 +53,8 @@ class FullScreenDisclaimerModule: UIModule, FullScreenDisclaimerModuleProtocol {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { [weak self] result in
-      switch result {
-      case .failure(let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        guard let wself = self else { return }
-        wself.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        let viewController = wself.buildFullScreenDisclaimerViewController(wself.uiConfig!)
-        wself.addChild(viewController: viewController, completion: completion)
-      }
-    }
+    let viewController = buildFullScreenDisclaimerViewController(uiConfig)
+    addChild(viewController: viewController, completion: completion)
   }
 
   private func buildFullScreenDisclaimerViewController(_ uiConfig: ShiftUIConfig) -> UIViewController {

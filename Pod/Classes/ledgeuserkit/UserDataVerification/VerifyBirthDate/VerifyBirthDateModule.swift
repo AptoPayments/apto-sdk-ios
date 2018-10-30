@@ -26,26 +26,17 @@ class VerifyBirthDateModule: UIModule, VerifyBirthDateModuleProtocol {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure(let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        let config = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        self.uiConfig = config
-        let presenter = VerifyBirthDatePresenter()
-        let interactor = VerifyBirthDateInteractor(session: self.shiftSession,
-                                                   verificationType: self.verificationType,
-                                                   dataReceiver: presenter)
-        presenter.interactor = interactor
-        presenter.router = self
-        let viewController = VerifyBirthDateViewController(uiConfig: config)
-        viewController.eventHandler = presenter
-        presenter.view = viewController
-        self.addChild(viewController: viewController, completion: completion)
-        self.presenter = presenter
-      }
-    }
+    let presenter = VerifyBirthDatePresenter()
+    let interactor = VerifyBirthDateInteractor(session: shiftSession,
+                                               verificationType: verificationType,
+                                               dataReceiver: presenter)
+    presenter.interactor = interactor
+    presenter.router = self
+    let viewController = VerifyBirthDateViewController(uiConfig: uiConfig)
+    viewController.eventHandler = presenter
+    presenter.view = viewController
+    addChild(viewController: viewController, completion: completion)
+    self.presenter = presenter
   }
 }
 

@@ -36,7 +36,7 @@ class MemberOfArmedForcesStep: DataCollectorBaseStep, DataCollectorStepProtocol 
     }
 
     label.numberOfLines = 0
-    label.font = uiConfig.formLabelFont
+    label.font = uiConfig.fontProvider.formLabelFont
     label.textColor = uiConfig.textPrimaryColor
     return labelField
   }

@@ -40,7 +40,6 @@ class LinkLoanDataCollectorModule: UIModule {
         completion(.failure(error))
       case .success(let contextConfiguration):
         self.contextConfiguration = contextConfiguration
-        self.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
 
         // Use the default loan value if no loan amount is defined
         if self.loanData.amount?.amount.value == nil {
@@ -60,11 +59,9 @@ class LinkLoanDataCollectorModule: UIModule {
   }
 
   fileprivate func buildLoanDataCollectorViewController() -> UIViewController {
-    let presenter = LinkLoanDataCollectorPresenter(uiConfig:self.uiConfig!)
-    let interactor = LinkLoanDataCollectorInteractor(loanData: loanData,
-                                                     config: self.config,
-                                                     dataReceiver: presenter)
-    let viewController = LinkLoanDataCollectorViewController(uiConfiguration: self.uiConfig!, eventHandler: presenter)
+    let presenter = LinkLoanDataCollectorPresenter(uiConfig: self.uiConfig)
+    let interactor = LinkLoanDataCollectorInteractor(loanData: loanData, config: self.config, dataReceiver: presenter)
+    let viewController = LinkLoanDataCollectorViewController(uiConfiguration: self.uiConfig, eventHandler: presenter)
     presenter.view = viewController
     presenter.interactor = interactor
     presenter.router = self

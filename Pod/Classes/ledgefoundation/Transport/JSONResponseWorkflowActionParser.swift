@@ -1,6 +1,6 @@
 //
 //  JSONResponseWorkflowActionParser.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 23/10/2017.
 //
@@ -98,5 +98,17 @@ extension JSON {
 
   var disclaimerActionConfiguration: Content? {
     return self["disclaimer"].content
+  }
+
+  var selectBalanceStoreActionConfiguration: SelectBalanceStoreActionConfiguration? {
+    guard let rawAllowedBalanceTypesArray = self["select_balance_store"]["allowed_balance_types"].array else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't select balance store action \(self)"))
+      return nil
+    }
+    let allowedBalanceTypes = rawAllowedBalanceTypesArray.compactMap { json -> AllowedBalanceType? in
+      return json.allowedBalanceType
+    }
+    return SelectBalanceStoreActionConfiguration(allowedBalanceTypes: allowedBalanceTypes)
   }
 }

@@ -46,7 +46,7 @@ class NewShiftCardModule: UIModule {
   // MARK: - Configuration HandlingApplication
 
   fileprivate func loadConfigurationFromServer(_ completion:@escaping Result<Void, NSError>.Callback) {
-    self.shiftSession.contextConfiguration(true) { result in
+    shiftSession.contextConfiguration(true) { result in
       switch result {
       case .failure(let error):
         completion(.failure(error))
@@ -58,7 +58,6 @@ class NewShiftCardModule: UIModule {
             completion(.failure(error))
           case .success(let shiftCardConfiguration):
             self.shiftCardConfiguration = shiftCardConfiguration
-            self.uiConfig = ShiftUIConfig(projectConfiguration: self.projectConfiguration)
             completion(.success(Void()))
           }
         }

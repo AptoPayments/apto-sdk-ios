@@ -195,6 +195,8 @@ public enum CardNetwork {
   let nativeSpendableToday: Amount?
   var fundingSource: FundingSource?
   let kyc: KYCState?
+  let physicalCardActivationRequired: Bool?
+  let features: CardFeatures?
 
   public init(accountId: String,
               cardNetwork: CardNetwork?,
@@ -209,6 +211,8 @@ public enum CardNetwork {
               spendableToday: Amount?,
               nativeSpendableToday: Amount?,
               kyc: KYCState?,
+              physicalCardActivationRequired: Bool?,
+              features: CardFeatures? = nil,
               panToken: String? = nil,
               cvvToken: String? = nil,
               verified: Bool? = false) {
@@ -225,6 +229,8 @@ public enum CardNetwork {
     self.panToken = panToken
     self.cvvToken = cvvToken
     self.cardBrand = cardBrand
+    self.physicalCardActivationRequired = physicalCardActivationRequired
+    self.features = features
     super.init(accountId: accountId, type: .card, state: state, verified: verified)
   }
 

@@ -18,17 +18,8 @@ class ContentPresenterModule: UIModule, ContentPresenterModuleProtocol {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure(let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        let config = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        self.uiConfig = config
-        let viewController = self.buildViewController(config)
-        self.addChild(viewController: viewController, completion: completion)
-      }
-    }
+    let viewController = buildViewController(uiConfig)
+    addChild(viewController: viewController, completion: completion)
   }
 
   private func buildViewController(_ uiConfig: ShiftUIConfig) -> UIViewController {

@@ -20,9 +20,9 @@ class ExternalOAuthInteractor: ExternalOAuthInteractorProtocol {
     self.shiftSession = shiftSession
   }
 
-  func custodianSelected(custodianType: CustodianType) {
-    self.custodianType = custodianType
-    shiftSession.startOauthAuthentication(custodianType) { result in
+  func balanceTypeSelected(_ balanceType: AllowedBalanceType) {
+    custodianType = balanceType.type
+    shiftSession.startOauthAuthentication(balanceType) { result in
       switch result {
       case .failure(let error):
         self.presenter.show(error: error)

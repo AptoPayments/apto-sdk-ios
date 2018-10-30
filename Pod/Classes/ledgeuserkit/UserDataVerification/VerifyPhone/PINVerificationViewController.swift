@@ -130,7 +130,7 @@ private extension PINVerificationViewController {
                                                                  textAlignment: .center,
                                                                  multiline: true,
                                                                  uiConfig: uiConfiguration)
-    datapointValueLabel.font = uiConfiguration.formFieldFont
+    datapointValueLabel.font = uiConfiguration.fontProvider.formFieldFont
     datapointValueLabel.textColor = uiConfiguration.textSecondaryColor
     view.addSubview(datapointValueLabel)
     datapointValueLabel.snp.makeConstraints { make in

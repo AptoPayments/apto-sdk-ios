@@ -35,6 +35,7 @@ public enum JSONRouter {
   case addBankAccounts
   case bankOauthConfig
   case issueVirtualCard
+  case activatePhysicalCard
   case updateFinancialAccountState
   case updateFinancialAccountPIN
   case financialAccountFundingSources
@@ -43,6 +44,7 @@ public enum JSONRouter {
   case documentOCRStatus
   case cardConfig
   case applyToCard
+  case cardApplication
   case cardApplicationStatus
   case setBalanceStore
   case acceptDisclaimer
@@ -77,6 +79,7 @@ public enum JSONRouter {
     case .addBankAccounts: return "/user/accounts"
     case .bankOauthConfig: return "/bankoauth"
     case .issueVirtualCard: return "/user/accounts/issuecard"
+    case .activatePhysicalCard: return "/user/accounts/:accountId/activate_physical"
     case .updateFinancialAccountState: return "/user/accounts/:accountId/:action"
     case .updateFinancialAccountPIN: return "/user/accounts/:accountId/pin"
     case .financialAccountFundingSources: return "/user/accounts/:accountId/balances"
@@ -85,6 +88,7 @@ public enum JSONRouter {
     case .documentOCRStatus: return "/documents/ocr/:verificationId"
     case .cardConfig: return "/config/card"
     case .applyToCard: return "/user/accounts/apply"
+    case .cardApplication: return "/user/accounts/applications/:applicationId"
     case .cardApplicationStatus: return "/user/accounts/applications/:applicationId/status"
     case .setBalanceStore: return "/user/accounts/applications/:applicationId/select_balance_store"
     case .acceptDisclaimer: return "/disclaimers/accept"

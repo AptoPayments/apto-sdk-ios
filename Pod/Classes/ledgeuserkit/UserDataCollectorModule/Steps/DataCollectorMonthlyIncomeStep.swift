@@ -39,7 +39,7 @@ class MonthlyIncomeStep: DataCollectorBaseStep, DataCollectorStepProtocol {
                                               textAlignment: .left,
                                               showSplitter: false,
                                               uiConfig: uiConfig)
-    label.label?.font = uiConfig.formLabelFont
+    label.label?.font = uiConfig.fontProvider.formLabelFont
     label.label?.textColor = uiConfig.textPrimaryColor
     return label
   }

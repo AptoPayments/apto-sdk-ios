@@ -104,7 +104,7 @@ extension IdDocumentTypePicker: UIPickerViewDelegate {
       label = UILabel(frame: CGRect(x: 0, y: 0, width: pickerView.frame.width - 2 * horizontalMargin, height: 36))
     }
     label.textColor = uiConfig.textPrimaryColor
-    label.font = uiConfig.formLabelFont
+    label.font = uiConfig.fontProvider.formLabelFont
     label.text = allowedDocumentTypes[row].localizedDescription
     return label
   }

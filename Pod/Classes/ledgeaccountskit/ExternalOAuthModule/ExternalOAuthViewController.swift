@@ -1,6 +1,6 @@
 //
 //  ExternalOAuthViewController.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 03/06/2018.
 //
@@ -11,18 +11,19 @@ import SnapKit
 import ReactiveKit
 
 class ExternalOAuthViewController: ShiftViewController {
-  private unowned let eventHandler: ExternalOAuthPresenterProtocol
+  private var disposeBag = DisposeBag()
+  private unowned let presenter: ExternalOAuthPresenterProtocol
   private let imageView = UIImageView()
   private let providerLabel = UILabel()
   private let accessDescriptionLabel = UILabel()
   private var actionButton: UIButton! // swiftlint:disable:this implicitly_unwrapped_optional
   private let descriptionLabel = UILabel()
-
+  private var allowedBalanceTypes = [AllowedBalanceType]()
   init(uiConfiguration: ShiftUIConfig, eventHandler: ExternalOAuthPresenterProtocol) {
-    self.eventHandler = eventHandler
+    self.presenter = eventHandler
     super.init(uiConfiguration: uiConfiguration)
     self.actionButton = ComponentCatalog.buttonWith(title: "", uiConfig: uiConfiguration) { [unowned self] in
-      self.eventHandler.custodianTapped(custodianType: .coinbase)
+      self.custodianSelected(type: .coinbase)
     }
   }
 
@@ -37,33 +38,53 @@ class ExternalOAuthViewController: ShiftViewController {
     setupViewModelSubscriptions()
   }
 
-  // Setup viewModel subscriptions
-  private func setupViewModelSubscriptions() {
-    let viewModel = eventHandler.viewModel
+  override func previousTapped() {
+    presenter.backTapped()
+  }
 
-    _ = viewModel.title.ignoreNil().observeNext { title in
+  private func custodianSelected(type: CustodianType) {
+    if let balanceType = allowedBalanceTypes.first(where: { $0.type == type }) {
+      presenter.balanceTypeTapped(balanceType)
+    }
+    else {
+      // TODO: Remove as soon as this feature is deployed in the backend
+      presenter.balanceTypeTapped(AllowedBalanceType(type: .coinbase, baseUri: ""))
+    }
+  }
+}
+
+// MARK: - Set viewModel subscriptions
+private extension ExternalOAuthViewController {
+  func setupViewModelSubscriptions() {
+    let viewModel = presenter.viewModel
+
+    viewModel.title.ignoreNil().observeNext { [unowned self] title in
       self.set(title: title)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.imageName.observeNext { imageName in
+    viewModel.imageName.observeNext { [unowned self] imageName in
       self.set(imageName: imageName)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.provider.ignoreNil().observeNext { provider in
+    viewModel.provider.ignoreNil().observeNext { [unowned self] provider in
       self.set(provider: provider)
-     }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.accessDescription.ignoreNil().observeNext { accessDescription in
+    viewModel.accessDescription.ignoreNil().observeNext { [unowned self] accessDescription in
       self.set(accessDescription: accessDescription)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.callToActionTitle.ignoreNil().observeNext { actionTitle in
+    viewModel.callToActionTitle.ignoreNil().observeNext { [unowned self] actionTitle in
       self.set(actionTitle: actionTitle)
-    }
+    }.dispose(in: disposeBag)
 
-    _ = viewModel.description.ignoreNil().observeNext { description in
+    viewModel.description.ignoreNil().observeNext { [unowned self] description in
       self.set(description: description)
-    }
+    }.dispose(in: disposeBag)
+
+    viewModel.allowedBalanceTypes.ignoreNil().observeNext { [unowned self] allowedBalanceTypes in
+      self.allowedBalanceTypes = allowedBalanceTypes
+    }.dispose(in: disposeBag)
   }
 
   func set(imageName: String?) {
@@ -90,12 +111,9 @@ class ExternalOAuthViewController: ShiftViewController {
   func set(description: String) {
     descriptionLabel.text = description
   }
-
-  override func previousTapped() {
-    eventHandler.backTapped()
-  }
 }
 
+// MARK: - Set up UI
 private extension ExternalOAuthViewController {
   func setUpUI() {
     view.backgroundColor = uiConfiguration.backgroundColor
@@ -125,7 +143,7 @@ private extension ExternalOAuthViewController {
   func setUpProviderLabel() {
     view.addSubview(providerLabel)
     providerLabel.textColor = uiConfiguration.textPrimaryColor
-    providerLabel.font = uiConfiguration.amountBigFont
+    providerLabel.font = uiConfiguration.fontProvider.amountBigFont
     providerLabel.textAlignment = .center
     providerLabel.snp.makeConstraints { make in
       make.top.equalTo(imageView.snp.bottom).offset(40)
@@ -137,7 +155,7 @@ private extension ExternalOAuthViewController {
     view.addSubview(accessDescriptionLabel)
     accessDescriptionLabel.numberOfLines = 0
     accessDescriptionLabel.textColor = uiConfiguration.textSecondaryColor
-    accessDescriptionLabel.font = uiConfiguration.formListFont
+    accessDescriptionLabel.font = uiConfiguration.fontProvider.formListFont
     accessDescriptionLabel.textAlignment = .center
     accessDescriptionLabel.snp.makeConstraints { make in
       make.left.right.equalTo(providerLabel)
@@ -157,7 +175,7 @@ private extension ExternalOAuthViewController {
     view.addSubview(descriptionLabel)
     descriptionLabel.numberOfLines = 0
     descriptionLabel.textColor = uiConfiguration.textTertiaryColor
-    descriptionLabel.font = uiConfiguration.instructionsFont
+    descriptionLabel.font = uiConfiguration.fontProvider.instructionsFont
     descriptionLabel.textAlignment = .center
     descriptionLabel.snp.makeConstraints { make in
       make.top.equalTo(actionButton.snp.bottom).offset(32)

@@ -39,4 +39,8 @@ final class PresenterLocator: PresenterLocatorProtocol {
   func dataConfirmationPresenter() -> DataConfirmationPresenterProtocol {
     return DataConfirmationPresenter()
   }
+
+  func physicalCardActivationSucceedPresenter() -> PhysicalCardActivationSucceedPresenterProtocol {
+    return PhysicalCardActivationSucceedPresenter()
+  }
 }

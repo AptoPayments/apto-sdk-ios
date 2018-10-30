@@ -109,7 +109,7 @@ private extension ChangePinView {
   func setUpTitleLabel() -> UILabel {
     let titleLabel = UILabel()
     titleLabel.text = "change.pin.title".podLocalized()
-    titleLabel.font = uiConfig.amountBigFont
+    titleLabel.font = uiConfig.fontProvider.amountBigFont
     titleLabel.textAlignment = .center
     titleLabel.textColor = uiConfig.textPrimaryColor
     dialogView.addSubview(titleLabel)
@@ -123,7 +123,7 @@ private extension ChangePinView {
   }
 
   func setUpDescriptionLabel(titleLabel: UIView) {
-    descriptionLabel.font = uiConfig.formListFont
+    descriptionLabel.font = uiConfig.fontProvider.formListFont
     descriptionLabel.textAlignment = .center
     descriptionLabel.textColor = uiConfig.textSecondaryColor
     descriptionLabel.numberOfLines = 0

@@ -19,16 +19,8 @@ class ShowGenericMessageModule: UIModule {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure (let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        self.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        let viewController = self.buildWelcomeScreenViewController(self.uiConfig!)
-        self.addChild(viewController: viewController, completion: completion)
-      }
-    }
+    let viewController = buildWelcomeScreenViewController(uiConfig)
+    addChild(viewController: viewController, completion: completion)
   }
 
   func buildWelcomeScreenViewController(_ uiConfig:ShiftUIConfig) -> UIViewController {

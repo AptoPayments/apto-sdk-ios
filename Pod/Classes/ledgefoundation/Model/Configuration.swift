@@ -45,6 +45,7 @@ public struct ProjectBranding {
   public let uiSuccessColor: String
   public let cardBackgroundColor: String
   public let logoUrl: String?
+  public let uiTheme: String
 }
 
 open class ProjectConfiguration {

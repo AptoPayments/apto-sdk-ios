@@ -270,7 +270,7 @@ private extension BirthdaySSNStep {
     let privateInfoLabel = FormBuilder.itemDescriptionRowWith(
       text: "birthday-collector.information-private".podLocalized(),
       uiConfig: uiConfig)
-    privateInfoLabel.label.font = uiConfig.instructionsFont
+    privateInfoLabel.label.font = uiConfig.fontProvider.instructionsFont
     privateInfoLabel.label.textColor = uiConfig.textTertiaryColor
     privateInfoLabel.label.numberOfLines = 0
     privateInfoLabel.label.snp.updateConstraints { make in

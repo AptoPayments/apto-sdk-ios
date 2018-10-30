@@ -13,17 +13,16 @@ class WebBrowserModule: UIModule {
   private let headers: [String: String]?
   private var presenter: WebBrowserPresenter?
 
-  init(serviceLocator: ServiceLocatorProtocol, uiConfig: ShiftUIConfig, url: URL, headers: [String: String]? = nil) {
+  init(serviceLocator: ServiceLocatorProtocol, url: URL, headers: [String: String]? = nil) {
     self.url = url
     self.headers = headers
     super.init(serviceLocator: serviceLocator)
-    self.uiConfig = uiConfig
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
     let presenter = WebBrowserPresenter()
     let interactor = WebBrowserInteractor(url: self.url, headers: self.headers, dataReceiver: presenter)
-    let viewController = WebBrowserViewController(uiConfiguration: self.uiConfig!, eventHandler: presenter)
+    let viewController = WebBrowserViewController(uiConfiguration: self.uiConfig, eventHandler: presenter)
     presenter.interactor = interactor
     presenter.router = self
     presenter.view = viewController
@@ -44,10 +43,7 @@ extension UIModule {
       UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
     else {
-      let webBrowserModule = WebBrowserModule(serviceLocator: serviceLocator,
-                                              uiConfig: self.uiConfig!,
-                                              url: url,
-                                              headers: headers)
+      let webBrowserModule = WebBrowserModule(serviceLocator: serviceLocator, url: url, headers: headers)
       webBrowserModule.onClose = { [weak self] module in
         self?.dismissModule {
           completion?()
@@ -57,9 +53,7 @@ extension UIModule {
     }
   }
 
-  open func showExternal(url: URL,
-                         headers: [String: String]? = nil,
-                         useSafari: Bool? = false) {
+  open func showExternal(url: URL, headers: [String: String]? = nil, useSafari: Bool? = false) {
     showExternal(url: url, headers: headers, useSafari: useSafari, completion: nil)
   }
 }

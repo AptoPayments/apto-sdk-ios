@@ -18,6 +18,7 @@ struct FormRowBalanceRadioViewValue {
 class FormRowBalanceRadioView: FormRowMultilineView {
   var selectedValue: Int? {
     didSet {
+      guard oldValue != selectedValue else { return }
       hideCurrentTick()
       guard let selectedValue = self.selectedValue else {
         return
@@ -120,6 +121,7 @@ class FormRowBalanceRadioView: FormRowMultilineView {
   }
 
   private func showTickIn(view: UIView) {
+    tickImageView.tintColor = uiConfig.uiPrimaryColor
     self.selectedLine = view
     view.addSubview(tickImageView)
     tickImageView.snp.remakeConstraints { make in

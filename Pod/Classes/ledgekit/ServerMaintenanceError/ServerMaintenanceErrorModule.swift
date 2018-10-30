@@ -26,15 +26,10 @@ protocol ServerMaintenanceErrorPresenterProtocol: ServerMaintenanceErrorEventHan
 }
 
 class ServerMaintenanceErrorModule: UIModule, ServerMaintenanceErrorModuleProtocol {
-  init(serviceLocator: ServiceLocatorProtocol, uiConfig: ShiftUIConfig?) {
-    super.init(serviceLocator: serviceLocator)
-    self.uiConfig = uiConfig
-  }
-
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
     let presenter = serviceLocator.presenterLocator.serverMaintenanceErrorPresenter()
     let interactor = serviceLocator.interactorLocator.serverMaintenanceErrorInteractor()
-    let viewController = serviceLocator.viewLocator.serverMaintenanceErrorView(uiConfig: uiConfig,
+    let viewController = serviceLocator.viewLocator.serverMaintenanceErrorView(uiConfig: serviceLocator.uiConfig,
                                                                                eventHandler: presenter)
     presenter.router = self
     presenter.interactor = interactor

@@ -42,6 +42,7 @@ class BalanceView: UIView {
   }
 
   private let uiConfiguration: ShiftUIConfig
+  private var fundingSource: FundingSource?
 
   init(uiConfiguration: ShiftUIConfig) {
     self.uiConfiguration = uiConfiguration
@@ -54,6 +55,7 @@ class BalanceView: UIView {
   }
 
   func set(fundingSource: FundingSource) {
+    self.fundingSource = fundingSource
     guard fundingSource.state == .valid else {
       showInvalidBalance()
       return
@@ -88,6 +90,7 @@ private extension BalanceView {
   }
 
   func showSpendableIfPresent(spendableToday: Amount?, nativeSpendableToday: Amount?) {
+    guard fundingSource?.state != .invalid else { return }
     if let spendableToday = spendableToday {
       showSpendable = true
       spendableLabel.text = spendableToday.text
@@ -132,7 +135,7 @@ private extension BalanceView {
   func setUpBalanceExplanation() {
     balanceExplanation.text = "manage.shift.card.current-balance".podLocalized()
     balanceExplanation.textColor = uiConfiguration.textSecondaryColor
-    balanceExplanation.font = uiConfiguration.sectionTitleFont
+    balanceExplanation.font = uiConfiguration.fontProvider.sectionTitleFont
     balanceExplanation.textAlignment = .left
     addSubview(balanceExplanation)
     balanceExplanation.snp.makeConstraints { make in
@@ -141,7 +144,7 @@ private extension BalanceView {
   }
 
   func setUpBalanceLabel() {
-    balanceLabel.font = uiConfiguration.amountBigFont
+    balanceLabel.font = uiConfiguration.fontProvider.amountBigFont
     balanceLabel.textColor = uiConfiguration.textPrimaryColor
     balanceLabel.textAlignment = .left
     addSubview(balanceLabel)
@@ -154,7 +157,7 @@ private extension BalanceView {
   func setUpSpendableExplanation() {
     spendableExplanation.text = "manage.shift.card.spendable-today".podLocalized()
     spendableExplanation.textColor = uiConfiguration.textSecondaryColor
-    spendableExplanation.font = uiConfiguration.sectionTitleFont
+    spendableExplanation.font = uiConfiguration.fontProvider.sectionTitleFont
     spendableExplanation.textAlignment = .right
     addSubview(spendableExplanation)
     spendableExplanation.snp.makeConstraints { make in
@@ -163,7 +166,7 @@ private extension BalanceView {
   }
 
   func setUpSpendableLabel() {
-    spendableLabel.font = uiConfiguration.amountBigFont
+    spendableLabel.font = uiConfiguration.fontProvider.amountBigFont
     spendableLabel.textColor = uiConfiguration.textPrimaryColor
     spendableLabel.textAlignment = .right
     addSubview(spendableLabel)
@@ -174,7 +177,7 @@ private extension BalanceView {
   }
 
   func setUpBalanceBitCoins() {
-    balanceBitCoins.font = uiConfiguration.subCurrencyFont
+    balanceBitCoins.font = uiConfiguration.fontProvider.subCurrencyFont
     balanceBitCoins.textColor = uiConfiguration.textTertiaryColor
     balanceBitCoins.textAlignment = .left
     addSubview(balanceBitCoins)
@@ -186,7 +189,7 @@ private extension BalanceView {
   }
 
   func setUpSpendableBitCoins() {
-    spendableBitCoins.font = uiConfiguration.subCurrencyFont
+    spendableBitCoins.font = uiConfiguration.fontProvider.subCurrencyFont
     spendableBitCoins.textColor = uiConfiguration.textTertiaryColor
     spendableBitCoins.textAlignment = .right
     addSubview(spendableBitCoins)

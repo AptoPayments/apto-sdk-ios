@@ -22,21 +22,6 @@ class FullScreenDisclaimerModuleTest: XCTestCase {
     sut = FullScreenDisclaimerModule(serviceLocator: serviceLocator, disclaimer: disclaimer)
   }
 
-  func testInitializeConfigurationFailsCallCompletionBlockWithFailure() {
-    // Given
-    serviceLocator.setUpSessionForContextConfigurationFailure()
-
-    // When
-    var returnedResult: Result<UIViewController, NSError>?
-    sut.initialize { result in
-      returnedResult = result
-    }
-
-    // Then
-    XCTAssertTrue(returnedResult!.isFailure) // swiftlint:disable:this implicitly_unwrapped_optional
-    XCTAssertNotNil(returnedResult!.error) // swiftlint:disable:this implicitly_unwrapped_optional
-  }
-
   func testInitializeConfigurationSucceedCallCompletionBlockWithSuccess() {
     // Given
     serviceLocator.setUpSessionForContextConfigurationSuccess()

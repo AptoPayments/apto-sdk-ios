@@ -46,7 +46,8 @@ class ModelDataProvider {
                            uiErrorColor: "ffffff",
                            uiSuccessColor: "ffffff",
                            cardBackgroundColor: "ffffff",
-                           logoUrl: nil)
+                           logoUrl: nil,
+                           uiTheme: "theme_1")
   }()
 
   lazy var projectConfiguration: ProjectConfiguration = {
@@ -121,11 +122,38 @@ class ModelDataProvider {
                              spendableToday: Amount(value: 12.34, currency: "GBP"),
                              nativeSpendableToday: Amount(value: 0.034, currency: "BTC"),
                              kyc: .passed,
+                             physicalCardActivationRequired: false,
                              panToken: "pan_token",
                              cvvToken: "cvv_token",
                              verified: true)
 
-  lazy var externalOauthModuleConfig = ExternalOAuthModuleConfig(title: "title")
+  lazy var cardWithIVR: Card = {
+    let phoneNumber = PhoneNumber(countryCode: 1, phoneNumber: "2342303796")
+    let ivr = IVR(status: .enabled, phone: phoneNumber)
+    let features = CardFeatures(ivr: ivr, changePin: .disabled, allowedBalanceTypes: [coinbaseBalanceType])
+    let card = Card(accountId: "card_id",
+                    cardNetwork: .other,
+                    cardIssuer: .shift,
+                    cardBrand: "Shift",
+                    state: .active,
+                    cardHolder: "Holder Name",
+                    pan: "PAN",
+                    cvv: "333",
+                    lastFourDigits: "7890",
+                    expiration: "03/99",
+                    spendableToday: Amount(value: 12.34, currency: "GBP"),
+                    nativeSpendableToday: Amount(value: 0.034, currency: "BTC"),
+                    kyc: .passed,
+                    physicalCardActivationRequired: false,
+                    features: features,
+                    panToken: "pan_token",
+                    cvvToken: "cvv_token",
+                    verified: true)
+    return card
+  }()
+
+  lazy var externalOauthModuleConfig = ExternalOAuthModuleConfig(title: "title",
+                                                                 allowedBalanceTypes: [coinbaseBalanceType])
 
   lazy var custodian = Custodian(custodianType: .coinbase, name: "Coinbase")
 
@@ -137,4 +165,6 @@ class ModelDataProvider {
                                        credentials: oauthCredential)
 
   lazy var usa = Country(isoCode: "US", name: "United States")
+
+  lazy var coinbaseBalanceType = AllowedBalanceType(type: .coinbase, baseUri: "baseUri")
 }

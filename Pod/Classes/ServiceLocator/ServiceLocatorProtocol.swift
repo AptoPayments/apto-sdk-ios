@@ -15,4 +15,5 @@ protocol ServiceLocatorProtocol: class {
   var storageLocator: StorageLocatorProtocol { get }
 
   var session: ShiftSession { get }
+  var uiConfig: ShiftUIConfig! { get set } // swiftlint:disable:this implicitly_unwrapped_optional
 }

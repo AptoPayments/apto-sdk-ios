@@ -415,7 +415,7 @@ class FormBuilder {
                            uiConfig: ShiftUIConfig) -> FormRowRadioView {
     let creditLabels: [UILabel] = labels.map { label -> UILabel in
       let uiLabel = ComponentCatalog.formLabelWith(text: label, uiConfig: uiConfig)
-      uiLabel.font = uiConfig.formFieldFont
+      uiLabel.font = uiConfig.fontProvider.formFieldFont
       uiLabel.textColor = uiConfig.textSecondaryColor
       return uiLabel
     }
@@ -606,7 +606,7 @@ class FormBuilder {
     let label = UILabel()
     label.text = text
     label.textColor = uiConfig.textSecondaryColor
-    label.font = uiConfig.formFieldFont
+    label.font = uiConfig.fontProvider.formFieldFont
     label.numberOfLines = 0
     label.textAlignment = .left
     return FormRowMultilineLabelView(label: label)

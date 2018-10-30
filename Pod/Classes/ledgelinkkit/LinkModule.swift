@@ -67,19 +67,13 @@ open class LinkModule: UIModule {
   }
 
   override public func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-
     self.loadConfigurationFromServer { result in
-
       switch result {
       case .failure(let error):
         completion(.failure(error))
         return
       case .success:
-
-        self.uiConfig = ShiftUIConfig(projectConfiguration: self.projectConfiguration)
-
         if self.linkConfiguration.posMode == true {
-
           // POS Mode
           NotificationCenter.default.addObserver(self, selector: #selector(self.clearUserToken), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
 
@@ -92,20 +86,15 @@ open class LinkModule: UIModule {
 
           // Register to the session expired event
           NotificationCenter.default.addObserver(self, selector: #selector(self.didReceiveSessionExpiredEvent(_:)), name: .UserTokenSessionExpiredNotification, object: nil)
-
         }
         else {
-
           // try to get info about the current user
           self.shiftSession.currentUser (filterInvalidTokenResult:false) { result in
-
             switch result {
             case .failure:
-
               // There's no current user.
               self.userDataPoints = DataPointList()
               ShiftPlatform.defaultManager().clearUserToken()
-
             case .success (let user):
               self.userDataPoints = user.userData
             }
@@ -118,7 +107,6 @@ open class LinkModule: UIModule {
 
             // Register to the session expired event
             NotificationCenter.default.addObserver(self, selector: #selector(self.didReceiveSessionExpiredEvent(_:)), name: .UserTokenSessionExpiredNotification, object: nil)
-
           }
         }
       }
@@ -200,7 +188,6 @@ open class LinkModule: UIModule {
     let authModuleConfig = self.buildAuthModuleConfig(contextConfiguration: self.contextConfiguration)
     // Prepare the current user's data
     let authModule = serviceLocator.moduleLocator.authModule(authConfig: authModuleConfig,
-                                                             uiConfig: uiConfig!,
                                                              initialUserData: userDataPoints)
     authModule.onBack = { [weak self] module in
       self?.popModule {
@@ -316,7 +303,7 @@ open class LinkModule: UIModule {
   // MARK: - Offer Applier Module Handling
 
   fileprivate func showOfferApplierFor(offer: LoanOffer) {
-    self.offerApplierViewController = self.buildOfferApplierViewController(offer, uiConfig: uiConfig!)
+    self.offerApplierViewController = self.buildOfferApplierViewController(offer, uiConfig: uiConfig)
     self.push(viewController: self.offerApplierViewController!) {}
   }
 

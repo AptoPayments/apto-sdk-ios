@@ -1,6 +1,6 @@
 //
 //  ExternalOAuthPresenter.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 03/06/2018.
 //
@@ -22,10 +22,11 @@ class ExternalOAuthPresenter: ExternalOAuthPresenterProtocol {
     viewModel.accessDescription.next(config.accessDescription)
     viewModel.callToActionTitle.next(config.callToActionTitle)
     viewModel.description.next(config.description)
+    viewModel.allowedBalanceTypes.next(config.allowedBalanceTypes)
   }
 
-  func custodianTapped(custodianType: CustodianType) {
-    interactor.custodianSelected(custodianType: custodianType)
+  func balanceTypeTapped(_ balanceType: AllowedBalanceType) {
+    interactor.balanceTypeSelected(balanceType)
   }
 
   func backTapped() {

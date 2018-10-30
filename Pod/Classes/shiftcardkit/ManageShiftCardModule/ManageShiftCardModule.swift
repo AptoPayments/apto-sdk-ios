@@ -18,6 +18,8 @@ class ManageShiftCardModule: UIModule {
   private var shiftCardConfiguration: ShiftCardConfiguration?
   private var presenter: ManageShiftCardPresenter?
   private var kycPresenter: KYCPresenter?
+  private var physicalCardModule: PhysicalCardActivationSucceedModuleProtocol?
+  private var externalOAuthModule: ExternalOAuthModuleProtocol?
 
   public init(serviceLocator: ServiceLocatorProtocol, card: Card, mode: ShiftCardModuleMode) {
     self.card = card
@@ -31,7 +33,6 @@ class ManageShiftCardModule: UIModule {
       case .failure(let error):
         completion(.failure(error))
       case .success(let contextConfiguration):
-        self.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
         self.projectConfiguration = contextConfiguration.projectConfiguration
         self.shiftSession.shiftCardSession.shiftCardConfiguration { result in
           switch result {
@@ -93,9 +94,9 @@ class ManageShiftCardModule: UIModule {
                                                 shiftCardConfiguration: ShiftCardConfiguration,
                                                 completion: @escaping Result<UIViewController, NSError>.Callback) {
     // swiftlint:disable:next force_unwrapping
-    let viewController = self.buildManageShiftCardViewController(self.uiConfig!,
+    let viewController = self.buildManageShiftCardViewController(uiConfig,
                                                                  shiftCardConfiguration: shiftCardConfiguration,
-                                                                 card: self.card)
+                                                                 card: card)
     if addChild {
       self.addChild(viewController: viewController, completion: completion)
     }
@@ -131,7 +132,7 @@ class ManageShiftCardModule: UIModule {
                                          card: Card,
                                          completion: @escaping Result<UIViewController, NSError>.Callback) {
     // swiftlint:disable:next force_unwrapping
-    let viewController = self.buildKYCViewController(self.uiConfig!, card: card)
+    let viewController = self.buildKYCViewController(uiConfig, card: card)
     if addChild {
       let leftButtonMode: UIViewControllerLeftButtonMode = self.mode == .standalone ? .none : .close
       self.addChild(viewController: viewController, leftButtonMode: leftButtonMode, completion: completion)
@@ -180,7 +181,7 @@ extension ManageShiftCardModule: ManageShiftCardRouterProtocol {
   }
 
   func cardSettingsTappedInManageShiftCardViewer() {
-    let module = ShiftCardSettingsModule(serviceLocator: serviceLocator, card: card)
+    let module = ShiftCardSettingsModule(serviceLocator: serviceLocator, card: card, phoneCaller: PhoneCaller())
     module.onClose = { [weak self] module in
       self?.dismissModule {
         self?.shiftCardSettingsModule = nil
@@ -193,8 +194,57 @@ extension ManageShiftCardModule: ManageShiftCardRouterProtocol {
 
   func showTransactionDetails(transaction: Transaction) {
     // swiftlint:disable:next force_unwrapping
-    let viewController = buildTransactionDetailsViewControllerFor(uiConfig!, transaction: transaction)
+    let viewController = buildTransactionDetailsViewControllerFor(uiConfig, transaction: transaction)
     self.push(viewController: viewController) {}
+  }
+
+  func physicalActivationSucceed() {
+    let physicalCardModule = serviceLocator.moduleLocator.physicalCardActivationSucceedModule(card: card)
+    physicalCardModule.onClose = { [unowned self] _ in
+      self.dismissModule { [unowned self] in
+        self.physicalCardModule = nil
+        self.presenter?.refreshCard()
+      }
+    }
+    physicalCardModule.onFinish = { [unowned self] _ in
+      self.dismissModule { [unowned self] in
+        self.physicalCardModule = nil
+        self.presenter?.refreshCard()
+      }
+    }
+    present(module: physicalCardModule) { _ in }
+    self.physicalCardModule = physicalCardModule
+  }
+
+  func addFundingSource(completion: @escaping (FundingSource) -> Void) {
+    // TODO: Remove as soon as this feature is deployed in the backend
+    let allowedBalanceTypes = card.features?.allowedBalanceTypes ?? []
+    let oauthModuleConfig = ExternalOAuthModuleConfig(title: "Coinbase", allowedBalanceTypes: allowedBalanceTypes)
+    let externalOAuthModule = serviceLocator.moduleLocator.externalOAuthModule(config: oauthModuleConfig,
+                                                                               uiConfig: uiConfig)
+    externalOAuthModule.onOAuthSucceeded = { [unowned self] _, custodian in
+      self.showLoadingSpinner()
+      self.shiftSession.addFinancialAccountFundingSource(accountId: self.card.accountId,
+                                                         custodian: custodian) { result in
+        self.hideLoadingSpinner()
+        switch result {
+        case .failure(let error):
+          self.show(error: error)
+        case .success(let fundingSource):
+          self.dismissModule {
+            self.externalOAuthModule = nil
+            completion(fundingSource)
+          }
+        }
+      }
+    }
+    externalOAuthModule.onClose = { [unowned self] _ in
+      self.dismissModule {
+        self.externalOAuthModule = nil
+      }
+    }
+    self.externalOAuthModule = externalOAuthModule
+    present(module: externalOAuthModule) { _ in }
   }
 
   fileprivate func buildTransactionDetailsViewControllerFor(_ uiConfig: ShiftUIConfig,

@@ -101,4 +101,13 @@ public class PhoneHelper {
       return nil
     }
   }
+
+  public func callURL(from phoneNumber: PhoneNumber?) -> URL? {
+    guard let phoneNumber = phoneNumber,
+          let countryCode = phoneNumber.countryCode.value,
+          let number = phoneNumber.phoneNumber.value else {
+      return nil
+    }
+    return URL(string: "tel://+\(countryCode)" + number)
+  }
 }

@@ -57,8 +57,8 @@ private extension FormRowAddressView {
       guard address != self.selectedPlace?.name, address != self.address.value?.formattedAddress else {
         return
       }
-      self.addressManager.autoComplete(address: address,
-                                       countries: self.allowedCountries) { result in
+      self.address.next(nil)
+      self.addressManager.autoComplete(address: address, countries: self.allowedCountries) { result in
         switch result {
         case .failure:
           break
@@ -86,7 +86,7 @@ extension FormRowAddressView: UITableViewDataSource {
   public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
     cell.textLabel?.text = places.value[indexPath.row].name
-    cell.textLabel?.font = uiConfig.formListFont
+    cell.textLabel?.font = uiConfig.fontProvider.formListFont
     cell.textLabel?.textColor = uiConfig.textPrimaryColor
 
     return cell

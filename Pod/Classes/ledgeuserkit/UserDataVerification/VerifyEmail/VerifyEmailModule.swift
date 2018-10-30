@@ -30,34 +30,25 @@ class VerifyEmailModule: UIModule, VerifyEmailModuleProtocol {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure (let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        let uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        self.uiConfig = uiConfig
-        let presenter = VerifyEmailPresenter()
-        let interactor = VerifyEmailInteractor(session: self.shiftSession, verificationType: self.verificationType, dataReceiver: presenter)
-        presenter.interactor = interactor
-        presenter.router = self
-        let viewController = PINVerificationViewController(uiConfig: uiConfig, eventHandler: presenter)
-        presenter.view = viewController
-        self.addChild(viewController: viewController, completion: completion)
-        self.presenter = presenter
-      }
-    }
+    let presenter = VerifyEmailPresenter()
+    let interactor = VerifyEmailInteractor(session: shiftSession,
+                                           verificationType: verificationType,
+                                           dataReceiver: presenter)
+    presenter.interactor = interactor
+    presenter.router = self
+    let viewController = PINVerificationViewController(uiConfig: uiConfig, eventHandler: presenter)
+    presenter.view = viewController
+    addChild(viewController: viewController, completion: completion)
+    self.presenter = presenter
   }
 }
 
 extension VerifyEmailModule: VerifyEmailRouterProtocol {
-
   func closeTappedInVerifyEmail() {
     close()
   }
 
-  func nextTappedInVerifyEmailWith(verification:Verification) {
+  func nextTappedInVerifyEmailWith(verification: Verification) {
     onVerificationPassed?(self, verification)
   }
-
 }

@@ -29,21 +29,22 @@ class ChangeCardPINAction {
 
 extension ChangeCardPINAction: ChangePinViewDelegate {
   func newCardPin(pin: String) {
-    UIApplication.topViewController()?.showLoadingSpinner(tintColor: uiConfig.tintColor)
-    self.shiftCardSession.changeCard(card: card, pin: pin) { result in
+    var topViewController = UIApplication.topViewController()
+    if let navigationController = topViewController?.navigationController {
+      topViewController = navigationController
+    }
+    if let topViewController = topViewController, let alert = self.alert {
+      let point = alert.dialogView.center
+      topViewController.showLoadingSpinner(tintColor: uiConfig.uiPrimaryColor, position: .custom(coordinates: point))
+    }
+    alert?.dismiss(animated: true) { }
+    shiftCardSession.changeCard(card: card, pin: pin) { [unowned self] result in
+      topViewController?.hideLoadingSpinner()
       switch result {
       case .failure(let error):
-        UIApplication.topViewController()?.show(error: error)
+        topViewController?.show(error: error)
       case .success:
-        UIApplication.topViewController()?.hideLoadingSpinner()
-        if let alert = self.alert {
-          alert.dismiss(animated: true) {
-            self.showPinChangedMessage()
-          }
-        }
-        else {
-          self.showPinChangedMessage()
-        }
+        self.showPinChangedMessage()
       }
     }
   }
@@ -51,7 +52,7 @@ extension ChangeCardPINAction: ChangePinViewDelegate {
   func showPinChangedMessage() {
     let delayTime = DispatchTime.now() + Double(Int64(0.3 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
     DispatchQueue.main.asyncAfter(deadline: delayTime) {
-      UIApplication.topViewController()?.showMessage("Card PIN has been changed")
+      UIApplication.topViewController()?.showMessage("change.pin.success".podLocalized())
     }
   }
 }

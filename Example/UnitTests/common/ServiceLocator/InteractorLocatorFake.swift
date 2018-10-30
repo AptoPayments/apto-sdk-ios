@@ -50,4 +50,10 @@ class InteractorLocatorFake: InteractorLocatorProtocol {
   func dataConfirmationInteractor(userData: DataPointList) -> DataConfirmationInteractorProtocol {
     return dataConfirmationInteractorFake
   }
+
+  lazy var physicalCardActivationSucceedInteractorFake = PhysicalCardActivationSucceedInteractorFake()
+  func physicalCardActivationSucceedInteractor(card: Card) -> PhysicalCardActivationSucceedInteractorProtocol {
+    physicalCardActivationSucceedInteractorFake.card = card
+    return physicalCardActivationSucceedInteractorFake
+  }
 }

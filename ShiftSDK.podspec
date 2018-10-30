@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "ShiftSDK"
-  s.version          = "1.1.10"
+  s.version          = "1.1.11"
   s.summary          = "The Shift platform iOS SDK."
   s.description      = <<-DESC
                         Shift iOS SDK
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.homepage         = "https://github.com/ShiftFinancial/shift-sdk-ios"
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { "Ivan Oliver" => "ivan@shiftpayments.com" }
-  s.source           = { :git => "https://github.com/ShiftFinancial/shift-sdk-ios.git", :tag => "1.1.10" }
+  s.source           = { :git => "https://github.com/ShiftFinancial/shift-sdk-ios.git", :tag => "1.1.11" }
 
   s.platform = :ios
   s.ios.deployment_target = '10.0'
@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
   s.vendored_libraries = 'Pod/Vendor/CardIO/lib/libCardIO.a', 'Pod/Vendor/CardIO/lib/libopencv_core.a', 'Pod/Vendor/CardIO/lib/libopencv_imgproc.a'
   s.xcconfig = { 'HEADER_SEARCH_PATHS' => "Pod/Vendor/CardIO/include", 'OTHER_LDFLAGS' => "-lc++ -ObjC", 'LIBRARY_SEARCH_PATHS' => "Pod/Vendor/CardIO/lib" }
 
-  s.frameworks = 'UIKit', 'CoreLocation', 'Accelerate', 'AudioToolbox', 'AVFoundation', 'CoreGraphics', 'CoreMedia', 'CoreVideo', 'Foundation', 'MobileCoreServices', 'OpenGLES', 'QuartzCore', 'Security', 'LocalAuthentication'
+  s.frameworks = 'UIKit', 'CoreLocation', 'Accelerate', 'AudioToolbox', 'AVFoundation', 'CoreGraphics', 'CoreMedia', 'CoreVideo', 'Foundation', 'MobileCoreServices', 'OpenGLES', 'QuartzCore', 'Security', 'LocalAuthentication', 'CallKit'
   s.dependency 'Alamofire'
   s.dependency 'SwiftyJSON'
   s.dependency 'SnapKit'

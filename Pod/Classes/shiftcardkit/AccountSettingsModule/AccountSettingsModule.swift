@@ -18,10 +18,8 @@ class AccountSettingsModule: UIModule {
       case .failure(let error):
         completion(.failure(error))
       case .success(let contextConfiguration):
-        let config = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        self.uiConfig = config
         self.projectConfiguration = contextConfiguration.projectConfiguration
-        let viewController = self.buildAccountSettingsViewController(config)
+        let viewController = self.buildAccountSettingsViewController(self.uiConfig)
         self.addChild(viewController: viewController, completion: completion)
       }
     }

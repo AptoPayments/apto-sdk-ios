@@ -31,75 +31,9 @@ final class FullScreenDisclaimerViewController: ShiftViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
 
-    view.backgroundColor = uiConfiguration.backgroundColor
-    setUpNavigationBar()
-
-    // Bottom Bar Buttons
-    setUpNavigationView()
-    setUpAgreeButton()
-    // Support for external url disclaimers
-    setUpWebView()
-    // Support for plain text or markdown disclaimers
-    setUpTextView()
-
-    edgesForExtendedLayout = UIRectEdge()
-    extendedLayoutIncludesOpaqueBars = true
-
-    // Subscribe to viewModel changes
+    setUpUI()
     setupViewModelSubscriptions()
-
     eventHandler.viewLoaded()
-  }
-
-  // Setup subviews
-  private func setUpNavigationBar() {
-    navigationController?.navigationBar.setUpWith(uiConfig: uiConfiguration)
-    showNavCancelButton(uiConfiguration.iconTertiaryColor)
-  }
-
-  private func setUpTextView() {
-    view.addSubview(textView)
-    textView.linkAttributes = [NSAttributedStringKey.foregroundColor: uiConfiguration.textPrimaryColor,
-                               kCTUnderlineStyleAttributeName as AnyHashable: false]
-    textView.enabledTextCheckingTypes = NSTextCheckingAllTypes
-    textView.delegate = self
-    textView.numberOfLines = 0
-    textView.verticalAlignment = .top
-    textView.snp.makeConstraints { make in
-      make.top.left.right.equalTo(self.view).inset(10)
-      make.bottom.equalTo(navigationView.snp.top).offset(-10)
-    }
-    textView.isHidden = true
-  }
-
-  private func setUpWebView() {
-    webView.isHidden = true
-    view.addSubview(webView)
-    webView.snp.makeConstraints { make in
-      make.top.left.right.equalTo(self.view)
-      make.bottom.equalTo(navigationView.snp.top)
-    }
-    webView.delegate = self
-  }
-
-  private func setUpAgreeButton() {
-    agreeButton = ComponentCatalog.buttonWith(title: "agree.button.title".podLocalized(),
-                                              uiConfig: uiConfiguration) { [unowned self] in
-      self.agreeTapped()
-    }
-    navigationView.addSubview(agreeButton)
-    agreeButton.snp.makeConstraints { make in
-      make.top.equalTo(navigationView).inset(5)
-      make.left.right.bottom.equalTo(navigationView).inset(44)
-      make.height.equalTo(50)
-    }
-  }
-
-  private func setUpNavigationView() {
-    view.addSubview(navigationView)
-    navigationView.snp.makeConstraints { make in
-      make.left.right.bottom.equalTo(self.view)
-    }
   }
 
   // Setup viewModel subscriptions
@@ -114,7 +48,7 @@ final class FullScreenDisclaimerViewController: ShiftViewController {
   final private func set(disclaimer: Content) {
     switch disclaimer {
     case .plainText, .markdown:
-      guard let attributedString = disclaimer.attributedString(font: uiConfiguration.instructionsFont,
+      guard let attributedString = disclaimer.attributedString(font: uiConfiguration.fontProvider.instructionsFont,
                                                                color: uiConfiguration.textPrimaryColor,
                                                                linkColor: uiConfiguration.uiPrimaryColor) else {
         showEmptyDisclaimer()
@@ -168,5 +102,87 @@ extension FullScreenDisclaimerViewController: UIWebViewDelegate {
 
   func webViewDidFinishLoad(_ webView: UIWebView) {
     hideLoadingSpinner()
+  }
+}
+
+private extension FullScreenDisclaimerViewController {
+  func setUpUI() {
+    view.backgroundColor = uiConfiguration.backgroundColor
+    edgesForExtendedLayout = UIRectEdge()
+    extendedLayoutIncludesOpaqueBars = true
+
+    setUpNavigationBar()
+    // Bottom Bar Buttons
+    setUpNavigationView()
+    setUpAgreeButton()
+    setUpCancelButton()
+    // Support for external url disclaimers
+    setUpWebView()
+    // Support for plain text or markdown disclaimers
+    setUpTextView()
+  }
+
+  func setUpNavigationBar() {
+    title = "full-screen-disclaimer.title".podLocalized()
+    navigationController?.navigationBar.setUpWith(uiConfig: uiConfiguration)
+    hideNavCancelButton()
+  }
+
+  func setUpTextView() {
+    view.addSubview(textView)
+    textView.linkAttributes = [NSAttributedStringKey.foregroundColor: uiConfiguration.textPrimaryColor,
+                               kCTUnderlineStyleAttributeName as AnyHashable: false]
+    textView.enabledTextCheckingTypes = NSTextCheckingAllTypes
+    textView.delegate = self
+    textView.numberOfLines = 0
+    textView.verticalAlignment = .top
+    textView.snp.makeConstraints { make in
+      make.top.left.right.equalTo(self.view).inset(10)
+      make.bottom.equalTo(navigationView.snp.top).offset(-10)
+    }
+    textView.isHidden = true
+  }
+
+  func setUpWebView() {
+    webView.isHidden = true
+    view.addSubview(webView)
+    webView.snp.makeConstraints { make in
+      make.top.left.right.equalTo(self.view)
+      make.bottom.equalTo(navigationView.snp.top)
+    }
+    webView.delegate = self
+  }
+
+  func setUpAgreeButton() {
+    agreeButton = ComponentCatalog.buttonWith(title: "full-screen-disclaimer.agree.button.title".podLocalized(),
+                                              uiConfig: uiConfiguration) { [unowned self] in
+      self.agreeTapped()
+    }
+    navigationView.addSubview(agreeButton)
+    agreeButton.snp.makeConstraints { make in
+      make.left.top.right.equalTo(navigationView).inset(20)
+      make.height.equalTo(50)
+    }
+  }
+
+  func setUpCancelButton() {
+    let title = "full-screen-disclaimer.do-not-agree.button.title".podLocalized()
+    let button = ComponentCatalog.formTextLinkButtonWith(title: title,
+                                                         uiConfig: uiConfiguration) { [unowned self] in
+      self.closeTapped()
+    }
+    navigationView.addSubview(button)
+    button.snp.makeConstraints { make in
+      make.top.equalTo(agreeButton.snp.bottom).offset(4)
+      make.left.right.equalTo(agreeButton)
+      make.bottom.equalToSuperview().inset(48)
+    }
+  }
+
+  func setUpNavigationView() {
+    view.addSubview(navigationView)
+    navigationView.snp.makeConstraints { make in
+      make.left.right.bottom.equalTo(self.view)
+    }
   }
 }

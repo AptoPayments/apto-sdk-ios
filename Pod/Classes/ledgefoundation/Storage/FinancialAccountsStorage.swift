@@ -55,6 +55,11 @@ protocol FinancialAccountsStorageProtocol {
                  issuer: CardIssuer,
                  custodian: Custodian?,
                  callback: @escaping Result<Card, NSError>.Callback)
+  func activatePhysical(_ apiKey: String,
+                        userToken: String,
+                        accountId: String,
+                        code: String,
+                        callback: @escaping Result<PhysicalCardActivationResult, NSError>.Callback)
   func updateFinancialAccountState(_ apiKey: String,
                                    userToken: String,
                                    accountId: String,
@@ -326,6 +331,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
                     spendableToday: nil,
                     nativeSpendableToday: nil,
                     kyc: nil,
+                    physicalCardActivationRequired: false,
                     panToken: cardNumber,
                     cvvToken: cvv)
     let data = card.jsonSerialize()
@@ -364,6 +370,28 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
           return .failure(ServiceError(code: .jsonError))
         }
         return .success(card)
+      })
+    }
+  }
+
+  func activatePhysical(_ apiKey: String,
+                        userToken: String,
+                        accountId: String,
+                        code: String,
+                        callback: @escaping Result<PhysicalCardActivationResult, NSError>.Callback) {
+    let parameters = [
+      "code": code as AnyObject
+    ]
+    let url = URLWrapper(baseUrl: transport.baseUrl(),
+                         url: JSONRouter.activatePhysicalCard,
+                         urlParameters: [":accountId": accountId])
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+    transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
+      callback(result.flatMap { json -> Result<PhysicalCardActivationResult, NSError> in
+        guard let result = json.physicalCardActivationResult else {
+          return .failure(ServiceError(code: .jsonError))
+        }
+        return .success(result)
       })
     }
   }

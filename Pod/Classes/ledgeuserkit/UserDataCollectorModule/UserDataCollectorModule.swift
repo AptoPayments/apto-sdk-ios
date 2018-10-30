@@ -66,10 +66,8 @@ class UserDataCollectorModule: UIModule {
           case .success(let user):
             self.initializeConfig(contextConfiguration: contextConfiguration)
             self.initialUserData = user.userData
-            let uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-            self.uiConfig = uiConfig
             let viewController = self.buildUserDataCollectorViewController(self.initialUserData,
-                                                                           uiConfig: uiConfig,
+                                                                           uiConfig: self.uiConfig,
                                                                            config: self.config)
             self.addChild(viewController: viewController, completion: completion)
           }

@@ -23,21 +23,19 @@ class LinkLoanFundedModule: UIModule {
   }
 
   override public func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-
     linkSession.shiftSession.contextConfiguration { result in
       switch result {
-      case .failure (let error):
+      case .failure(let error):
         completion(.failure(error))
       case .success(let contextConfiguration):
-        self.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
         self.linkSession.shiftSession.currentUser { result in
           switch result {
-          case .failure (let error):
+          case .failure(let error):
             completion(.failure(error))
           case .success(let user):
             self.currentUser = user
-            let viewController = self.buildLinkLoanFundedViewController(self.uiConfig!,
-                                                                        contextConfiguration:contextConfiguration,
+            let viewController = self.buildLinkLoanFundedViewController(self.uiConfig,
+                                                                        contextConfiguration: contextConfiguration,
                                                                         application: self.application)
             self.addChild(viewController: viewController, completion: completion)
           }

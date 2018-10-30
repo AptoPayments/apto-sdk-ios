@@ -30,7 +30,7 @@ public protocol ViewControllerProtocol {
   func show(error: Error)
   func showNetworkNotReachableError(_ uiConfig: ShiftUIConfig?)
   func hideNetworkNotReachableError()
-  func showServerMaintenanceError(_ uiConfig: ShiftUIConfig?)
+  func showServerMaintenanceError()
   func showMessage(_ message: String)
   func showLoadingSpinner(tintColor: UIColor, position: SubviewPosition)
   func hideLoadingSpinner()
@@ -210,8 +210,8 @@ extension UIViewController: ViewControllerProtocol {
     dismiss(animated: true)
   }
 
-  public func showServerMaintenanceError(_ uiConfig: ShiftUIConfig?) {
-    let module = ServiceLocator.shared.moduleLocator.serverMaintenanceErrorModule(uiConfig: uiConfig)
+  public func showServerMaintenanceError() {
+    let module = ServiceLocator.shared.moduleLocator.serverMaintenanceErrorModule()
     module.initialize { result in
       switch result {
       case .failure(let error):

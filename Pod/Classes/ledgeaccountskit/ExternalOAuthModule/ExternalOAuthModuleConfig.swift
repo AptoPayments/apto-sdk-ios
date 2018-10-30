@@ -14,4 +14,5 @@ struct ExternalOAuthModuleConfig {
   let accessDescription: String = "external-oauth.coinbase.access".podLocalized()
   let callToActionTitle: String = "external-oauth.coinbase.action".podLocalized()
   let description: String = "external-oauth.coinbase.description".podLocalized()
+  let allowedBalanceTypes: [AllowedBalanceType]
 }

@@ -20,16 +20,8 @@ class DisplayCardModule: UIModule {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback){
-    shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure (let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        self.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        let viewController = self.buildDisplayCardViewController(self.uiConfig!, card:self.card)
-        self.addChild(viewController: viewController, completion: completion)
-      }
-    }
+    let viewController = self.buildDisplayCardViewController(uiConfig, card: card)
+    addChild(viewController: viewController, completion: completion)
   }
 
   fileprivate func buildDisplayCardViewController(_ uiConfig:ShiftUIConfig, card:Card) -> UIViewController {

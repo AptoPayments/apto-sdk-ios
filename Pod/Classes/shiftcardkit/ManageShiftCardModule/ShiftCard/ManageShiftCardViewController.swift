@@ -22,9 +22,11 @@ protocol ManageShiftCardEventHandler: class {
   func cardTapped()
   func activateCardTapped()
   func refreshCard()
-  func reloadTapped()
+  func reloadTapped(showSpinner: Bool)
   func moreTransactionsTapped(completion: @escaping (_ noMoreTransactions: Bool) -> Void)
   func transactionSelected(indexPath: IndexPath)
+  func activatePhysicalCard(code: String)
+  func addFundingSourceTapped()
 }
 
 class ManageShiftCardViewController: ShiftViewController, ManageShiftCardViewProtocol {
@@ -32,6 +34,10 @@ class ManageShiftCardViewController: ShiftViewController, ManageShiftCardViewPro
   // swiftlint:disable implicitly_unwrapped_optional
   private var mainView: ManageShiftCardMainView!
   private var mainViewCellController: ViewWrapperCellController!
+  private lazy var activationButton = UIBarButtonItem(image: UIImage.imageFromPodBundle("physical-card-icon"),
+                                                      style: .plain,
+                                                      target: self,
+                                                      action: #selector(activatePhysicalCardTapped))
   // swiftlint:enable implicitly_unwrapped_optional
   private let activateCardView: ActivateCardView
   private let footer = DefaultRefreshFooter.footer()
@@ -98,6 +104,22 @@ extension ManageShiftCardViewController: ManageShiftCardMainViewDelegate, Activa
     transactionsList.endUpdates()
     CATransaction.commit()
   }
+
+  func addFundingSourceTapped() {
+    self.eventHandler.addFundingSourceTapped()
+  }
+
+  @objc func activatePhysicalCardTapped() {
+    UIAlertController.prompt(title: "manage.shift.card.enter-code.title".podLocalized(),
+                             message: "manage.shift.card.enter-code.message".podLocalized(),
+                             placeholder: "manage.shift.card.enter-code.placeholder".podLocalized(),
+                             keyboardType: .numberPad,
+                             okTitle: "manage.shift.card.enter-code.submit".podLocalized(),
+                             cancelTitle: "general.button.cancel".podLocalized()) { [unowned self] code in
+      guard let code = code, !code.isEmpty else { return }
+      self.eventHandler.activatePhysicalCard(code: code)
+    }
+  }
 }
 
 extension ManageShiftCardViewController: UITableViewDataSource {
@@ -151,7 +173,7 @@ extension ManageShiftCardViewController: UITableViewDelegate {
       make.bottom.equalToSuperview().inset(4)
     }
     label.textColor = uiConfiguration.textSecondaryColor
-    label.font = uiConfiguration.sectionTitleFont
+    label.font = uiConfiguration.fontProvider.sectionTitleFont
     label.text = eventHandler.viewModel.transactions.sections[section - 1].metadata
     return view
   }
@@ -202,15 +224,15 @@ private extension ManageShiftCardViewController {
   func createRefreshHeader() {
     let header = DefaultRefreshHeader.header()
     header.textLabel.textColor = uiConfiguration.textTertiaryColor
-    header.textLabel.font = uiConfiguration.timestampFont
+    header.textLabel.font = uiConfiguration.fontProvider.timestampFont
     transactionsList.configRefreshHeader(with: header, container: self) { [weak self] in
-      self?.eventHandler.reloadTapped()
+      self?.eventHandler.reloadTapped(showSpinner: false)
     }
   }
 
   func createRefreshFooter() {
     footer.textLabel.textColor = uiConfiguration.textTertiaryColor
-    footer.textLabel.font = uiConfiguration.timestampFont
+    footer.textLabel.font = uiConfiguration.fontProvider.timestampFont
     footer.textLabel.numberOfLines = 0
     footer.setText("manage.shift.card.refresh.title".podLocalized(), mode: .scrollAndTapToRefresh)
     footer.setText("manage.shift.card.refresh.loading".podLocalized(), mode: .refreshing)
@@ -271,6 +293,21 @@ private extension ManageShiftCardViewController {
       return 120
     }
   }
+
+  func updateNavigationBar(showActivateButton: Bool) {
+    var items = navigationItem.rightBarButtonItems ?? []
+    if showActivateButton {
+      if !items.contains(activationButton) {
+        activationButton.tintColor = uiConfiguration.textTopBarColor
+        items.append(activationButton)
+        navigationItem.rightBarButtonItems = items
+      }
+    }
+    else if items.contains(activationButton) {
+      items.removeAll { $0 == activationButton }
+      navigationItem.rightBarButtonItems = items
+    }
+  }
 }
 
 // MARK: - View model subscriptions
@@ -278,58 +315,63 @@ private extension ManageShiftCardViewController {
   func setupViewModelSubscriptions() {
     let viewModel = eventHandler.viewModel
 
-    viewModel.cardHolder.observeNext { cardHolder in
+    viewModel.cardHolder.observeNext { [unowned self] cardHolder in
       self.mainView.set(cardHolder: cardHolder)
       self.updateUI()
     }.dispose(in: disposeBag)
 
-    viewModel.pan.observeNext { pan in
+    viewModel.pan.observeNext { [unowned self] pan in
       self.mainView.set(cardNumber: pan)
     }.dispose(in: disposeBag)
 
-    viewModel.lastFour.observeNext { lastFour in
+    viewModel.lastFour.observeNext { [unowned self] lastFour in
       self.mainView.set(lastFour: lastFour)
     }.dispose(in: disposeBag)
 
-    viewModel.cvv.observeNext { cvv in
+    viewModel.cvv.observeNext { [unowned self] cvv in
       self.mainView.set(cvv: cvv)
     }.dispose(in: disposeBag)
 
-    viewModel.cardNetwork.observeNext { cardNetwork in
+    viewModel.cardNetwork.observeNext { [unowned self] cardNetwork in
       self.mainView.set(cardNetwork: cardNetwork)
     }.dispose(in: disposeBag)
 
     combineLatest(viewModel.expirationMonth,
-                  viewModel.expirationYear).observeNext { expirationMonth, expirationYear in
+                  viewModel.expirationYear).observeNext { [unowned self] expirationMonth, expirationYear in
                     if let expirationMonth = expirationMonth, let expirationYear = expirationYear {
                       self.mainView.set(expirationMonth: expirationMonth, expirationYear: expirationYear)
                     }
     }.dispose(in: disposeBag)
 
-    viewModel.fundingSource.observeNext { fundingSource in
+    viewModel.fundingSource.observeNext { [unowned self] fundingSource in
       self.mainView.set(fundingSource: fundingSource)
     }.dispose(in: disposeBag)
 
+    viewModel.physicalCardActivationRequired.observeNext { [unowned self] physicalCardActivationRequired in
+      self.mainView.set(physicalCardActivationRequired: physicalCardActivationRequired)
+      self.updateNavigationBar(showActivateButton: physicalCardActivationRequired == true)
+    }.dispose(in: disposeBag)
+
     combineLatest(viewModel.spendableToday,
-                  viewModel.nativeSpendableToday).observeNext { spendableToday, nativeSpendableToday in
+                  viewModel.nativeSpendableToday).observeNext { [unowned self] spendableToday, nativeSpendableToday in
                     self.mainView.setSpendable(amount: spendableToday, nativeAmount: nativeSpendableToday)
     }.dispose(in: disposeBag)
 
-    viewModel.state.observeNext { state in
+    viewModel.state.observeNext { [unowned self] state in
       self.mainView.set(cardState: state)
       self.updateUI()
     }.dispose(in: disposeBag)
 
-    viewModel.isActivateCardFeatureEnabled.observeNext { shouldShowActivation in
+    viewModel.isActivateCardFeatureEnabled.observeNext { [unowned self] shouldShowActivation in
       self.mainView.set(activateCardFeatureEnabled: shouldShowActivation)
       self.shouldShowActivation = shouldShowActivation
     }.dispose(in: disposeBag)
 
-    viewModel.cardInfoVisible.observeNext { visible in
+    viewModel.cardInfoVisible.observeNext { [unowned self] visible in
       self.mainView.set(showInfo: visible)
     }.dispose(in: disposeBag)
 
-    viewModel.transactions.observeNext { event in
+    viewModel.transactions.observeNext { [unowned self] event in
       switch event.change {
       case .reset:
         break
@@ -339,18 +381,20 @@ private extension ManageShiftCardViewController {
         self.transactionsList.switchRefreshFooter(to: .normal)
       }
     }.dispose(in: disposeBag)
+
+    viewModel.transactionsLoaded.observeNext { [unowned self] _ in
+      self.updateUI()
+    }.dispose(in: disposeBag)
   }
 
   func updateUI() {
     let viewModel = eventHandler.viewModel
     transactionsList.reloadData()
     activateCardView.isHidden = shouldShowActivation == true ? viewModel.state.value != .created : true
-    footer.isHidden = viewModel.transactions.numberOfSections == 0
+    footer.isHidden = viewModel.transactions.isEmpty
     // Only show the empty case if we are all set
-    if viewModel.state.value != .created
-      && viewModel.cardHolder.value != nil
-      && viewModel.isActivateCardFeatureEnabled.value != nil {
-      emptyCaseView.isHidden = viewModel.transactions.numberOfSections != 0
+    if viewModel.transactionsLoaded.value == true {
+      emptyCaseView.isHidden = !viewModel.transactions.isEmpty
     }
   }
 }

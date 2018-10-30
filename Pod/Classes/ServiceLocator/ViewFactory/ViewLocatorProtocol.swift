@@ -28,4 +28,7 @@ protocol ViewLocatorProtocol {
                             presenter: ContentPresenterPresenterProtocol) -> ContentPresenterViewController
   func dataConfirmationView(uiConfig: ShiftUIConfig,
                             presenter: DataConfirmationPresenterProtocol) -> DataConfirmationViewController
+  func physicalCardActivationView(uiConfig: ShiftUIConfig,
+                                  presenter: PhysicalCardActivationSucceedPresenterProtocol)
+      -> PhysicalCardActivationSucceedViewController
 }

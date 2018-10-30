@@ -48,4 +48,9 @@ class PresenterLocatorFake: PresenterLocatorProtocol {
   func dataConfirmationPresenter() -> DataConfirmationPresenterProtocol {
     return dataConfirmationPresenterSpy
   }
+
+  lazy var physicalCardActivationSucceedPresenterSpy = PhysicalCardActivationSucceedPresenterSpy()
+  func physicalCardActivationSucceedPresenter() -> PhysicalCardActivationSucceedPresenterProtocol {
+    return physicalCardActivationSucceedPresenterSpy
+  }
 }

@@ -21,6 +21,7 @@ protocol ShiftCardSettingsRouterProtocol: class {
   func closeFromShiftCardSettings()
   func addFundingSource(completion: @escaping (FundingSource) -> Void)
   func changeCardPin()
+  func call(url: URL, completion: @escaping () -> Void)
   func showCardInfo()
   func hideCardInfo()
   func isCardInfoVisible() -> Bool
@@ -39,18 +40,31 @@ protocol ShiftCardSettingsInteractorProtocol {
   func setActive(fundingSource: FundingSource, callback: @escaping Result<FundingSource, NSError>.Callback)
 }
 
+public struct LegalDocuments {
+  public let cardHolderAgreement: Content?
+  public let faq: Content?
+  public let termsAndConditions: Content?
+  public let privacyPolicy: Content?
+}
+
+extension LegalDocuments {
+  init() {
+    self.init(cardHolderAgreement: nil, faq: nil, termsAndConditions: nil, privacyPolicy: nil)
+  }
+}
+
 open class ShiftCardSettingsViewModel {
   open var expendableBalance: Observable<Amount?> = Observable(nil)
   open var fundingSources: Observable<[FundingSource]> = Observable([])
+  open var fundingSourcesLoaded: Observable<Bool> = Observable(false)
   open var activeFundingSource: Observable<FundingSource?> = Observable(nil)
   open var activeFundingSourceIdx: Observable<Int?> = Observable(nil)
   open var showBalancesSection: Observable<Bool?> = Observable(nil)
   open var locked: Observable<Bool?> = Observable(nil)
   open var showCardInfo: Observable<Bool?> = Observable(nil)
-  open var cardHolderAgreement: Observable<Content?> = Observable(nil)
-  open var faq: Observable<Content?> = Observable(nil)
-  open var termsAndConditions: Observable<Content?> = Observable(nil)
-  open var privacyPolicy: Observable<Content?> = Observable(nil)
+  open var legalDocuments: Observable<LegalDocuments> = Observable(LegalDocuments())
+  open var showChangePin: Observable<Bool> = Observable(false)
+  open var showGetPin: Observable<Bool> = Observable(false)
 }
 
 protocol ShiftCardSettingsPresenterHandler: class {
@@ -62,6 +76,7 @@ protocol ShiftCardSettingsPresenterHandler: class {
   func addFundingSourceTapped()
   func lostCardTapped()
   func changePinTapped()
+  func getPinTapped()
   func lockCardChanged(switcher: UISwitch)
   func showCardInfoChanged(switcher: UISwitch)
   func show(content: Content, title: String)

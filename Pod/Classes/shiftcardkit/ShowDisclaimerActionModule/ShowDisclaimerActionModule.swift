@@ -15,19 +15,23 @@ class ShowDisclaimerActionModule: UIModule, ShowDisclaimerActionModuleProtocol {
   private let workflowObject: WorkflowObject
   private let workflowAction: WorkflowAction
   private let disclaimer: Content
+  private let actionConfirmer: ActionConfirmer.Type
 
   var shiftCardSession: ShiftCardSession {
     return shiftSession.shiftCardSession
   }
 
-  init(serviceLocator: ServiceLocatorProtocol, workflowObject: WorkflowObject, workflowAction: WorkflowAction) {
+  init(serviceLocator: ServiceLocatorProtocol,
+       workflowObject: WorkflowObject,
+       workflowAction: WorkflowAction,
+       actionConfirmer: ActionConfirmer.Type) {
     guard let disclaimer = workflowAction.configuration as? Content else {
       fatalError("Wrong workflow action")
     }
     self.workflowObject = workflowObject
     self.workflowAction = workflowAction
     self.disclaimer = disclaimer
-
+    self.actionConfirmer = actionConfirmer
     super.init(serviceLocator: serviceLocator)
   }
 
@@ -39,10 +43,14 @@ class ShowDisclaimerActionModule: UIModule, ShowDisclaimerActionModuleProtocol {
   private func buildFullScreenDisclaimerModule() -> FullScreenDisclaimerModuleProtocol {
     let module = serviceLocator.moduleLocator.fullScreenDisclaimerModule(disclaimer: disclaimer)
     module.onClose = { [unowned self] _ in
-      self.close()
+      self.confirmClose {[unowned self] in
+        self.close()
+      }
     }
     module.onBack = { [unowned self] _ in
-      self.back()
+      self.confirmClose { [unowned self] in
+        self.back()
+      }
     }
     module.onDisclaimerAgreed = disclaimerAgreed
 
@@ -59,6 +67,31 @@ class ShowDisclaimerActionModule: UIModule, ShowDisclaimerActionModuleProtocol {
       case .success:
         self.onFinish?(self)
       }
+    }
+  }
+
+  private func confirmClose(onConfirm: @escaping () -> ()) {
+    if let cardApplication = self.workflowObject as? CardApplication {
+      let cancelTitle = "general.button.cancel".podLocalized()
+      actionConfirmer.confirm(title: "disclaimer-action.cancel-confirmation.title".podLocalized(),
+                              message: "disclaimer-action.cancel-confirmation.message".podLocalized(),
+                              okTitle: "disclaimer-action.cancel-confirmation.confirm-button.title".podLocalized(),
+                              cancelTitle: cancelTitle) { [unowned self] action in
+        guard let title = action.title, title != cancelTitle else {
+          return
+        }
+        self.showLoadingSpinner()
+        self.shiftCardSession.cancelCardApplication(cardApplication.id) { [unowned self] _ in
+          self.hideLoadingSpinner()
+          onConfirm()
+          NotificationCenter.default.post(Notification(name: .UserTokenSessionClosedNotification,
+                                                       object: nil,
+                                                       userInfo: nil))
+        }
+      }
+    }
+    else {
+      onConfirm()
     }
   }
 }

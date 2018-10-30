@@ -29,29 +29,21 @@ class SelectFinancialAccountModule: UIModule {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure (let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        self.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        self.shiftSession.nextFinancialAccounts(0, rows: 1) { [weak self] result in
-          guard let wself = self else {
-            return
-          }
-          completion(result.flatMap { financialAccounts -> Result<UIViewController, NSError> in
-            wself.initiallyAvailableFinancialAccounts = financialAccounts.count > 0
-            if wself.initiallyAvailableFinancialAccounts {
-              wself.financialAccountListViewController = wself.buidFinancialAccountListViewController(wself.uiConfig!)
-              return .success(wself.financialAccountListViewController)
-            }
-            else {
-              let viewController = wself.buidSelectFinancialAccountTypeViewController(wself.uiConfig!)
-              return .success(viewController)
-            }
-          })
-        }
+    shiftSession.nextFinancialAccounts(0, rows: 1) { [weak self] result in
+      guard let wself = self else {
+        return
       }
+      completion(result.flatMap { financialAccounts -> Result<UIViewController, NSError> in
+        wself.initiallyAvailableFinancialAccounts = financialAccounts.count > 0
+        if wself.initiallyAvailableFinancialAccounts {
+          wself.financialAccountListViewController = wself.buidFinancialAccountListViewController(wself.uiConfig)
+          return .success(wself.financialAccountListViewController)
+        }
+        else {
+          let viewController = wself.buidSelectFinancialAccountTypeViewController(wself.uiConfig)
+          return .success(viewController)
+        }
+      })
     }
   }
 
@@ -111,7 +103,7 @@ class SelectFinancialAccountModule: UIModule {
 extension SelectFinancialAccountModule: FinancialAccountListRouterProtocol {
 
   func showAddAccountFlow() {
-    self.push(viewController: buidSelectFinancialAccountTypeViewController(self.uiConfig!)) {}
+    self.push(viewController: buidSelectFinancialAccountTypeViewController(self.uiConfig)) {}
   }
 
   func accountSelected(_ financialAccount:FinancialAccount) {
@@ -130,7 +122,7 @@ extension SelectFinancialAccountModule: SelectFinancialAccountTypeRouterProtocol
     }
     else {
       self.popViewController(animated: true) {
-        self.push(viewController: self.buidFinancialAccountListViewController(self.uiConfig!), animated: false) {}
+        self.push(viewController: self.buidFinancialAccountListViewController(self.uiConfig), animated: false) {}
       }
     }
   }
@@ -153,7 +145,7 @@ extension SelectFinancialAccountModule: SelectFinancialAccountTypeRouterProtocol
   }
 
   func showAddCardFlow() {
-    self.push(viewController: buildAddCardViewController(self.uiConfig!)) {}
+    self.push(viewController: buildAddCardViewController(self.uiConfig)) {}
   }
 
   func backInFinancialAccountType(_ animated: Bool?) {

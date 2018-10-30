@@ -17,6 +17,8 @@ protocol ManageShiftCardRouterProtocol: class {
   func accountSettingsTappedInManageShiftCardViewer()
   func cardSettingsTappedInManageShiftCardViewer()
   func showTransactionDetails(transaction: Transaction)
+  func physicalActivationSucceed()
+  func addFundingSource(completion: @escaping (FundingSource) -> Void)
 }
 
 protocol ManageShiftCardViewProtocol: ViewControllerProtocol {
@@ -29,6 +31,7 @@ protocol ManageShiftCardInteractorProtocol {
   func provideTransactions(rows: Int,
                            lastTransactionId: String?,
                            callback: @escaping Result<[Transaction], NSError>.Callback)
+  func activatePhysicalCard(code: String, callback: @escaping Result<Void, NSError>.Callback)
 }
 
 open class ManageShiftCardViewModel {
@@ -42,12 +45,14 @@ open class ManageShiftCardViewModel {
   open var expirationYear: Observable<UInt?> = Observable(nil)
   open var lastFour: Observable<String?> = Observable(nil)
   open var cardNetwork: Observable<CardNetwork?> = Observable(nil)
+  open var physicalCardActivationRequired: Observable<Bool?> = Observable(nil)
   open var fundingSource: Observable<FundingSource?> = Observable(nil)
   open var spendableToday: Observable<Amount?> = Observable(nil)
   open var nativeSpendableToday: Observable<Amount?> = Observable(nil)
   open var custodianLogo: Observable<UIImage?> = Observable(nil)
   open var custodianName: Observable<String?> = Observable(nil)
   open var transactions: MutableObservable2DArray<String, Transaction> = MutableObservable2DArray([])
+  open var transactionsLoaded: Observable<Bool> = Observable(false)
 }
 
 struct ManageShiftCardPresenterConfig {
@@ -116,8 +121,8 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
     }
   }
 
-  func reloadTapped() {
-    refreshInfo()
+  func reloadTapped(showSpinner: Bool) {
+    refreshInfo(showSpinner: showSpinner)
   }
 
   func moreTransactionsTapped(completion: @escaping (_ noMoreTransactions: Bool) -> Void) {
@@ -126,11 +131,34 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
     }
   }
 
-  fileprivate func refreshInfo() {
+  func activatePhysicalCard(code: String) {
     view.showLoadingSpinner()
+    interactor.activatePhysicalCard(code: code) { [unowned self] result in
+      self.view.hideLoadingSpinner()
+      switch result {
+      case .failure(let error):
+        self.view.show(error: error)
+      case .success:
+        self.router.physicalActivationSucceed()
+      }
+    }
+  }
+
+  func addFundingSourceTapped() {
+    router.addFundingSource { _ in
+      self.refreshCard()
+    }
+  }
+
+  fileprivate func refreshInfo(showSpinner: Bool = true) {
+    if showSpinner {
+      view.showLoadingSpinner()
+    }
     refreshCard {
-      self.refreshTransactions { _ in
-        self.view.hideLoadingSpinner()
+      self.refreshTransactions { [unowned self] _ in
+        if showSpinner {
+          self.view.hideLoadingSpinner()
+        }
       }
     }
   }
@@ -164,6 +192,7 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
     viewModel.lastFour.next(card.lastFourDigits)
     viewModel.cardNetwork.next(card.cardNetwork)
     viewModel.fundingSource.next(card.fundingSource)
+    viewModel.physicalCardActivationRequired.next(card.physicalCardActivationRequired)
     viewModel.spendableToday.next(card.spendableToday)
     viewModel.nativeSpendableToday.next(card.nativeSpendableToday)
     if let imageUrl = config.imageUrl, let url = URL(string: imageUrl) {
@@ -194,6 +223,7 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
   }
 
   fileprivate func refreshTransactions(completion: @escaping (_ transactionsLoaded: Int) -> Void) {
+    viewModel.transactionsLoaded.next(false)
     viewModel.transactions.removeAllItemsAndSections()
     lastTransactionId = nil
     getMoreTransactions(completion: completion)
@@ -201,6 +231,9 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
 
   fileprivate func getMoreTransactions(completion: @escaping (_ transactionsLoaded: Int) -> Void) {
     interactor.provideTransactions(rows: rowsPerPage, lastTransactionId: lastTransactionId) { [weak self] result in
+      if self?.viewModel.transactionsLoaded.value == false {
+        self?.viewModel.transactionsLoaded.next(true)
+      }
       switch result {
       case .failure(let error):
         self?.view.show(error: error)

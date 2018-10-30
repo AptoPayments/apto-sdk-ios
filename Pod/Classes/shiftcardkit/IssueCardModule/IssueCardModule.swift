@@ -54,17 +54,8 @@ class IssueCardModule: UIModule, IssueCardModuleProtocol {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-   shiftSession.contextConfiguration { result in
-     switch result {
-     case .failure(let error):
-       completion(.failure(error))
-     case .success(let contextConfiguration):
-       let config = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-       self.uiConfig = config
-       let viewController = self.buildIssueCardViewController(uiConfig: config)
-       completion(.success(viewController))
-     }
-   }
+    let viewController = buildIssueCardViewController(uiConfig: uiConfig)
+    completion(.success(viewController))
   }
 
   private func buildIssueCardViewController(uiConfig: ShiftUIConfig) -> UIViewController {

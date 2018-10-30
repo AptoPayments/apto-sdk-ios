@@ -8,7 +8,7 @@
 
 public protocol UIModuleProtocol: class {
   /// UI Configuration
-  var uiConfig: ShiftUIConfig? { get set }
+  var uiConfig: ShiftUIConfig { get }
 
   /// Session
   var shiftSession: ShiftSession { get }

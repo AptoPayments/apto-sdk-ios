@@ -86,6 +86,15 @@ class ShiftCardSession {
                                                     callback: callback)
   }
 
+  func cancelCardApplication(_ applicationId: String, callback: @escaping Result<Void, NSError>.Callback) {
+    guard let accessToken = ShiftPlatform.defaultManager().currentToken() else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+
+    ShiftPlatform.defaultManager().cancelCardApplication(accessToken, applicationId: applicationId, callback: callback)
+  }
+
   func issueCard(_ applicationId: String,
                  callback: @escaping Result<Card, NSError>.Callback) {
     guard let accessToken = ShiftPlatform.defaultManager().currentToken() else {
@@ -122,6 +131,18 @@ class ShiftCardSession {
         return .success(financialAccounts.map { financialAccount -> Card in return financialAccount as! Card })
       })
     }
+  }
+
+  func activatePhysical(card: Card,
+                        code: String,
+                        callback: @escaping Result<PhysicalCardActivationResult, NSError>.Callback) {
+    guard let accessToken = ShiftPlatform.defaultManager().currentToken() else {
+      return callback(.failure(BackendError(code: .invalidSession)))
+    }
+    ShiftPlatform.defaultManager().activatePhysicalCard(accessToken,
+                                                        accountId: card.accountId,
+                                                        code: code,
+                                                        callback: callback)
   }
 
   func activate(card: Card, callback: @escaping Result<Card, NSError>.Callback) {

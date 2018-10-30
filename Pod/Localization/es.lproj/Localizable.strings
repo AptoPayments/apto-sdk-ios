@@ -626,7 +626,19 @@
 
 "member-of-armed-forces-collector.time-at-address.warning.empty" = "Debe indicar sí o no.";
 
-"agree.button.title" = "Aceptar";
+/* * ./Pod/Classes/ledgekit/FullScreenDisclaimer/FullScreenDisclaimerViewController.swift */
+
+"full-screen-disclaimer.agree.button.title" = "Aceptar";
+
+"full-screen-disclaimer.do-not-agree.button.title" = "No estoy de acuerdo";
+
+/* * ./Pod/Classes/shiftcardkit/ShowDisclaimerActionModule/ShowDisclaimerActionModule.swift */
+
+"disclaimer-action.cancel-confirmation.title" = "Acuerdo del titular";
+
+"disclaimer-action.cancel-confirmation.message" = "Seguro que no aceptas el acuerdo?";
+
+"disclaimer-action.cancel-confirmation.confirm-button.title" = "Confirmar";
 
 /* * ./Pod/Classes/linkkit/LinkApplicationLisr/LinkApplicationListViewController.swift */
 
@@ -660,13 +672,33 @@
 
 "manage.shift.card.no.transactions" = "Aún no hay transacciones.\nEmpieza ya!";
 
-/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Views/InvalidBalanceMessageView.swift */
+"manage.shift.card.enter-code.title" = "Activa tu tarjeta física";
+
+"manage.shift.card.enter-code.message" = "Activa tu tarjeta introduciendo el código de activación enviado junto a su tarjeta física.";
+
+"manage.shift.card.enter-code.placeholder" = "Código de activación";
+
+"manage.shift.card.enter-code.submit" = "Enviar";
+
+/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Views/ManageShiftCardMainView.swift */
 
 "invalid-balance.title" = "Funding sources no válido";
 
-"invalid-balance.message" = "Su tarjeta estará deshabilitada hasta que añada un nuevo funding source!";
+"invalid-balance.message" = "El funding source actual no es válido. Por favor selecciona o añade otro funding source!";
 
-"invalid-balance.call-to-action" = "Gestiónalo ahora";
+"invalid-balance.call-to-action" = "Seleccionarlo ahora";
+
+"no-balance.title" = "No se han encontrado funding sources";
+
+"no-balance.message" = "Su tarjeta estará deshabilitada hasta que añada un nuevo funding source!";
+
+"no-balance.call-to-action" = "Añadirlo ahora";
+
+"activate-physical-card.title" = "Activa tu tarjeta física";
+
+"activate-physical-card.message" = "¿Ya has recibido tu Shift Card? Excelente! Pulsa aquí para activarla.";
+
+"activate-physical-card.call-to-action" = "Actívala ahora";
 
 /* * ./Pod/Classes/ledgeaccountskit/SelectFinancialAccountModule/Add Card/CreditCardView.swift */
 
@@ -689,6 +721,8 @@
 "change.pin.type-pin.confirm" = "Confirma el PIN";
 
 "change.pin.error.pins-does-not-match" = "Los PIN no son iguales";
+
+"change.pin.success" = "El PIN ha sido cambiado";
 
 /* Input Document */
 
@@ -824,6 +858,10 @@
 
 "card.settings.change-pin.subtitle" = "Cambia el código PIN de la tarjeta";
 
+"card.settings.get-pin.title" = "Obtener PIN";
+
+"card.settings.get-pin.subtitle" = "Recupera tu PIN usando nuestro sistema automático";
+
 "card.settings.enable-card.title" = "Desactivar tarjeta";
 
 "card.settings.enable-card.subtitle" = "No permitir operaciones";
@@ -948,6 +986,14 @@
 
 "error.transport.sdkDeprecated" = "Esta versión ha sido descatalogada, por favor actualiza la app.";
 
+"error.transport.wrongPhysicalCardActivationCode" = "El código de activación no coincide con el código de activación de su tarjeta, por favor inténtalo de nuevo o contacta con Atención al Cliente.";
+
+"error.transport.tooManyPhysicalCardActivationAttempts" = "Ha excedido el número máximo de intentos permitido, por favor contacta con Atención al Cliente.";
+
+"error.transport.physicalCardAlreadyActivated" = "Su tarjeta ya está activa, por favor actualiza la pantalla o contacta con Atención al Cliente.";
+
+"error.transport.physicalCardActivationNotSupported" = "Su tarjeta no se puede activar, por favor contacta con Atención al Cliente.";
+
 /* * ./Pod/Classes/ledgeaccountskit/SelectBalanceStoreModule/SelectBalanceStoreModule.swift */
 
 "select-balance-store.title" = "Enlaza tu cuenta";
@@ -1021,3 +1067,15 @@
 "report-lost-card-action.message" = "Atención, una vez que confirme que extravió o le robaron su tarjeta esta se bloqueará instantáneamente para que no pueda ser usada";
 
 "report-lost-card-action.confirm" = "Confirmar";
+
+/* * Pod/Classes/shiftcardkit/ManageShiftCardModule/PhysicalCardActivationSucceed/PhysicalCardActivationSucceedViewController.swift */
+
+"physical.card.activation.succeed.title" = "Tarjeta física";
+
+"physical.card.activation.succeed.label.title" = "Felicidades!";
+
+"physical.card.activation.succeed.label.message" = "Su tarjeta física Shift Card ha sido habilitada. Hemos definido un PIN aleatorio para la misma";
+
+"physical.card.activation.succeed.button.title" = "Obtener PIN";
+
+"physical.card.activation.succeed.call.charge" = "El PIN se obtiene mediante una llamada telefónica y puede llevar un cargo por parte de su operador de telefonía";

@@ -627,11 +627,7 @@ public enum HandleFileResult {
   }
 
   private func presentServerMaintenanceError() {
-    var uiConfig: ShiftUIConfig? = nil
-    if let contextConfiguration = configurationStorage.contextConfigurationCache {
-      uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-    }
-    UIApplication.topViewController()?.showServerMaintenanceError(uiConfig)
+    UIApplication.topViewController()?.showServerMaintenanceError()
   }
 }
 
@@ -682,7 +678,7 @@ extension ShiftPlatform {
   }
 
   func startOauthAuthentication(_ accessToken: AccessToken,
-                                custodianType: CustodianType,
+                                balanceType: AllowedBalanceType,
                                 callback: @escaping Result<OauthAttempt, NSError>.Callback) {
     guard let apiKey = self.apiKey else  {
       callback(.failure(BackendError(code: .invalidSession)))
@@ -690,7 +686,7 @@ extension ShiftPlatform {
     }
     oauthStorage.startOauthAuthentication(apiKey,
                                           userToken: accessToken.token,
-                                          custodianType: custodianType,
+                                          balanceType: balanceType,
                                           callback: callback)
   }
 

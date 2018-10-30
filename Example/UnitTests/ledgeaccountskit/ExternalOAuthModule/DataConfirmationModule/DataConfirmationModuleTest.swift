@@ -37,7 +37,6 @@ class DataConfirmationModuleTest: XCTestCase {
 
   func testInitialiazeConfigurationSucceedCallSuccess() {
     // Given
-    serviceLocator.setUpSessionForContextConfigurationSuccess()
     var returnedResult: Result<UIViewController, NSError>?
 
     // When
@@ -47,20 +46,6 @@ class DataConfirmationModuleTest: XCTestCase {
 
     // Then
     XCTAssertTrue(returnedResult!.isSuccess) // swiftlint:disable:this force_unwrapping
-  }
-
-  func testInitialiazeConfigurationFailsCallFailure() {
-    // Given
-    serviceLocator.setUpSessionForContextConfigurationFailure()
-    var returnedResult: Result<UIViewController, NSError>?
-
-    // When
-    sut.initialize { result in
-      returnedResult = result
-    }
-
-    // Then
-    XCTAssertTrue(returnedResult!.isFailure) // swiftlint:disable:this force_unwrapping
   }
 
   func testCloseCalledCallOnClose() {

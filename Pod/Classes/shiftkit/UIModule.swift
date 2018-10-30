@@ -37,7 +37,9 @@ open class UIModule: NSObject, UIModuleProtocol {
   }
 
   // UI Configuration
-  public var uiConfig: ShiftUIConfig?
+  public var uiConfig: ShiftUIConfig {
+    return serviceLocator.uiConfig
+  }
 
   // Service locator
   let serviceLocator: ServiceLocatorProtocol
@@ -86,9 +88,6 @@ open class UIModule: NSObject, UIModuleProtocol {
                    animated: Bool? = true,
                    leftButtonMode : UIViewControllerLeftButtonMode? = .back,
                    completion: @escaping (() -> Void)) {
-    guard let uiConfig = self.uiConfig else {
-      return
-    }
     viewController.configureLeftNavButton(mode: leftButtonMode!, uiConfig: uiConfig)
     navigationController?.pushViewController(viewController, animated: animated!) { [ weak self] in
       self?.viewControllers.append(viewController)
@@ -218,9 +217,6 @@ open class UIModule: NSObject, UIModuleProtocol {
   public func addChild(viewController: UIViewController,
                        leftButtonMode: UIViewControllerLeftButtonMode? = .back,
                        completion: @escaping Result<UIViewController, NSError>.Callback) {
-    if let uiConfig = self.uiConfig {
-      viewController.configureLeftNavButton(mode: leftButtonMode!, uiConfig: uiConfig)
-    }
     viewControllers.append(viewController)
     completion(.success(viewController))
   }
@@ -228,7 +224,7 @@ open class UIModule: NSObject, UIModuleProtocol {
   // MARK: - Useful (helper) functions
 
   public func showLoadingSpinner(position: SubviewPosition = .center) {
-    UIApplication.topViewController()?.showLoadingSpinner(tintColor: uiConfig?.uiPrimaryColor ?? .darkGray,
+    UIApplication.topViewController()?.showLoadingSpinner(tintColor: uiConfig.uiPrimaryColor,
                                                           position: position)
   }
 

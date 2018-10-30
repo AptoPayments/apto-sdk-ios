@@ -24,6 +24,20 @@ extension ShiftPlatform {
                                        callback: callback)
   }
 
+  func activatePhysicalCard(_ accessToken: AccessToken,
+                            accountId: String,
+                            code: String,
+                            callback: @escaping Result<PhysicalCardActivationResult, NSError>.Callback) {
+    guard let apiKey = self.apiKey else {
+      return callback(.failure(BackendError(code: .invalidSession)))
+    }
+    financialAccountsStorage.activatePhysical(apiKey,
+                                              userToken: accessToken.token,
+                                              accountId: accountId,
+                                              code: code,
+                                              callback: callback)
+  }
+
   func activateCard(_ accessToken: AccessToken,
                     accountId: String,
                     callback: @escaping Result<Card, NSError>.Callback) {
@@ -245,6 +259,19 @@ extension ShiftPlatform {
                                              workflowObject: workflowObject,
                                              workflowAction: workflowAction,
                                              callback: callback)
+  }
+
+  func cancelCardApplication(_ accessToken: AccessToken,
+                             applicationId: String,
+                             callback: @escaping Result<Void, NSError>.Callback) {
+    guard let apiKey = self.apiKey else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+    cardApplicationsStorage.cancelCardApplication(apiKey,
+                                                  userToken: accessToken.token,
+                                                  applicationId: applicationId,
+                                                  callback: callback)
   }
 
   func issueCard(_ accessToken: AccessToken,

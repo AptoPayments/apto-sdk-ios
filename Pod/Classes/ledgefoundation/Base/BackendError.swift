@@ -31,6 +31,12 @@ open class BackendError: NSError {
     case shiftCardEnableError = 900174
     case shiftCardDisableError = 900175
     case primaryFundingSourceNotFound = 90197
+    case shiftActivatePhysicalCardError = 90206
+    case wrongPhysicalCardActivationCode = 90207
+    case tooManyPhysicalCardActivationAttempts = 90208
+    case physicalCardAlreadyActivated = 90209
+    case physicalCardActivationNotSupported = 90210
+    case invalidPhysicalCardActivationCode = 90211
     case sdkDeprecated = 415
     case other = 1005
     case serverMaintenance = -1004
@@ -60,6 +66,14 @@ open class BackendError: NSError {
       case .shiftCardEnableError: return "error.transport.shiftCardEnableError"
       case .shiftCardDisableError: return "error.transport.shiftCardDisableError"
       case .sdkDeprecated: return "error.transport.sdkDeprecated"
+      case .shiftActivatePhysicalCardError,
+           .physicalCardActivationNotSupported:
+        return "error.transport.physicalCardActivationNotSupported"
+      case .wrongPhysicalCardActivationCode,
+           .invalidPhysicalCardActivationCode:
+        return "error.transport.wrongPhysicalCardActivationCode"
+      case .tooManyPhysicalCardActivationAttempts: return "error.transport.tooManyPhysicalCardActivationAttempts"
+      case .physicalCardAlreadyActivated: return "error.transport.physicalCardAlreadyActivated"
       }
     }
   }

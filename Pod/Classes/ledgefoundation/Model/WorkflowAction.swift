@@ -1,6 +1,6 @@
 //
 //  WorkflowAction.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 20/10/2017.
 //
@@ -114,6 +114,10 @@ class ShowGenericMessageActionConfiguration: WorkflowActionConfiguration {
     self.trackerIncrementName = trackerIncrementName
     self.callToAction = callToAction
   }
+}
+
+struct SelectBalanceStoreActionConfiguration: WorkflowActionConfiguration {
+  let allowedBalanceTypes: [AllowedBalanceType]
 }
 
 open class CallToAction: NSObject {

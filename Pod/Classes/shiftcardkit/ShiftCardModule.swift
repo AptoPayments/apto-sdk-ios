@@ -165,7 +165,6 @@ open class ShiftCardModule: UIModule {
     // Prepare the current user's data
     let authModuleConfig = AuthModuleConfig(projectConfiguration: projectConfiguration)
     let authModule = serviceLocator.moduleLocator.authModule(authConfig: authModuleConfig,
-                                                             uiConfig: uiConfig!,
                                                              initialUserData: userDataPoints)
     authModule.onBack = { [unowned self] module in
       self.popModule {
@@ -293,13 +292,13 @@ open class ShiftCardModule: UIModule {
         completion(.failure(error))
       case .success (let contextConfiguration):
         self.contextConfiguration = contextConfiguration
+        self.serviceLocator.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
         self.shiftCardSession.shiftCardConfiguration(true) { [unowned self] result in
           switch result {
           case .failure(let error):
             completion(.failure(error))
           case .success(let shiftCardConfiguration):
             self.shiftCardConfiguration = shiftCardConfiguration
-            self.uiConfig = ShiftUIConfig(projectConfiguration: self.projectConfiguration)
             completion(.success(Void()))
           }
         }
@@ -350,7 +349,8 @@ extension ShiftSession {
           from.dismiss(animated: true) {}
           self.initialModule = nil
         }
-        let uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
+        let uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration,
+                                     fontCustomizationOptions: options?.fontCustomizationOptions)
         from.present(module: shiftCardModule, animated: true, leftButtonMode: .close, uiConfig: uiConfig) { result in
           switch result {
           case .failure(let error):

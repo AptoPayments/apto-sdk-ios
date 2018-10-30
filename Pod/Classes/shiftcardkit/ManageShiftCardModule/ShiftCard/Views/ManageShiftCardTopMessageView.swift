@@ -1,5 +1,5 @@
 //
-//  InvalidBalanceMessageView.swift
+//  ManageShiftCardTopMessageView.swift
 //  ShiftSDK
 //
 // Created by Takeichi Kanzaki on 15/10/2018.
@@ -7,25 +7,27 @@
 
 import SnapKit
 
-protocol InvalidBalanceMessageViewDelegate {
-  func close()
-  func addFundingSource()
+struct ManageShiftCardTopMessageViewConfig {
+  let title: String
+  let message: String
+  let actionTitle: String
+  let closeHandler: () -> ()
+  let actionHandler: () -> ()
 }
 
-class InvalidBalanceMessageView: UIView {
+class ManageShiftCardTopMessageView: UIView {
+  private let config: ManageShiftCardTopMessageViewConfig
   private let uiConfig: ShiftUIConfig
   private let titleLabel: UILabel
   private let messageLabel: UILabel
 
-  var delegate: InvalidBalanceMessageViewDelegate?
-
-  init(uiConfig: ShiftUIConfig) {
+  init(config: ManageShiftCardTopMessageViewConfig, uiConfig: ShiftUIConfig) {
+    self.config = config
     self.uiConfig = uiConfig
-    self.titleLabel = ComponentCatalog.sectionTitleLabelWith(text: "invalid-balance.title".podLocalized(),
+    self.titleLabel = ComponentCatalog.sectionTitleLabelWith(text: config.title,
                                                              uiConfig: uiConfig)
-    self.messageLabel = ComponentCatalog.boldMessageLabelWith(text: "invalid-balance.message".podLocalized(),
+    self.messageLabel = ComponentCatalog.boldMessageLabelWith(text: config.message,
                                                               uiConfig: uiConfig)
-
     super.init(frame: .zero)
     setUpUI()
   }
@@ -36,7 +38,7 @@ class InvalidBalanceMessageView: UIView {
 }
 
 // MARK: - Set up UI
-private extension InvalidBalanceMessageView {
+private extension ManageShiftCardTopMessageView {
   func setUpUI() {
     backgroundColor = uiConfig.uiToastMessagesColor
     layoutTitleLabel()
@@ -59,7 +61,7 @@ private extension InvalidBalanceMessageView {
     messageLabel.snp.makeConstraints { make in
       make.top.equalTo(titleLabel.snp.bottom).offset(4)
       make.left.equalToSuperview().offset(16)
-      make.right.equalToSuperview().inset(32)
+      make.right.equalToSuperview().inset(40)
     }
   }
 
@@ -69,7 +71,7 @@ private extension InvalidBalanceMessageView {
     button.tintColor = uiConfig.iconSecondaryColor
     button.setImage(image, for: .normal)
     button.addTapGestureRecognizer { [unowned self] in
-      self.delegate?.close()
+      self.config.closeHandler()
     }
     addSubview(button)
     button.snp.makeConstraints { make in
@@ -79,9 +81,9 @@ private extension InvalidBalanceMessageView {
   }
 
   func createAddFundingSourceButton() {
-    let button = ComponentCatalog.smallButtonWith(title: "invalid-balance.call-to-action".podLocalized(),
+    let button = ComponentCatalog.smallButtonWith(title: config.actionTitle,
                                                   uiConfig: uiConfig) { [unowned self] in
-      self.delegate?.addFundingSource()
+      self.config.actionHandler()
     }
     addSubview(button)
     button.snp.makeConstraints { make in

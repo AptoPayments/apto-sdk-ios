@@ -26,7 +26,6 @@ class AuthModuleTest: XCTestCase {
 
     sut = AuthModule(serviceLocator: serviceLocator,
                      config: authModuleConfig,
-                     uiConfig: uiConfig,
                      initialUserData: initialUserData)
   }
 

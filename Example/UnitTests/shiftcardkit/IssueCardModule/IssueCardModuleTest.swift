@@ -23,29 +23,6 @@ class IssueCardModuleTest: XCTestCase {
     sut = IssueCardModule(serviceLocator: serviceLocator, application: application)
   }
 
-  func testInitializeLoadContextConfiguration() {
-    // When
-    sut.initialize { _ in }
-
-    // Then
-    XCTAssertTrue(serviceLocator.sessionFake.contextConfigurationCalled)
-  }
-
-  func testInitializeConfigurationFailsCallCompletionBlockWithFailure() {
-    // Given
-    serviceLocator.setUpSessionForContextConfigurationFailure()
-
-    // When
-    var returnedResult: Result<UIViewController, NSError>?
-    sut.initialize { result in
-      returnedResult = result
-    }
-
-    // Then
-    XCTAssertTrue(returnedResult!.isFailure) // swiftlint:disable:this implicitly_unwrapped_optional
-    XCTAssertNotNil(returnedResult!.error) // swiftlint:disable:this implicitly_unwrapped_optional
-  }
-
   func testInitializeConfigurationSucceedCallCompletionBlockWithSuccess() {
     // Given
     serviceLocator.setUpSessionForContextConfigurationSuccess()

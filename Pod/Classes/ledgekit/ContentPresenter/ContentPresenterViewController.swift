@@ -50,7 +50,7 @@ private extension ContentPresenterViewController {
   func set(content: Content) {
     switch content {
     case .plainText, .markdown:
-      guard let attributedString = content.attributedString(font: uiConfiguration.instructionsFont,
+      guard let attributedString = content.attributedString(font: uiConfiguration.fontProvider.instructionsFont,
                                                             color: uiConfiguration.textPrimaryColor,
                                                             linkColor: uiConfiguration.uiPrimaryColor) else {
         showEmptyContent()

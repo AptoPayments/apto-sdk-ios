@@ -30,7 +30,8 @@ class ShowDisclaimerActionModuleTest: XCTestCase {
 
     sut = ShowDisclaimerActionModule(serviceLocator: serviceLocator,
                                      workflowObject: workflowObject,
-                                     workflowAction: workflowAction)
+                                     workflowAction: workflowAction,
+                                     actionConfirmer: ActionConfirmerFake.self)
   }
 
   func testInitializeAddFullScreenDisclaimerAsChild() {
@@ -67,6 +68,124 @@ class ShowDisclaimerActionModuleTest: XCTestCase {
 
     // Then
     XCTAssertTrue(onFinishCalled)
+  }
+
+  func testDisclaimerClosedShowConfirmation() {
+    // Given
+    givenSUTInitialized()
+
+    // When
+    disclaimerModule.close()
+
+    // Then
+    XCTAssertTrue(ActionConfirmerFake.confirmCalled)
+  }
+
+  func testDisclaimerCloseNotConfirmedDoNotClose() {
+    // Given
+    var onCloseCalled = false
+    sut.onClose = { _ in
+      onCloseCalled = true
+    }
+    givenSUTInitialized()
+    ActionConfirmerFake.nextActionToExecute = .cancel
+
+    // When
+    disclaimerModule.close()
+
+    // Then
+    XCTAssertFalse(onCloseCalled)
+  }
+
+  func testDisclaimerCloseConfirmedCallCancelApplication() {
+    // Given
+    givenSUTInitialized()
+    ActionConfirmerFake.nextActionToExecute = .ok
+    let shiftCardSessionFake = serviceLocator.sessionFake.setUpShiftCardSession()
+
+    // When
+    disclaimerModule.close()
+
+    // Then
+    XCTAssertTrue(shiftCardSessionFake.cancelCardApplicationCalled)
+    XCTAssertEqual(shiftCardSessionFake.lastCancelCardApplicationId, workflowObject.id)
+  }
+
+  func testDisclaimerCancelConfirmedCancelApplicationCallBack() {
+    // Given
+    var onCloseCalled = false
+    sut.onClose = { _ in
+      onCloseCalled = true
+    }
+    givenSUTInitialized()
+    ActionConfirmerFake.nextActionToExecute = .ok
+    let shiftCardSessionFake = serviceLocator.sessionFake.setUpShiftCardSession()
+    shiftCardSessionFake.nextCancelCardApplicationResult = .success(Void())
+
+    // When
+    disclaimerModule.close()
+
+    // Then
+    XCTAssertTrue(onCloseCalled)
+  }
+
+  func testDisclaimerBackShowConfirmation() {
+    // Given
+    givenSUTInitialized()
+
+    // When
+    disclaimerModule.back()
+
+    // Then
+    XCTAssertTrue(ActionConfirmerFake.confirmCalled)
+  }
+
+  func testDisclaimerBackNotConfirmedDoNotBack() {
+    // Given
+    var onBackCalled = false
+    sut.onBack = { _ in
+      onBackCalled = true
+    }
+    givenSUTInitialized()
+    ActionConfirmerFake.nextActionToExecute = .cancel
+
+    // When
+    disclaimerModule.back()
+
+    // Then
+    XCTAssertFalse(onBackCalled)
+  }
+
+  func testDisclaimerBackConfirmedCallCancelApplication() {
+    // Given
+    givenSUTInitialized()
+    ActionConfirmerFake.nextActionToExecute = .ok
+    let shiftCardSessionFake = serviceLocator.sessionFake.setUpShiftCardSession()
+
+    // When
+    disclaimerModule.back()
+
+    // Then
+    XCTAssertTrue(shiftCardSessionFake.cancelCardApplicationCalled)
+    XCTAssertEqual(shiftCardSessionFake.lastCancelCardApplicationId, workflowObject.id)
+  }
+
+  func testDisclaimerBackConfirmedCancelApplicationCallBack() {
+    // Given
+    var onBackCalled = false
+    sut.onBack = { _ in
+      onBackCalled = true
+    }
+    givenSUTInitialized()
+    ActionConfirmerFake.nextActionToExecute = .ok
+    let shiftCardSessionFake = serviceLocator.sessionFake.setUpShiftCardSession()
+    shiftCardSessionFake.nextCancelCardApplicationResult = .success(Void())
+
+    // When
+    disclaimerModule.back()
+
+    // Then
+    XCTAssertTrue(onBackCalled)
   }
 
   private func givenSUTInitialized() {

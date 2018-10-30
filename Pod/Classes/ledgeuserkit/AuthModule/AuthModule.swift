@@ -79,19 +79,15 @@ class AuthModule: UIModule, AuthModuleProtocol {
 
   init(serviceLocator: ServiceLocatorProtocol,
        config: AuthModuleConfig,
-       uiConfig: ShiftUIConfig,
        initialUserData: DataPointList) {
     self.config = config
     self.initialUserData = initialUserData
     super.init(serviceLocator: serviceLocator)
-    self.uiConfig = uiConfig
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    let viewController = self.buildAuthViewController(initialUserData,
-                                                      uiConfig: uiConfig!, // swiftlint:disable:this force_unwrapping
-                                                      config: config)
-    self.addChild(viewController: viewController, completion: completion)
+    let viewController = buildAuthViewController(initialUserData, uiConfig: uiConfig, config: config)
+    addChild(viewController: viewController, completion: completion)
   }
 
   // MARK: - Auth View Controller Handling

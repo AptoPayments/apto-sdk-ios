@@ -201,7 +201,7 @@ private extension CreditCardView {
 
   func setUpExpireDateText() {
     expireDateText.translatesAutoresizingMaskIntoConstraints = false
-    expireDateText.font = uiConfiguration.cardLabelFont
+    expireDateText.font = uiConfiguration.fontProvider.cardLabelFont
     expireDateText.text = "EXP"
     expireDateText.textColor = uiConfiguration.cardLabelColor
     frontView.addSubview(expireDateText)
@@ -213,7 +213,7 @@ private extension CreditCardView {
 
   func setUpExpireDate() {
     expireDate.translatesAutoresizingMaskIntoConstraints = false
-    expireDate.font = uiConfiguration.cardSmallValueFont
+    expireDate.font = uiConfiguration.fontProvider.cardSmallValueFont
     expireDate.formattingPattern = "**/****"
     expireDate.textColor = uiConfiguration.textTopBarColor
     frontView.addSubview(expireDate)
@@ -225,7 +225,7 @@ private extension CreditCardView {
 
   func setUpFrontCVVText() {
     frontCvvText.translatesAutoresizingMaskIntoConstraints = false
-    frontCvvText.font = uiConfiguration.cardLabelFont
+    frontCvvText.font = uiConfiguration.fontProvider.cardLabelFont
     frontCvvText.text = "CVV"
     frontCvvText.textColor = uiConfiguration.cardLabelColor
     frontView.addSubview(frontCvvText)
@@ -237,7 +237,7 @@ private extension CreditCardView {
 
   func setUpFrontCVV() {
     frontCvv.translatesAutoresizingMaskIntoConstraints = false
-    frontCvv.font = uiConfiguration.cardSmallValueFont
+    frontCvv.font = uiConfiguration.fontProvider.cardSmallValueFont
     frontCvv.formattingPattern = "***"
     frontCvv.textColor = uiConfiguration.textTopBarColor
     frontView.addSubview(frontCvv)
@@ -249,7 +249,7 @@ private extension CreditCardView {
 
   func setUpCardHolderView() {
     cardHolder.translatesAutoresizingMaskIntoConstraints = false
-    cardHolder.font = uiConfiguration.cardSmallValueFont
+    cardHolder.font = uiConfiguration.fontProvider.cardSmallValueFont
     cardHolder.text = ""
     cardHolder.textColor = uiConfiguration.textTopBarColor
     cardHolder.adjustsFontSizeToFitWidth = true
@@ -265,7 +265,7 @@ private extension CreditCardView {
     cardNumber.formattingPattern = "**** **** **** ****"
     cardNumber.textColor = uiConfiguration.textTopBarColor
     cardNumber.textAlignment = .center
-    cardNumber.font = uiConfiguration.cardLargeValueFont
+    cardNumber.font = uiConfiguration.fontProvider.cardLargeValueFont
     cardNumber.adjustsFontSizeToFitWidth = true
     cardNumber.isUserInteractionEnabled = false
     cardNumber.addTapGestureRecognizer { [unowned self] in

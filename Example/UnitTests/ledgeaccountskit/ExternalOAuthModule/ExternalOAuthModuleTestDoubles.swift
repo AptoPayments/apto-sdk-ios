@@ -41,11 +41,11 @@ class ExternalOAuthPresenterSpy: ExternalOAuthPresenterProtocol {
     backTappedCalled = true
   }
 
-  private(set) var custodianTappedCalled = false
-  private(set) var lastCustodianTypeTapped: CustodianType?
-  func custodianTapped(custodianType: CustodianType) {
-    custodianTappedCalled = true
-    lastCustodianTypeTapped = custodianType
+  private(set) var balanceTypeTappedCalled = false
+  private(set) var lastBalanceTypeSelected: AllowedBalanceType?
+  func balanceTypeTapped(_ balanceType: AllowedBalanceType) {
+    balanceTypeTappedCalled = true
+    lastBalanceTypeSelected = balanceType
   }
 }
 
@@ -101,11 +101,11 @@ class ExternalOAuthModuleFake: ExternalOAuthModuleSpy {
 class ExternalOAuthInteractorSpy: ExternalOAuthInteractorProtocol {
   var presenter: ExternalOAuthPresenterProtocol! // swiftlint:disable:this implicitly_unwrapped_optional
 
-  private(set) var custodianSelectedCalled = false
-  private(set) var lastCustodianTypeSelected: CustodianType?
-  func custodianSelected(custodianType: CustodianType) {
-    custodianSelectedCalled = true
-    lastCustodianTypeSelected = custodianType
+  private(set) var balanceTypeSelectedCalled = false
+  private(set) var lastBalanceTypeSelected: AllowedBalanceType?
+  func balanceTypeSelected(_ balanceType: AllowedBalanceType) {
+    balanceTypeSelectedCalled = true
+    lastBalanceTypeSelected = balanceType
   }
 
   private(set) var custodianAuthenticationSucceedCalled = false

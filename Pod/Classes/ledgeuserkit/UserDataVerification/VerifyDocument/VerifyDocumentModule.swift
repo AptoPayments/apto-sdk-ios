@@ -29,20 +29,11 @@ class VerifyDocumentModule: UIModule {
                                    _ verificationResult: DocumentVerificationResult) -> Void)?
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure(let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        let config = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        self.uiConfig = config
-        let presenter = InputDocumentPresenter()
-        let viewController = InputDocumentViewController(uiConfiguration: config, eventHandler: presenter)
-        presenter.router = self
-        self.inputDocumentPresenter = presenter
-        self.addChild(viewController: viewController, completion: completion)
-      }
-    }
+    let presenter = InputDocumentPresenter()
+    let viewController = InputDocumentViewController(uiConfiguration: uiConfig, eventHandler: presenter)
+    presenter.router = self
+    inputDocumentPresenter = presenter
+    addChild(viewController: viewController, completion: completion)
   }
 
   fileprivate func showVerifyDocumentViewController(documentImages: [UIImage],
@@ -51,7 +42,7 @@ class VerifyDocumentModule: UIModule {
                                                     completion: @escaping Result<Void, NSError>.Callback) {
     let presenter = VerifyDocumentPresenter()
     // swiftlint:disable:next force_unwrapping
-    let viewController = VerifyDocumentViewController(uiConfiguration: self.uiConfig!, eventHandler: presenter)
+    let viewController = VerifyDocumentViewController(uiConfiguration: uiConfig, eventHandler: presenter)
     let interactor = VerifyDocumentInteractor(session: shiftSession,
                                               documentImages: documentImages,
                                               selfie: selfie,

@@ -30,6 +30,10 @@ protocol CardApplicationsStorageProtocol {
                         workflowObject: WorkflowObject,
                         workflowAction: WorkflowAction,
                         callback: @escaping Result<Void, NSError>.Callback)
+  func cancelCardApplication(_ apiKey: String,
+                             userToken: String,
+                             applicationId: String,
+                             callback: @escaping Result<Void, NSError>.Callback)
   func issueCard(_ apiKey: String,
                  userToken: String,
                  applicationId: String,
@@ -154,6 +158,17 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
         }
       })
     }
+  }
+
+  func cancelCardApplication(_ apiKey: String,
+                             userToken: String,
+                             applicationId: String,
+                             callback: @escaping Result<Void, NSError>.Callback) {
+    let url = URLWrapper(baseUrl: transport.environment.baseUrl(),
+                         url: JSONRouter.cardApplication,
+                         urlParameters: [":applicationId": applicationId])
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+    transport.delete(url, authorization: auth, parameters: nil, filterInvalidTokenResult: true, callback: callback)
   }
 
   func issueCard(_ apiKey: String,

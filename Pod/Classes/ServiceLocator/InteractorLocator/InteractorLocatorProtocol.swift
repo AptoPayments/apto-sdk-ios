@@ -18,4 +18,5 @@ protocol InteractorLocatorProtocol {
   func accountSettingsInteractor() -> AccountSettingsInteractorProtocol
   func contentPresenterInteractor(content: Content) -> ContentPresenterInteractorProtocol
   func dataConfirmationInteractor(userData: DataPointList) -> DataConfirmationInteractorProtocol
+  func physicalCardActivationSucceedInteractor(card: Card) -> PhysicalCardActivationSucceedInteractorProtocol
 }

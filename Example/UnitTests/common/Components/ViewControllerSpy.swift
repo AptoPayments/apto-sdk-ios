@@ -9,7 +9,7 @@
 @testable import ShiftSDK
 
 class ViewControllerSpy: ViewControllerProtocol {
-  
+
   private(set) var setTitleCalled = false
   private(set) var lastTitle: String?
   func set(title: String) {
@@ -72,7 +72,7 @@ class ViewControllerSpy: ViewControllerProtocol {
     deactivateNavNextButtonCalled = true
     lastDeactivateNavNextButtonTintColor = deactivatedTintColor
   }
-  
+
   private (set) var configureLeftNavButtonCalled = false
   private (set) var lastConfigureLeftNavButtonMode: UIViewControllerLeftButtonMode?
   private (set) var lastConfigureLeftNavButtonUIConfig: ShiftUIConfig?
@@ -102,10 +102,8 @@ class ViewControllerSpy: ViewControllerProtocol {
   }
 
   private(set) var showServerMaintenanceErrorCalled = false
-  private(set) var lastServerMaintenanceErrorConfig: ShiftUIConfig?
-  func showServerMaintenanceError(_ uiConfig: ShiftUIConfig?) {
+  func showServerMaintenanceError() {
     showServerMaintenanceErrorCalled = true
-    lastServerMaintenanceErrorConfig = uiConfig
   }
 
   private(set) var showMessageCalled = false

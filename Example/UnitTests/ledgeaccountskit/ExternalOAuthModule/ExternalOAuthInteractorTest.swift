@@ -16,7 +16,7 @@ class ExternalOAuthInteractorTest: XCTestCase {
   private let serviceLocator = ServiceLocatorFake()
   private lazy var dataProvider: ModelDataProvider = ModelDataProvider.provider
   private lazy var shiftSession: ShiftSessionFake = serviceLocator.sessionFake
-  private let custodianType: CustodianType = .coinbase
+  private lazy var balanceType: AllowedBalanceType = dataProvider.coinbaseBalanceType
   private lazy var oauthAttempt = dataProvider.oauthAttempt
   private lazy var presenter = serviceLocator.presenterLocatorFake.externalOauthPresenterSpy
 
@@ -29,7 +29,7 @@ class ExternalOAuthInteractorTest: XCTestCase {
 
   func testCustodianSelectedStartOauthAuthentication() {
     // When
-    sut.custodianSelected(custodianType: custodianType)
+    sut.balanceTypeSelected(balanceType)
 
     // Then
     XCTAssertTrue(shiftSession.startOauthAuthenticationCalled)
@@ -40,7 +40,7 @@ class ExternalOAuthInteractorTest: XCTestCase {
     shiftSession.nextStartOauthAuthenticationResult = .failure(BackendError(code: .other))
 
     // When
-    sut.custodianSelected(custodianType: custodianType)
+    sut.balanceTypeSelected(balanceType)
 
     // Then
     XCTAssertTrue(presenter.showErrorCalled)
@@ -52,7 +52,7 @@ class ExternalOAuthInteractorTest: XCTestCase {
     shiftSession.nextStartOauthAuthenticationResult = .success(oauthAttempt)
 
     // When
-    sut.custodianSelected(custodianType: custodianType)
+    sut.balanceTypeSelected(balanceType)
 
     // Then
     XCTAssertTrue(presenter.showUrlCalled)
@@ -98,6 +98,6 @@ class ExternalOAuthInteractorTest: XCTestCase {
 
   private func givenStartOauthAuthenticationSucceed() {
     shiftSession.nextStartOauthAuthenticationResult = .success(oauthAttempt)
-    sut.custodianSelected(custodianType: custodianType)
+    sut.balanceTypeSelected(balanceType)
   }
 }

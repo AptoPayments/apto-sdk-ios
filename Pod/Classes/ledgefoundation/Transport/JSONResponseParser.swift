@@ -148,6 +148,14 @@ extension JSON {
       return self.allowedCountriesRequiredDataPointConfig
     case "id_document_datapoint_configuration":
       return self.allowedIdDocumentTypesRequiredDataPointConfig
+    case "ivr":
+      return self.ivr
+    case "physical_activation_result":
+      return self.physicalCardActivationResult
+    case "allowed_balance_type":
+      return self.allowedBalanceType
+    case "select_balance_store_configuration":
+      return self.selectBalanceStoreActionConfiguration
     default:
       return nil
     }
@@ -411,7 +419,8 @@ extension JSON {
           let uiTertiaryColor = self["ui_tertiary_color"].string,
           let uiErrorColor = self["ui_error_color"].string,
           let uiSuccessColor = self["ui_success_color"].string,
-          let cardBackgroundColor = self["card_background_color"].string else {
+          let cardBackgroundColor = self["card_background_color"].string,
+          let uiTheme = self["ui_theme"].string else {
       return nil
     }
     let logoUrl = self["logo_url"].string
@@ -429,7 +438,8 @@ extension JSON {
                            uiErrorColor: uiErrorColor,
                            uiSuccessColor: uiSuccessColor,
                            cardBackgroundColor: cardBackgroundColor,
-                           logoUrl: logoUrl)
+                           logoUrl: logoUrl,
+                           uiTheme: uiTheme)
   }
 
   var allowedCountries: [Country]? {
@@ -1147,6 +1157,8 @@ extension JSON {
     let issuer = CardIssuer.issuerFrom(description: cardIssuer)
     let spendableToday = self["spendable_today"].amount
     let nativeSpendableToday = self["native_spendable_today"].amount
+    let physicalCardActivationRequired = self["physical_card_activation_required"].bool
+    let cardFeatures = self["features"].cardFeatures
 
     let card = Card(accountId: id,
                     cardNetwork: CardNetwork.cardNetworkFrom(description: cardNetwork),
@@ -1158,6 +1170,8 @@ extension JSON {
                     spendableToday: spendableToday,
                     nativeSpendableToday: nativeSpendableToday,
                     kyc: self.kyc,
+                    physicalCardActivationRequired: physicalCardActivationRequired,
+                    features: cardFeatures,
                     verified:verified)
 
     if let pan = self["pan"].string {

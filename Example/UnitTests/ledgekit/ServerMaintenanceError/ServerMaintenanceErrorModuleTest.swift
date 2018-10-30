@@ -20,7 +20,7 @@ class ServerMaintenanceErrorModuleTest: XCTestCase {
   override func setUp() {
     super.setUp()
 
-    sut = ServerMaintenanceErrorModule(serviceLocator: serviceLocator, uiConfig: uiConfig)
+    sut = ServerMaintenanceErrorModule(serviceLocator: serviceLocator)
   }
 
   func testInitializeReturnViewController() {

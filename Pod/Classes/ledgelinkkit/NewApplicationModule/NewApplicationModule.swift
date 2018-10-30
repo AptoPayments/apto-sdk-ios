@@ -38,14 +38,11 @@ class NewApplicationModule: UIModule {
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
     self.loadConfigurationFromServer { result in
-
       switch result {
       case .failure(let error):
         completion(.failure(error))
         return
       case .success:
-        self.uiConfig = ShiftUIConfig(projectConfiguration: self.projectConfiguration)
-
         if self.linkConfiguration.posMode {
           // Empty user data
           self.userMissingDataPoints = self.linkConfiguration.userRequiredData.getMissingDataPoints(

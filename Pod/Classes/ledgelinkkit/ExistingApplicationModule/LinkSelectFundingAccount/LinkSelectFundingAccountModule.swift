@@ -19,27 +19,19 @@ class LinkSelectFundingAccountModule: UIModule {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure (let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        self.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        let module = SelectFinancialAccountModule(serviceLocator: self.serviceLocator, dataProvider: self)
-        module.onBack = { module in
-          self.clear()
-          self.back()
-        }
-        module.onClose = { module in
-          self.clear()
-          self.close()
-        }
-        module.onAccountSelected = { module, account in
-          self.set(fundingAccount: account)
-        }
-        self.addChild(module: module, completion: completion)
-      }
+    let module = SelectFinancialAccountModule(serviceLocator: self.serviceLocator, dataProvider: self)
+    module.onBack = { module in
+      self.clear()
+      self.back()
     }
+    module.onClose = { module in
+      self.clear()
+      self.close()
+    }
+    module.onAccountSelected = { module, account in
+      self.set(fundingAccount: account)
+    }
+    addChild(module: module, completion: completion)
   }
 
   fileprivate func set(fundingAccount: FinancialAccount) {

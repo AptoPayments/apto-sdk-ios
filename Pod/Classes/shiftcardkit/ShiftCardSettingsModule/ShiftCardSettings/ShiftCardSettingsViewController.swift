@@ -93,29 +93,31 @@ private extension ShiftCardSettingsViewController {
   func setupViewModelSubscriptions() {
     let viewModel = presenter.viewModel
     combineLatest(viewModel.showBalancesSection,
+                  viewModel.showChangePin,
+                  viewModel.showGetPin,
                   viewModel.fundingSources,
-                  viewModel.faq,
-                  viewModel.cardHolderAgreement,
-                  viewModel.termsAndConditions,
-                  viewModel.privacyPolicy).observeNext { [unowned self] showBalancesSection, fundingSources,
-                                                                        faq, cardHolderAgreement, termsAndConditions,
-                                                                        privacyPolicy in
-
+                  viewModel.fundingSourcesLoaded,
+                  viewModel.legalDocuments).observeNext { [unowned self] showBalancesSection, showChangePin,
+                                                                         showGetPin, fundingSources,
+                                                                         fundingSourcesLoaded, legalDocuments in
       let rows = [
         self.createFundingSourceTitle(showBalancesSection),
-        self.createFundingSourceView(showBalancesSection, fundingSources: fundingSources),
+        self.createFundingSourceView(showBalancesSection,
+                                     fundingSources: fundingSources,
+                                     fundingSourcesLoaded: fundingSourcesLoaded),
         self.createAddFoundingSourceButton(showBalancesSection, fundingSources: fundingSources),
         self.createSettingsTitle(),
-        self.createChangePinRow(),
+        self.createChangePinRow(showButton: showChangePin),
+        self.createGetPinRow(showButton: showGetPin),
         self.setUpShowCardInfoRow(),
         self.setUpLockCardRow(),
         self.createSupportTitle(),
         self.createLostCardButton(),
-        self.createFAQButton(faq),
-        self.createLegalTitle(content: [cardHolderAgreement, termsAndConditions, privacyPolicy]),
-        self.createCardholderAgreementButton(cardHolderAgreement),
-        self.createTermsAndConditionsButton(termsAndConditions),
-        self.createPrivacyPolicyButton(privacyPolicy)
+        self.createFAQButton(legalDocuments.faq),
+        self.createLegalTitle(legalDocuments: legalDocuments),
+        self.createCardholderAgreementButton(legalDocuments.cardHolderAgreement),
+        self.createTermsAndConditionsButton(legalDocuments.termsAndConditions),
+        self.createPrivacyPolicyButton(legalDocuments.privacyPolicy)
       ].compactMap { return $0 }
       self.formView.show(rows: rows)
     }.dispose(in: disposeBag)
@@ -140,13 +142,15 @@ private extension ShiftCardSettingsViewController {
                                            uiConfig: self.uiConfiguration)
   }
 
-  func createFundingSourceView(_ showBalancesSection: Bool?, fundingSources: [FundingSource]) -> FormRowView? {
+  func createFundingSourceView(_ showBalancesSection: Bool?,
+                               fundingSources: [FundingSource],
+                               fundingSourcesLoaded: Bool) -> FormRowView? {
     guard showBalancesSection == true else { return nil }
     if !fundingSources.isEmpty {
       return createFundingSourceSelector(fundingSources: fundingSources)
     }
     else {
-      return createFundingSourceEmptyCase()
+      return createFundingSourceEmptyCase(fundingSourcesLoaded: fundingSourcesLoaded)
     }
   }
 
@@ -167,7 +171,8 @@ private extension ShiftCardSettingsViewController {
     return selector
   }
 
-  func createFundingSourceEmptyCase() -> FormRowCustomView {
+  func createFundingSourceEmptyCase(fundingSourcesLoaded: Bool) -> FormRowCustomView? {
+    guard fundingSourcesLoaded else { return nil }
     let emptyCaseView = FundingSourceEmptyCaseView(uiConfig: uiConfiguration)
     emptyCaseView.delegate = self
     return FormRowCustomView(view: emptyCaseView, showSplitter: false)
@@ -218,7 +223,12 @@ private extension ShiftCardSettingsViewController {
                             subtitle: "card.settings.faq.subtitle".podLocalized())
   }
 
-  func createLegalTitle(content: [Content?]) -> FormRowLabelView? {
+  func createLegalTitle(legalDocuments: LegalDocuments) -> FormRowLabelView? {
+    let content: [Content?] = [
+      legalDocuments.cardHolderAgreement,
+      legalDocuments.termsAndConditions,
+      legalDocuments.privacyPolicy
+    ]
     guard !(content.compactMap { return $0 }).isEmpty else {
       return nil
     }
@@ -270,12 +280,23 @@ private extension ShiftCardSettingsViewController {
     return retVal
   }
 
-  func createChangePinRow() -> FormRowTopBottomLabelView {
+  func createChangePinRow(showButton: Bool) -> FormRowTopBottomLabelView? {
+    guard showButton else { return nil }
     return FormBuilder.linkRowWith(title: "card.settings.change-pin.title".podLocalized(),
                                    subtitle: "card.settings.change-pin.subtitle".podLocalized(),
                                    leftIcon: nil,
                                    uiConfig: uiConfiguration) { [unowned self] in
       self.presenter.changePinTapped()
+    }
+  }
+
+  func createGetPinRow(showButton: Bool) -> FormRowTopBottomLabelView? {
+    guard showButton else { return nil }
+    return FormBuilder.linkRowWith(title: "card.settings.get-pin.title".podLocalized(),
+                                   subtitle: "card.settings.get-pin.subtitle".podLocalized(),
+                                   leftIcon: nil,
+                                   uiConfig: uiConfiguration) { [unowned self] in
+      self.presenter.getPinTapped()
     }
   }
 

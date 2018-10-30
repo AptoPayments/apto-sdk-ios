@@ -7,7 +7,7 @@
 //
 
 final class InteractorLocator: InteractorLocatorProtocol {
-  private let serviceLocator: ServiceLocatorProtocol
+  private unowned let serviceLocator: ServiceLocatorProtocol
 
   init(serviceLocator: ServiceLocatorProtocol) {
     self.serviceLocator = serviceLocator
@@ -49,5 +49,9 @@ final class InteractorLocator: InteractorLocatorProtocol {
 
   func dataConfirmationInteractor(userData: DataPointList) -> DataConfirmationInteractorProtocol {
     return DataConfirmationInteractor(userData: userData)
+  }
+
+  func physicalCardActivationSucceedInteractor(card: Card) -> PhysicalCardActivationSucceedInteractorProtocol {
+    return PhysicalCardActivationSucceedInteractor(card: card)
   }
 }

@@ -11,7 +11,7 @@ import SwiftyJSON
 protocol OauthStorageProtocol {
   func startOauthAuthentication(_ apiKey: String,
                                 userToken: String,
-                                custodianType: CustodianType,
+                                balanceType: AllowedBalanceType,
                                 callback: @escaping Result<OauthAttempt, NSError>.Callback)
   func waitForOauthAuthenticationConfirmation(_ apiKey: String,
                                               userToken: String,
@@ -29,10 +29,11 @@ class OauthStorage: OauthStorageProtocol {
 
   func startOauthAuthentication(_ apiKey: String,
                                 userToken: String,
-                                custodianType: CustodianType,
+                                balanceType: AllowedBalanceType,
                                 callback: @escaping Result<OauthAttempt, NSError>.Callback) {
     let parameters = [
-      "provider": custodianType.name() as AnyObject,
+      "provider": balanceType.type.name() as AnyObject,
+      "base_uri": balanceType.baseUri as AnyObject,
       "redirect_url": "shift-sdk://oauth-finish" as AnyObject
     ]
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .startOauth)

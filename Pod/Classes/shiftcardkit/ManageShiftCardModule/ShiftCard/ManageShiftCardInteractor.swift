@@ -75,4 +75,30 @@ class ManageShiftCardInteractor: ManageShiftCardInteractorProtocol {
       }
     }
   }
+
+  func activatePhysicalCard(code: String, callback: @escaping Result<Void, NSError>.Callback) {
+    guard let card = card else { return }
+    shiftSession.shiftCardSession.activatePhysical(card: card, code: code) { result in
+      switch result {
+      case .failure(let error):
+        callback(.failure(error))
+      case .success(let activationResult):
+        if activationResult.type == .activated {
+          callback(.success(Void()))
+        }
+        else {
+          let error: BackendError
+          if let rawErrorCode = activationResult.errorCode,
+             let errorCode = BackendError.ErrorCodes(rawValue: rawErrorCode) {
+            error = BackendError(code: errorCode)
+          }
+          else {
+            // This should never happen
+            error = BackendError(code: .other)
+          }
+          callback(.failure(error))
+        }
+      }
+    }
+  }
 }

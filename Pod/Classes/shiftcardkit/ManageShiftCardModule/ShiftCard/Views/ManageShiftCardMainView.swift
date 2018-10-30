@@ -11,12 +11,21 @@ import SnapKit
 
 protocol ManageShiftCardMainViewDelegate: class {
   func cardTapped()
-  func needToUpdateUI(action: () -> (), completion: @escaping () -> ())
+  func needToUpdateUI(action: () -> Void, completion: @escaping () -> Void)
+  func activatePhysicalCardTapped()
+  func addFundingSourceTapped()
+}
+
+private enum TopMessageViewType: Int, Equatable {
+  case none
+  case invalidBalance
+  case noBalance
+  case activatePhysicalCard
 }
 
 class ManageShiftCardMainView: UIView {
   private let balanceView: BalanceView
-  private let invalidBalanceView: InvalidBalanceMessageView
+  private var topMessageView: ManageShiftCardTopMessageView?
   private let tapToManageView = UILabel()
   private var isActivateCardFeatureEnabled = false {
     didSet {
@@ -33,7 +42,7 @@ class ManageShiftCardMainView: UIView {
   private var showBalance = false
   private var activeStateReceived = false
   private var balanceReceived = false
-  private var showInvalidBalance = false
+  private var topMessageViewType = TopMessageViewType.none
   private let creditCardView: CreditCardView
   private unowned let delegate: ManageShiftCardMainViewDelegate
   private let uiConfiguration: ShiftUIConfig
@@ -43,7 +52,6 @@ class ManageShiftCardMainView: UIView {
     self.delegate = delegate
     self.balanceView = BalanceView(uiConfiguration: uiConfiguration)
     self.creditCardView = CreditCardView(uiConfiguration: uiConfiguration)
-    self.invalidBalanceView = InvalidBalanceMessageView(uiConfig: uiConfiguration)
     super.init(frame: .zero)
     setUpUI(uiConfiguration: uiConfiguration)
   }
@@ -95,13 +103,28 @@ class ManageShiftCardMainView: UIView {
       creditCardView.set(validFundingSource: fundingSource.state == .valid)
       balanceView.set(fundingSource: fundingSource)
       showBalance = true
-      showInvalidBalance = fundingSource.state == .invalid
+      if fundingSource.state == .invalid {
+        topMessageViewType = .invalidBalance
+      }
+      else {
+        topMessageViewType = .none
+      }
     }
     else {
       showBalance = false
-      showInvalidBalance = false
+      topMessageViewType = .noBalance
+      creditCardView.set(validFundingSource: false)
     }
     refreshLayoutConstraints()
+  }
+
+  func set(physicalCardActivationRequired: Bool?) {
+    // If balance is not valid ignore the physical card activation
+    guard topMessageViewType != .invalidBalance || topMessageViewType != .noBalance else { return }
+    if physicalCardActivationRequired == true {
+      topMessageViewType = .activatePhysicalCard
+      refreshLayoutConstraints()
+    }
   }
 
   func setSpendable(amount: Amount?, nativeAmount: Amount?) {
@@ -159,7 +182,6 @@ private extension ManageShiftCardMainView {
     balanceView.backgroundColor = backgroundColor
     setUpCreditCardView(uiConfiguration: uiConfiguration)
     setUpTapToManageView(uiConfiguration: uiConfiguration)
-    setUpInvalidBalanceView(uiConfiguration: uiConfiguration)
   }
 
   func setUpCreditCardView(uiConfiguration: ShiftUIConfig) {
@@ -169,7 +191,7 @@ private extension ManageShiftCardMainView {
   func setUpTapToManageView(uiConfiguration: ShiftUIConfig) {
     tapToManageView.isUserInteractionEnabled = true
     tapToManageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(cardTapped)))
-    tapToManageView.font = uiConfiguration.instructionsFont
+    tapToManageView.font = uiConfiguration.fontProvider.instructionsFont
     tapToManageView.numberOfLines = 0
     tapToManageView.textColor = uiConfiguration.textTertiaryColor
     tapToManageView.textAlignment = .center
@@ -179,8 +201,38 @@ private extension ManageShiftCardMainView {
     tapToManageView.isHidden = true
   }
 
-  func setUpInvalidBalanceView(uiConfiguration: ShiftUIConfig) {
-    invalidBalanceView.delegate = self
+  func setUpInvalidBalanceView(uiConfiguration: ShiftUIConfig) -> ManageShiftCardTopMessageView {
+    let config = ManageShiftCardTopMessageViewConfig(title: "invalid-balance.title".podLocalized(),
+                                                     message: "invalid-balance.message".podLocalized(),
+                                                     actionTitle: "invalid-balance.call-to-action".podLocalized(),
+                                                     closeHandler: { [unowned self] in self.closeTopMessageView() },
+                                                     actionHandler: { [unowned self] in self.cardTapped() })
+    let topMessageView = ManageShiftCardTopMessageView(config: config, uiConfig: uiConfiguration)
+    self.topMessageView = topMessageView
+    return topMessageView
+  }
+
+  func setUpNoBalanceView(uiConfiguration: ShiftUIConfig) -> ManageShiftCardTopMessageView {
+    let config = ManageShiftCardTopMessageViewConfig(title: "no-balance.title".podLocalized(),
+                                                     message: "no-balance.message".podLocalized(),
+                                                     actionTitle: "no-balance.call-to-action".podLocalized(),
+                                                     closeHandler: { [unowned self] in self.closeTopMessageView() },
+                                                     actionHandler: { [unowned self] in self.addFundingSource() })
+    let topMessageView = ManageShiftCardTopMessageView(config: config, uiConfig: uiConfiguration)
+    self.topMessageView = topMessageView
+    return topMessageView
+  }
+
+  func setUpActivatePhysicalCardView(uiConfiguration: ShiftUIConfig) -> ManageShiftCardTopMessageView {
+    let actionTitle = "activate-physical-card.call-to-action".podLocalized()
+    let config = ManageShiftCardTopMessageViewConfig(title: "activate-physical-card.title".podLocalized(),
+                                                     message: "activate-physical-card.message".podLocalized(),
+                                                     actionTitle: actionTitle,
+                                                     closeHandler: { [unowned self] in self.closeTopMessageView() },
+                                                     actionHandler: { [unowned self] in self.activatePhysicalCard() })
+    let topMessageView = ManageShiftCardTopMessageView(config: config, uiConfig: uiConfiguration)
+    self.topMessageView = topMessageView
+    return topMessageView
   }
 }
 
@@ -191,11 +243,11 @@ private extension ManageShiftCardMainView {
       return
     }
     balanceView.snp.removeConstraints()
-    invalidBalanceView.snp.removeConstraints()
     creditCardView.snp.removeConstraints()
     tapToManageView.snp.removeConstraints()
-    if showInvalidBalance {
-      layoutInvalidBalance()
+    removeTopMessageView()
+    if topMessageViewType != .none {
+      layoutTopMessageView()
     }
     else if showBalance {
       layoutBalance()
@@ -206,18 +258,39 @@ private extension ManageShiftCardMainView {
     layoutTapToManageView()
   }
 
-  func layoutInvalidBalance() {
-    addSubview(invalidBalanceView)
+  private func removeTopMessageView() {
+    topMessageView?.snp.removeConstraints()
+    topMessageView?.removeFromSuperview()
+    topMessageView = nil
+  }
+
+  func layoutTopMessageView() {
     balanceView.removeFromSuperview()
-    invalidBalanceView.snp.makeConstraints { make in
+    guard let topMessageView = topMessageView(for: topMessageViewType) else { return }
+    addSubview(topMessageView)
+    balanceView.removeFromSuperview()
+    topMessageView.snp.makeConstraints { make in
       make.top.left.right.equalToSuperview()
     }
     layoutCreditCardView()
   }
 
+  func topMessageView(for type: TopMessageViewType) -> UIView? {
+    switch type {
+    case .invalidBalance:
+      return setUpInvalidBalanceView(uiConfiguration: uiConfiguration)
+    case .noBalance:
+      return setUpNoBalanceView(uiConfiguration: uiConfiguration)
+    case .activatePhysicalCard:
+      return setUpActivatePhysicalCardView(uiConfiguration: uiConfiguration)
+    case .none:
+      return nil
+    }
+  }
+
   func layoutBalance() {
     addSubview(balanceView)
-    invalidBalanceView.removeFromSuperview()
+    topMessageView?.removeFromSuperview()
     balanceView.snp.makeConstraints { make in
       make.top.equalToSuperview().offset(24)
       make.left.right.equalTo(self).inset(16)
@@ -236,15 +309,15 @@ private extension ManageShiftCardMainView {
   }
 
   func topView() -> ConstraintItem {
-    if showInvalidBalance {
-      return invalidBalanceView.snp.bottom
+    if let topMessageView = self.topMessageView {
+      return topMessageView.snp.bottom
     }
     return showBalance ? balanceView.snp.bottom : self.snp.top
   }
 
   func layoutHiddenBalance() {
     balanceView.removeFromSuperview()
-    invalidBalanceView.removeFromSuperview()
+    topMessageView?.removeFromSuperview()
     layoutCreditCardView()
   }
 
@@ -259,20 +332,26 @@ private extension ManageShiftCardMainView {
   }
 }
 
-extension ManageShiftCardMainView: InvalidBalanceMessageViewDelegate {
-  func close() {
-    showInvalidBalance = false
+// MARK: - ManageShiftCardTopMessageView actions
+extension ManageShiftCardMainView {
+  func closeTopMessageView() {
+    topMessageViewType = .none
     self.delegate.needToUpdateUI(action: { [unowned self] in
-      self.balanceView.alpha = 0
-      refreshLayoutConstraints()
-    }) { [unowned self] in
-      self.animate(animations: {
-        self.balanceView.alpha = 1
-      })
-    }
+                                   self.balanceView.alpha = 0
+                                   refreshLayoutConstraints()
+                                 },
+                                 completion: { [unowned self] in
+                                   self.animate(animations: {
+                                     self.balanceView.alpha = 1
+                                   }, completion: nil)
+                                 })
   }
 
   func addFundingSource() {
-    self.delegate.cardTapped()
+    self.delegate.addFundingSourceTapped()
+  }
+
+  func activatePhysicalCard() {
+    delegate.activatePhysicalCardTapped()
   }
 }

@@ -614,7 +614,21 @@
 
 "member-of-armed-forces-collector.time-at-address.warning.empty" = "You must answer this question.";
 
-"agree.button.title" = "I Agree";
+/* * ./Pod/Classes/ledgekit/FullScreenDisclaimer/FullScreenDisclaimerViewController.swift */
+
+"full-screen-disclaimer.title" = "Cardholder agreement";
+
+"full-screen-disclaimer.agree.button.title" = "I Agree";
+
+"full-screen-disclaimer.do-not-agree.button.title" = "I do not agree to the cardholder agreement";
+
+/* * ./Pod/Classes/shiftcardkit/ShowDisclaimerActionModule/ShowDisclaimerActionModule.swift */
+
+"disclaimer-action.cancel-confirmation.title" = "Cardholder agreement";
+
+"disclaimer-action.cancel-confirmation.message" = "Are you sure you do not want to agree to the Cardholder agreement?";
+
+"disclaimer-action.cancel-confirmation.confirm-button.title" = "Confirm";
 
 /* * ./Pod/Classes/Shiftlinkkit/LinkApplicationLisr/LinkApplicationListViewController.swift */
 
@@ -652,13 +666,33 @@
 
 "manage.shift.card.activate-card.explanation" = "Once your Card is enabled, tap on it to manage Funding sources, Set a new PIN, Lock the Card and more.";
 
-/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Views/InvalidBalanceMessageView.swift */
+"manage.shift.card.enter-code.title" = "Enable your physical card";
+
+"manage.shift.card.enter-code.message" = "Enable your card by entering the activation code that came attached with your physical card.";
+
+"manage.shift.card.enter-code.placeholder" = "Activation code";
+
+"manage.shift.card.enter-code.submit" = "Submit";
+
+/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Views/ManageShiftCardMainView.swift */
 
 "invalid-balance.title" = "Invalid funding source";
 
-"invalid-balance.message" = "Your card will be disabled until you add a new funding source!";
+"invalid-balance.message" = "Your current funding source is not valid. Please select or add a different one!";
 
-"invalid-balance.call-to-action" = "Fix it now";
+"invalid-balance.call-to-action" = "Select now";
+
+"no-balance.title" = "Funding sources not found";
+
+"no-balance.message" = "Your card will be disabled until you add a new funding source!";
+
+"no-balance.call-to-action" = "Add it now";
+
+"activate-physical-card.title" = "Enable your physical card";
+
+"activate-physical-card.message" = "Received your physical Shift Card? Nice! Tap here to enable it.";
+
+"activate-physical-card.call-to-action" = "Enable now";
 
 /* * ./Pod/Classes/ledgeaccountskit/SelectFinancialAccountModule/Add Card/CreditCardView.swift */
 
@@ -681,6 +715,8 @@
 "change.pin.type-pin.confirm" = "Confirm PIN";
 
 "change.pin.error.pins-does-not-match" = "PIN does not match.";
+
+"change.pin.success" = "Card PIN has been changed";
 
 /* Input Document */
 
@@ -783,6 +819,10 @@
 "card.settings.change-pin.title" = "Reset PIN";
 
 "card.settings.change-pin.subtitle" = "Reset the PIN code of the card";
+
+"card.settings.get-pin.title" = "Get my PIN";
+
+"card.settings.get-pin.subtitle" = "Retrieve your PIN via our automated system";
 
 "card.settings.enable-card.title" = "Lock Card";
 
@@ -942,6 +982,14 @@
 
 "error.transport.sdkDeprecated" = "This version has been deprecated, please update the app.";
 
+"error.transport.wrongPhysicalCardActivationCode" = "The activation code that you entered is invalid, please try it again or contact with Customer Support.";
+
+"error.transport.tooManyPhysicalCardActivationAttempts" = "You have exceeded the number of attempts allowed, please contact with Customer Support.";
+
+"error.transport.physicalCardAlreadyActivated" = "Your card is already enabled, please pull to refresh the information or contact with Customer Support.";
+
+"error.transport.physicalCardActivationNotSupported" = "Your card can not be enabled, please contact with Customer Support.";
+
 /* * ./Pod/Classes/ledgeaccountskit/SelectBalanceStoreModule/SelectBalanceStoreModule.swift */
 
 "select-balance-store.title" = "Link your account";
@@ -1015,3 +1063,15 @@
 "report-lost-card-action.message" = "Just as a heads up, once you confirm your card is lost or stolen, it'll instantly be locked so no one can use it.";
 
 "report-lost-card-action.confirm" = "Confirm";
+
+/* * Pod/Classes/shiftcardkit/ManageShiftCardModule/PhysicalCardActivationSucceed/PhysicalCardActivationSucceedViewController.swift */
+
+"physical.card.activation.succeed.title" = "Physical Card";
+
+"physical.card.activation.succeed.label.title" = "Congratulations!";
+
+"physical.card.activation.succeed.label.message" = "Your physical Shift Card has been enabled. We've set a random PIN code for your card.";
+
+"physical.card.activation.succeed.button.title" = "Get my PIN";
+
+"physical.card.activation.succeed.call.charge" = "PIN is obtained via phone call and charge may be applied by your mobile network operator.";

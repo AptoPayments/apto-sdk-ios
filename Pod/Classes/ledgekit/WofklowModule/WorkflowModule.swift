@@ -27,20 +27,12 @@ class WorkflowModule: UIModule {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure(let error):
-        self.show(error: error)
-      case .success(let contextConfiguration):
-        self.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        let module = self.moduleFor(workflowAction: self.workflowObject.nextAction)
-        guard let safeModule = module else {
-          completion(.failure(ServiceError(code: .internalIncosistencyError)))
-          return
-        }
-        self.addChild(module: safeModule, completion: completion)
-      }
+    let module = self.moduleFor(workflowAction: workflowObject.nextAction)
+    guard let safeModule = module else {
+      completion(.failure(ServiceError(code: .internalIncosistencyError)))
+      return
     }
+    addChild(module: safeModule, completion: completion)
   }
 
   // MARK: - Private methods

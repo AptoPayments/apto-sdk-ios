@@ -37,11 +37,11 @@ open class TransactionListCell: UITableViewCell {
       return
     }
     mccIcon.tintColor = uiConfiguration.iconSecondaryColor
-    descriptionLabel.font = uiConfiguration.mainItemRegularFont
+    descriptionLabel.font = uiConfiguration.fontProvider.mainItemRegularFont
     descriptionLabel.textColor = uiConfiguration.textPrimaryColor
-    dateLabel.font = uiConfiguration.timestampFont
+    dateLabel.font = uiConfiguration.fontProvider.timestampFont
     dateLabel.textColor = uiConfiguration.textTertiaryColor
-    amountLabel.font = uiConfiguration.amountSmallFont
+    amountLabel.font = uiConfiguration.fontProvider.amountSmallFont
     amountLabel.textColor = uiConfiguration.textPrimaryColor
     self.styleInitialized = true
   }

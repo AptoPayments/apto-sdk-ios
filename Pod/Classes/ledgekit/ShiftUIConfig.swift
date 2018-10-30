@@ -8,6 +8,11 @@
 
 import Foundation
 
+public enum UITheme: String, Equatable {
+  case theme1 = "theme_1"
+  case theme2 = "theme_2"
+}
+
 @objc open class ShiftUIConfig: NSObject {
   // General
 
@@ -52,6 +57,8 @@ import Foundation
 
   // Fonts
 
+  open var fontProvider: UIFontProviderProtocol = UITheme1FontProvider()
+
   open lazy var fonth6 = UIFont(name: "HelveticaNeue-Light", size: 12)!
   open lazy var fonth5 = UIFont(name: "HelveticaNeue-Light", size: 14)!
   open lazy var fonth4 = UIFont(name: "HelveticaNeue-Light", size: 16)!
@@ -64,54 +71,28 @@ import Foundation
   open lazy var shiftTitleFont = UIFont.systemFont(ofSize: 26)
   open lazy var shiftFont = UIFont.systemFont(ofSize: 18)
 
-  open lazy var formFieldFont = UIFont.systemFont(ofSize: 24, weight: .light)
-  open lazy var formLabelFont = UIFont.systemFont(ofSize: 16, weight: .medium)
-  open lazy var formListFont = UIFont.systemFont(ofSize: 16, weight: .regular)
-  open lazy var formTextLink = UIFont.systemFont(ofSize: 13, weight: .regular)
-  open lazy var formSectionTitleFont = UIFont.systemFont(ofSize: 14, weight: .medium)
-
-  open lazy var primaryCallToActionFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
-  open lazy var primaryCallToActionFontSmall = UIFont.systemFont(ofSize: 14, weight: .semibold)
-
-  open lazy var amountBigFont = UIFont.systemFont(ofSize: 24, weight: .light)
-  open lazy var amountMediumFont = UIFont.systemFont(ofSize: 20, weight: .regular)
-  open lazy var amountSmallFont = UIFont.systemFont(ofSize: 18, weight: .light)
-  open lazy var sectionTitleFont = UIFont.systemFont(ofSize: 14, weight: .bold)
-  open lazy var subCurrencyFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
-
-  open lazy var itemDescriptionFont = UIFont.systemFont(ofSize: 13, weight: .medium)
-  open lazy var mainItemLightFont = UIFont.systemFont(ofSize: 18, weight: .thin)
-  open lazy var mainItemRegularFont = UIFont.systemFont(ofSize: 18, weight: .regular)
-  open lazy var instructionsFont = UIFont.systemFont(ofSize: 13, weight: .regular)
-  open lazy var timestampFont = UIFont.systemFont(ofSize: 12, weight: .regular)
-  open lazy var textLinkFont = UIFont.systemFont(ofSize: 15, weight: .medium)
-
-  open lazy var topBarAmountFont = UIFont.systemFont(ofSize: 20, weight: .light)
-  open lazy var topBarTitleFont = UIFont.systemFont(ofSize: 17, weight: .medium)
-  open lazy var topBarTitleBigFont = UIFont.systemFont(ofSize: 20, weight: .regular)
-
-  open lazy var largeTitleFont = UIFont.systemFont(ofSize: 28, weight: .black)
-
-  open lazy var errorTitleFont = UIFont.systemFont(ofSize: 24, weight: .medium)
-  open lazy var errorMessageFont = UIFont.systemFont(ofSize: 16, weight: .regular)
-  open lazy var boldMessageFont = UIFont.systemFont(ofSize: 15, weight: .bold)
-
   // Cards
 
-  open lazy var cardLabelFont = UIFont.systemFont(ofSize: 10, weight: .regular)
-  // swiftlint:disable force_unwrapping
-  open lazy var cardSmallValueFont = UIFont(name: "OCR A Extended", size: 17)!
-  open lazy var cardLargeValueFont = UIFont(name: "OCR A Extended", size: 24)!
-  // swiftlint:enable force_unwrapping
-  open lazy var cardLabelColor = textTopBarColor.withAlphaComponent(0.7)
+  open lazy var cardLabelColor = UIColor.white.withAlphaComponent(0.7)
 
   // Form customization
 
-  open lazy var buttonCornerRadius: CGFloat = 25
+  open lazy var buttonCornerRadius: CGFloat = {
+    switch uiTheme {
+    case .theme1:
+      return 25
+    case .theme2:
+      return 12
+    }
+  }()
 
   // Status bar
 
   open lazy var statusBarStyle: UIStatusBarStyle = .default
+
+  // View theme
+
+  open lazy var uiTheme: UITheme = .theme1
 
   open lazy var formLabelWidth: CGFloat = 90
   open lazy var formSubtitleColor = UIColor.colorFromHex(0xA0A0A0)
@@ -148,7 +129,7 @@ import Foundation
   open lazy var sectionTitleTextColor = UIColor.black
   open lazy var loanConsentSignLabelBackgroundColor = UIColor.clear
 
-  public init(projectConfiguration: ProjectConfiguration) {
+  public init(projectConfiguration: ProjectConfiguration, fontCustomizationOptions: FontCustomizationOptions? = nil) {
     super.init()
     // swiftlint:disable force_unwrapping
     self.iconPrimaryColor = UIColor.colorFromHexString(projectConfiguration.branding.iconPrimaryColor)!
@@ -165,8 +146,25 @@ import Foundation
     self.uiErrorColor = UIColor.colorFromHexString(projectConfiguration.branding.uiErrorColor)!
     self.uiSuccessColor = UIColor.colorFromHexString(projectConfiguration.branding.uiSuccessColor)!
     self.cardBackgroundColor = UIColor.colorFromHexString(projectConfiguration.branding.cardBackgroundColor)!
+    self.uiTheme = UITheme(rawValue: projectConfiguration.branding.uiTheme)!
     // swiftlint:enable force_unwrapping
     self.statusBarStyle = .lightContent
+    switch self.uiTheme {
+    case .theme1:
+      self.fontProvider = UITheme1FontProvider()
+    case .theme2:
+      if let fontCustomizationOptions = fontCustomizationOptions {
+        switch fontCustomizationOptions {
+        case .fontDescriptors(let descriptors):
+          self.fontProvider = UITheme2FontProvider(fontDescriptors: descriptors)
+        case .fontProvider(let provider):
+          self.fontProvider = provider
+        }
+      }
+      else {
+        self.fontProvider = UITheme2FontProvider(fontDescriptors: nil)
+      }
+    }
     registerCustomFonts()
   }
 

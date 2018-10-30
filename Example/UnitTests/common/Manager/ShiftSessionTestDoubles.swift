@@ -38,12 +38,12 @@ class ShiftSessionSpy: ShiftSession {
   }
 
   private(set) var startOauthAuthenticationCalled = false
-  private(set) var lastStartOauthCustodianType: CustodianType?
+  private(set) var lastStartOauthBalanceType: AllowedBalanceType?
   private(set) var lastStartOauthAuthenticationCallback: Result<OauthAttempt, NSError>.Callback?
-  override func startOauthAuthentication(_ custodianType: CustodianType,
+  override func startOauthAuthentication(_ balanceType: AllowedBalanceType,
                                          callback: @escaping Result<OauthAttempt, NSError>.Callback) {
     startOauthAuthenticationCalled = true
-    lastStartOauthCustodianType = custodianType
+    lastStartOauthBalanceType = balanceType
     lastStartOauthAuthenticationCallback = callback
   }
 
@@ -105,9 +105,9 @@ class ShiftSessionFake: ShiftSessionSpy {
   }
 
   var nextStartOauthAuthenticationResult: Result<OauthAttempt, NSError>?
-  override func startOauthAuthentication(_ custodianType: CustodianType,
+  override func startOauthAuthentication(_ balanceType: AllowedBalanceType,
                                          callback: @escaping Result<OauthAttempt, NSError>.Callback) {
-    super.startOauthAuthentication(custodianType, callback: callback)
+    super.startOauthAuthentication(balanceType, callback: callback)
 
     if let result = nextStartOauthAuthenticationResult {
       callback(result)

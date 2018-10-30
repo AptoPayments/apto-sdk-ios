@@ -18,11 +18,10 @@ class ExternalOAuthModule: UIModule, ExternalOAuthModuleProtocol {
   init(serviceLocator: ServiceLocatorProtocol, config: ExternalOAuthModuleConfig, uiConfig: ShiftUIConfig) {
     self.config = config
     super.init(serviceLocator: serviceLocator)
-    self.uiConfig = uiConfig
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    let viewController = buildExternalOAuthViewController(uiConfig!) // swiftlint:disable:this force_unwrapping
+    let viewController = buildExternalOAuthViewController(uiConfig)
     self.addChild(viewController: viewController, completion: completion)
   }
 

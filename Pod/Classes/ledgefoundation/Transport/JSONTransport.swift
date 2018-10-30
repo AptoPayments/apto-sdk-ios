@@ -46,7 +46,7 @@ public protocol JSONTransport {
            headers: [String: String]?,
            acceptRedirectTo: ((String) -> Bool)?,
            filterInvalidTokenResult: Bool,
-           callback: @escaping  Result<JSON, NSError>.Callback)
+           callback: @escaping Result<JSON, NSError>.Callback)
 
   func post(_ url: URLConvertible,
             authorization: JSONTransportAuthorization,
@@ -58,13 +58,13 @@ public protocol JSONTransport {
            authorization: JSONTransportAuthorization,
            parameters: [String: AnyObject]?,
            filterInvalidTokenResult: Bool,
-           callback: @escaping  Result<JSON, NSError>.Callback)
+           callback: @escaping Result<JSON, NSError>.Callback)
 
   func delete(_ url: URLConvertible,
               authorization: JSONTransportAuthorization,
               parameters: [String: AnyObject]?,
               filterInvalidTokenResult: Bool,
-              callback: @escaping  Result<Void, NSError>.Callback)
+              callback: @escaping Result<Void, NSError>.Callback)
 }
 
 extension JSONTransport {

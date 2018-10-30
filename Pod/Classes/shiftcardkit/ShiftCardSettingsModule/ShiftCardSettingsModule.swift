@@ -9,6 +9,7 @@ import UIKit
 
 class ShiftCardSettingsModule: UIModule {
   private let card: Card
+  private let caller: PhoneCallerProtocol
   private var projectConfiguration: ProjectConfiguration! // swiftlint:disable:this implicitly_unwrapped_optional
   private var externalOAuthModule: ExternalOAuthModule?
   private var presenter: ShiftCardSettingsPresenter?
@@ -17,8 +18,9 @@ class ShiftCardSettingsModule: UIModule {
 
   weak var delegate: ShiftCardSettingsModuleDelegate?
 
-  public init(serviceLocator: ServiceLocatorProtocol, card: Card) {
+  public init(serviceLocator: ServiceLocatorProtocol, card: Card, phoneCaller: PhoneCallerProtocol) {
     self.card = card
+    self.caller = phoneCaller
     super.init(serviceLocator: serviceLocator)
   }
 
@@ -33,11 +35,9 @@ class ShiftCardSettingsModule: UIModule {
           case .failure(let error):
             completion(.failure(error))
           case .success(let shiftCardConfiguration):
-            let config = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-            self.uiConfig = config
             self.projectConfiguration = contextConfiguration.projectConfiguration
             let viewController = self.buildShiftCardSettingsViewController(
-              config,
+              self.uiConfig,
               shiftCardConfiguration: shiftCardConfiguration,
               card: self.card)
             self.addChild(viewController: viewController, completion: completion)
@@ -82,10 +82,9 @@ extension ShiftCardSettingsModule: ShiftCardSettingsRouterProtocol {
   }
 
   func addFundingSource(completion: @escaping (FundingSource) -> Void) {
-    guard let uiConfig = self.uiConfig else {
-      return
-    }
-    let oauthModuleConfig = ExternalOAuthModuleConfig(title: "Coinbase")
+    // TODO: Remove as soon as this feature is deployed in the backend
+    let allowedBalanceTypes = card.features?.allowedBalanceTypes ?? []
+    let oauthModuleConfig = ExternalOAuthModuleConfig(title: "Coinbase", allowedBalanceTypes: allowedBalanceTypes)
     let externalOAuthModule = ExternalOAuthModule(serviceLocator: serviceLocator,
                                                   config: oauthModuleConfig,
                                                   uiConfig: uiConfig)
@@ -120,9 +119,13 @@ extension ShiftCardSettingsModule: ShiftCardSettingsRouterProtocol {
   func changeCardPin() {
     let action = ChangeCardPINAction(shiftCardSession: shiftSession.shiftCardSession,
                                      card: card,
-                                     uiConfig: self.uiConfig!) // swiftlint:disable:this force_unwrapping
+                                     uiConfig: self.uiConfig)
     action.run()
     self.changePinAction = action
+  }
+
+  func call(url: URL, completion: @escaping () -> Void) {
+    caller.call(phoneNumberURL: url, from: self, completion: completion)
   }
 
   func showCardInfo() {

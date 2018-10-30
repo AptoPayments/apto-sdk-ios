@@ -10,7 +10,7 @@ protocol SelectBalanceStoreModuleProtocol: UIModuleProtocol {
 }
 
 class SelectBalanceStoreModule: UIModule, SelectBalanceStoreModuleProtocol {
-  private let externalOAuthModuleConfig = ExternalOAuthModuleConfig(title: "select-balance-store.title".podLocalized())
+  private let externalOAuthModuleConfig: ExternalOAuthModuleConfig
   private let application: CardApplication
   private var dataConfirmationModule: DataConfirmationModuleProtocol?
   private var projectConfiguration: ProjectConfiguration! // swiftlint:disable:this implicitly_unwrapped_optional
@@ -21,6 +21,16 @@ class SelectBalanceStoreModule: UIModule, SelectBalanceStoreModuleProtocol {
 
   init(serviceLocator: ServiceLocatorProtocol, application: CardApplication) {
     self.application = application
+    let allowedBalanceTypes: [AllowedBalanceType]
+    if let action = application.nextAction.configuration as? SelectBalanceStoreActionConfiguration {
+      allowedBalanceTypes = action.allowedBalanceTypes
+    }
+    else {
+      // TODO: Remove as soon as this feature is deployed in the backend
+      allowedBalanceTypes = []
+    }
+    externalOAuthModuleConfig = ExternalOAuthModuleConfig(title: "select-balance-store.title".podLocalized(),
+                                                          allowedBalanceTypes: allowedBalanceTypes)
     super.init(serviceLocator: serviceLocator)
   }
 
@@ -31,9 +41,7 @@ class SelectBalanceStoreModule: UIModule, SelectBalanceStoreModuleProtocol {
         completion(.failure(error))
       case .success(let contextConfiguration):
         self.projectConfiguration = contextConfiguration.projectConfiguration
-        let uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        self.uiConfig = uiConfig
-        let module = self.buildExternalOAuthModule(uiConfig: uiConfig)
+        let module = self.buildExternalOAuthModule(uiConfig: self.uiConfig)
         self.addChild(module: module, completion: completion)
       }
     }

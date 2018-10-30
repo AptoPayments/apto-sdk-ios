@@ -18,16 +18,8 @@ class LinkOfferListModule: UIModule {
   open var onOfferApplied: ((_ offerListModule: LinkOfferListModule, _ offer: LoanOffer) -> Void)?
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    linkSession.shiftSession.contextConfiguration { result in
-      switch result {
-      case .failure (let error):
-        completion(.failure(error))
-      case .success(let contextConfiguration):
-        self.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
-        let viewController = self.buildOfferLoaderViewController(self.uiConfig!)
-        self.addChild(viewController: viewController, completion: completion)
-      }
-    }
+    let viewController = buildOfferLoaderViewController(uiConfig)
+    addChild(viewController: viewController, completion: completion)
   }
 
   // MARK: - Offer Loader Handling
@@ -50,10 +42,10 @@ class LinkOfferListModule: UIModule {
     var offerListView: LinkOfferListView
     switch offerListStyle {
     case .list:
-      offerListView = LinkOfferListViewController(uiConfiguration: self.uiConfig!, eventHandler: presenter)
+      offerListView = LinkOfferListViewController(uiConfiguration: self.uiConfig, eventHandler: presenter)
       break
     case .carousel:
-      offerListView = LinkOfferListCarouselViewController(uiConfiguration: self.uiConfig!, eventHandler: presenter)
+      offerListView = LinkOfferListCarouselViewController(uiConfiguration: self.uiConfig, eventHandler: presenter)
       break
     }
     presenter.view = offerListView
@@ -94,9 +86,9 @@ class LinkOfferListModule: UIModule {
   }
 
   fileprivate func buildApplicationSummaryViewController(linkConfiguration:LinkConfiguration, loanData:AppLoanData, userData:DataPointList, offer:LoanOffer) -> UIViewController {
-    let presenter = LinkApplicationSummaryPresenter(config: linkConfiguration, uiConfig: self.uiConfig!)
+    let presenter = LinkApplicationSummaryPresenter(config: linkConfiguration, uiConfig: self.uiConfig)
     let interactor = LinkApplicationSummaryInteractor(linkSession:linkSession, loanData:loanData, userData:userData, offer:offer, dataReceiver: presenter)
-    let viewController = LinkApplicationSummaryViewController(uiConfiguration: self.uiConfig!)
+    let viewController = LinkApplicationSummaryViewController(uiConfiguration: self.uiConfig)
     presenter.view = viewController
     presenter.interactor = interactor
     presenter.router = self

@@ -22,7 +22,7 @@ protocol ExternalOAuthPresenterProtocol: class {
   func show(url: URL)
   func custodianSelected(_ custodian: Custodian)
   func backTapped()
-  func custodianTapped(custodianType: CustodianType)
+  func balanceTypeTapped(_ balanceType: AllowedBalanceType)
 }
 
 protocol ExternalOAuthRouterProtocol: class {
@@ -35,18 +35,19 @@ protocol ExternalOAuthRouterProtocol: class {
 
 protocol ExternalOAuthInteractorProtocol {
   var presenter: ExternalOAuthPresenterProtocol! { get set } // swiftlint:disable:this implicitly_unwrapped_optional
-  func custodianSelected(custodianType: CustodianType)
+  func balanceTypeSelected(_ balanceType: AllowedBalanceType)
   func custodianAuthenticationSucceed()
 }
 
 protocol ExternalOAuthViewProtocol: ViewControllerProtocol {}
 
 class ExternalOAuthViewModel {
-  var title: Observable<String?> = Observable(nil)
-  var imageName: Observable<String?> = Observable(nil)
-  var provider: Observable<String?> = Observable(nil)
-  var accessDescription: Observable<String?> = Observable(nil)
-  var callToActionTitle: Observable<String?> = Observable(nil)
-  var description: Observable<String?> = Observable(nil)
-  var error: Observable<Error?> = Observable(nil)
+  let title: Observable<String?> = Observable(nil)
+  let imageName: Observable<String?> = Observable(nil)
+  let provider: Observable<String?> = Observable(nil)
+  let accessDescription: Observable<String?> = Observable(nil)
+  let callToActionTitle: Observable<String?> = Observable(nil)
+  let description: Observable<String?> = Observable(nil)
+  let error: Observable<Error?> = Observable(nil)
+  let allowedBalanceTypes: Observable<[AllowedBalanceType]?> = Observable(nil)
 }

@@ -21,13 +21,8 @@ final class ModuleLocator: ModuleLocatorProtocol {
     return FullScreenDisclaimerModule(serviceLocator: serviceLocator, disclaimer: disclaimer)
   }
 
-  func authModule(authConfig: AuthModuleConfig,
-                  uiConfig: ShiftUIConfig,
-                  initialUserData: DataPointList) -> AuthModuleProtocol {
-    return AuthModule(serviceLocator: serviceLocator,
-                      config: authConfig,
-                      uiConfig: uiConfig,
-                      initialUserData: initialUserData)
+  func authModule(authConfig: AuthModuleConfig, initialUserData: DataPointList) -> AuthModuleProtocol {
+    return AuthModule(serviceLocator: serviceLocator, config: authConfig, initialUserData: initialUserData)
   }
 
   func verifyPhoneModule(verificationType: VerificationParams<PhoneNumber, Verification>) -> VerifyPhoneModuleProtocol {
@@ -72,7 +67,8 @@ final class ModuleLocator: ModuleLocatorProtocol {
                                   workflowAction: WorkflowAction) -> ShowDisclaimerActionModuleProtocol {
     return ShowDisclaimerActionModule(serviceLocator: serviceLocator,
                                       workflowObject: workflowObject,
-                                      workflowAction: workflowAction)
+                                      workflowAction: workflowAction,
+                                      actionConfirmer: UIAlertController.self)
   }
 
   func verifyDocumentModule(workflowObject: WorkflowObject?) -> VerifyDocumentModule {
@@ -84,8 +80,8 @@ final class ModuleLocator: ModuleLocatorProtocol {
   }
 
   // MARK: - Errors
-  func serverMaintenanceErrorModule(uiConfig: ShiftUIConfig?) -> ServerMaintenanceErrorModuleProtocol {
-    return ServerMaintenanceErrorModule(serviceLocator: serviceLocator, uiConfig: uiConfig)
+  func serverMaintenanceErrorModule() -> ServerMaintenanceErrorModuleProtocol {
+    return ServerMaintenanceErrorModule(serviceLocator: serviceLocator)
   }
 
   func accountSettingsModule() -> UIModuleProtocol {
@@ -98,5 +94,9 @@ final class ModuleLocator: ModuleLocatorProtocol {
 
   func dataConfirmationModule(userData: DataPointList) -> DataConfirmationModuleProtocol {
     return DataConfirmationModule(serviceLocator: serviceLocator, userData: userData)
+  }
+
+  func physicalCardActivationSucceedModule(card: Card) -> PhysicalCardActivationSucceedModuleProtocol {
+    return PhysicalCardActivationSucceedModule(serviceLocator: serviceLocator, card: card, phoneCaller: PhoneCaller())
   }
 }

@@ -12,12 +12,13 @@ import Bond
 // MARK: - Basic Data Types
 
 var currencySymbols: [String: String] = [
-  "BTC": "BTC",
-  "BTH": "BTH",
-  "ETH": "ETH",
-  "ETC": "ETC",
-  "LTC": "LTC",
-  "ZRX": "ZRX"
+  // We need the whitespaces to cheat NumberFormatter and have a whitespace between the value and symbol
+  "BTC": " BTC ",
+  "BTH": " BTH ",
+  "ETH": " ETH ",
+  "ETC": " ETC ",
+  "LTC": " LTC ",
+  "ZRX": " ZRX "
 ]
 
 @objc open class Amount: NSObject {
@@ -39,10 +40,10 @@ var currencySymbols: [String: String] = [
     return nil
   }
   open var text: String {
-    return text(withFormat: ".2")
+    return text(withDecimalPlaces: 2)
   }
   open var longText: String {
-    return text(withFormat: ".5")
+    return text(withDecimalPlaces: 5)
   }
 
   override public init() {
@@ -74,16 +75,18 @@ var currencySymbols: [String: String] = [
     return retVal
   }
 
-  private func text(withFormat format: String) -> String {
-    var currency = ""
-    var value: Double = 0
+  private func text(withDecimalPlaces decimalPlaces: Int) -> String {
+    let formatter = NumberFormatter()
+    formatter.maximumFractionDigits = decimalPlaces
+    formatter.numberStyle = .currency
     if let currencySymbol = self.currencySymbol {
-      currency = currencySymbol
+      formatter.currencySymbol = currencySymbol
     }
+    var value: Double = 0
     if let amount = self.amount.value {
       value = amount
     }
-    return "\(currency) \(value.format(format))"
+    return formatter.string(from: NSNumber(value: value))?.trimmingCharacters(in: CharacterSet.whitespaces) ?? "-"
   }
 }
 

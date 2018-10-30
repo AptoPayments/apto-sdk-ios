@@ -249,13 +249,13 @@ open class ShiftSession: NSObject {
     shiftPlatform.bankOauthConfiguration(accessToken, forceRefresh: forceRefresh, callback: callback)
   }
 
-  func startOauthAuthentication(_ custodianType: CustodianType,
+  func startOauthAuthentication(_ balanceType: AllowedBalanceType,
                                 callback: @escaping Result<OauthAttempt, NSError>.Callback) {
     guard let accessToken = shiftPlatform.currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    shiftPlatform.startOauthAuthentication(accessToken, custodianType: custodianType, callback: callback)
+    shiftPlatform.startOauthAuthentication(accessToken, balanceType: balanceType, callback: callback)
   }
 
   func verifyOauthAttemptStatus(_ attempt: OauthAttempt,

@@ -16,4 +16,5 @@ protocol PresenterLocatorProtocol {
   func accountSettingsPresenter() -> AccountSettingsPresenterProtocol
   func contentPresenterPresenter() -> ContentPresenterPresenterProtocol
   func dataConfirmationPresenter() -> DataConfirmationPresenterProtocol
+  func physicalCardActivationSucceedPresenter() -> PhysicalCardActivationSucceedPresenterProtocol
 }
