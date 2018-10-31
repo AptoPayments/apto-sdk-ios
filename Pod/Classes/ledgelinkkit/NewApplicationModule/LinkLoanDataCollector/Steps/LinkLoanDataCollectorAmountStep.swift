@@ -64,7 +64,6 @@ class LinkLoanDataColletorAmountStep: DataCollectorBaseStep, DataCollectorStepPr
       let _ = amountField.bndNumber.observeNext { amountValue in
         self.loanData.amount?.amount.next(Double(amountValue!))
       }
-      amountField.backgroundColor = self.uiConfig.cardBackgroundColor
       amountField.minStep = Int(config.loanAmountRange.inc)
       amountField.setupComplete = true
       amountField.trackHighlightTintColor = self.uiConfig.tintColor

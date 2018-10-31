@@ -27,7 +27,9 @@ class DisplayCardViewController: ShiftViewController, DisplayCardViewProtocol {
 
   init(uiConfiguration: ShiftUIConfig, eventHandler:DisplayCardEventHandler) {
     self.eventHandler = eventHandler
-    self.creditCardView = CreditCardView(uiConfiguration: uiConfiguration)
+    self.creditCardView = CreditCardView(
+      uiConfiguration: uiConfiguration,
+      cardStyle: CardStyle(background: .color(color: uiConfiguration.uiPrimaryColor)))
     super.init(uiConfiguration: uiConfiguration)
   }
 

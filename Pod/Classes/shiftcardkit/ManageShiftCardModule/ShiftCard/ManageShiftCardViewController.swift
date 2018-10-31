@@ -52,7 +52,7 @@ class ManageShiftCardViewController: ShiftViewController, ManageShiftCardViewPro
     self.mode = mode
     self.activateCardView = ActivateCardView(uiConfig: uiConfiguration)
     super.init(uiConfiguration: uiConfiguration)
-    self.mainView = ManageShiftCardMainView(uiConfiguration: uiConfiguration, delegate: self)
+    self.mainView = ManageShiftCardMainView(uiConfiguration: uiConfiguration, cardStyle: nil, delegate: self)
     self.mainViewCellController = ViewWrapperCellController(view: self.mainView)
   }
 
@@ -384,6 +384,10 @@ private extension ManageShiftCardViewController {
 
     viewModel.transactionsLoaded.observeNext { [unowned self] _ in
       self.updateUI()
+    }.dispose(in: disposeBag)
+
+    viewModel.cardStyle.observeNext { [unowned self] cardStyle in
+      self.mainView.set(cardStyle: cardStyle)
     }.dispose(in: disposeBag)
   }
 

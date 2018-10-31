@@ -419,7 +419,6 @@ extension JSON {
           let uiTertiaryColor = self["ui_tertiary_color"].string,
           let uiErrorColor = self["ui_error_color"].string,
           let uiSuccessColor = self["ui_success_color"].string,
-          let cardBackgroundColor = self["card_background_color"].string,
           let uiTheme = self["ui_theme"].string else {
       return nil
     }
@@ -437,7 +436,6 @@ extension JSON {
                            uiTertiaryColor: uiTertiaryColor,
                            uiErrorColor: uiErrorColor,
                            uiSuccessColor: uiSuccessColor,
-                           cardBackgroundColor: cardBackgroundColor,
                            logoUrl: logoUrl,
                            uiTheme: uiTheme)
   }
@@ -1159,6 +1157,7 @@ extension JSON {
     let nativeSpendableToday = self["native_spendable_today"].amount
     let physicalCardActivationRequired = self["physical_card_activation_required"].bool
     let cardFeatures = self["features"].cardFeatures
+    let cardStyle = self["card_style"].cardStyle
 
     let card = Card(accountId: id,
                     cardNetwork: CardNetwork.cardNetworkFrom(description: cardNetwork),
@@ -1172,6 +1171,7 @@ extension JSON {
                     kyc: self.kyc,
                     physicalCardActivationRequired: physicalCardActivationRequired,
                     features: cardFeatures,
+                    cardStyle: cardStyle,
                     verified:verified)
 
     if let pan = self["pan"].string {

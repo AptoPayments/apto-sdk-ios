@@ -197,6 +197,7 @@ public enum CardNetwork {
   let kyc: KYCState?
   let physicalCardActivationRequired: Bool?
   let features: CardFeatures?
+  let cardStyle: CardStyle?
 
   public init(accountId: String,
               cardNetwork: CardNetwork?,
@@ -215,6 +216,7 @@ public enum CardNetwork {
               features: CardFeatures? = nil,
               panToken: String? = nil,
               cvvToken: String? = nil,
+              cardStyle: CardStyle? = nil,
               verified: Bool? = false) {
     self.cardNetwork = cardNetwork
     self.cardIssuer = cardIssuer
@@ -231,6 +233,7 @@ public enum CardNetwork {
     self.cardBrand = cardBrand
     self.physicalCardActivationRequired = physicalCardActivationRequired
     self.features = features
+    self.cardStyle = cardStyle
     super.init(accountId: accountId, type: .card, state: state, verified: verified)
   }
 

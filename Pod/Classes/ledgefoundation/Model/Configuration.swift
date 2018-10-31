@@ -43,7 +43,6 @@ public struct ProjectBranding {
   public let uiTertiaryColor: String
   public let uiErrorColor: String
   public let uiSuccessColor: String
-  public let cardBackgroundColor: String
   public let logoUrl: String?
   public let uiTheme: String
 }

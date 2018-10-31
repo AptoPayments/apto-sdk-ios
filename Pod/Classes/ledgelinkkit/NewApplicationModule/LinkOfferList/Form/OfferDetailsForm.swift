@@ -24,25 +24,21 @@ class OfferDetailsForm {
     
     if let interestRate = offer.interestRate {
       let interestRow = FormBuilder.labelLabelRowWith(leftText: "order-details-form.interest-rate".podLocalized(), rightText: "\(interestRate)%", uiConfig: uiConfig)
-      interestRow.backgroundColor = uiConfig.cardBackgroundColor
       retVal.append(interestRow)
     }
     
     if let loanAmount = offer.loanAmount {
       let amountRow = FormBuilder.labelLabelRowWith(leftText: "order-details-form.amount-financed".podLocalized(), rightText: loanAmount.text, uiConfig: uiConfig)
-      amountRow.backgroundColor = uiConfig.cardBackgroundColor
       retVal.append(amountRow)
     }
 
     if let paymentAmount = offer.paymentAmount, Int(paymentAmount.amount.value!) > 0 {
       let monthlyPaymentRow = FormBuilder.labelLabelRowWith(leftText: "order-details-form.monthly-payment".podLocalized(), rightText: paymentAmount.text, uiConfig: uiConfig)
-      monthlyPaymentRow.backgroundColor = uiConfig.cardBackgroundColor
       retVal.append(monthlyPaymentRow)
     }
     
     if let term = offer.term, term.duration > 0 {
       let termRow = FormBuilder.labelLabelRowWith(leftText: "order-details-form.term".podLocalized(), rightText: term.text, showSplitter: false, uiConfig: uiConfig)
-      termRow.backgroundColor = uiConfig.cardBackgroundColor
       retVal.append(termRow)
     }
     

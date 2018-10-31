@@ -47,8 +47,7 @@ class ExternalOAuthViewController: ShiftViewController {
       presenter.balanceTypeTapped(balanceType)
     }
     else {
-      // TODO: Remove as soon as this feature is deployed in the backend
-      presenter.balanceTypeTapped(AllowedBalanceType(type: .coinbase, baseUri: ""))
+      showMessage("external-oauth.wrong-type.error".podLocalized())
     }
   }
 }

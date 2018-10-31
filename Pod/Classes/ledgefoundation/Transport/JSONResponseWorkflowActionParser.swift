@@ -101,13 +101,10 @@ extension JSON {
   }
 
   var selectBalanceStoreActionConfiguration: SelectBalanceStoreActionConfiguration? {
-    guard let rawAllowedBalanceTypesArray = self["select_balance_store"]["allowed_balance_types"].array else {
+    guard let allowedBalanceTypes = self["allowed_balance_types"].linkObject as? [AllowedBalanceType] else {
       ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                             reason: "Can't select balance store action \(self)"))
       return nil
-    }
-    let allowedBalanceTypes = rawAllowedBalanceTypesArray.compactMap { json -> AllowedBalanceType? in
-      return json.allowedBalanceType
     }
     return SelectBalanceStoreActionConfiguration(allowedBalanceTypes: allowedBalanceTypes)
   }

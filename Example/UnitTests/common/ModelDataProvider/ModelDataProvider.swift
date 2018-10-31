@@ -23,12 +23,13 @@ class ModelDataProvider {
   lazy var amountRangeConfiguration = AmountRangeConfiguration(min: 0, max: 1000, def: 100, inc: 100)
 
   lazy var workflowAction: WorkflowAction = {
+    let configuration = SelectBalanceStoreActionConfiguration(allowedBalanceTypes: [coinbaseBalanceType])
     return WorkflowAction(actionId: nil,
                           name: nil,
                           order: nil,
                           status: nil,
-                          actionType: .showGenericMessage,
-                          configuration: nil)
+                          actionType: .selectBalanceStore,
+                          configuration: configuration)
   }()
 
   lazy var projectBranding: ProjectBranding = {
@@ -45,7 +46,6 @@ class ModelDataProvider {
                            uiTertiaryColor: "ffffff",
                            uiErrorColor: "ffffff",
                            uiSuccessColor: "ffffff",
-                           cardBackgroundColor: "ffffff",
                            logoUrl: nil,
                            uiTheme: "theme_1")
   }()

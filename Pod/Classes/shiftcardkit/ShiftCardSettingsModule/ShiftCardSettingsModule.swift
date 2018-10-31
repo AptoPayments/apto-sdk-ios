@@ -82,8 +82,9 @@ extension ShiftCardSettingsModule: ShiftCardSettingsRouterProtocol {
   }
 
   func addFundingSource(completion: @escaping (FundingSource) -> Void) {
-    // TODO: Remove as soon as this feature is deployed in the backend
-    let allowedBalanceTypes = card.features?.allowedBalanceTypes ?? []
+    guard let allowedBalanceTypes = card.features?.allowedBalanceTypes, !allowedBalanceTypes.isEmpty else {
+      return
+    }
     let oauthModuleConfig = ExternalOAuthModuleConfig(title: "Coinbase", allowedBalanceTypes: allowedBalanceTypes)
     let externalOAuthModule = ExternalOAuthModule(serviceLocator: serviceLocator,
                                                   config: oauthModuleConfig,

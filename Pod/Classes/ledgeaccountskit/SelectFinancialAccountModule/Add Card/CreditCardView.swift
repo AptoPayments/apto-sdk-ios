@@ -13,6 +13,7 @@ import Stripe
 
 class CreditCardView: UIView {
   private let uiConfiguration: ShiftUIConfig
+  private var cardStyle: CardStyle?
   // Container View
   private var showingBack = false
   private let logos: [CardNetwork: UIImage?] = [
@@ -23,7 +24,7 @@ class CreditCardView: UIView {
   ]
 
   // MARK: - Front View
-  private let frontView = UIView()
+  private let frontView = UIImageView()
   private let imageView = UIImageView()
   private let cardNumber = UIFormattedLabel()
   private let cardHolder = UILabel()
@@ -57,12 +58,12 @@ class CreditCardView: UIView {
   private var hasValidFundingSource = true
 
   // MARK: - Lifecycle
-  init(uiConfiguration: ShiftUIConfig) {
+  init(uiConfiguration: ShiftUIConfig, cardStyle: CardStyle?) {
     self.uiConfiguration = uiConfiguration
+    self.cardStyle = cardStyle
     super.init(frame: .zero)
     self.translatesAutoresizingMaskIntoConstraints = false
     self.layer.cornerRadius = 10
-    self.backgroundColor = uiConfiguration.cardBackgroundColor
     setUpShadow()
     setupFrontView()
     setupBackView()
@@ -120,6 +121,11 @@ class CreditCardView: UIView {
     updateCardEnabledState()
   }
 
+  func set(cardStyle: CardStyle?) {
+    self.cardStyle = cardStyle
+    updateCardStyle()
+  }
+
   func didBeginEditingCVC() {
     if !showingBack {
       flip()
@@ -151,10 +157,8 @@ class CreditCardView: UIView {
 
   fileprivate func set(cardNetwork: CardNetwork, enabled: Bool, alpha: CGFloat) {
     UIView.animate(withDuration: 2) {
-      let color = enabled ? self.uiConfiguration.cardBackgroundColor : self.uiConfiguration.cardBackgroundColorDisabled
       self.imageView.tintColor = self.uiConfiguration.textTopBarColor
       self.imageView.image = self.logos[cardNetwork]! // swiftlint:disable:this force_unwrapping
-      self.backView.backgroundColor = color
     }
   }
 }
@@ -306,7 +310,6 @@ private extension CreditCardView {
     backView.clipsToBounds = true
     self.addSubview(backView)
     backView.isHidden = true
-    backView.backgroundColor = uiConfiguration.cardBackgroundColor
     backView.snp.makeConstraints { make in
       make.top.bottom.left.right.equalTo(self)
     }
@@ -339,6 +342,7 @@ private extension CreditCardView {
       make.right.equalTo(backView).inset(10)
     }
   }
+
 }
 
 // MARK: - Update card info
@@ -397,14 +401,29 @@ private extension CreditCardView {
     }
   }
 
+  func updateCardStyle() {
+    guard let cardStyle = cardStyle else {
+      return
+    }
+    UIView.animate(withDuration: 2) { [weak self] in
+      switch cardStyle.background {
+      case .color(let cardColor):
+        self?.backgroundColor = cardColor
+        self?.imageView.isHidden = false
+        self?.frontView.image = nil
+      case .image(let url):
+        self?.frontView.setImageUrl(url)
+        self?.imageView.isHidden = true
+      }
+    }
+  }
+
   func setUpEnabledCard() {
-    backgroundColor = uiConfiguration.cardBackgroundColor
     lockedView.isHidden = true
     lockImageView.isHidden = true
   }
 
   func setUpDisabledCard() {
-    backgroundColor = uiConfiguration.cardBackgroundColorDisabled
     lockImageView.image = lockedImage()
     lockedView.isHidden = false
     lockImageView.isHidden = false

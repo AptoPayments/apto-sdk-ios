@@ -35,9 +35,6 @@ public enum UITheme: String, Equatable {
   open lazy var uiErrorColor = UIColor.colorFromHex(0xdb1d0e)
   open lazy var uiToastMessagesColor = uiPrimaryColor.withAlphaComponent(0.15)
 
-  open lazy var cardBackgroundColor = UIColor.colorFromHex(0x161d24)
-  open lazy var cardBackgroundColorDisabled = cardBackgroundColor.withAlphaComponent(0.85)
-
   // Icon colors
 
   open lazy var iconPrimaryColor = UIColor.colorFromHex(0x419743)
@@ -145,7 +142,6 @@ public enum UITheme: String, Equatable {
     self.uiTertiaryColor = UIColor.colorFromHexString(projectConfiguration.branding.uiTertiaryColor)!
     self.uiErrorColor = UIColor.colorFromHexString(projectConfiguration.branding.uiErrorColor)!
     self.uiSuccessColor = UIColor.colorFromHexString(projectConfiguration.branding.uiSuccessColor)!
-    self.cardBackgroundColor = UIColor.colorFromHexString(projectConfiguration.branding.cardBackgroundColor)!
     self.uiTheme = UITheme(rawValue: projectConfiguration.branding.uiTheme)!
     // swiftlint:enable force_unwrapping
     self.statusBarStyle = .lightContent

@@ -33,15 +33,7 @@ extension JSON {
     let rawChangePinStatus = self["set_pin"]["status"].string ?? ""
     let changePinStatus = FeatureStatus(rawValue: rawChangePinStatus) ?? .disabled
     let ivr = self["get_pin"].ivr
-    let allowedBalanceTypes: [AllowedBalanceType]?
-    if let rawAllowedBalanceTypesArray = self["select_balance_store"]["allowed_balance_types"].array {
-      allowedBalanceTypes = rawAllowedBalanceTypesArray.compactMap { json -> AllowedBalanceType? in
-        return json.allowedBalanceType
-      }
-    }
-    else {
-      allowedBalanceTypes = nil
-    }
+    let allowedBalanceTypes = self["select_balance_store"]["allowed_balance_types"].linkObject as? [AllowedBalanceType]
 
     return CardFeatures(ivr: ivr, changePin: changePinStatus, allowedBalanceTypes: allowedBalanceTypes)
   }

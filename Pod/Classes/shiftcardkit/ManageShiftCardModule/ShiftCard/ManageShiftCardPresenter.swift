@@ -53,6 +53,7 @@ open class ManageShiftCardViewModel {
   open var custodianName: Observable<String?> = Observable(nil)
   open var transactions: MutableObservable2DArray<String, Transaction> = MutableObservable2DArray([])
   open var transactionsLoaded: Observable<Bool> = Observable(false)
+  open var cardStyle: Observable<CardStyle?> = Observable(nil)
 }
 
 struct ManageShiftCardPresenterConfig {
@@ -195,6 +196,7 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
     viewModel.physicalCardActivationRequired.next(card.physicalCardActivationRequired)
     viewModel.spendableToday.next(card.spendableToday)
     viewModel.nativeSpendableToday.next(card.nativeSpendableToday)
+    viewModel.cardStyle.next(card.cardStyle)
     if let imageUrl = config.imageUrl, let url = URL(string: imageUrl) {
       ImageCache.defaultCache().imageWithUrl(url) { result in
         if case let .success(image) = result {

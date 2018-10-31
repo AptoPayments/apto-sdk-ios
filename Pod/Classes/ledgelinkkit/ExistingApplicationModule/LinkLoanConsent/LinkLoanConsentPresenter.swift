@@ -138,8 +138,6 @@ class LinkLoanConsentPresenter: LinkLoanConsentEventHandlerProtocol {
                                                               uiConfig: uiConfig,
                                                               linkHandler: linkHandler)
         disclosureLabel.label.numberOfLines = 0
-        disclosureLabel.backgroundColor = uiConfig.cardBackgroundColor
-        disclosureLabel.label.backgroundColor = uiConfig.cardBackgroundColor
         rows.append(disclosureLabel)
       }
 

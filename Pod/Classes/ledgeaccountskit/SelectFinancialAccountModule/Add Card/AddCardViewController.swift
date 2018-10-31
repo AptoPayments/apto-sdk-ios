@@ -26,7 +26,9 @@ class AddCardViewController: ShiftViewController, AddCardViewProtocol {
   init(uiConfiguration: ShiftUIConfig, eventHandler:AddCardTypeEventHandler) {
     self.eventHandler = eventHandler
     self.paymentField = STPPaymentCardTextField(frame: CGRect(x: 10, y: 10, width:300, height: 44))
-    self.creditCardView = CreditCardView(uiConfiguration: uiConfiguration)
+    self.creditCardView = CreditCardView(
+      uiConfiguration: uiConfiguration,
+      cardStyle: CardStyle(background: .color(color: uiConfiguration.uiPrimaryColor)))
     super.init(uiConfiguration: uiConfiguration)
   }
 

@@ -1002,6 +1002,8 @@
 
 "external-oauth.coinbase.description" = "Connect Coinbase to spend online and offline at over 38 million merchants worldwide.";
 
+"external-oauth.wrong-type.error" = "Funding source not supported";
+
 /* * ./Pod/Classes/ledgeaccountskit/SelectFinancialAccountModule/Add Card/AddCardViewController.swift */
 
 "select-financial-account.add-card-button.title" = "Add Card";

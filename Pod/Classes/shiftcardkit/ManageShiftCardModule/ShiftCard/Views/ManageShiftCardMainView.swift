@@ -47,11 +47,11 @@ class ManageShiftCardMainView: UIView {
   private unowned let delegate: ManageShiftCardMainViewDelegate
   private let uiConfiguration: ShiftUIConfig
 
-  init(uiConfiguration: ShiftUIConfig, delegate: ManageShiftCardMainViewDelegate) {
+  init(uiConfiguration: ShiftUIConfig, cardStyle: CardStyle?, delegate: ManageShiftCardMainViewDelegate) {
     self.uiConfiguration = uiConfiguration
     self.delegate = delegate
     self.balanceView = BalanceView(uiConfiguration: uiConfiguration)
-    self.creditCardView = CreditCardView(uiConfiguration: uiConfiguration)
+    self.creditCardView = CreditCardView(uiConfiguration: uiConfiguration, cardStyle: cardStyle)
     super.init(frame: .zero)
     setUpUI(uiConfiguration: uiConfiguration)
   }
@@ -139,6 +139,10 @@ class ManageShiftCardMainView: UIView {
       self.cardState = .inactive
     }
     refreshLayoutConstraints()
+  }
+
+  func set(cardStyle: CardStyle?) {
+    creditCardView.set(cardStyle: cardStyle)
   }
 
   func set(activateCardFeatureEnabled: Bool?) {

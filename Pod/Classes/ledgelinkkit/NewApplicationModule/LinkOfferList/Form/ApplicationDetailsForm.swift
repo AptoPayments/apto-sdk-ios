@@ -75,6 +75,6 @@ class ApplicationDetailsForm {
   }
   
   fileprivate func rowWith(leftText:String, rightText:String?) -> FormRowLeftRightLabelView {
-    return FormBuilder.labelLabelRowWith(leftText: leftText, rightText: rightText, backgroundColor:self.uiConfig.cardBackgroundColor, uiConfig: uiConfig)
+    return FormBuilder.labelLabelRowWith(leftText: leftText, rightText: rightText, uiConfig: uiConfig)
   }
 }

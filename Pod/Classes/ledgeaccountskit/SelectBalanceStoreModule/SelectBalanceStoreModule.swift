@@ -21,16 +21,11 @@ class SelectBalanceStoreModule: UIModule, SelectBalanceStoreModuleProtocol {
 
   init(serviceLocator: ServiceLocatorProtocol, application: CardApplication) {
     self.application = application
-    let allowedBalanceTypes: [AllowedBalanceType]
-    if let action = application.nextAction.configuration as? SelectBalanceStoreActionConfiguration {
-      allowedBalanceTypes = action.allowedBalanceTypes
-    }
-    else {
-      // TODO: Remove as soon as this feature is deployed in the backend
-      allowedBalanceTypes = []
+    guard let action = application.nextAction.configuration as? SelectBalanceStoreActionConfiguration else {
+      fatalError("Wrong select balance store configuration")
     }
     externalOAuthModuleConfig = ExternalOAuthModuleConfig(title: "select-balance-store.title".podLocalized(),
-                                                          allowedBalanceTypes: allowedBalanceTypes)
+                                                          allowedBalanceTypes: action.allowedBalanceTypes)
     super.init(serviceLocator: serviceLocator)
   }
 
