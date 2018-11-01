@@ -46,11 +46,13 @@ class DisplayCardPresenter: DisplayCardEventHandler {
         self?.view.hideLoadingSpinner()
         var monthShown: UInt = 1
         var yearShown: UInt = 1
-        let expiration = card.expiration.split(separator: "-")
-        if var year = UInt(expiration[0]), let month = UInt(expiration[1]) {
-          if year > 99 { year = year - 2000 }
-          monthShown = month
-          yearShown = year
+        if let expiration = card.expiration {
+          let expirationComponents = expiration.split(separator: "-")
+          if var year = UInt(expirationComponents[0]), let month = UInt(expirationComponents[1]) {
+            if year > 99 { year = year - 2000 }
+            monthShown = month
+            yearShown = year
+          }
         }
         self?.view.set(cardNetwork: card.cardNetwork,
                        cardHolder: card.cardHolder,

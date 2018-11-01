@@ -1138,8 +1138,7 @@ extension JSON {
     guard let
       id = self["account_id"].string,
       let state = self["state"].string,
-      let lastFourDigits = self["last_four"].string,
-      let expiration = self["expiration"].string
+      let lastFourDigits = self["last_four"].string
       else {
         ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse card \(self)"))
         return nil
@@ -1148,6 +1147,7 @@ extension JSON {
       return nil
     }
 
+    let expiration = self["expiration"].string
     let verified = self["verified"].bool
     let cardIssuer = self["card_issuer"].string
     let cardNetwork = self["card_network"].string

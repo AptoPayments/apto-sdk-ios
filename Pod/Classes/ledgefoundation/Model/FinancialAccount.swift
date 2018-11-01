@@ -190,7 +190,7 @@ public enum CardNetwork {
   var cvv: String?
   let panToken: String?
   let cvvToken: String?
-  let expiration: String
+  let expiration: String?
   let spendableToday: Amount?
   let nativeSpendableToday: Amount?
   var fundingSource: FundingSource?
@@ -208,7 +208,7 @@ public enum CardNetwork {
               pan: String? = nil,
               cvv: String? = nil,
               lastFourDigits: String,
-              expiration: String,
+              expiration: String?,
               spendableToday: Amount?,
               nativeSpendableToday: Amount?,
               kyc: KYCState?,

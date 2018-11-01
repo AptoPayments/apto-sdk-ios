@@ -184,11 +184,17 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
     viewModel.pan.next(card.pan)
     viewModel.cvv.next(card.cvv)
     viewModel.cardHolder.next(card.cardHolder)
-    let expiration = card.expiration.split(separator: "-")
-    if var year = UInt(expiration[0]), let month = UInt(expiration[1]) {
-      if year > 99 { year = year - 2000 }
-      viewModel.expirationMonth.next(month)
-      viewModel.expirationYear.next(year)
+    if let expiration = card.expiration {
+      let expirationComponents = expiration.split(separator: "-")
+      if var year = UInt(expirationComponents[0]), let month = UInt(expirationComponents[1]) {
+        if year > 99 { year = year - 2000 }
+        viewModel.expirationMonth.next(month)
+        viewModel.expirationYear.next(year)
+      }
+    }
+    else {
+      viewModel.expirationMonth.next(nil)
+      viewModel.expirationYear.next(nil)
     }
     viewModel.lastFour.next(card.lastFourDigits)
     viewModel.cardNetwork.next(card.cardNetwork)
