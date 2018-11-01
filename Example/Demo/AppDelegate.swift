@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // SDK initialization
     ShiftPlatform.defaultManager().initializeWithApiKey("<Api Key>",
-                                                        environment: .development)
+                                                        environment: .production)
 
     ShiftPlatform.defaultManager().initializePushNotifications()
     ShiftPlatform.defaultManager().handle(launchOptions:launchOptions)
