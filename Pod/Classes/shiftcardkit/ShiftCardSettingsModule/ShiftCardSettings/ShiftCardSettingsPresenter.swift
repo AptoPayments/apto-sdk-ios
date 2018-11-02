@@ -11,7 +11,6 @@ import Stripe
 import Bond
 
 struct ShiftCardSettingsPresenterConfig {
-  let showBalancesSection: Bool?
   let cardholderAgreement: Content?
   let privacyPolicy: Content?
   let termsAndCondition: Content?
@@ -52,7 +51,7 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
                                                      emailRecipients: emailRecipients,
                                                      uiConfig: uiConfig)
     self.showCardInfoAction = ShowCardInfoAction()
-    self.viewModel.showBalancesSection.next(config.showBalancesSection)
+    self.viewModel.showBalancesSection.next(self.shouldShowBalancesSection())
     let legalDocuments = LegalDocuments(cardHolderAgreement: config.cardholderAgreement,
                                         faq: config.faq,
                                         termsAndConditions: config.termsAndCondition,
@@ -112,7 +111,7 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
     viewModel.showGetPin.next(card.features?.ivr?.status == .enabled)
     viewModel.locked.next(card.state != .active)
     viewModel.showCardInfo.next(router.isCardInfoVisible())
-    guard config.showBalancesSection == true else {
+    guard self.shouldShowBalancesSection() else {
       return
     }
     view.showLoadingSpinner()
@@ -142,6 +141,13 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
         }
       }
     }
+  }
+
+  private func shouldShowBalancesSection() -> Bool {
+    if let allowedBalanceTypes = card.features?.allowedBalanceTypes {
+      return allowedBalanceTypes.count > 0
+    }
+    return false
   }
 
   func previousTapped() {

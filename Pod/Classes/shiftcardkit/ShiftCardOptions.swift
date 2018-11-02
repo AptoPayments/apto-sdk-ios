@@ -5,7 +5,6 @@
 //  Created by Ivan Oliver Martínez on 30/07/2018.
 //
 @objc public enum ShiftCardOptionsKeys: Int {
-  case showBalancesSection
   case showActivateCardButton
   case useBalanceVersionV2
 }
@@ -16,7 +15,6 @@
 
   override init() {
     self.features = [
-      .showBalancesSection: true,
       .showActivateCardButton: true,
       .useBalanceVersionV2: false
     ]

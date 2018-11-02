@@ -50,10 +50,8 @@ class ShiftCardSettingsModule: UIModule {
   fileprivate func buildShiftCardSettingsViewController(_ uiConfig: ShiftUIConfig,
                                                         shiftCardConfiguration: ShiftCardConfiguration,
                                                         card: Card) -> ShiftCardSettingsViewController {
-    let showBalancesSection = shiftCardConfiguration.isFeatureEnabled(.showBalancesSection)
     let cardProduct = shiftCardConfiguration.cardProduct
-    let presenterConfig = ShiftCardSettingsPresenterConfig(showBalancesSection: showBalancesSection,
-                                                           cardholderAgreement: cardProduct.cardholderAgreement,
+    let presenterConfig = ShiftCardSettingsPresenterConfig(cardholderAgreement: cardProduct.cardholderAgreement,
                                                            privacyPolicy: cardProduct.privacyPolicy,
                                                            termsAndCondition: cardProduct.termsAndConditions,
                                                            faq: cardProduct.faq)
