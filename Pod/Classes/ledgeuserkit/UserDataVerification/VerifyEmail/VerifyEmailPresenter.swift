@@ -25,9 +25,9 @@ class VerifyEmailPresenter: PINVerificationPresenter, VerifyEmailDataReceiver {
   let viewModel = PINVerificationViewModel()
 
   func viewLoaded() {
-    viewModel.title.next("verify_email.title".podLocalized())
-    viewModel.subtitle.next("verify_email.label.title".podLocalized())
-    viewModel.resendButtonTitle.next("verify_email.resend_button.title".podLocalized())
+    viewModel.title.next("auth.verify_email.title".podLocalized())
+    viewModel.subtitle.next("auth.verify_email.explanation".podLocalized())
+    viewModel.resendButtonTitle.next("auth.verify_email.resend_button.title".podLocalized())
     interactor.provideEmail()
   }
 

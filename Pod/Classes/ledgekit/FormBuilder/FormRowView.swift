@@ -80,13 +80,10 @@ open class FormRowView: UIControl, FormFocusPresenterProtocol, ValidationResultP
   var splitter: UIView? = nil
 
   init(showSplitter: Bool,
-       topPadding: CGFloat = 5,
-       bottomPadding: CGFloat = 5,
-       leftPadding: CGFloat = 16,
-       rightPadding: CGFloat = 16,
+       padding: UIEdgeInsets = UIEdgeInsets(top: 5, left: 16, bottom: 5, right: 16),
        height: CGFloat = 40,
        maxHeight: CGFloat = 20000) {
-    self.padding = UIEdgeInsetsMake(topPadding, leftPadding, bottomPadding, rightPadding)
+    self.padding = padding
     self.contentView = UIView()
     self.showSplitter = showSplitter
     super.init(frame: CGRect(x: 0, y: 0, width: 320, height: height))

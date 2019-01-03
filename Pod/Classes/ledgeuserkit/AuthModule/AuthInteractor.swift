@@ -130,7 +130,9 @@ class AuthInteractor: AuthInteractorProtocol {
                                               reason: "Primary Credential not Available"))
         return
       }
+      dataReceiver.showLoadingView()
       self.session.createUser(self.internalUserData) { [weak self] result in
+        self?.dataReceiver.hideLoadingView()
         switch result {
         case .failure(let error):
           self?.dataReceiver.show(error: error)
@@ -150,8 +152,10 @@ class AuthInteractor: AuthInteractorProtocol {
                                               reason: "Can't obtain login verifications"))
         return
     }
+    dataReceiver.showLoadingView()
     self.session.loginUserWith(verifications: [primaryCredentialDatapointVerification,
                                                secondaryCredentialDatapointVerification]) { [weak self] result in
+      self?.dataReceiver.hideLoadingView()
       switch result {
       case .failure(let error):
         self?.dataReceiver.show(error: error)

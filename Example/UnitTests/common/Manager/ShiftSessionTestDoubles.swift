@@ -66,6 +66,28 @@ class ShiftSessionSpy: ShiftSession {
     lastUserDataToUpdate = userData
     lastUpdateUserDataCallback = callback
   }
+
+  private(set) var getFinancialAccountCalled = false
+  private(set) var lastGetFinancialAccountId: String?
+  private(set) var lastGetFinancialAccountForceRefresh: Bool?
+  private(set) var lastGetFinancialAccountRetrieveBalances: Bool?
+  override func getFinancialAccount(accountId: String,
+                                    forceRefresh: Bool = true,
+                                    retrieveBalances: Bool = false,
+                                    callback: @escaping Result<FinancialAccount, NSError>.Callback) {
+    getFinancialAccountCalled = true
+    lastGetFinancialAccountId = accountId
+    lastGetFinancialAccountForceRefresh = forceRefresh
+    lastGetFinancialAccountRetrieveBalances = retrieveBalances
+  }
+
+  private(set) var getCardDetailsCalled = false
+  private(set) var lastCardIdToGetDetails: String?
+  override func getCardDetails(accountId: String,
+                               callback: @escaping Result<CardDetails, NSError>.Callback) {
+    getCardDetailsCalled = true
+    lastCardIdToGetDetails = accountId
+  }
 }
 
 class ShiftSessionFake: ShiftSessionSpy {
@@ -130,6 +152,31 @@ class ShiftSessionFake: ShiftSessionSpy {
     super.updateUserData(userData, callback: callback)
 
     if let result = nextUpdateUserDataResult {
+      callback(result)
+    }
+  }
+
+  var nextGetFinancialAccountResult: Result<FinancialAccount, NSError>?
+  override func getFinancialAccount(accountId: String,
+                                    forceRefresh: Bool = true,
+                                    retrieveBalances: Bool = false,
+                                    callback: @escaping Result<FinancialAccount, NSError>.Callback) {
+    super.getFinancialAccount(accountId: accountId,
+                              forceRefresh: forceRefresh,
+                              retrieveBalances: retrieveBalances,
+                              callback: callback)
+
+    if let result = nextGetFinancialAccountResult {
+      callback(result)
+    }
+  }
+
+  var nextGetCardDetailsResult: Result<CardDetails, NSError>?
+  override func getCardDetails(accountId: String,
+                               callback: @escaping Result<CardDetails, NSError>.Callback) {
+    super.getCardDetails(accountId: accountId, callback: callback)
+
+    if let result = nextGetCardDetailsResult {
       callback(result)
     }
   }

@@ -29,8 +29,7 @@ class FormRowEmailView: FormRowTextInputView {
 class EmailValidator: DataValidator<String> {
   init(failReasonMessage: String) {
     super.init(failReasonMessage: failReasonMessage) { value -> ValidationResult in
-      // swiftlint:disable:next line_length
-      let emailRegEx = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+      let emailRegEx = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}$"
       let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
       if emailTest.evaluate(with: value) {
         return .pass

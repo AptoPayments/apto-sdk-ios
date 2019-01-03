@@ -23,10 +23,9 @@ class FormBuilder {
     defaultLabel.snp.makeConstraints { make in
       make.height.equalTo(26)
     }
-    return FormRowLabelView(label: defaultLabel,
-                            showSplitter: false,
-                            height: height,
-                            position: position)
+    let retVal = FormRowLabelView(label: defaultLabel, showSplitter: false, height: height, position: position)
+    retVal.padding = uiConfig.formRowPadding
+    return retVal
   }
 
   static func mainItemRegularRowWith(text: String,
@@ -61,11 +60,21 @@ class FormBuilder {
                                   multiline: Bool = false,
                                   uiConfig: ShiftUIConfig,
                                   linkHandler: LinkHandler?) -> FormRowRichTextLabelView {
-    let attributedLabel = TTTAttributedLabel.init(frame: CGRect.zero)
-    attributedLabel.linkAttributes = [
-      NSAttributedStringKey.foregroundColor: uiConfig.tintColor,
-      kCTUnderlineStyleAttributeName as AnyHashable: false
-    ]
+    let attributedLabel = TTTAttributedLabel(frame: CGRect.zero)
+    switch uiConfig.uiTheme {
+    case .theme1:
+      attributedLabel.linkAttributes = [
+        NSAttributedStringKey.foregroundColor: uiConfig.tintColor,
+        kCTUnderlineStyleAttributeName as AnyHashable: false
+      ]
+    case .theme2:
+      attributedLabel.linkAttributes = [
+        NSAttributedStringKey.foregroundColor: uiConfig.textSecondaryColor,
+        NSAttributedStringKey.font: uiConfig.fontProvider.formTextLink,
+        NSAttributedStringKey.underlineStyle: NSUnderlineStyle.styleSingle.rawValue,
+        NSAttributedStringKey.underlineColor: uiConfig.textSecondaryColor
+      ]
+    }
     let label = FormRowRichTextLabelView(label: attributedLabel,
                                          showSplitter: false,
                                          position: position,
@@ -75,9 +84,15 @@ class FormBuilder {
     }
     attributedLabel.enabledTextCheckingTypes = NSTextCheckingAllTypes
     attributedLabel.setText(text)
-    attributedLabel.delegate = linkHandler
-    label.backgroundColor = uiConfig.noteBackgroundColor
-    label.label.backgroundColor = uiConfig.noteBackgroundColor
+    switch uiConfig.uiTheme {
+    case .theme1:
+      label.label.backgroundColor = uiConfig.noteBackgroundColor
+      label.backgroundColor = uiConfig.noteBackgroundColor
+    case .theme2:
+      label.backgroundColor = uiConfig.uiBackgroundPrimaryColor
+      label.label.backgroundColor = uiConfig.uiBackgroundPrimaryColor
+    }
+    label.padding = uiConfig.formRowPadding
     return label
   }
 
@@ -116,7 +131,7 @@ class FormBuilder {
                                       uiConfig: uiConfig)
     retVal.unfocusedColor = uiConfig.textPrimaryColor
     retVal.focusedColor = uiConfig.textPrimaryColor
-    retVal.backgroundColor = uiConfig.backgroundColor
+    retVal.backgroundColor = uiConfig.uiBackgroundPrimaryColor
     retVal.showSplitter = false
     return retVal
   }
@@ -140,7 +155,7 @@ class FormBuilder {
                                     uiConfig: uiConfig)
     retVal.unfocusedColor = uiConfig.textPrimaryColor
     retVal.focusedColor = uiConfig.textPrimaryColor
-    retVal.backgroundColor = uiConfig.backgroundColor
+    retVal.backgroundColor = uiConfig.uiBackgroundPrimaryColor
     retVal.showSplitter = false
     return retVal
   }
@@ -179,7 +194,7 @@ class FormBuilder {
     return retVal
   }
 
-  static func datePickerRowWith(label: String,
+  static func datePickerRowWith(label: String?,
                                 placeholder: String,
                                 format: FormDateFormat,
                                 value: Date?,
@@ -188,7 +203,10 @@ class FormBuilder {
                                 firstFormField: Bool = false,
                                 lastFormField: Bool = false,
                                 uiConfig: ShiftUIConfig) -> FormRowDatePickerView {
-    let uiLabel = ComponentCatalog.formLabelWith(text: label, uiConfig: uiConfig)
+    var uiLabel: UILabel? = nil
+    if let label = label {
+      uiLabel = ComponentCatalog.formLabelWith(text: label, uiConfig: uiConfig)
+    }
     let textField = ComponentCatalog.formFieldWith(placeholder: placeholder,
                                                    value: nil,
                                                    accessibilityLabel: accessibilityLabel,
@@ -204,7 +222,20 @@ class FormBuilder {
                                        uiConfig: uiConfig)
     retVal.unfocusedColor = uiConfig.textPrimaryColor
     retVal.focusedColor = uiConfig.textPrimaryColor
-    retVal.backgroundColor = uiConfig.backgroundColor
+    retVal.backgroundColor = uiConfig.uiBackgroundPrimaryColor
+    retVal.padding = uiConfig.formRowPadding
+    if uiConfig.uiTheme == .theme2 {
+      retVal.backgroundColor = .white
+      retVal.layer.cornerRadius = uiConfig.buttonCornerRadius
+      retVal.layer.shadowOffset = CGSize(width: 0, height: 2)
+      retVal.layer.shadowColor = UIColor(red:0, green:0, blue:0, alpha:0.12).cgColor
+      retVal.layer.shadowOpacity = 1
+      retVal.layer.shadowRadius = 4
+      retVal.textField.textAlignment = .center
+      retVal.textField.snp.updateConstraints { make in
+        make.height.equalTo(uiConfig.formRowHeight)
+      }
+    }
     return retVal
   }
 
@@ -230,7 +261,7 @@ class FormBuilder {
                                         uiConfig: uiConfig)
     retVal.unfocusedColor = uiConfig.defaultTextColor
     retVal.focusedColor = uiConfig.defaultTextColor
-    retVal.backgroundColor = uiConfig.backgroundColor
+    retVal.backgroundColor = uiConfig.uiBackgroundPrimaryColor
     return retVal
   }
 
@@ -252,23 +283,28 @@ class FormBuilder {
                                   uiConfig: uiConfig)
     retVal.unfocusedColor = uiConfig.textPrimaryColor
     retVal.focusedColor = uiConfig.textPrimaryColor
-    retVal.backgroundColor = uiConfig.backgroundColor
+    retVal.backgroundColor = uiConfig.uiBackgroundPrimaryColor
     return retVal
   }
 
-  static func phoneTextFieldRow(label: String,
+  static func phoneTextFieldRow(label: String?,
                                 allowedCountries: [Country],
                                 placeholder: String,
                                 value: InternationalPhoneNumber?,
                                 accessibilityLabel: String? = nil,
                                 uiConfig: ShiftUIConfig) -> FormRowPhoneFieldView {
-    let uiLabel = ComponentCatalog.formLabelWith(text: label, uiConfig: uiConfig)
+    var uiLabel: UILabel?
+    if let label = label {
+      uiLabel = ComponentCatalog.formLabelWith(text: label, uiConfig: uiConfig)
+    }
     let phoneField = ComponentCatalog.formPhoneFieldWith(placeholder: placeholder,
                                                          value: value,
                                                          allowedCountries: allowedCountries,
                                                          accessibilityLabel: accessibilityLabel,
                                                          uiConfig: uiConfig)
-    return FormRowPhoneFieldView(label: uiLabel, phoneTextField: phoneField)
+    let retVal = FormRowPhoneFieldView(label: uiLabel, phoneTextField: phoneField, height: uiConfig.formRowHeight)
+    retVal.padding = uiConfig.formRowPadding
+    return retVal
   }
 
   static func countryPickerRow(label: String,
@@ -385,7 +421,7 @@ class FormBuilder {
                           leftIcon: UIImage?,
                           height: CGFloat = 66,
                           uiConfig: ShiftUIConfig,
-                          clickHandler: @escaping (() -> Void)) -> FormRowTopBottomLabelView {
+                          clickHandler: @escaping (() -> Void)) -> FormRowView {
     let titleLabel = ComponentCatalog.mainItemLightLabelWith(text: title, uiConfig: uiConfig)
     let subtitleLabel = ComponentCatalog.itemDescriptionLabelWith(text: subtitle, uiConfig: uiConfig)
     let imageView: UIImageView?
@@ -396,11 +432,27 @@ class FormBuilder {
     else {
       imageView = nil
     }
-    return FormRowTopBottomLabelView(titleLabel: titleLabel,
-                                     subtitleLabel: subtitleLabel,
-                                     leftImageView: imageView,
-                                     height: height,
-                                     clickHandler: clickHandler)
+    switch uiConfig.uiTheme {
+    case .theme1:
+      return FormRowTopBottomLabelView(titleLabel: titleLabel,
+                                       subtitleLabel: subtitleLabel,
+                                       leftImageView: imageView,
+                                       height: height,
+                                       clickHandler: clickHandler)
+    case .theme2:
+      let rightView = UIImageView(image: UIImage.imageFromPodBundle("row_arrow")?.asTemplate())
+      rightView.tintColor = uiConfig.uiTertiaryColor
+      rightView.snp.makeConstraints { make in
+        make.width.equalTo(7)
+        make.height.equalTo(12)
+      }
+      return FormRowTopBottomLabelViewTheme2(titleLabel: titleLabel,
+                                             subtitleLabel: subtitle.isEmpty ? nil : subtitleLabel,
+                                             leftImageView: imageView,
+                                             rightView: rightView,
+                                             height: height,
+                                             clickHandler: clickHandler)
+    }
   }
 
   static func checkboxRowWith(text: String,
@@ -425,20 +477,31 @@ class FormBuilder {
                                   onImage: nil,
                                   flashColor: uiConfig.iconPrimaryColor)
     retVal.tickImageView?.tintColor = uiConfig.iconPrimaryColor
-    retVal.backgroundColor = uiConfig.backgroundColor
+    retVal.backgroundColor = uiConfig.uiBackgroundPrimaryColor
     return retVal
   }
 
   static func balanceRadioRowWith(balances: [FormRowBalanceRadioViewValue],
                                   values: [Int],
-                                  uiConfig: ShiftUIConfig) -> FormRowBalanceRadioView {
-    let retVal = FormRowBalanceRadioView(items: balances,
-                                         values: values,
-                                         flashColor: uiConfig.uiPrimaryColor,
-                                         uiConfig: uiConfig)
-    retVal.tickImageView.tintColor = uiConfig.iconPrimaryColor
-    retVal.backgroundColor = uiConfig.backgroundColor
-    return retVal
+                                  uiConfig: ShiftUIConfig) -> FormRowBalanceRadioViewProtocol {
+    switch uiConfig.uiTheme {
+    case .theme1:
+      let retVal = FormRowBalanceRadioView(items: balances,
+                                           values: values,
+                                           flashColor: uiConfig.uiPrimaryColor,
+                                           uiConfig: uiConfig)
+      retVal.tickImageView.tintColor = uiConfig.iconPrimaryColor
+      retVal.backgroundColor = uiConfig.uiBackgroundPrimaryColor
+      return retVal
+    case .theme2:
+      let retVal = FormRowBalanceRadioViewTheme2(items: balances,
+                                                 values: values,
+                                                 flashColor: uiConfig.uiPrimaryColor,
+                                                 uiConfig: uiConfig)
+      retVal.tickImageView.tintColor = uiConfig.uiPrimaryColor
+      retVal.backgroundColor = uiConfig.uiBackgroundSecondaryColor
+      return retVal
+    }
   }
 
   static func valuePickerRow(title: String,
@@ -462,7 +525,7 @@ class FormBuilder {
                                         uiConfig: uiConfig)
     retVal.unfocusedColor = uiConfig.textPrimaryColor
     retVal.focusedColor = uiConfig.textPrimaryColor
-    retVal.backgroundColor = uiConfig.backgroundColor
+    retVal.backgroundColor = uiConfig.uiBackgroundPrimaryColor
     retVal.showSplitter = false
     return retVal
   }
@@ -516,6 +579,7 @@ class FormBuilder {
   static func titleSubtitleSwitchRowWith(title: String,
                                          subtitle: String,
                                          height: CGFloat = 66,
+                                         leftMargin: CGFloat = 0,
                                          uiConfig: ShiftUIConfig,
                                          onChange: ((UISwitch) -> Void)? = nil) -> FormRowSwitchTitleSubtitleView {
     let titleLabel = ComponentCatalog.mainItemLightLabelWith(text: title, uiConfig: uiConfig)
@@ -528,7 +592,8 @@ class FormBuilder {
     return FormRowSwitchTitleSubtitleView(titleLabel: titleLabel,
                                           subtitleLabel: subtitleLabel,
                                           switcher: switcher,
-                                          height: height)
+                                          height: height,
+                                          leftMargin: leftMargin)
   }
 
   static func labelLabelRowWith(leftText: String,
@@ -562,6 +627,8 @@ class FormBuilder {
                                 rightText: String?,
                                 textAlignment: NSTextAlignment = .right,
                                 multiLine: Bool = false,
+                                showSplitter: Bool = false,
+                                height: CGFloat = 40,
                                 uiConfig: ShiftUIConfig) -> FormRowLeftImageRightLabelView {
     let rightLabel = ComponentCatalog.mainItemLightLabelWith(text: rightText ?? "",
                                                              textAlignment: textAlignment,
@@ -570,7 +637,9 @@ class FormBuilder {
       rightLabel.numberOfLines = 0
     }
     return FormRowLeftImageRightLabelView(imageView: imageView,
-                                          rightLabel: rightLabel)
+                                          rightLabel: rightLabel,
+                                          showSplitter: showSplitter,
+                                          height: height)
   }
 
   static func screenSubtitleRowWith(text: String, uiConfig: ShiftUIConfig, height: CGFloat = 44) -> FormRowLabelView {
@@ -602,13 +671,22 @@ class FormBuilder {
     return FormRowLabelView(label: label, showSplitter: false, height: 40, position: .bottom)
   }
 
-  static func formAnswerRowWith(text: String, uiConfig: ShiftUIConfig) -> FormRowMultilineLabelView {
+  static func formAnswerRowWith(text: String,
+                                height: CGFloat = 40,
+                                uiConfig: ShiftUIConfig) -> FormRowMultilineLabelView {
     let label = UILabel()
     label.text = text
-    label.textColor = uiConfig.textSecondaryColor
+    switch uiConfig.uiTheme {
+    case .theme1:
+      label.textColor = uiConfig.textSecondaryColor
+    case .theme2:
+      label.textColor = uiConfig.textPrimaryColor
+    }
     label.font = uiConfig.fontProvider.formFieldFont
     label.numberOfLines = 0
     label.textAlignment = .left
-    return FormRowMultilineLabelView(label: label)
+    let retVal = FormRowMultilineLabelView(label: label, height: height)
+    retVal.padding = uiConfig.formRowPadding
+    return retVal
   }
 }

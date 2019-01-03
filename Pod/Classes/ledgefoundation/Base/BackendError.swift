@@ -19,6 +19,7 @@ open class BackendError: NSError {
     case birthDateVerificationFailed
     case emailVerificationFailed
     case phoneVerificationFailed
+    case unknownSessionError = 3030
     case sessionExpired = 3031
     case invalidSession = 3032
     case emptySession = 3033
@@ -47,9 +48,10 @@ open class BackendError: NSError {
       case .undefinedError: return "error.transport.undefined"
       case .serviceUnavailable: return "error.transport.serviceUnavailable"
       case .incorrectParameters: return "error.transport.incorrectParameters"
-      case .birthDateVerificationFailed: return "error.transport.verifyBirthDate"
+      case .birthDateVerificationFailed: return "auth.verify_birthdate.error_wrong_code.message"
       case .emailVerificationFailed: return "error.transport.emailNotVerified"
-      case .phoneVerificationFailed: return "error.transport.verifyPhone.incorrectPin"
+      case .phoneVerificationFailed: return "auth.verify_phone.error_wrong_code.message"
+      case .unknownSessionError: return "error.transport.invalidSession"
       case .invalidSession: return "error.transport.invalidSession"
       case .sessionExpired: return "error.transport.sessionExpired"
       case .primaryFundingSourceNotFound: return "error.transport.primaryFundingSourceNotFound"
@@ -93,6 +95,10 @@ open class BackendError: NSError {
 
   public required init(coder aDecoder: NSCoder) {
     fatalError("Not implemented")
+  }
+
+  open func unknownSessionError() -> Bool {
+    return self.code == ErrorCodes.unknownSessionError.rawValue
   }
 
   open func invalidSessionError() -> Bool {

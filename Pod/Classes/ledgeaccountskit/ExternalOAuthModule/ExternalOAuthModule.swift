@@ -39,7 +39,7 @@ class ExternalOAuthModule: UIModule, ExternalOAuthModuleProtocol {
 }
 
 extension ExternalOAuthModule: ExternalOAuthRouterProtocol {
-  func backInExternalOAuth(_ animated: Bool?) {
+  func backInExternalOAuth(_ animated: Bool) {
     self.back()
   }
 

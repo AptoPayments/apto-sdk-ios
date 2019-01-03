@@ -181,6 +181,7 @@ class ShiftCardSession {
                         page: Int?,
                         rows: Int?,
                         lastTransactionId: String?,
+                        forceRefresh: Bool = true,
                         callback: @escaping Result<[Transaction], NSError>.Callback) {
     guard let accessToken = ShiftPlatform.defaultManager().currentToken() else {
       callback(.failure(BackendError(code: .invalidSession, reason: nil)))
@@ -191,12 +192,14 @@ class ShiftCardSession {
                                                     page: page,
                                                     rows: rows,
                                                     lastTransactionId: lastTransactionId,
+                                                    forceRefresh: forceRefresh,
                                                     callback: callback)
   }
 
   func cardFundingSources(card: Card,
                           page: Int?,
                           rows: Int?,
+                          forceRefresh: Bool = true,
                           callback: @escaping Result<[FundingSource], NSError>.Callback) {
     guard let accessToken = ShiftPlatform.defaultManager().currentToken() else {
       callback(.failure(BackendError(code: .invalidSession, reason: nil)))
@@ -206,16 +209,20 @@ class ShiftCardSession {
                                                                   accountId: card.accountId,
                                                                   page: page,
                                                                   rows: rows,
+                                                                  forceRefresh: forceRefresh,
                                                                   callback: callback)
   }
 
-  func getCardFundingSource(card: Card, callback: @escaping Result<FundingSource?, NSError>.Callback) {
+  func getCardFundingSource(card: Card,
+                            forceRefresh: Bool = true,
+                            callback: @escaping Result<FundingSource?, NSError>.Callback) {
     guard let accessToken = ShiftPlatform.defaultManager().currentToken() else {
       callback(.failure(BackendError(code: .invalidSession, reason: nil)))
       return
     }
     ShiftPlatform.defaultManager().getCardFundingSource(accessToken: accessToken,
                                                         accountId: card.accountId,
+                                                        forceRefresh: forceRefresh,
                                                         callback: callback)
   }
 

@@ -1,6 +1,6 @@
 //
 //  ManageShiftCardInteractor.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 24/10/2017.
 //
@@ -10,74 +10,58 @@ import Foundation
 
 class ManageShiftCardInteractor: ManageShiftCardInteractorProtocol {
   private let shiftSession: ShiftSession
-  private let accountId: String
-  private var card: Card?
-  private let uiConfig: ShiftUIConfig
+  private var card: Card
 
-  init(shiftSession: ShiftSession, accountId: String, uiConfig: ShiftUIConfig) {
+  init(shiftSession: ShiftSession, card: Card) {
     self.shiftSession = shiftSession
-    self.accountId = accountId
-    self.uiConfig = uiConfig
+    self.card = card
   }
 
-  func provideCard(_ callback: @escaping Result<Card, NSError>.Callback) {
-    self.shiftSession.currentUser { userResult in
-      switch userResult {
+  func provideFundingSource(forceRefresh: Bool, callback: @escaping Result<Card, NSError>.Callback) {
+    shiftSession.shiftCardSession.getCardFundingSource(card: card, forceRefresh: forceRefresh) { result in
+      switch result {
       case .failure(let error):
         callback(.failure(error))
-      case .success(let user):
-        self.shiftSession.getFinancialAccount(accountId: self.accountId) { result in
-          callback(result.flatMap { financialAccount -> Result<Card, NSError> in
-            guard let card = financialAccount as? Card else {
-              return .failure(ServiceError(code: .jsonError))
-            }
-            card.cardHolder = user.userData.nameDataPoint.fullName()
-            self.card = card
-            return .success(card)
-          })
-        }
+      case .success(let fundingSource):
+        self.card.fundingSource = fundingSource
+        callback(.success(self.card))
       }
     }
   }
 
+  func reloadCard(_ callback: @escaping Result<Card, NSError>.Callback) {
+    shiftSession.getFinancialAccount(accountId: self.card.accountId, retrieveBalances: true) { result in
+      callback(result.flatMap { financialAccount -> Result<Card, NSError> in
+        guard let card = financialAccount as? Card else {
+          return .failure(ServiceError(code: .jsonError))
+        }
+        self.card = card
+        return .success(card)
+      })
+    }
+  }
+
+  func loadCardInfo(_ callback: @escaping Result<CardDetails, NSError>.Callback) {
+    shiftSession.getCardDetails(accountId: card.accountId, callback: callback)
+  }
+
   func activateCard(_ callback: @escaping Result<Card, NSError>.Callback) {
-    if let card = self.card {
-      shiftSession.shiftCardSession.activate(card: card, callback: callback)
-    }
-    else {
-      // This shouldn't happen!
-      callback(.failure(ServiceError(code: .notInitialized)))
-    }
+    shiftSession.shiftCardSession.activate(card: card, callback: callback)
   }
 
   func provideTransactions(rows: Int,
                            lastTransactionId: String?,
+                           forceRefresh: Bool,
                            callback: @escaping Result<[Transaction], NSError>.Callback) {
-    if let card = self.card {
-      shiftSession.shiftCardSession.cardTransactions(card: card,
-                                                     page: nil,
-                                                     rows: rows,
-                                                     lastTransactionId: lastTransactionId,
-                                                     callback: callback)
-    }
-    else {
-      self.provideCard { result in
-        switch result {
-        case .failure(let error):
-          callback(.failure(error))
-        case .success(let card):
-          self.shiftSession.shiftCardSession.cardTransactions(card: card,
-                                                              page: nil,
-                                                              rows: rows,
-                                                              lastTransactionId: lastTransactionId,
-                                                              callback: callback)
-        }
-      }
-    }
+    shiftSession.shiftCardSession.cardTransactions(card: card,
+                                                   page: nil,
+                                                   rows: rows,
+                                                   lastTransactionId: lastTransactionId,
+                                                   forceRefresh: forceRefresh,
+                                                   callback: callback)
   }
 
   func activatePhysicalCard(code: String, callback: @escaping Result<Void, NSError>.Callback) {
-    guard let card = card else { return }
     shiftSession.shiftCardSession.activatePhysical(card: card, code: code) { result in
       switch result {
       case .failure(let error):
@@ -100,5 +84,9 @@ class ManageShiftCardInteractor: ManageShiftCardInteractorProtocol {
         }
       }
     }
+  }
+
+  func loadFundingSources(callback: @escaping Result<[FundingSource], NSError>.Callback) {
+    shiftSession.shiftCardSession.cardFundingSources(card: card, page: nil, rows: nil, callback: callback)
   }
 }

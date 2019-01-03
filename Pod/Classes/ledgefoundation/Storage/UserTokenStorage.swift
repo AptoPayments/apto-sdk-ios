@@ -25,6 +25,28 @@ class UserTokenStorage: UserTokenStorageProtocol {
     static let fileName = "token.txt"
   }
 
+  public init() {
+    // Register to the session expired event
+    NotificationCenter.default.addObserver(self,
+                                           selector: #selector(self.didReceiveSessionExpiredEvent(_:)),
+                                           name: .UserTokenSessionExpiredNotification,
+                                           object: nil)
+    // Register to the session invalid event
+    NotificationCenter.default.addObserver(self,
+                                           selector: #selector(self.didReceiveSessionInvalidEvent(_:)),
+                                           name: .UserTokenSessionInvalidNotification,
+                                           object: nil)
+    // Register to the session closed event
+    NotificationCenter.default.addObserver(self,
+                                           selector: #selector(self.didReceiveSessionClosedEvent(_:)),
+                                           name: .UserTokenSessionClosedNotification,
+                                           object: nil)
+  }
+
+  deinit {
+    NotificationCenter.default.removeObserver(self)
+  }
+
   func setCurrent(token: String, withPrimaryCredential: DataPointType, andSecondaryCredential: DataPointType) {
     currentTokenCache = token
     currentTokenPrimaryCredentialCache = withPrimaryCredential
@@ -109,6 +131,19 @@ class UserTokenStorage: UserTokenStorageProtocol {
     ]
     NSKeyedArchiver.archiveRootObject(data, toFile: localFilePath.path)
   }
+
+  @objc private func didReceiveSessionExpiredEvent(_ notification: Notification) {
+    self.clearCurrentToken()
+  }
+
+  @objc private func didReceiveSessionInvalidEvent(_ notification: Notification) {
+    self.clearCurrentToken()
+  }
+
+  @objc private func didReceiveSessionClosedEvent(_ notification: Notification) {
+    self.clearCurrentToken()
+  }
+
 }
 
 extension Notification.Name {

@@ -13,6 +13,11 @@ class DataConfirmationModuleSpy: UIModuleSpy, DataConfirmationModuleProtocol {
   func confirmData() {
     confirmDataCalled = true
   }
+
+  private(set) var showURLCalled = false
+  func show(url: URL) {
+    showURLCalled = true
+  }
 }
 
 class DataConfirmationPresenterSpy: DataConfirmationPresenterProtocol {
@@ -35,6 +40,11 @@ class DataConfirmationPresenterSpy: DataConfirmationPresenterProtocol {
   private(set) var closeTappedCalled = false
   func closeTapped() {
     closeTappedCalled = true
+  }
+
+  private(set) var showURLCalled = false
+  func show(url: URL) {
+    showURLCalled = true
   }
 }
 

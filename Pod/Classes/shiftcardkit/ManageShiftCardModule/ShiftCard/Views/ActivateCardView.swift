@@ -47,7 +47,6 @@ private extension ActivateCardView {
     addSubview(button)
     button.snp.makeConstraints { make in
       make.left.right.bottom.equalToSuperview().inset(margins)
-      make.height.equalTo(50)
     }
     return button
   }

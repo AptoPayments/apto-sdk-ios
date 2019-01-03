@@ -35,26 +35,21 @@ class WorkflowModuleFactoryImpl: WorkflowModuleFactory {
       guard let config = workflowAction.configuration as? CollectUserDataActionConfiguration else {
         fatalError("Wrong configuration for collectUserData action.")
       }
-      let finalStepTitle = "birthday-collector.get-card.title".podLocalized()
-      let finalStepSubtitle = "birthday-collector.get-card.subtitle".podLocalized()
-      let callToAction = CallToAction(title: "birthday-collector.button.get-card".podLocalized(),
-                                      callToActionType: .continueFlow)
       return serviceLocator.moduleLocator.userDataCollectorModule(userRequiredData: config.requiredDataPointsList,
                                                                   mode: .continueFlow,
                                                                   backButtonMode: .back,
-                                                                  finalStepTitle: finalStepTitle,
-                                                                  finalStepSubtitle: finalStepSubtitle,
-                                                                  finalStepCallToAction: callToAction,
                                                                   disclaimers: [])
     case .issueCard:
-      guard let application = workflowObject as? CardApplication else {
+      guard var application = workflowObject as? CardApplication else {
         return nil
       }
+      application.nextAction = workflowAction
       return serviceLocator.moduleLocator.issueCardModule(application: application)
     case .selectBalanceStore:
-      guard let application = workflowObject as? CardApplication else {
+      guard var application = workflowObject as? CardApplication else {
         return nil
       }
+      application.nextAction = workflowAction
       return serviceLocator.moduleLocator.selectBalanceStoreModule(application: application)
     case .showDisclaimer:
       guard let _ = workflowAction.configuration as? Content else {

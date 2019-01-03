@@ -41,7 +41,7 @@ class VerifyDocumentViewController: ShiftViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
 
-    view.backgroundColor = uiConfiguration.backgroundColor
+    view.backgroundColor = uiConfiguration.uiBackgroundPrimaryColor
     setUpIcon()
     setUpExplanationLabel()
     setUpContinueButton()

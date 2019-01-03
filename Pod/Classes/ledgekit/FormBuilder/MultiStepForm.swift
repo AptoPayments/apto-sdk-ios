@@ -31,7 +31,7 @@ open class MultiStepForm: UIScrollView, ReturnButtonListenerProtocol, RowFocusLi
     self.unregisterFromKeyboardNotifications()
   }
 
-  override open func resignFirstResponder() -> Bool {
+  @discardableResult override open func resignFirstResponder() -> Bool {
     guard let focusedRow = self.focusedRow else {
       return true
     }
@@ -66,9 +66,10 @@ open class MultiStepForm: UIScrollView, ReturnButtonListenerProtocol, RowFocusLi
     }
   }
 
-  open override func becomeFirstResponder() -> Bool {
+  @discardableResult open override func becomeFirstResponder() -> Bool {
     for row in self.rows {
       if row.becomeFirstResponder() {
+        row.focus()
         return true
       }
     }

@@ -58,7 +58,7 @@ extension ChangePinView: UIPinEntryTextFieldDelegate {
       let confirmedPin = frPinView.getText()
       guard confirmedPin == self.pin else {
         let error = UserError(message: "change.pin.error.pins-does-not-match".podLocalized())
-        UIApplication.topViewController()?.show(error: error)
+        UIApplication.topViewController()?.show(error: error, uiConfig: uiConfig)
         pinEntryView.resetText()
         _ = pinEntryView.resignFirstResponder()
         pinEntryView.shake()

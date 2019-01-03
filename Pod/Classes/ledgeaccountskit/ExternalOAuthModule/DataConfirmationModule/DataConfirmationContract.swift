@@ -10,6 +10,7 @@ import Bond
 protocol DataConfirmationRouter: class {
   func confirmData()
   func close()
+  func show(url: URL)
 }
 
 protocol DataConfirmationModuleProtocol: UIModuleProtocol, DataConfirmationRouter {
@@ -29,6 +30,7 @@ protocol DataConfirmationPresenterProtocol: class {
   func viewLoaded()
   func confirmDataTapped()
   func closeTapped()
+  func show(url: URL)
 }
 
 protocol DataConfirmationInteractorProtocol {

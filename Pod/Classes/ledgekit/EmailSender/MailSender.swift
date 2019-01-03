@@ -9,17 +9,17 @@ import UIKit
 import MessageUI
 
 class MailSender: NSObject {
-  
+
   var composer: UIViewController?
-  
+
   func canSendEmail() -> Bool {
     return MFMailComposeViewController.canSendMail()
   }
-  
+
   func sendMessageWith(subject: String, message: String, recipients: [String?]) {
-    
+
     guard canSendEmail() else {
-      UIApplication.topViewController()?.showMessage("Email client not configured")
+      UIApplication.topViewController()?.showMessage("Email client not configured", uiConfig: nil)
       return
     }
     let filteredRecipients = recipients.compactMap { recipient -> String? in
@@ -37,12 +37,12 @@ class MailSender: NSObject {
 }
 
 extension MailSender: MFMailComposeViewControllerDelegate {
-  
+
   func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
     if let composer = self.composer {
       composer.dismiss(animated: true, completion: nil)
       self.composer = nil
     }
   }
-  
+
 }

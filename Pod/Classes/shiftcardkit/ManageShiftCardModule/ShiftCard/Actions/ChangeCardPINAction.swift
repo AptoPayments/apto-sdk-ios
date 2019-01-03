@@ -42,7 +42,7 @@ extension ChangeCardPINAction: ChangePinViewDelegate {
       topViewController?.hideLoadingSpinner()
       switch result {
       case .failure(let error):
-        topViewController?.show(error: error)
+        topViewController?.show(error: error, uiConfig: self.uiConfig)
       case .success:
         self.showPinChangedMessage()
       }
@@ -51,8 +51,8 @@ extension ChangeCardPINAction: ChangePinViewDelegate {
 
   func showPinChangedMessage() {
     let delayTime = DispatchTime.now() + Double(Int64(0.3 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-    DispatchQueue.main.asyncAfter(deadline: delayTime) {
-      UIApplication.topViewController()?.showMessage("change.pin.success".podLocalized())
+    DispatchQueue.main.asyncAfter(deadline: delayTime) { [unowned self] in
+      UIApplication.topViewController()?.showMessage("change.pin.success".podLocalized(), uiConfig: self.uiConfig)
     }
   }
 }

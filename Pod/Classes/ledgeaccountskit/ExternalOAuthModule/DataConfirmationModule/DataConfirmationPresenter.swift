@@ -24,4 +24,8 @@ class DataConfirmationPresenter: DataConfirmationPresenterProtocol {
   func closeTapped() {
     router.close()
   }
+
+  func show(url: URL) {
+    router.show(url: url)
+  }
 }

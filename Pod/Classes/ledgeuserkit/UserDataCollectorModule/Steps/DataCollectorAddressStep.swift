@@ -10,8 +10,8 @@ import Bond
 import ReactiveKit
 
 class AddressStep: DataCollectorBaseStep, DataCollectorStepProtocol {
-  var title = "address-collector.title".podLocalized()
-  private var disposeBag = DisposeBag()
+  var title = "collect_user_data.address.title".podLocalized()
+  private let disposeBag = DisposeBag()
   private let requiredData: RequiredDataPointList
   private let userData: DataPointList
   private let address: Address
@@ -50,8 +50,8 @@ class AddressStep: DataCollectorBaseStep, DataCollectorStepProtocol {
   }
 
   private func createAddressField() -> FormRowAddressView {
-    let placeholder = "address-collector.address.placeholder".podLocalized()
-    let addressField = FormBuilder.addressInputRowWith(label: "address-collector.address".podLocalized(),
+    let placeholder = "collect_user_data.address.address.placeholder".podLocalized()
+    let addressField = FormBuilder.addressInputRowWith(label: "collect_user_data.address.address.title".podLocalized(),
                                                        placeholder: placeholder,
                                                        value: "",
                                                        accessibilityLabel: "Address Input Field",
@@ -74,8 +74,10 @@ class AddressStep: DataCollectorBaseStep, DataCollectorStepProtocol {
   }
 
   private func createAptUnitField() -> FormRowTextInputView {
-    let aptUnitField = FormBuilder.standardTextInputRowWith(label: "address-collector.apt-unit".podLocalized(),
-                                                            placeholder: "Apt 456",
+    let label = "collect_user_data.address.apt_unit.title".podLocalized()
+    let placeholder = "collect_user_data.address.apt_unit.placeholder".podLocalized()
+    let aptUnitField = FormBuilder.standardTextInputRowWith(label: label,
+                                                            placeholder: placeholder,
                                                             value: "",
                                                             uiConfig: uiConfig)
     address.apUnit.bidirectionalBind(to: aptUnitField.bndValue)

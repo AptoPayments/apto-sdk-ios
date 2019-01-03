@@ -1,6 +1,6 @@
 //
 //  ShiftCardTransactionDetailsInteractor.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 25/03/2018.
 //

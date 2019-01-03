@@ -31,4 +31,8 @@ class DataConfirmationModule: UIModule, DataConfirmationModuleProtocol {
   func confirmData() {
     onFinish?(self)
   }
+
+  func show(url: URL) {
+    showExternal(url: url)
+  }
 }

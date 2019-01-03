@@ -8,14 +8,9 @@
 
 import UIKit
 
-protocol VerifyBirthDateModuleProtocol: UIModuleProtocol {
-  var onVerificationPassed: ((_ verifyBirthDateModule: VerifyBirthDateModule,
-                              _ verification: Verification) -> Void)? { get set }
-}
-
 class VerifyBirthDateModule: UIModule, VerifyBirthDateModuleProtocol {
   private let verificationType: VerificationParams<BirthDate, Verification>
-  private var presenter: VerifyBirthDatePresenter?
+  private var presenter: VerifyBirthDatePresenterProtocol?
 
   open var onVerificationPassed: ((_ verifyBirthDateModule: VerifyBirthDateModule,
                                    _ verification: Verification) -> Void)?
@@ -26,14 +21,12 @@ class VerifyBirthDateModule: UIModule, VerifyBirthDateModuleProtocol {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    let presenter = VerifyBirthDatePresenter()
-    let interactor = VerifyBirthDateInteractor(session: shiftSession,
-                                               verificationType: verificationType,
-                                               dataReceiver: presenter)
+    let presenter = serviceLocator.presenterLocator.verifyBirthDatePresenter()
+    let interactor = serviceLocator.interactorLocator.verifyBirthDateInteractor(verificationType: verificationType,
+                                                                                dataReceiver: presenter)
     presenter.interactor = interactor
     presenter.router = self
-    let viewController = VerifyBirthDateViewController(uiConfig: uiConfig)
-    viewController.eventHandler = presenter
+    let viewController = serviceLocator.viewLocator.verifyBirthDateView(presenter: presenter)
     presenter.view = viewController
     addChild(viewController: viewController, completion: completion)
     self.presenter = presenter

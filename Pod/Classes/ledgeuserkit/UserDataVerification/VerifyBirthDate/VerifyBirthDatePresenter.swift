@@ -8,26 +8,11 @@
 
 import Bond
 
-protocol VerifyBirthDateRouterProtocol: class {
-  func closeTappedInVerifyBirthDate()
-  func birthDateVerificationPassed(verification: Verification)
-}
-
-protocol VerifyBirthDateInteractorProtocol {
-  func provideBirthDate()
-  func submit(birthDate: Date)
-}
-
-protocol VerifyBirthDateViewControllerProtocol: ViewControllerProtocol {
-  func showWrongBirthDateErrorMessage()
-  func showLoadingSpinner()
-}
-
-class VerifyBirthDatePresenter: VerifyBirthDateEventHandler, VerifyBirthDateDataReceiver {
+class VerifyBirthDatePresenter: VerifyBirthDatePresenterProtocol {
   // swiftlint:disable implicitly_unwrapped_optional
   var interactor: VerifyBirthDateInteractorProtocol!
   weak var router: VerifyBirthDateRouterProtocol!
-  var view: VerifyBirthDateViewControllerProtocol!
+  var view: VerifyBirthDateViewProtocol!
   // swiftlint:enable implicitly_unwrapped_optional
 
   func viewLoaded() {

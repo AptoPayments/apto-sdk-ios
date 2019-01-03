@@ -20,6 +20,11 @@ extension JSON {
     let status = WorkflowActionStatus.from(typeValue: self["status"].int)
     let configuration = self["configuration"].linkObject as? WorkflowActionConfiguration
 
+    // Read the copies
+    if let copies = self["labels"].dictionaryObject as? [String: String] {
+      StringLocalizationStorage.shared.append(copies)
+    }
+
     return WorkflowAction(actionId: actionId,
                           name: name,
                           order: order,
@@ -107,5 +112,14 @@ extension JSON {
       return nil
     }
     return SelectBalanceStoreActionConfiguration(allowedBalanceTypes: allowedBalanceTypes)
+  }
+
+  var issueCardActionConfiguration: IssueCardActionConfiguration? {
+    guard let legalNotice = self["legal_notice"].content else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse issue card action config \(self)"))
+      return nil
+    }
+    return IssueCardActionConfiguration(legalNotice: legalNotice)
   }
 }

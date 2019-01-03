@@ -10,7 +10,7 @@ import Bond
 import ReactiveKit
 
 class InfoStep: DataCollectorBaseStep, DataCollectorStepProtocol {
-  var title = "info-collector.title".podLocalized()
+  var title = "collect_user_data.personal_info.title".podLocalized()
 
   private let disposeBag = DisposeBag()
   private let requiredData: RequiredDataPointList
@@ -89,8 +89,10 @@ private extension InfoStep {
 
   func createFirstNameField() -> FormRowTextInputView {
     let validator = NonEmptyTextValidator(failReasonMessage: "info-collector.first-name.warning.empty".podLocalized())
-    let firstNameField = FormBuilder.standardTextInputRowWith(label: "info-collector.first-name".podLocalized(),
-                                                              placeholder: "John",
+    let label = "collect_user_data.personal_info.first_name.title".podLocalized()
+    let placeholder = "collect_user_data.personal_info.first_name.placeholder".podLocalized()
+    let firstNameField = FormBuilder.standardTextInputRowWith(label: label,
+                                                              placeholder: placeholder,
                                                               value: "",
                                                               accessibilityLabel: "First Name Input Field",
                                                               validator: validator,
@@ -102,8 +104,10 @@ private extension InfoStep {
 
   func createLastNameField() -> FormRowTextInputView {
     let validator = NonEmptyTextValidator(failReasonMessage: "info-collector.last-name.warning.empty".podLocalized())
-    let lastNameField = FormBuilder.standardTextInputRowWith(label: "info-collector.last-name".podLocalized(),
-                                                             placeholder: "Smith",
+    let label = "collect_user_data.personal_info.last_name.title".podLocalized()
+    let placeholder = "collect_user_data.personal_info.last_name.placeholder".podLocalized()
+    let lastNameField = FormBuilder.standardTextInputRowWith(label: label,
+                                                             placeholder: placeholder,
                                                              value: "",
                                                              accessibilityLabel: "Last Name Input Field",
                                                              validator: validator,
@@ -128,8 +132,11 @@ private extension InfoStep {
 
   func createEmailField() -> FormRowTextInputView {
     let validator = EmailValidator(failReasonMessage: "info-collector.email.warning.empty".podLocalized())
-    let emailField = FormBuilder.standardTextInputRowWith(label: "info-collector.email".podLocalized(),
-                                                          placeholder: "john@smith.com", value: "",
+    let label = "collect_user_data.personal_info.email.title".podLocalized()
+    let placeholder = "collect_user_data.personal_info.email.placeholder".podLocalized()
+    let emailField = FormBuilder.standardTextInputRowWith(label: label,
+                                                          placeholder: placeholder,
+                                                          value: "",
                                                           accessibilityLabel: "Email Input Field",
                                                           validator: validator,
                                                           uiConfig: uiConfig)
@@ -193,9 +200,10 @@ private extension InfoStep {
     else {
       allowedCountries = [Country.defaultCountry]
     }
-    let phoneField = FormBuilder.phoneTextFieldRow(label: "phone-collector.phone".podLocalized(),
+    let placeholder = "collect_user_data.personal_info.phone.placeholder".podLocalized()
+    let phoneField = FormBuilder.phoneTextFieldRow(label: "collect_user_data.personal_info.phone.title".podLocalized(),
                                                    allowedCountries: allowedCountries,
-                                                   placeholder: "phone-collector.phone.placeholder".podLocalized(),
+                                                   placeholder: placeholder,
                                                    value: number,
                                                    accessibilityLabel: "Phone Number Input Field",
                                                    uiConfig: uiConfig)

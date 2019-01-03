@@ -45,17 +45,11 @@ final class ModuleLocator: ModuleLocatorProtocol {
   func userDataCollectorModule(userRequiredData: RequiredDataPointList,
                                mode: UserDataCollectorFinalStepMode,
                                backButtonMode: UIViewControllerLeftButtonMode,
-                               finalStepTitle: String,
-                               finalStepSubtitle: String,
-                               finalStepCallToAction: CallToAction,
                                disclaimers: [Content]) -> UserDataCollectorModule {
     return UserDataCollectorModule(serviceLocator: serviceLocator,
                                    userRequiredData: userRequiredData,
                                    mode: mode,
                                    backButtonMode: backButtonMode,
-                                   finalStepTitle: finalStepTitle,
-                                   finalStepSubtitle: finalStepSubtitle,
-                                   finalStepCallToAction: finalStepCallToAction,
                                    disclaimers: disclaimers)
   }
 
@@ -94,6 +88,28 @@ final class ModuleLocator: ModuleLocatorProtocol {
 
   func dataConfirmationModule(userData: DataPointList) -> DataConfirmationModuleProtocol {
     return DataConfirmationModule(serviceLocator: serviceLocator, userData: userData)
+  }
+
+  func webBrowserModule(url: URL, headers: [String: String]? = nil) -> UIModuleProtocol {
+    return WebBrowserModule(serviceLocator: serviceLocator, url: url, headers: headers)
+  }
+
+  // MARK: - Manage card
+  func manageCardModule(card: Card, mode: ShiftCardModuleMode) -> UIModuleProtocol {
+    return ManageShiftCardModule(serviceLocator: serviceLocator, card: card, mode: mode)
+  }
+
+  func fundingSourceSelector(card: Card) -> FundingSourceSelectorModuleProtocol {
+    return FundingSourceSelectorModule(serviceLocator: serviceLocator, card: card)
+  }
+
+  func cardSettingsModule(card: Card) -> ShiftCardSettingsModuleProtocol {
+    return ShiftCardSettingsModule(serviceLocator: serviceLocator, card: card, phoneCaller: PhoneCaller())
+  }
+
+  // MARK: - Physical card activation
+  func physicalCardActivationModule(card: Card) -> PhysicalCardActivationModuleProtocol {
+    return PhysicalCardActivationModule(serviceLocator: serviceLocator, card: card, phoneCaller: PhoneCaller())
   }
 
   func physicalCardActivationSucceedModule(card: Card) -> PhysicalCardActivationSucceedModuleProtocol {

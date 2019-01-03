@@ -109,6 +109,7 @@ public enum HandleFileResult {
   fileprivate lazy var linkFileStorage = serviceLocator.storageLocator.linkFileStorage()
   fileprivate let pushNotificationsManager = PushNotificationsManager()
   private lazy var serviceLocator = ServiceLocator.shared
+  private lazy var localCacheFileManager = LocalCacheFileManager(userTokenStorage: userTokenStorage)
 
   deinit {
     self.removeNotificationObservers()
@@ -149,15 +150,17 @@ public enum HandleFileResult {
                                                                 baseUrlProvider: transportEnvironment,
                                                                 certPinningConfig: certPinningConfig,
                                                                 allowSelfSignedCertificate: allowSelfSignedCertificate)
-    self.userStorage = serviceLocator.storageLocator.userStorage(transport: transport)
-    self.offersStorage = serviceLocator.storageLocator.offersStorage(transport: transport)
-    self.configurationStorage = serviceLocator.storageLocator.configurationStorage(transport: transport)
-    self.loanApplicationsStorage = serviceLocator.storageLocator.loanApplicationStorage(transport: transport)
-    self.cardApplicationsStorage = serviceLocator.storageLocator.cardApplicationsStorage(transport: transport)
-    self.storeStorage = serviceLocator.storageLocator.storeStorage(transport: transport)
-    self.financialAccountsStorage = serviceLocator.storageLocator.financialAccountsStorage(transport: transport)
-    self.pushTokenStorage = serviceLocator.storageLocator.pushTokenStorage(transport: transport)
-    self.oauthStorage = serviceLocator.storageLocator.oauthStorage(transport: transport)
+    let storageLocator = serviceLocator.storageLocator
+    self.userStorage = storageLocator.userStorage(transport: transport)
+    self.offersStorage = storageLocator.offersStorage(transport: transport)
+    self.configurationStorage = storageLocator.configurationStorage(transport: transport)
+    self.loanApplicationsStorage = storageLocator.loanApplicationStorage(transport: transport)
+    self.cardApplicationsStorage = storageLocator.cardApplicationsStorage(transport: transport)
+    self.storeStorage = storageLocator.storeStorage(transport: transport)
+    self.financialAccountsStorage = storageLocator.financialAccountsStorage(transport: transport,
+                                                                            localCacheManager: localCacheFileManager)
+    self.pushTokenStorage = storageLocator.pushTokenStorage(transport: transport)
+    self.oauthStorage = storageLocator.oauthStorage(transport: transport)
 
     // Notify the delegate that the manager has already been initialized
     self.initialized = true
@@ -212,8 +215,9 @@ public enum HandleFileResult {
   }
 
   @objc public func clearUserToken() {
-    self.unregisterPushTokenIfNeeded()
-    self.userTokenStorage.clearCurrentToken()
+    try? localCacheFileManager.invalidate()
+    unregisterPushTokenIfNeeded()
+    userTokenStorage.clearCurrentToken()
     delegate?.newUserTokenReceived(nil)
   }
 
@@ -493,7 +497,8 @@ public enum HandleFileResult {
 
   func getFinancialAccount(_ accessToken: AccessToken,
                            accountId: String,
-                           retrieveBalance: Bool = true,
+                           forceRefresh: Bool = true,
+                           retrieveBalances: Bool = false,
                            callback: @escaping Result<FinancialAccount, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
@@ -502,8 +507,22 @@ public enum HandleFileResult {
     financialAccountsStorage.getFinancialAccount(apiKey,
                                                  userToken: accessToken.token,
                                                  accountId: accountId,
-                                                 retrieveBalance: retrieveBalance,
+                                                 forceRefresh: forceRefresh,
+                                                 retrieveBalances: retrieveBalances,
                                                  callback: callback)
+  }
+
+  func getCardDetails(_ accessToken: AccessToken,
+                      accountId: String,
+                      callback: @escaping Result<CardDetails, NSError>.Callback) {
+    guard let apiKey = self.apiKey else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+    financialAccountsStorage.getCardDetails(apiKey,
+                                            userToken: accessToken.token,
+                                            accountId: accountId,
+                                            callback: callback)
   }
 
   func addCard(_ accessToken: AccessToken,

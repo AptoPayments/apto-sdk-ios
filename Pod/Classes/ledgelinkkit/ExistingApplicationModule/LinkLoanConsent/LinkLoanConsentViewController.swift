@@ -57,7 +57,7 @@ class LinkLoanConsentViewController: ShiftViewController, LinkLoanConsentViewCon
 
   fileprivate func setupUI() {
 
-    self.view.backgroundColor = uiConfiguration.backgroundColor
+    self.view.backgroundColor = uiConfiguration.uiBackgroundPrimaryColor
     self.navigationController?.navigationBar.backgroundColor = uiConfiguration.uiPrimaryColor
     self.title = "loan-consent.title".podLocalized()
     self.edgesForExtendedLayout = UIRectEdge()

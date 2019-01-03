@@ -130,7 +130,7 @@ open class LinkModule: UIModule {
       self.getApplications() { result in
         switch result {
         case .failure(let error):
-          UIApplication.topViewController()?.show(error:error)
+          self.show(error:error)
         case .success(let applications):
           if applications.count > 0 {
             let applicationListModule = self.buildListApplicationModuleFor(applications: applications)
@@ -163,7 +163,7 @@ open class LinkModule: UIModule {
       wself.getApplications() { result in
         switch result {
         case .failure(let error):
-          UIApplication.topViewController()?.show(error:error)
+          wself.show(error:error)
         case .success(let applications):
           if applications.count > 0 {
             wself.showApplicationListModuleFor(applications: applications, leftButtonMode: .close)
@@ -209,7 +209,7 @@ open class LinkModule: UIModule {
         }
         switch result {
         case .failure(let error):
-          UIApplication.topViewController()!.show(error:error)
+          wself.show(error:error)
         case .success(let applications):
           module.hideLoadingSpinner()
           if applications.count > 0 {
@@ -238,7 +238,7 @@ open class LinkModule: UIModule {
     shiftSession.linkSession.nextApplications(0, rows: 100, callback: callback)
   }
 
-  fileprivate func showApplicationListModuleFor(applications: [LoanApplicationSummary], leftButtonMode: UIViewControllerLeftButtonMode? = .back) {
+  fileprivate func showApplicationListModuleFor(applications: [LoanApplicationSummary], leftButtonMode: UIViewControllerLeftButtonMode = .back) {
     self.applicationListModule = self.buildListApplicationModuleFor(applications: applications)
     self.push(module: applicationListModule!, leftButtonMode: leftButtonMode) { result in }
   }
@@ -250,7 +250,7 @@ open class LinkModule: UIModule {
       self.shiftSession.linkSession.applicationStatus(applicationSummary.id) { result in
         switch result {
         case .failure(let error):
-          UIApplication.topViewController()?.show(error:error)
+          self.show(error:error)
         case .success(let application):
           self.workflowModule = self.workflowModuleFor(application: application)
           self.push(module: self.workflowModule!) { result in }
@@ -274,7 +274,7 @@ open class LinkModule: UIModule {
 
   // MARK: - New Loan Application Flow Handling
 
-  fileprivate func showNewApplicationFlow(initialDataPointList:DataPointList?, leftButtonMode: UIViewControllerLeftButtonMode? = .back, completion:(() -> Void)? = nil) {
+  fileprivate func showNewApplicationFlow(initialDataPointList:DataPointList?, leftButtonMode: UIViewControllerLeftButtonMode = .back, completion:(() -> Void)? = nil) {
     newApplicationModule = buildNewApplicationModule(initialDataPointList:initialDataPointList)
     self.push(module: newApplicationModule!, leftButtonMode: leftButtonMode, completion: { result in
       completion?()
@@ -369,7 +369,7 @@ extension LinkModule: LinkApplierRouterProtocol {
 
   }
 
-  func close(_ animated: Bool?) {
+  func close(_ animated: Bool) {
     self.close()
   }
 
@@ -401,7 +401,7 @@ extension LinkModule: LinkApplierRouterProtocol {
 // MARK: - LinkLoanConsentRouterProtocol protocol
 
 extension LinkModule: LinkLoanConsentRouterProtocol {
-  func backFromLoanconsent(_ animated:Bool?) {
+  func backFromLoanconsent(_ animated: Bool) {
     self.popViewController() {}
   }
 }
@@ -420,7 +420,7 @@ extension LinkModule: WorkflowObjectStatusRequester {
     shiftSession.linkSession.applicationStatus(application.id) { result in
       switch result {
       case .failure(let error):
-        UIApplication.topViewController()?.show(error: error)
+        self.show(error: error)
       case .success(let application):
         completion(.success(application))
       }
@@ -445,6 +445,7 @@ extension ShiftSession {
           self.initialModule = nil
         }
         let uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
+        linkModule.serviceLocator.uiConfig = uiConfig
         from.present(module: linkModule, animated: true, uiConfig: uiConfig) { result in
           switch result {
           case .failure(let error):

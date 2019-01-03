@@ -31,7 +31,7 @@ class LinkApplicationListViewController : CarouselViewcontroller, LinkApplicatio
   override func viewDidLoad() {
     super.viewDidLoad()
     self.title = "link-application-list.title".podLocalized()
-    self.view.backgroundColor = self.uiConfiguration.backgroundColor
+    self.view.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     self.navigationController?.navigationBar.backgroundColor = self.uiConfiguration.uiPrimaryColor
     self.edgesForExtendedLayout = .top
     self.extendedLayoutIncludesOpaqueBars = true
@@ -104,9 +104,5 @@ class LinkApplicationListViewController : CarouselViewcontroller, LinkApplicatio
 
   override func closeTapped() {
     eventHandler.closeTapped()
-  }
-
-  func showLoadingSpinner() {
-    showLoadingSpinner(tintColor: uiConfiguration.uiPrimaryColor)
   }
 }

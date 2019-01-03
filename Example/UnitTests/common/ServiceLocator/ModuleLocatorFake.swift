@@ -66,20 +66,23 @@ class ModuleLocatorFake: ModuleLocatorProtocol {
   func userDataCollectorModule(userRequiredData: RequiredDataPointList,
                                mode: UserDataCollectorFinalStepMode,
                                backButtonMode: UIViewControllerLeftButtonMode,
-                               finalStepTitle: String,
-                               finalStepSubtitle: String,
-                               finalStepCallToAction: CallToAction,
                                disclaimers: [Content]) -> UserDataCollectorModule {
     Swift.fatalError("userDataCollectorModule(...) has not been implemented")
   }
 
+  lazy var selectBalanceStoreModuleSpy: SelectBalanceStoreModuleProtocol = {
+      return SelectBalanceStoreModuleSpy(serviceLocator: serviceLocator)
+  }()
   func selectBalanceStoreModule(application: CardApplication) -> SelectBalanceStoreModuleProtocol {
-    Swift.fatalError("selectBalanceStoreModule(application:) has not been implemented")
+    return selectBalanceStoreModuleSpy
   }
 
+  lazy var showDisclaimerActionModuleSpy: ShowDisclaimerActionModuleProtocol = {
+    return ShowDisclaimerActionModuleSpy(serviceLocator: serviceLocator)
+  }()
   func showDisclaimerActionModule(workflowObject: WorkflowObject,
                                   workflowAction: WorkflowAction) -> ShowDisclaimerActionModuleProtocol {
-    Swift.fatalError("showDisclaimerActionModule(disclaimer:) has not been implemented")
+    return showDisclaimerActionModuleSpy
   }
 
   func verifyDocumentModule(workflowObject: WorkflowObject?) -> VerifyDocumentModule {
@@ -116,6 +119,31 @@ class ModuleLocatorFake: ModuleLocatorProtocol {
   }()
   func dataConfirmationModule(userData: DataPointList) -> DataConfirmationModuleProtocol {
     return dataConfirmationModuleSpy
+  }
+
+  lazy var webBrowserModuleSpy: WebBrowserModuleSpy = {
+    return WebBrowserModuleSpy(serviceLocator: serviceLocator)
+  }()
+  func webBrowserModule(url: URL, headers: [String: String]? = nil) -> UIModuleProtocol {
+    return webBrowserModuleSpy
+  }
+
+  // MARK: - Manage card
+  func manageCardModule(card: Card, mode: ShiftCardModuleMode) -> UIModuleProtocol {
+    Swift.fatalError("manageCardModule(card:mode:) has not been implemented")
+  }
+
+  func fundingSourceSelector(card: Card) -> FundingSourceSelectorModuleProtocol {
+    Swift.fatalError("fundingSourceSelector(card:) has not been implemented")
+  }
+
+  func cardSettingsModule(card: Card) -> ShiftCardSettingsModuleProtocol {
+    Swift.fatalError("cardSettingsModule(card:) has not been implemented")
+  }
+
+  // MARK: - Physical card activation
+  func physicalCardActivationModule(card: Card) -> PhysicalCardActivationModuleProtocol {
+    Swift.fatalError("physicalCardActivationModule(card:) has not been implemented")
   }
 
   lazy var physicalCardActivationSucceedModuleFake: PhysicalCardActivationSucceedModuleFake = {

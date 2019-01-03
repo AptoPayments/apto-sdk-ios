@@ -10,7 +10,7 @@ import Bond
 import TTTAttributedLabel
 
 protocol LinkLoanConsentRouterProtocol: URLHandlerProtocol {
-  func backFromLoanconsent(_ animated:Bool?)
+  func backFromLoanconsent(_ animated: Bool)
 }
 
 protocol LinkLoanConsentViewControllerProtocol: ViewControllerProtocol {
@@ -58,7 +58,7 @@ class LinkLoanConsentPresenter: LinkLoanConsentEventHandlerProtocol {
       }
       switch result {
       case .failure(let error):
-        wself.view.show(error: error)
+        wself.view.show(error: error, uiConfig: nil)
       case .success(let application):
         wself.setup(viewModel: wself.viewModel, application: application)
         wself.setupDefaultRows(viewModel: wself.viewModel, uiConfig:wself.uiConfiguration , application: application)
@@ -72,10 +72,10 @@ class LinkLoanConsentPresenter: LinkLoanConsentEventHandlerProtocol {
 
   func agreeTermsTapped() {
     if viewModel.signed.value == false {
-      view.showMessage("loan-consent.must-accent-conditions".podLocalized())
+      view.showMessage("loan-consent.must-accent-conditions".podLocalized(), uiConfig: nil)
     }
     else {
-      view.showMessage("Coming Soon!")
+      view.showMessage("Coming Soon!", uiConfig: nil)
     }
   }
 

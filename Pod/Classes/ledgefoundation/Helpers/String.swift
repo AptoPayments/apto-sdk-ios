@@ -1,12 +1,13 @@
 //
 //  String.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 30/03/16.
 //
 //
 
 import Foundation
+import CommonCrypto
 
 public extension String {
 
@@ -27,7 +28,10 @@ public extension String {
     return  String(self.prefix(ind)) + string + String(self.suffix(self.count-ind))
   }
 
-  func formattedHtmlString(font:UIFont, color:UIColor, linkColor:UIColor) -> NSMutableAttributedString? {
+  func formattedHtmlString(font: UIFont,
+                           color: UIColor,
+                           linkColor: UIColor,
+                           lineSpacing: CGFloat = 0) -> NSMutableAttributedString? {
     let htmlData = self.data(using: String.Encoding.utf8)
     guard let data = htmlData else {
       return nil
@@ -35,10 +39,11 @@ public extension String {
     let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html as Any]
     do {
       let attrString = try NSAttributedString(data: data, options: options, documentAttributes: nil).mutableCopy() as? NSMutableAttributedString
-      attrString?.replacePlainTextStyle(font: font, color: color)
-      attrString?.replaceLinkStyle(font: font, color: linkColor)
+      attrString?.replacePlainTextStyle(font: font, color: color, lineSpacing: lineSpacing)
+      attrString?.replaceLinkStyle(font: font, color: linkColor, lineSpacing: lineSpacing)
       return attrString
-    } catch {
+    }
+    catch {
       return nil
     }
   }
@@ -121,6 +126,20 @@ public extension String {
   }
 
   public static let dropDownCharacter = "▾"
+}
+
+extension String {
+  var md5: String? {
+    guard let data = self.data(using: .utf8) else { return nil }
+
+    let hash = data.withUnsafeBytes { (bytes: UnsafePointer<Data>) -> [UInt8] in
+      var hash: [UInt8] = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
+      CC_MD5(bytes, CC_LONG(data.count), &hash)
+      return hash
+    }
+
+    return hash.map { String(format: "%02x", $0) }.joined()
+  }
 }
 
 public final class LocalLanguage {

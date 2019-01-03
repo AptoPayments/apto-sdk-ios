@@ -212,7 +212,7 @@ open class FormRowTextInputView: FormRowLeftLabelView, UITextFieldDelegate {
     else {
       textField.snp.makeConstraints { make in
         make.left.right.top.bottom.equalToSuperview()
-        make.height.equalTo(height / 2)
+        make.height.equalTo(height)
       }
     }
   }

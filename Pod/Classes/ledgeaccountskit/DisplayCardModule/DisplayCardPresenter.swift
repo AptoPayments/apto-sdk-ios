@@ -41,12 +41,12 @@ class DisplayCardPresenter: DisplayCardEventHandler {
     interactor.provideCard { [weak self] result in
       switch result {
       case .failure(let error):
-        self?.view.show(error:error)
+        self?.view.show(error:error, uiConfig: nil)
       case .success(let card):
         self?.view.hideLoadingSpinner()
         var monthShown: UInt = 1
         var yearShown: UInt = 1
-        if let expiration = card.expiration {
+        if let expiration = card.details?.expiration {
           let expirationComponents = expiration.split(separator: "-")
           if var year = UInt(expirationComponents[0]), let month = UInt(expirationComponents[1]) {
             if year > 99 { year = year - 2000 }
@@ -56,8 +56,8 @@ class DisplayCardPresenter: DisplayCardEventHandler {
         }
         self?.view.set(cardNetwork: card.cardNetwork,
                        cardHolder: card.cardHolder,
-                       pan: card.pan,
-                       cvv: card.cvv,
+                       pan: card.details?.pan,
+                       cvv: card.details?.cvv,
                        expirationMonth: monthShown,
                        expirationYear: yearShown,
                        cardBalance: card.fundingSource?.balance,

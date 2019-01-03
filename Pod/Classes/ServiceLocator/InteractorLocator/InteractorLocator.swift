@@ -27,6 +27,20 @@ final class InteractorLocator: InteractorLocatorProtocol {
                           dataReceiver: dataReceiver)
   }
 
+  func verifyPhoneInteractor(verificationType: VerificationParams<PhoneNumber, Verification>,
+                             dataReceiver: VerifyPhoneDataReceiver) -> VerifyPhoneInteractorProtocol {
+    return VerifyPhoneInteractor(session: serviceLocator.session,
+                                 verificationType: verificationType,
+                                 dataReceiver: dataReceiver)
+  }
+
+  func verifyBirthDateInteractor(verificationType: VerificationParams<BirthDate, Verification>,
+                                 dataReceiver: VerifyBirthDateDataReceiver) -> VerifyBirthDateInteractorProtocol {
+    return VerifyBirthDateInteractor(session: serviceLocator.session,
+                                     verificationType: verificationType,
+                                     dataReceiver: dataReceiver)
+  }
+
   func externalOAuthInteractor(session: ShiftSession) -> ExternalOAuthInteractorProtocol {
     return ExternalOAuthInteractor(shiftSession: session)
   }
@@ -51,7 +65,41 @@ final class InteractorLocator: InteractorLocatorProtocol {
     return DataConfirmationInteractor(userData: userData)
   }
 
+  func webBrowserInteractor(url: URL,
+                            headers: [String: String]?,
+                            dataReceiver: WebBrowserDataReceiverProtocol) -> WebBrowserInteractorProtocol {
+    return WebBrowserInteractor(url: url, headers: headers, dataReceiver: dataReceiver)
+  }
+
+  // MARK: - Manage card
+  func manageCardInteractor(card: Card) -> ManageShiftCardInteractorProtocol {
+    return ManageShiftCardInteractor(shiftSession: serviceLocator.session, card: card)
+  }
+
+  func fundingSourceSelector(card: Card) -> FundingSourceSelectorInteractorProtocol {
+    return FundingSourceSelectorInteractor(card: card, cardSession: serviceLocator.session.shiftCardSession)
+  }
+
+  func cardSettingsInteractor() -> ShiftCardSettingsInteractorProtocol {
+    return ShiftCardSettingsInteractor()
+  }
+
+  func kycInteractor(card: Card) -> KYCInteractorProtocol {
+    return KYCInteractor(shiftSession: serviceLocator.session, card: card)
+  }
+
+  // MARK: - Physical card activation
+  func physicalCardActivationInteractor(card: Card, session: ShiftSession) -> PhysicalCardActivationInteractorProtocol {
+    return PhysicalCardActivationInteractor(card: card, session: session)
+  }
+
   func physicalCardActivationSucceedInteractor(card: Card) -> PhysicalCardActivationSucceedInteractorProtocol {
     return PhysicalCardActivationSucceedInteractor(card: card)
   }
+
+  // MARK: - Transaction Details
+  func transactionDetailsInteractor(transaction: Transaction) -> ShiftCardTransactionDetailsInteractorProtocol {
+    return ShiftCardTransactionDetailsInteractor(shiftSession: serviceLocator.session, transaction: transaction)
+  }
+
 }

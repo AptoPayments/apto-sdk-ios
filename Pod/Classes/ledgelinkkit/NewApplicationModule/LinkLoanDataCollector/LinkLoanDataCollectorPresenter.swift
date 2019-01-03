@@ -29,37 +29,37 @@ protocol LinkLoanDataCollectorViewProtocol: ViewControllerProtocol {
 }
 
 class LinkLoanDataCollectorPresenter: LinkLoanDataCollectorDataReceiver, LinkLoanDataCollectorEventHandler {
-  
+
   var uiConfig: ShiftUIConfig
   var stepHandler: LinkLoanDataColletorAmountStep!
-  
+
   var view: LinkLoanDataCollectorViewProtocol!
   var interactor: LinkLoanDataCollectorInteractorProtocol!
   var router: LinkLoanDataCollectorRouterProtocol!
   var linkHandler: LinkHandler?
   var config: LinkLoanDataCollectorConfig!
-  
+
   init(uiConfig: ShiftUIConfig) {
     self.uiConfig = uiConfig
   }
-  
+
   func viewLoaded() {
     self.interactor.provideLoanDataCollectorData()
   }
-  
+
   // MARK: - Private methods
-  
+
   func set(loanData: AppLoanData,
                     config: LinkLoanDataCollectorConfig) {
     self.setupInterface(loanData, config:config)
   }
-  
+
   // MARK: - Navigation buttons handling
-  
+
   func closeTapped() {
     router.close()
   }
-  
+
   func nextTapped() {
     switch self.config.mode {
     case .firstStep:
@@ -68,7 +68,7 @@ class LinkLoanDataCollectorPresenter: LinkLoanDataCollectorDataReceiver, LinkLoa
       router.profileTappedInLoanDataCollector()
     }
   }
-  
+
   func previousTapped() {
     router.back()
   }
@@ -77,7 +77,7 @@ class LinkLoanDataCollectorPresenter: LinkLoanDataCollectorDataReceiver, LinkLoa
 
   func setupInterface(_ loanData: AppLoanData,
                       config: LinkLoanDataCollectorConfig) {
-    
+
     linkHandler = LinkHandler(urlHandler: router)
     self.config = config
 
@@ -96,15 +96,15 @@ class LinkLoanDataCollectorPresenter: LinkLoanDataCollectorDataReceiver, LinkLoa
           return
         }
         guard config.pendingApplications.count > 0 else {
-          wself.view.showMessage("data-collector.no-pending-applications".podLocalized())
+          wself.view.showMessage("data-collector.no-pending-applications".podLocalized(), uiConfig: nil)
           return
         }
         wself.router.applicationListTappedInLoanDataCollector()
       }, linkHandler: linkHandler)
-    
+
     view.set(title: stepHandler.title)
     view.show(fields: stepHandler.rows)
-    
+
     switch config.mode {
     case .firstStep:
       configureNavForMissingDatapoints()
@@ -115,7 +115,7 @@ class LinkLoanDataCollectorPresenter: LinkLoanDataCollectorDataReceiver, LinkLoa
     }
 
   }
-  
+
   func configureNavForMissingDatapoints() {
     self.view.showNavNextButton(tintColor: uiConfig.iconTertiaryColor)
     let _ = self.stepHandler.valid.observeNext { [weak self] validStep in
@@ -129,6 +129,6 @@ class LinkLoanDataCollectorPresenter: LinkLoanDataCollectorDataReceiver, LinkLoa
     self.view.showNavProfileButton(uiConfig.iconTertiaryColor)
     self.view.activateNavNextButton(uiConfig.iconTertiaryColor)
   }
-  
-  
+
+
 }

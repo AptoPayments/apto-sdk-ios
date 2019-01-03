@@ -22,9 +22,6 @@ protocol ModuleLocatorProtocol {
   func userDataCollectorModule(userRequiredData: RequiredDataPointList,
                                mode: UserDataCollectorFinalStepMode,
                                backButtonMode: UIViewControllerLeftButtonMode,
-                               finalStepTitle: String,
-                               finalStepSubtitle: String,
-                               finalStepCallToAction: CallToAction,
                                disclaimers: [Content]) -> UserDataCollectorModule
   func selectBalanceStoreModule(application: CardApplication) -> SelectBalanceStoreModuleProtocol
   func showDisclaimerActionModule(workflowObject: WorkflowObject,
@@ -38,5 +35,14 @@ protocol ModuleLocatorProtocol {
   func accountSettingsModule() -> UIModuleProtocol
   func contentPresenterModule(content: Content, title: String) -> ContentPresenterModuleProtocol
   func dataConfirmationModule(userData: DataPointList) -> DataConfirmationModuleProtocol
+  func webBrowserModule(url: URL, headers: [String: String]?) -> UIModuleProtocol
+
+  // MARK: - Manage card
+  func manageCardModule(card: Card, mode: ShiftCardModuleMode) -> UIModuleProtocol
+  func fundingSourceSelector(card: Card) -> FundingSourceSelectorModuleProtocol
+  func cardSettingsModule(card: Card) -> ShiftCardSettingsModuleProtocol
+
+  // MARK: - Physical card activation
+  func physicalCardActivationModule(card: Card) -> PhysicalCardActivationModuleProtocol
   func physicalCardActivationSucceedModule(card: Card) -> PhysicalCardActivationSucceedModuleProtocol
 }

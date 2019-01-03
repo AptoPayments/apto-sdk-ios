@@ -40,8 +40,8 @@ class UIModuleSpy: UIModule {
   private(set) var lastViewControllerPushedLeftButtonMode: UIViewControllerLeftButtonMode?
   private(set) var lastViewControllerPushedCompletion: (() -> Void)?
   override func push(viewController: UIViewController,
-                     animated: Bool?,
-                     leftButtonMode: UIViewControllerLeftButtonMode?,
+                     animated: Bool,
+                     leftButtonMode: UIViewControllerLeftButtonMode,
                      completion: @escaping (() -> Void)) {
     pushViewControllerCalled = true
     lastViewControllerPushed = viewController
@@ -53,7 +53,7 @@ class UIModuleSpy: UIModule {
   private(set) var popViewControllerCalled = false
   private(set) var lastViewControllerPoppedAnimated: Bool?
   private(set) var lastViewControllerPoppedCompletion: (() -> Void)?
-  override func popViewController(animated: Bool?,
+  override func popViewController(animated: Bool,
                                   completion: @escaping (() -> Void)) {
     popViewControllerCalled = true
     lastViewControllerPoppedAnimated = animated
@@ -65,7 +65,7 @@ class UIModuleSpy: UIModule {
   private(set) var lastViewControllerPresentedAnimated: Bool?
   private(set) var lastViewControllerPresentedCompletion: (() -> Void)?
   override func present(viewController: UIViewController,
-                        animated: Bool?,
+                        animated: Bool,
                         completion: @escaping (() -> Void)) {
     presentViewControllerCalled = true
     lastViewControllerPresented = viewController
@@ -79,8 +79,8 @@ class UIModuleSpy: UIModule {
   private(set) var lastModulePushedLeftButtonMode: UIViewControllerLeftButtonMode?
   private(set) var lastModulePushedCompletion: Result<UIViewController, NSError>.Callback?
   override func push(module: UIModuleProtocol,
-                     animated: Bool?,
-                     leftButtonMode: UIViewControllerLeftButtonMode?,
+                     animated: Bool,
+                     leftButtonMode: UIViewControllerLeftButtonMode,
                      completion: @escaping Result<UIViewController, NSError>.Callback) {
     pushModuleCalled = true
     lastModulePushed = module
@@ -92,7 +92,7 @@ class UIModuleSpy: UIModule {
   private(set) var popModuleCalled = false
   private(set) var lastModulePoppedAnimated: Bool?
   private(set) var lastModulePoppedCompletion: (() -> Void)?
-  override func popModule(animated: Bool?,
+  override func popModule(animated: Bool,
                           completion: @escaping (() -> Void)) {
     popModuleCalled = true
     lastModulePoppedAnimated = animated
@@ -112,22 +112,25 @@ class UIModuleSpy: UIModule {
   private(set) var lastModulePresented: UIModuleProtocol?
   private(set) var lastModulePresentedAnimated: Bool?
   private(set) var lastModulePresentedLeftButtonMode: UIViewControllerLeftButtonMode?
+  private(set) var lastModulePresentedEmbedInNavigationController: Bool?
   private(set) var lastModulePresentedCompletion: Result<UIViewController, NSError>.Callback?
   override func present(module: UIModuleProtocol,
-                        animated: Bool?,
-                        leftButtonMode: UIViewControllerLeftButtonMode?,
+                        animated: Bool,
+                        leftButtonMode: UIViewControllerLeftButtonMode,
+                        embedInNavigationController: Bool = true,
                         completion: @escaping Result<UIViewController, NSError>.Callback) {
     presentModuleCalled = true
     lastModulePresented = module
     lastModulePresentedAnimated = animated
     lastModulePresentedLeftButtonMode = leftButtonMode
+    lastModulePresentedEmbedInNavigationController = embedInNavigationController
     lastModulePresentedCompletion = completion
   }
 
   private(set) var dismissViewControllerCalled = false
   private(set) var lastViewControllerDismissedAnimated: Bool?
   private(set) var lastViewControllerDismissedCompletion: (() -> Void)?
-  override func dismissViewController(animated: Bool?, completion: @escaping (() -> Void)) {
+  override func dismissViewController(animated: Bool, completion: @escaping (() -> Void)) {
     dismissViewControllerCalled = true
     lastViewControllerDismissedAnimated = animated
     lastViewControllerDismissedCompletion = completion
@@ -136,7 +139,7 @@ class UIModuleSpy: UIModule {
   private(set) var dismissModuleCalled = false
   private(set) var lastModuleDismissedAnimated: Bool?
   private(set) var lastModuleDismissedCompletion: (() -> Void)?
-  override func dismissModule(animated: Bool?, completion: @escaping (() -> Void)) {
+  override func dismissModule(animated: Bool, completion: @escaping (() -> Void)) {
     dismissModuleCalled = true
     lastModuleDismissedAnimated = animated
     lastModuleDismissedCompletion = completion
@@ -147,7 +150,7 @@ class UIModuleSpy: UIModule {
   private(set) var lastChildModuleLeftButtonMode: UIViewControllerLeftButtonMode?
   private(set) var lastChildModuleAddedCompletion: Result<UIViewController, NSError>.Callback?
   override func addChild(module: UIModuleProtocol,
-                         leftButtonMode: UIViewControllerLeftButtonMode?,
+                         leftButtonMode: UIViewControllerLeftButtonMode,
                          completion: @escaping Result<UIViewController, NSError>.Callback) {
     addChildModuleCalled = true
     lastChildModuleAdded = module
@@ -160,7 +163,7 @@ class UIModuleSpy: UIModule {
   private(set) var lastChildViewControllerLeftButtonMode: UIViewControllerLeftButtonMode?
   private(set) var lastChildViewControllerCompletion: Result<UIViewController, NSError>.Callback?
   override func addChild(viewController: UIViewController,
-                         leftButtonMode: UIViewControllerLeftButtonMode?,
+                         leftButtonMode: UIViewControllerLeftButtonMode,
                          completion: @escaping Result<UIViewController, NSError>.Callback) {
     addChildViewControllerCalled = true
     lastChildViewControllerAdded = viewController
@@ -185,5 +188,16 @@ class UIModuleSpy: UIModule {
   override func show(error: Error) {
     showErrorCalled = true
     lastErrorShown = error
+  }
+
+  private(set) var showMessageCalled = false
+  private(set) var lastMessageShown: String?
+  private(set) var lastMessageTitleShown: String?
+  private(set) var lastMessageShownIsError: Bool?
+  override func show(message: String, title: String, isError: Bool) {
+    showMessageCalled = true
+    lastMessageShown = message
+    lastMessageTitleShown = title
+    lastMessageShownIsError = isError
   }
 }

@@ -56,7 +56,7 @@ class AddCardPresenter: AddCardTypeEventHandler {
 
   func cardDataEntered(cardNumber:String, expirationMonth:UInt, expirationYear:UInt, cvv:String) {
     guard let cardNetwork = self.cardNetworkFrom(cardNumber: cardNumber) else {
-      view.showMessage("Unsupported Card Type")
+      view.showMessage("Unsupported Card Type", uiConfig: nil)
       return
     }
     view.showLoadingSpinner()
@@ -64,7 +64,7 @@ class AddCardPresenter: AddCardTypeEventHandler {
       self?.view.hideLoadingSpinner()
       switch result {
       case .failure (let error):
-        self?.view.show(error:error)
+        self?.view.show(error:error, uiConfig: nil)
       case .success(let card):
         self?.router.accountSelected(card)
       }

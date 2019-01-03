@@ -379,7 +379,8 @@ class UserStorage: UserStorageProtocol {
                          url: JSONRouter.verificationRestart,
                          urlParameters: [":verificationId": verificationId])
     let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
-    self.transport.post(url, authorization: auth, parameters: nil, filterInvalidTokenResult: true) { result in
+    let parameters = ["show_verification_secret": true as AnyObject]
+    self.transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<Verification, NSError> in
         guard let verification = json.verification else {
           return .failure(ServiceError(code: .jsonError))

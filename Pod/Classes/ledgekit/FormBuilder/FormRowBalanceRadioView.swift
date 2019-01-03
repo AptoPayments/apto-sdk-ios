@@ -15,7 +15,15 @@ struct FormRowBalanceRadioViewValue {
   let subtitle: String?
 }
 
-class FormRowBalanceRadioView: FormRowMultilineView {
+protocol BalanceRadioViewProtocol {
+  var selectedValue: Int? { get set }
+  var tickImageView: UIImageView { get }
+  var bndValue: Observable<Int?> { get }
+}
+
+typealias FormRowBalanceRadioViewProtocol = FormRowMultilineView & BalanceRadioViewProtocol
+
+class FormRowBalanceRadioView: FormRowMultilineView, BalanceRadioViewProtocol {
   var selectedValue: Int? {
     didSet {
       guard oldValue != selectedValue else { return }

@@ -18,7 +18,7 @@ class KYCInteractor: KYCInteractorProtocol {
   }
 
   func provideKYCInfo(_ callback: @escaping Result<KYCState?, NSError>.Callback) {
-    shiftSession.getFinancialAccount(accountId: card.accountId, retrieveBalance: false) { result in
+    shiftSession.getFinancialAccount(accountId: card.accountId, retrieveBalances: false) { result in
       callback(result.flatMap { financialAccount -> Result<KYCState?, NSError> in
         if let card = financialAccount as? Card {
           return .success(card.kyc)

@@ -84,9 +84,11 @@ class ViewControllerSpy: ViewControllerProtocol {
 
   private(set) var showErrorCalled = false
   private(set) var lastErrorShown: Error?
-  func show(error: Error) {
+  private(set) var lastUIConfig: ShiftUIConfig?
+  func show(error: Error, uiConfig: ShiftUIConfig?) {
     showErrorCalled = true
     lastErrorShown = error
+    lastUIConfig = uiConfig
   }
 
   private(set) var showNetworkNotReachableErrorCalled = false
@@ -108,9 +110,29 @@ class ViewControllerSpy: ViewControllerProtocol {
 
   private(set) var showMessageCalled = false
   private(set) var lastMessageShown: String?
-  func showMessage(_ errorMessage: String) {
+  private(set) var lastMessageUIConfig: ShiftUIConfig?
+  func showMessage(_ errorMessage: String, uiConfig: ShiftUIConfig?) {
     showMessageCalled = true
     lastMessageShown = errorMessage
+    lastMessageUIConfig = uiConfig
+  }
+
+  private(set) var showMessageWithTitleCalled = false
+  private(set) var lastMessageWithTitleShown: String?
+  private(set) var lastMessageTitleShown: String?
+  private(set) var lastMessageWithTitleIsError: Bool?
+  private(set) var lastMessageWithTitleUIConfig: ShiftUIConfig?
+  func show(message: String,
+            title: String,
+            animated: Bool,
+            isError: Bool,
+            uiConfig: ShiftUIConfig,
+            tapHandler: (() -> Void)?) {
+    showMessageWithTitleCalled = true
+    lastMessageWithTitleShown = message
+    lastMessageTitleShown = title
+    lastMessageWithTitleIsError = isError
+    lastMessageWithTitleUIConfig = uiConfig
   }
 
   private(set) var showLoadingSpinnerCalled = false
@@ -121,6 +143,16 @@ class ViewControllerSpy: ViewControllerProtocol {
   private(set) var hideLoadingSpinnerCalled = false
   func hideLoadingSpinner() {
     hideLoadingSpinnerCalled = true
+  }
+
+  private(set) var showLoadingViewCalled = false
+  func showLoadingView(uiConfig: ShiftUIConfig) {
+    showLoadingViewCalled = true
+  }
+
+  private(set) var hideLoadingViewCalled = false
+  func hideLoadingView() {
+    hideLoadingViewCalled = true
   }
 
   var navigationController: UINavigationController?

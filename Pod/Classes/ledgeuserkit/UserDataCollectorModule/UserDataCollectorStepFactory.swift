@@ -21,7 +21,6 @@ class UserDataCollectorStepFactory {
   private let googleGeocodingAPIKey: String?
   private let uiConfig: ShiftUIConfig
   private let config: UserDataCollectorConfig
-  private let shiftSession: ShiftSession
   private let linkHandler: LinkHandler
 
   init(requiredData: RequiredDataPointList,
@@ -38,7 +37,6 @@ class UserDataCollectorStepFactory {
        googleGeocodingAPIKey: String?,
        uiConfig: ShiftUIConfig,
        config: UserDataCollectorConfig,
-       shiftSession: ShiftSession,
        router: UserDataCollectorRouterProtocol) {
     self.requiredData = requiredData
     self.userData = userData
@@ -54,7 +52,6 @@ class UserDataCollectorStepFactory {
     self.googleGeocodingAPIKey = googleGeocodingAPIKey
     self.uiConfig = uiConfig
     self.config = config
-    self.shiftSession = shiftSession
     self.linkHandler = LinkHandler(urlHandler: router)
   }
 
@@ -105,10 +102,6 @@ class UserDataCollectorStepFactory {
                              mode: mode,
                              disclaimers: disclaimers,
                              uiConfig: uiConfig,
-                             shiftSession: shiftSession,
-                             screenTitle: config.finalStepTitle,
-                             subTitle: config.finalStepSubtitle,
-                             callToAction: config.finalStepCallToAction,
                              linkHandler: linkHandler)
     }
   }

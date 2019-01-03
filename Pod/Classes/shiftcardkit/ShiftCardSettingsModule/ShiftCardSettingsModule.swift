@@ -7,12 +7,11 @@
 
 import UIKit
 
-class ShiftCardSettingsModule: UIModule {
+class ShiftCardSettingsModule: UIModule, ShiftCardSettingsModuleProtocol {
   private let card: Card
   private let caller: PhoneCallerProtocol
   private var projectConfiguration: ProjectConfiguration! // swiftlint:disable:this implicitly_unwrapped_optional
-  private var externalOAuthModule: ExternalOAuthModule?
-  private var presenter: ShiftCardSettingsPresenter?
+  private var presenter: ShiftCardSettingsPresenterProtocol?
   private var changePinAction: ChangeCardPINAction?
   private var contentPresenterModule: ContentPresenterModuleProtocol?
 
@@ -49,19 +48,20 @@ class ShiftCardSettingsModule: UIModule {
 
   fileprivate func buildShiftCardSettingsViewController(_ uiConfig: ShiftUIConfig,
                                                         shiftCardConfiguration: ShiftCardConfiguration,
-                                                        card: Card) -> ShiftCardSettingsViewController {
+                                                        card: Card) -> ShiftViewController {
     let cardProduct = shiftCardConfiguration.cardProduct
     let presenterConfig = ShiftCardSettingsPresenterConfig(cardholderAgreement: cardProduct.cardholderAgreement,
                                                            privacyPolicy: cardProduct.privacyPolicy,
                                                            termsAndCondition: cardProduct.termsAndConditions,
                                                            faq: cardProduct.faq)
-    let presenter = ShiftCardSettingsPresenter(shiftCardSession: shiftSession.shiftCardSession,
-                                               card: card,
-                                               config: presenterConfig,
-                                               emailRecipients: [self.projectConfiguration.supportEmailAddress],
-                                               uiConfig: uiConfig)
-    let interactor = ShiftCardSettingsInteractor(shiftSession: shiftSession, card: card)
-    let viewController = ShiftCardSettingsViewController(uiConfiguration: uiConfig, presenter: presenter)
+    let recipients = [self.projectConfiguration.supportEmailAddress]
+    let presenter = serviceLocator.presenterLocator.cardSettingsPresenter(cardSession: shiftSession.shiftCardSession,
+                                                                          card: card,
+                                                                          config: presenterConfig,
+                                                                          emailRecipients: recipients,
+                                                                          uiConfig: uiConfig)
+    let interactor = serviceLocator.interactorLocator.cardSettingsInteractor()
+    let viewController = serviceLocator.viewLocator.cardSettingsView(presenter: presenter)
     presenter.router = self
     presenter.interactor = interactor
     presenter.view = viewController
@@ -77,42 +77,6 @@ extension ShiftCardSettingsModule: ShiftCardSettingsRouterProtocol {
 
   func closeFromShiftCardSettings() {
     close()
-  }
-
-  func addFundingSource(completion: @escaping (FundingSource) -> Void) {
-    guard let allowedBalanceTypes = card.features?.allowedBalanceTypes, !allowedBalanceTypes.isEmpty else {
-      return
-    }
-    let oauthModuleConfig = ExternalOAuthModuleConfig(title: "Coinbase", allowedBalanceTypes: allowedBalanceTypes)
-    let externalOAuthModule = ExternalOAuthModule(serviceLocator: serviceLocator,
-                                                  config: oauthModuleConfig,
-                                                  uiConfig: uiConfig)
-    externalOAuthModule.onOAuthSucceeded = { [weak self] _, custodian in
-      guard let wself = self else {
-        return
-      }
-      wself.showLoadingSpinner()
-      wself.shiftSession.addFinancialAccountFundingSource(accountId: wself.card.accountId,
-                                                          custodian: custodian) { result in
-        switch result {
-        case .failure(let error):
-          UIApplication.topViewController()?.show(error: error)
-        case .success(let fundingSource):
-          self?.hideLoadingSpinner()
-          self?.popModule {
-            self?.externalOAuthModule = nil
-            completion(fundingSource)
-          }
-        }
-      }
-    }
-    externalOAuthModule.onBack = { module in
-      self.popModule {
-        self.externalOAuthModule = nil
-      }
-    }
-    self.externalOAuthModule = externalOAuthModule
-    push(module: externalOAuthModule) { _ in }
   }
 
   func changeCardPin() {
@@ -152,9 +116,5 @@ extension ShiftCardSettingsModule: ShiftCardSettingsRouterProtocol {
     }
     contentPresenterModule =  module
     present(module: module, leftButtonMode: .close) { _ in }
-  }
-
-  func fundingSourceChanged() {
-    delegate?.fundingSourceChanged()
   }
 }

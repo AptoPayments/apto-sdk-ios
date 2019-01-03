@@ -68,6 +68,7 @@ open class FormRowDatePickerView: FormRowTextInputView {
     textField.inputView = datePicker
     datePicker.addTarget(self, action: #selector(FormRowDatePickerView.datePickerValueChanged(_:)), for: .valueChanged)
     guard let date = self.date else {
+      self.valid.next(false)
       return
     }
     datePicker.date = date

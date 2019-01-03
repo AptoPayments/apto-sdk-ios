@@ -52,13 +52,32 @@ class ComponentCatalog {
   static func formLabelWith(text: String,
                             textAlignment: NSTextAlignment = .left,
                             multiline: Bool = false,
+                            lineSpacing: CGFloat? = nil,
+                            letterSpacing: CGFloat? = nil,
                             accessibilityLabel: String? = nil,
                             uiConfig: ShiftUIConfig) -> UILabel {
     let retVal = UILabel()
-    retVal.text = text
-    retVal.font = uiConfig.fontProvider.formLabelFont
-    retVal.textColor = uiConfig.textPrimaryColor
-    retVal.textAlignment = textAlignment
+    let textColor = uiConfig.uiTheme == .theme1 ? uiConfig.textPrimaryColor : uiConfig.textSecondaryColor
+    if let lineSpacing = lineSpacing {
+      let paragraphStyle = NSMutableParagraphStyle()
+      paragraphStyle.alignment = textAlignment
+      paragraphStyle.lineSpacing = lineSpacing
+      var textAttributes: [NSAttributedStringKey: Any] = [
+        .foregroundColor: textColor,
+        .font: uiConfig.fontProvider.formLabelFont,
+        .paragraphStyle: paragraphStyle
+      ]
+      if let letterSpacing = letterSpacing {
+        textAttributes[.kern] = letterSpacing
+      }
+      retVal.attributedText = NSAttributedString(string: text, attributes: textAttributes)
+    }
+    else {
+      retVal.text = text
+      retVal.font = uiConfig.fontProvider.formLabelFont
+      retVal.textColor = textColor
+      retVal.textAlignment = textAlignment
+    }
     retVal.accessibilityLabel = accessibilityLabel
     if multiline {
       retVal.numberOfLines = 0
@@ -158,12 +177,21 @@ class ComponentCatalog {
                                  value: InternationalPhoneNumber?,
                                  allowedCountries: [Country],
                                  accessibilityLabel: String? = nil,
-                                 uiConfig: ShiftUIConfig) -> PhoneTextField {
-    return PhoneTextField(allowedCountries: allowedCountries,
-                          placeholder: placeholder,
-                          value: value,
-                          accessibilityLabel: accessibilityLabel,
-                          uiConfig: uiConfig)
+                                 uiConfig: ShiftUIConfig) -> PhoneTextFieldView {
+    switch uiConfig.uiTheme {
+    case .theme1:
+      return PhoneTextField(allowedCountries: allowedCountries,
+                            placeholder: placeholder,
+                            value: value,
+                            accessibilityLabel: accessibilityLabel,
+                            uiConfig: uiConfig)
+    case .theme2:
+      return PhoneTextFieldTheme2(allowedCountries: allowedCountries,
+                                  placeholder: placeholder,
+                                  value: value,
+                                  accessibilityLabel: accessibilityLabel,
+                                  uiConfig: uiConfig)
+    }
   }
 
   static func formTextLinkButtonWith(title: String,
@@ -196,6 +224,25 @@ class ComponentCatalog {
     let retVal = UILabel()
     retVal.text = text
     retVal.font = uiConfig.fontProvider.instructionsFont
+    switch uiConfig.uiTheme {
+    case .theme1:
+      retVal.textColor = uiConfig.textTertiaryColor
+    case .theme2:
+      retVal.textColor = uiConfig.textSecondaryColor
+    }
+    retVal.textAlignment = textAlignment
+    retVal.accessibilityLabel = accessibilityLabel
+    retVal.numberOfLines = 0
+    return retVal
+  }
+
+  static func emptyCaseLabelWith(text: String,
+                                 textAlignment: NSTextAlignment = .center,
+                                 accessibilityLabel: String? = nil,
+                                 uiConfig: ShiftUIConfig) -> UILabel {
+    let retVal = UILabel()
+    retVal.text = text
+    retVal.font = uiConfig.fontProvider.textLinkFont
     retVal.textColor = uiConfig.textTertiaryColor
     retVal.textAlignment = textAlignment
     retVal.accessibilityLabel = accessibilityLabel
@@ -247,6 +294,7 @@ class ComponentCatalog {
   }
 
   static func buttonWith(title: String,
+                         showShadow: Bool = true,
                          accessibilityLabel: String? = nil,
                          uiConfig: ShiftUIConfig,
                          tapHandler: @escaping() -> Void) -> UIButton {
@@ -256,12 +304,14 @@ class ComponentCatalog {
     button.accessibilityLabel = accessibilityLabel
     button.titleLabel?.font = uiConfig.fontProvider.primaryCallToActionFont
     button.setTitle(title, for: UIControlState())
-    button.layer.shadowOffset = CGSize(width: 0, height: 16)
-    button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
-    button.layer.shadowOpacity = 1
-    button.layer.shadowRadius = 16
+    if showShadow {
+      button.layer.shadowOffset = CGSize(width: 0, height: 16)
+      button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
+      button.layer.shadowOpacity = 1
+      button.layer.shadowRadius = 16
+    }
     button.snp.makeConstraints { make in
-      make.height.equalTo(50)
+      make.height.equalTo(uiConfig.buttonHeight)
     }
     _ = button.reactive.tap.observeNext(with: tapHandler)
     return button
@@ -269,20 +319,23 @@ class ComponentCatalog {
 
   static func smallButtonWith(title: String,
                               accessibilityLabel: String? = nil,
+                              showShadow: Bool = true,
                               uiConfig: ShiftUIConfig,
                               tapHandler: @escaping() -> Void) -> UIButton {
     let button = UIButton()
-    button.layer.cornerRadius = 18
+    button.layer.cornerRadius = uiConfig.smallButtonCornerRadius
     button.backgroundColor = uiConfig.uiPrimaryColor
     button.accessibilityLabel = accessibilityLabel
     button.titleLabel?.font = uiConfig.fontProvider.primaryCallToActionFontSmall
     button.setTitle(title, for: UIControlState())
-    button.layer.shadowOffset = CGSize(width: 0, height: 16)
-    button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
-    button.layer.shadowOpacity = 1
-    button.layer.shadowRadius = 16
+    if showShadow {
+      button.layer.shadowOffset = CGSize(width: 0, height: 16)
+      button.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
+      button.layer.shadowOpacity = 1
+      button.layer.shadowRadius = 16
+    }
     button.snp.makeConstraints { make in
-      make.height.equalTo(36)
+      make.height.equalTo(uiConfig.smallButtonHeight)
     }
     _ = button.reactive.tap.observeNext(with: tapHandler)
     return button
@@ -297,6 +350,26 @@ class ComponentCatalog {
     retVal.font = uiConfig.fontProvider.sectionTitleFont
     retVal.textColor = uiConfig.textSecondaryColor
     retVal.textAlignment = textAlignment
+    retVal.accessibilityLabel = accessibilityLabel
+    return retVal
+  }
+
+  static func starredSectionTitleLabelWith(text: String,
+                                           textAlignment: NSTextAlignment = .left,
+                                           accessibilityLabel: String? = nil,
+                                           uiConfig: ShiftUIConfig) -> UILabel {
+    let retVal = UILabel()
+    let textColor = uiConfig.textTopBarColor.withAlphaComponent(0.7)
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = textAlignment
+    paragraphStyle.lineSpacing = 1.17
+    let textAttributes: [NSAttributedStringKey: Any] = [
+      .foregroundColor: textColor,
+      .font: uiConfig.fontProvider.starredSectionTitleFont,
+      .paragraphStyle: paragraphStyle,
+      .kern: 2
+    ]
+    retVal.attributedText = NSAttributedString(string: text.uppercased(), attributes: textAttributes)
     retVal.accessibilityLabel = accessibilityLabel
     return retVal
   }

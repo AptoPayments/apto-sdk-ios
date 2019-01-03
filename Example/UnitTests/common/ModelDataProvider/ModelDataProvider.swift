@@ -33,7 +33,9 @@ class ModelDataProvider {
   }()
 
   lazy var projectBranding: ProjectBranding = {
-    return ProjectBranding(iconPrimaryColor: "ffffff",
+    return ProjectBranding(uiBackgroundPrimaryColor: "ffffff",
+                           uiBackgroundSecondaryColor: "ffffff",
+                           iconPrimaryColor: "ffffff",
                            iconSecondaryColor: "ffffff",
                            iconTertiaryColor: "ffffff",
                            textPrimaryColor: "ffffff",
@@ -46,6 +48,10 @@ class ModelDataProvider {
                            uiTertiaryColor: "ffffff",
                            uiErrorColor: "ffffff",
                            uiSuccessColor: "ffffff",
+                           uiNavigationPrimaryColor: "ffffff",
+                           uiNavigationSecondaryColor: "ffffff",
+                           textMessageColor: "ffffff",
+                           uiStatusBarStyle: "auto",
                            logoUrl: nil,
                            uiTheme: "theme_1")
   }()
@@ -109,48 +115,108 @@ class ModelDataProvider {
                                                               workflowObjectId: "workflow_id",
                                                               nextAction: workflowAction)
 
-  lazy var card: Card = Card(accountId: "card_id",
-                             cardNetwork: .other,
-                             cardIssuer: .shift,
-                             cardBrand: "Shift",
-                             state: .active,
-                             cardHolder: "Holder Name",
-                             pan: "PAN",
-                             cvv: "333",
-                             lastFourDigits: "7890",
-                             expiration: "03/99",
-                             spendableToday: Amount(value: 12.34, currency: "GBP"),
-                             nativeSpendableToday: Amount(value: 0.034, currency: "BTC"),
-                             kyc: .passed,
-                             physicalCardActivationRequired: false,
-                             panToken: "pan_token",
-                             cvvToken: "cvv_token",
-                             verified: true)
-
-  lazy var cardWithIVR: Card = {
-    let phoneNumber = PhoneNumber(countryCode: 1, phoneNumber: "2342303796")
-    let ivr = IVR(status: .enabled, phone: phoneNumber)
-    let features = CardFeatures(ivr: ivr, changePin: .disabled, allowedBalanceTypes: [coinbaseBalanceType])
+  lazy var card: Card = {
     let card = Card(accountId: "card_id",
                     cardNetwork: .other,
                     cardIssuer: .shift,
                     cardBrand: "Shift",
                     state: .active,
                     cardHolder: "Holder Name",
-                    pan: "PAN",
-                    cvv: "333",
                     lastFourDigits: "7890",
-                    expiration: "03/99",
                     spendableToday: Amount(value: 12.34, currency: "GBP"),
                     nativeSpendableToday: Amount(value: 0.034, currency: "BTC"),
+                    totalBalance: Amount(value: 12.34, currency: "GBP"),
+                    nativeTotalBalance: Amount(value: 0.034, currency: "BTC"),
                     kyc: .passed,
-                    physicalCardActivationRequired: false,
+                    orderedStatus: .received,
+                    panToken: "pan_token",
+                    cvvToken: "cvv_token",
+                    verified: true)
+    card.details = cardDetails
+    return card
+  }()
+
+  lazy var cardWithoutDetails: Card = Card(accountId: "card_id",
+                                           cardNetwork: .other,
+                                           cardIssuer: .shift,
+                                           cardBrand: "Shift",
+                                           state: .active,
+                                           cardHolder: "Holder Name",
+                                           lastFourDigits: "7890",
+                                           spendableToday: Amount(value: 12.34, currency: "GBP"),
+                                           nativeSpendableToday: Amount(value: 0.034, currency: "BTC"),
+                                           totalBalance: Amount(value: 12.34, currency: "GBP"),
+                                           nativeTotalBalance: Amount(value: 0.034, currency: "BTC"),
+                                           kyc: .passed,
+                                           orderedStatus: .received,
+                                           panToken: "pan_token",
+                                           cvvToken: "cvv_token",
+                                           verified: true)
+
+  lazy var cardWithIVR: Card = {
+    let phoneNumber = PhoneNumber(countryCode: 1, phoneNumber: "2342303796")
+    let ivr = IVR(status: .enabled, phone: phoneNumber)
+    let features = CardFeatures(ivr: ivr,
+                                changePin: .disabled,
+                                allowedBalanceTypes: [coinbaseBalanceType],
+                                activation: nil)
+    let card = Card(accountId: "card_id",
+                    cardNetwork: .other,
+                    cardIssuer: .shift,
+                    cardBrand: "Shift",
+                    state: .active,
+                    cardHolder: "Holder Name",
+                    lastFourDigits: "7890",
+                    spendableToday: Amount(value: 12.34, currency: "GBP"),
+                    nativeSpendableToday: Amount(value: 0.034, currency: "BTC"),
+                    totalBalance: Amount(value: 12.34, currency: "GBP"),
+                    nativeTotalBalance: Amount(value: 0.034, currency: "BTC"),
+                    kyc: .passed,
+                    orderedStatus: .received,
                     features: features,
                     panToken: "pan_token",
                     cvvToken: "cvv_token",
                     verified: true)
     return card
   }()
+
+  lazy var cardDetails = CardDetails(expiration: "99-03", pan: "1234234134124123", cvv: "123")
+
+  lazy var transaction = Transaction(transactionId: "transactionId",
+                                     transactionType: .purchase,
+                                     createdAt: Date(),
+                                     externalTransactionId: "externalTransactionId",
+                                     transactionDescription: "transactionDescription",
+                                     lastMessage: "lastMessage",
+                                     declineReason: nil,
+                                     merchant: nil,
+                                     store: nil,
+                                     localAmount: Amount(value: 10, currency: "USD"),
+                                     billingAmount: Amount(value: 10, currency: "USD"),
+                                     holdAmount: nil,
+                                     cashbackAmount: nil,
+                                     feeAmount: nil,
+                                     nativeBalance: Amount(value: 0.001, currency: "BTC"),
+                                     settlement: nil,
+                                     ecommerce: true,
+                                     international: false,
+                                     cardPresent: false,
+                                     emv: false,
+                                     cardNetwork: .visa,
+                                     state: .authorized,
+                                     adjustments: nil)
+
+  lazy var fundingSource = FundingSource(fundingSourceId: "fundingSourceId",
+                                         type: .custodianWallet,
+                                         balance: Amount(value: 1000, currency: "USD"),
+                                         amountHold: nil,
+                                         state: .valid)
+
+  lazy var invalidFundingSource = FundingSource(fundingSourceId: "fundingSourceId",
+                                                type: .custodianWallet,
+                                                balance: Amount(value: 1000, currency: "USD"),
+                                                amountHold: nil,
+                                                state: .invalid)
 
   lazy var externalOauthModuleConfig = ExternalOAuthModuleConfig(title: "title",
                                                                  allowedBalanceTypes: [coinbaseBalanceType])
@@ -161,10 +227,12 @@ class ModelDataProvider {
 
   lazy var oauthAttempt = OauthAttempt(id: "attempt_id",
                                        status: .passed,
-                                       url: URL(string: "https://shiftpayments.com"),
+                                       url: url,
                                        credentials: oauthCredential)
 
   lazy var usa = Country(isoCode: "US", name: "United States")
 
   lazy var coinbaseBalanceType = AllowedBalanceType(type: .coinbase, baseUri: "baseUri")
+
+  lazy var url = URL(string: "https://shiftpayments.com")! // swiftlint:disable:this implicitly_unwrapped_optional
 }

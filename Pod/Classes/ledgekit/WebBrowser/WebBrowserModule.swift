@@ -1,6 +1,6 @@
 //
 //  WebBrowserModule.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 14/10/2016.
 //
@@ -11,7 +11,7 @@ import Foundation
 class WebBrowserModule: UIModule {
   private let url: URL
   private let headers: [String: String]?
-  private var presenter: WebBrowserPresenter?
+  private var presenter: WebBrowserPresenterProtocol?
 
   init(serviceLocator: ServiceLocatorProtocol, url: URL, headers: [String: String]? = nil) {
     self.url = url
@@ -20,9 +20,11 @@ class WebBrowserModule: UIModule {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    let presenter = WebBrowserPresenter()
-    let interactor = WebBrowserInteractor(url: self.url, headers: self.headers, dataReceiver: presenter)
-    let viewController = WebBrowserViewController(uiConfiguration: self.uiConfig, eventHandler: presenter)
+    let presenter = serviceLocator.presenterLocator.webBrowserPresenter()
+    let interactor = serviceLocator.interactorLocator.webBrowserInteractor(url: url,
+                                                                           headers: headers,
+                                                                           dataReceiver: presenter)
+    let viewController = serviceLocator.viewLocator.webBrowserView(eventHandler: presenter)
     presenter.interactor = interactor
     presenter.router = self
     presenter.view = viewController
@@ -43,13 +45,13 @@ extension UIModule {
       UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
     else {
-      let webBrowserModule = WebBrowserModule(serviceLocator: serviceLocator, url: url, headers: headers)
+      let webBrowserModule = serviceLocator.moduleLocator.webBrowserModule(url: url, headers: headers)
       webBrowserModule.onClose = { [weak self] module in
         self?.dismissModule {
           completion?()
         }
       }
-      self.present(module: webBrowserModule) { result in }
+      self.present(module: webBrowserModule) { _ in }
     }
   }
 

@@ -1,16 +1,12 @@
 //
 //  WebBrowserInteractor.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 25/08/16.
 //
 //
 
 import Foundation
-
-protocol WebBrowserDataReceiverProtocol: class {
-  func load(url: URL, headers: [String: String]?)
-}
 
 class WebBrowserInteractor: WebBrowserInteractorProtocol {
   private let url: URL

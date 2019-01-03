@@ -27,6 +27,16 @@ class ExternalOAuthPresenterTest: XCTestCase {
     sut.interactor = interactor
   }
 
+  func testViewLoadedUpdateViewModel() {
+    // When
+    sut.viewLoaded()
+
+    // Then
+    XCTAssertNotNil(sut.viewModel.title.value)
+    XCTAssertNotNil(sut.viewModel.allowedBalanceTypes.value)
+    XCTAssertNil(sut.viewModel.error.value)
+  }
+
   func testCustodianTappedCallInteractor() {
     // When
     sut.balanceTypeTapped(balanceType)

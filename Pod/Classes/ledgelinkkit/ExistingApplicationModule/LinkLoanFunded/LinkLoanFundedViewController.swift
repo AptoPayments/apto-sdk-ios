@@ -34,7 +34,7 @@ class LinkLoanFundedViewController: ShiftViewController, LinkLoanFundedViewProto
   override func viewDidLoad() {
     super.viewDidLoad()
     self.title = "Loan Funded"
-    self.view.backgroundColor = self.uiConfiguration.backgroundColor
+    self.view.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     self.navigationController?.navigationBar.backgroundColor = self.uiConfiguration.uiPrimaryColor
     self.edgesForExtendedLayout = UIRectEdge()
     self.setupUI()

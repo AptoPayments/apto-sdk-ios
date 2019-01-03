@@ -9,8 +9,8 @@
 import Foundation
 
 protocol LinkApplicationListRouterProtocol {
-  func back(_ animated:Bool?)
-  func close(_ animated:Bool?)
+  func back(_ animated: Bool)
+  func close(_ animated: Bool)
   func applicationSelected(applicationSummary: LoanApplicationSummary)
   func newApplicationSelected()
 }
@@ -49,7 +49,7 @@ class LinkApplicationListPresenter: LinkApplicationListEventHandler {
       self.view.hideLoadingSpinner()
       switch result {
       case .failure(let error):
-        self.view.show(error:error)
+        self.view.show(error:error, uiConfig: nil)
       case .success(let newContents):
         self.applications = newContents
         self.view.set(subtitle: "link-application-list.subtitle".podLocalized())

@@ -46,11 +46,11 @@ extension LinkApplicationListModule: LinkApplicationListRouterProtocol {
     onNewApplicationSelected?(self)
   }
 
-  func back(_ animated: Bool?) {
+  func back(_ animated: Bool) {
     self.back()
   }
 
-  func close(_ animated: Bool?) {
+  func close(_ animated: Bool) {
     self.close()
   }
 

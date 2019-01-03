@@ -148,6 +148,34 @@ class AuthViewControllerSpy: ViewControllerSpy, AuthViewProtocol {
     updateProgressCalled = true
     lastProgress = progress
   }
+
+  func setTitle(_ title: String) {
+    super.set(title: title)
+  }
+
+  func showCancelButton() {
+    showNavCancelButton(nil)
+  }
+
+  func showNextButton() {
+    showNavNextButton(title: "", tintColor: nil)
+  }
+
+  func activateNextButton() {
+    activateNavNextButton(nil)
+  }
+
+  func deactivateNextButton() {
+    deactivateNavNextButton(nil)
+  }
+
+  func show(error: NSError) {
+    super.show(error: error, uiConfig: nil)
+  }
+
+  func showLoadingView() {
+    super.showLoadingView(uiConfig: ModelDataProvider.provider.uiConfig)
+  }
 }
 
 class AuthDataReceiverSpy: AuthDataReceiver {
@@ -195,6 +223,16 @@ class AuthDataReceiverSpy: AuthDataReceiver {
   func returnExistingUser(_ user: ShiftUser) {
     returnExistingUserWithUserDataCalled = true
     lastExistingUser = user
+  }
+
+  private(set) var showLoadingViewCalled = false
+  func showLoadingView() {
+    showLoadingViewCalled = true
+  }
+
+  private(set) var hideLoadingViewCalled = false
+  func hideLoadingView() {
+    hideLoadingViewCalled = true
   }
 }
 

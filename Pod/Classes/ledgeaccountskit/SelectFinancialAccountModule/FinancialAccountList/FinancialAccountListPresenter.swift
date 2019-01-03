@@ -25,7 +25,7 @@ protocol FinancialAccountListInteractorProtocol {
 }
 
 class FinancialAccountListPresenter: FinancialAccountListEventHandler {
-  
+
   var view: FinancialAccountListViewProtocol!
   var interactor: FinancialAccountListInteractorProtocol!
   var router: FinancialAccountListRouterProtocol!
@@ -33,30 +33,30 @@ class FinancialAccountListPresenter: FinancialAccountListEventHandler {
   var subtitle: String
   var financialAccounts: [FinancialAccount]?
   var selectedFinancialAccount:FinancialAccount?
-  
+
   init(title:String, subtitle:String) {
     self.title = title
     self.subtitle = subtitle
   }
-  
+
   func viewLoaded() {
     self.view.set(title:title)
     self.view.set(subtitle:subtitle)
     self.refreshListTapped()
   }
-  
+
   func backTapped() {
     router.back()
   }
-  
+
   func closeTapped() {
     router.close()
   }
-  
+
   func addAccountTapped() {
     router.showAddAccountFlow()
   }
-  
+
   func accountSelectedWith(index:Int) {
     guard let financialAccounts = self.financialAccounts else {
       self.selectedFinancialAccount = nil
@@ -68,24 +68,24 @@ class FinancialAccountListPresenter: FinancialAccountListEventHandler {
     }
     self.selectedFinancialAccount = financialAccounts[index]
   }
-  
+
   func doneTapped() {
     guard let financialAccount = self.selectedFinancialAccount else {
       return
     }
     router.accountSelected(financialAccount)
   }
-  
+
   func refreshListTapped() {
     self.interactor.loadFinancialAccountList() { [weak self] result in
       switch result {
       case .failure(let error):
-        self?.view.show(error:error)
+        self?.view.show(error:error, uiConfig: nil)
       case .success(let financialAccounts):
         self?.financialAccounts = financialAccounts
         self?.view.showNewContents(financialAccounts)
       }
     }
   }
-  
+
 }

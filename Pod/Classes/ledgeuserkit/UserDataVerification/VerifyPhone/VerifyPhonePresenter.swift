@@ -19,7 +19,16 @@ protocol VerifyPhoneInteractorProtocol: class {
   func submitPin(_ pin: String)
 }
 
-class VerifyPhonePresenter: PINVerificationPresenter, VerifyPhoneDataReceiver {
+protocol VerifyPhonePresenterProtocol: PINVerificationPresenter, VerifyPhoneDataReceiver {
+  // swiftlint:disable implicitly_unwrapped_optional
+  var interactor: VerifyPhoneInteractorProtocol! { get set }
+  var router: VerifyPhoneRouterProtocol! { get set }
+  var view: PINVerificationView! { get set }
+  // swiftlint:enable implicitly_unwrapped_optional
+  var viewModel: PINVerificationViewModel { get }
+}
+
+class VerifyPhonePresenter: VerifyPhonePresenterProtocol {
   // swiftlint:disable implicitly_unwrapped_optional
   var interactor: VerifyPhoneInteractorProtocol!
   weak var router: VerifyPhoneRouterProtocol!
@@ -28,9 +37,10 @@ class VerifyPhonePresenter: PINVerificationPresenter, VerifyPhoneDataReceiver {
   let viewModel = PINVerificationViewModel()
 
   func viewLoaded() {
-    viewModel.title.next("verify_phone.title".podLocalized())
-    viewModel.subtitle.next("verify_phone.label.title".podLocalized())
-    viewModel.resendButtonTitle.next("verify_phone.resend_button.title".podLocalized())
+    viewModel.title.next("auth.verify_phone.title".podLocalized())
+    viewModel.subtitle.next("auth.verify_phone.explanation".podLocalized())
+    viewModel.resendButtonTitle.next("auth.verify_phone.resend_button.title".podLocalized())
+    viewModel.footerTitle.next("auth.verify_phone.footer".podLocalized())
     interactor.providePhoneNumber()
   }
 

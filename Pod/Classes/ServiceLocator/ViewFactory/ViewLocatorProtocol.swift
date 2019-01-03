@@ -16,9 +16,14 @@ import UIKit
 protocol ViewLocatorProtocol {
   func fullScreenDisclaimerView(uiConfig: ShiftUIConfig,
                                 eventHandler: FullScreenDisclaimerEventHandler) -> UIViewController
+
+  // MARK: - Auth
   func authView(uiConfig: ShiftUIConfig, eventHandler: AuthEventHandler) -> AuthViewControllerProtocol
+  func pinVerificationView(presenter: PINVerificationPresenter) -> PINVerificationViewControllerProtocol
+  func verifyBirthDateView(presenter: VerifyBirthDateEventHandler) -> VerifyBirthDateViewControllerProtocol
   func externalOAuthView(uiConfiguration: ShiftUIConfig,
                          eventHandler: ExternalOAuthPresenterProtocol) -> UIViewController
+
   func issueCardView(uiConfig: ShiftUIConfig, eventHandler: IssueCardPresenterProtocol) -> UIViewController
   func serverMaintenanceErrorView(uiConfig: ShiftUIConfig?,
                                   eventHandler: ServerMaintenanceErrorEventHandler) -> UIViewController
@@ -27,8 +32,23 @@ protocol ViewLocatorProtocol {
   func contentPresenterView(uiConfig: ShiftUIConfig,
                             presenter: ContentPresenterPresenterProtocol) -> ContentPresenterViewController
   func dataConfirmationView(uiConfig: ShiftUIConfig,
-                            presenter: DataConfirmationPresenterProtocol) -> DataConfirmationViewController
-  func physicalCardActivationView(uiConfig: ShiftUIConfig,
-                                  presenter: PhysicalCardActivationSucceedPresenterProtocol)
-      -> PhysicalCardActivationSucceedViewController
+                            presenter: DataConfirmationPresenterProtocol) -> ShiftViewController
+  func webBrowserView(eventHandler: WebBrowserEventHandlerProtocol) -> WebBrowserViewControllerProtocol
+
+  // MARK: - Manage card
+  func manageCardView(mode: ShiftCardModuleMode,
+                      presenter: ManageShiftCardEventHandler) -> ManageShiftCardViewControllerProtocol
+  func fundingSourceSelectorView(presenter: FundingSourceSelectorPresenterProtocol) -> ShiftViewController
+  func cardSettingsView(presenter: ShiftCardSettingsPresenterProtocol) -> ShiftCardSettingsViewControllerProtocol
+  func kycView(presenter: KYCPresenterProtocol) -> KYCViewControllerProtocol
+
+  // MARK: - Physical card activation
+  func physicalCardActivation(presenter: PhysicalCardActivationPresenterProtocol) -> ShiftViewController
+  func physicalCardActivationSucceedView(uiConfig: ShiftUIConfig,
+                                         presenter: PhysicalCardActivationSucceedPresenterProtocol)
+    -> PhysicalCardActivationSucceedViewControllerProtocol
+
+  // MARK: - Transaction Details
+  func transactionDetailsView(presenter: ShiftCardTransactionDetailsPresenterProtocol)
+    -> ShiftCardTransactionDetailsViewControllerProtocol
 }

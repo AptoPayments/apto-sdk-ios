@@ -1,5 +1,5 @@
 //
-//  ShowDisclaimerActionModule.swift
+//  ActionConfirmerFake.swift
 //  ShiftSDK
 //
 // Created by Takeichi Kanzaki on 16/10/2018.

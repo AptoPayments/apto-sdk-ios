@@ -34,7 +34,7 @@ class AddCardViewController: ShiftViewController, AddCardViewProtocol {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    self.view.backgroundColor = self.uiConfiguration.backgroundColor
+    self.view.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     self.navigationController?.navigationBar.backgroundColor = self.uiConfiguration.uiPrimaryColor
     self.edgesForExtendedLayout = UIRectEdge()
     self.extendedLayoutIncludesOpaqueBars = true
@@ -134,10 +134,6 @@ class AddCardViewController: ShiftViewController, AddCardViewProtocol {
     vc?.hideCardIOLogo = true
     vc?.disableManualEntryButtons = true
     self.navigationController?.present(vc!, animated:true, completion:nil)
-  }
-
-  func showLoadingSpinner() {
-    showLoadingSpinner(tintColor: uiConfiguration.uiPrimaryColor)
   }
 }
 

@@ -32,6 +32,9 @@ extension DataPoint: JSONSerializable {
     if let notSpecified = notSpecified {
       data["not_specified"] = notSpecified as AnyObject
     }
+    if let verified = verified {
+      data["verified"] = verified as AnyObject
+    }
     data["data_type"] = self.type.description as AnyObject
     return data
   }

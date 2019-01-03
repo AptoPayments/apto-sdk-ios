@@ -56,6 +56,24 @@ extension UIView {
     self.layer.add(animation, forKey: "move")
     completion?()
   }
+
+  func show(message: String,
+            title: String,
+            animated: Bool = true,
+            isError: Bool,
+            uiConfig: ShiftUIConfig,
+            tapHandler: (() -> Void)?) {
+    UIApplication.topViewController()?.show(message: message,
+                                            title: title,
+                                            animated: animated,
+                                            isError: isError,
+                                            uiConfig: uiConfig,
+                                            tapHandler: tapHandler)
+  }
+
+  func hideMessage(animated: Bool = true) {
+    UIApplication.topViewController()?.dismissSwiftToast(animated)
+  }
 }
 
 // Gesture Recognizers

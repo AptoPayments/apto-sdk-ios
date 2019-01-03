@@ -11,12 +11,15 @@ import SnapKit
 class FormRowSwitchTitleSubtitleView: FormRowView {
   let titleSubtitleView: FormRowTopBottomLabelView
   let switcher: UISwitch
+  private let leftMargin: CGFloat
 
   init(titleLabel: UILabel,
        subtitleLabel: UILabel,
        switcher: UISwitch,
-       height: CGFloat = 66) {
+       height: CGFloat = 66,
+       leftMargin: CGFloat = 0) {
     self.switcher = switcher
+    self.leftMargin = leftMargin
     self.titleSubtitleView = FormRowTopBottomLabelView(titleLabel: titleLabel,
                                                        subtitleLabel: subtitleLabel,
                                                        height: height)
@@ -45,7 +48,8 @@ class FormRowSwitchTitleSubtitleView: FormRowView {
   private func layoutTitleView() {
     addSubview(titleSubtitleView)
     titleSubtitleView.snp.makeConstraints { make in
-      make.left.top.bottom.equalToSuperview()
+      make.top.bottom.equalToSuperview()
+      make.left.equalToSuperview().offset(leftMargin)
       make.right.equalTo(switcher.snp.left).inset(16)
     }
   }

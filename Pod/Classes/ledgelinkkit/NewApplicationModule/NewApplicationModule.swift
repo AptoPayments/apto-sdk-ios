@@ -90,16 +90,9 @@ class NewApplicationModule: UIModule {
       let disclaimers = linkConfiguration.loanProducts.compactMap { $0.prequalificationDisclaimer }
       let moduleLocator = serviceLocator.moduleLocator
       let userRequiredData = linkConfiguration.userRequiredData
-      let finalStepTitle = "birthday-collector.get-offers.title".podLocalized()
-      let finalStepSubtitle = "birthday-collector.get-offers.subtitle".podLocalized()
-      let callToAction = CallToAction(title: "birthday-collector.button.get-offers".podLocalized(),
-                                      callToActionType: .continueFlow)
       let userDataCollectorModule = moduleLocator.userDataCollectorModule(userRequiredData: userRequiredData,
                                                                           mode: .continueFlow,
                                                                           backButtonMode: .close,
-                                                                          finalStepTitle: finalStepTitle,
-                                                                          finalStepSubtitle: finalStepSubtitle,
-                                                                          finalStepCallToAction: callToAction,
                                                                           disclaimers: disclaimers)
       userDataCollectorModule.onClose = { [weak self] module in
         self?.close()
@@ -155,7 +148,7 @@ class NewApplicationModule: UIModule {
             self.showPrequalificationDisclaimers(disclaimers: prequalificationDisclaimers,
                                                  user: user)
           case .failure(let error):
-            UIApplication.topViewController()!.show(error: error) // swiftlint:disable:this force_unwrapping
+            self.show(error: error)
           }
         }
       }
@@ -168,17 +161,10 @@ class NewApplicationModule: UIModule {
   fileprivate func showUserDataCollector(_ mode: UserDataCollectorFinalStepMode) {
     let moduleLocator = serviceLocator.moduleLocator
     let userRequiredData = linkConfiguration.userRequiredData
-    let finalStepTitle = "birthday-collector.get-offers.title".podLocalized()
-    let finalStepSubtitle = "birthday-collector.get-offers.subtitle".podLocalized()
-    let callToAction = CallToAction(title: "birthday-collector.button.get-offers".podLocalized(),
-                                    callToActionType: .continueFlow)
     let disclaimers = linkConfiguration.loanProducts.compactMap { $0.prequalificationDisclaimer }
     let userDataCollectorModule = moduleLocator.userDataCollectorModule(userRequiredData: userRequiredData,
                                                                         mode: mode,
                                                                         backButtonMode: .back,
-                                                                        finalStepTitle: finalStepTitle,
-                                                                        finalStepSubtitle: finalStepSubtitle,
-                                                                        finalStepCallToAction: callToAction,
                                                                         disclaimers: disclaimers)
     userDataCollectorModule.onBack = { module in
       self.popModule {

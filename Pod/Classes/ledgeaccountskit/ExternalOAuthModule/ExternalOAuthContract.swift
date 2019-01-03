@@ -18,6 +18,7 @@ protocol ExternalOAuthPresenterProtocol: class {
   var interactor: ExternalOAuthInteractorProtocol! { get set }
   // swiftlint:enable implicitly_unwrapped_optional
   var viewModel: ExternalOAuthViewModel { get }
+  func viewLoaded()
   func show(error: NSError)
   func show(url: URL)
   func custodianSelected(_ custodian: Custodian)
@@ -26,7 +27,7 @@ protocol ExternalOAuthPresenterProtocol: class {
 }
 
 protocol ExternalOAuthRouterProtocol: class {
-  func backInExternalOAuth(_ animated: Bool?)
+  func backInExternalOAuth(_ animated: Bool)
   func oauthSucceeded(_ custodian: Custodian)
   func show(url: URL, completion: @escaping () -> ())
   func showLoadingSpinner()
@@ -43,11 +44,6 @@ protocol ExternalOAuthViewProtocol: ViewControllerProtocol {}
 
 class ExternalOAuthViewModel {
   let title: Observable<String?> = Observable(nil)
-  let imageName: Observable<String?> = Observable(nil)
-  let provider: Observable<String?> = Observable(nil)
-  let accessDescription: Observable<String?> = Observable(nil)
-  let callToActionTitle: Observable<String?> = Observable(nil)
-  let description: Observable<String?> = Observable(nil)
   let error: Observable<Error?> = Observable(nil)
   let allowedBalanceTypes: Observable<[AllowedBalanceType]?> = Observable(nil)
 }

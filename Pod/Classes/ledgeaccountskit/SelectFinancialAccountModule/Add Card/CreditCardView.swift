@@ -11,6 +11,8 @@ import SnapKit
 import UIKit
 import Stripe
 
+let cardAspectRatio = 1.585772508336421
+
 class CreditCardView: UIView {
   private let uiConfiguration: ShiftUIConfig
   private var cardStyle: CardStyle?
@@ -166,10 +168,11 @@ class CreditCardView: UIView {
 // MARK: - Setup UI
 private extension CreditCardView {
   func setUpShadow() {
-    layer.shadowOffset = CGSize(width: 0, height: 16)
+    let height = uiConfiguration.uiTheme == .theme1 ? 16 : 4
+    layer.shadowOffset = CGSize(width: 0, height: height)
     layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.16).cgColor
     layer.shadowOpacity = 1
-    layer.shadowRadius = 16
+    layer.shadowRadius = uiConfiguration.uiTheme == .theme1 ? 16 : 8
   }
 
   func setupFrontView() {
@@ -274,9 +277,10 @@ private extension CreditCardView {
     cardNumber.isUserInteractionEnabled = false
     cardNumber.addTapGestureRecognizer { [unowned self] in
       UIPasteboard.general.string = self.cardNumberText
-      UIApplication.topViewController()?.showMessage("credit.card-number-copied".podLocalized())
+      UIApplication.topViewController()?.showMessage("credit.card-number-copied".podLocalized(),
+                                                     uiConfig: self.uiConfiguration)
     }
-    frontView.addSubview(cardNumber)
+    addSubview(cardNumber)
     cardNumber.snp.makeConstraints { make in
       make.centerY.equalToSuperview()
       make.left.right.equalToSuperview().inset(16)

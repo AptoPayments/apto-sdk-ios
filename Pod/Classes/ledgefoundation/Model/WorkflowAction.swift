@@ -120,6 +120,10 @@ struct SelectBalanceStoreActionConfiguration: WorkflowActionConfiguration {
   let allowedBalanceTypes: [AllowedBalanceType]
 }
 
+struct IssueCardActionConfiguration: WorkflowActionConfiguration {
+  let legalNotice: Content
+}
+
 open class CallToAction: NSObject {
   open var title: String
   open var callToActionType: CallToActionType

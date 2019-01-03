@@ -43,6 +43,7 @@ public enum FontCustomizationOptions {
   var amountMediumFont: UIFont { get }
   var amountSmallFont: UIFont { get }
   var sectionTitleFont: UIFont { get }
+  var starredSectionTitleFont: UIFont { get }
   var subCurrencyFont: UIFont { get }
 
   var itemDescriptionFont: UIFont { get }
@@ -55,6 +56,7 @@ public enum FontCustomizationOptions {
   var topBarAmountFont: UIFont { get }
   var topBarTitleFont: UIFont { get }
   var topBarTitleBigFont: UIFont { get }
+  var topBarItemFont: UIFont { get }
 
   var largeTitleFont: UIFont { get }
 
@@ -80,6 +82,7 @@ public class UITheme1FontProvider: UIFontProviderProtocol {
   public lazy var amountMediumFont = UIFont.systemFont(ofSize: 20, weight: .regular)
   public lazy var amountSmallFont = UIFont.systemFont(ofSize: 18, weight: .light)
   public lazy var sectionTitleFont = UIFont.systemFont(ofSize: 14, weight: .bold)
+  public lazy var starredSectionTitleFont = UIFont.systemFont(ofSize: 14, weight: .medium)
   public lazy var subCurrencyFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
 
   public lazy var itemDescriptionFont = UIFont.systemFont(ofSize: 13, weight: .medium)
@@ -92,6 +95,7 @@ public class UITheme1FontProvider: UIFontProviderProtocol {
   public lazy var topBarAmountFont = UIFont.systemFont(ofSize: 20, weight: .light)
   public lazy var topBarTitleFont = UIFont.systemFont(ofSize: 17, weight: .medium)
   public lazy var topBarTitleBigFont = UIFont.systemFont(ofSize: 20, weight: .regular)
+  public lazy var topBarItemFont = UIFont.systemFont(ofSize: 10, weight: .regular)
 
   public lazy var largeTitleFont = UIFont.systemFont(ofSize: 28, weight: .black)
 
@@ -141,6 +145,9 @@ public class UITheme2FontProvider: UIFontProviderProtocol {
   public lazy var sectionTitleFont = {
     return UIFont(descriptor: fontDescriptors.medium, size: 14)
   }()
+  public lazy var starredSectionTitleFont = {
+    return UIFont(descriptor: fontDescriptors.regular, size: 12)
+  }()
   public lazy var subCurrencyFont = {
     return UIFont(descriptor: fontDescriptors.regular, size: 16)
   }()
@@ -172,6 +179,9 @@ public class UITheme2FontProvider: UIFontProviderProtocol {
   }()
   public lazy var topBarTitleBigFont = {
     return UIFont(descriptor: fontDescriptors.bold, size: 26)
+  }()
+  public lazy var topBarItemFont = {
+    return UIFont(descriptor: fontDescriptors.regular, size: 10)
   }()
 
   public lazy var largeTitleFont = {

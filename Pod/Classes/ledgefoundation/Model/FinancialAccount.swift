@@ -8,12 +8,12 @@
 
 import Foundation
 
-public enum FinancialAccountType {
+public enum FinancialAccountType: String, Codable {
   case bank
   case card
 }
 
-public enum FinancialAccountState {
+public enum FinancialAccountState: String, Codable {
   case unknown
   case created
   case active
@@ -58,36 +58,35 @@ public enum FinancialAccountState {
   }
 }
 
-public enum KYCState {
-  case resubmitDetails()
-  case uploadFile()
-  case underReview()
+public enum KYCState: String, Codable {
+  case resubmitDetails
+  case uploadFile
+  case underReview
   case passed
-  case rejected()
-  case temporaryError()
+  case rejected
+  case temporaryError
 
   static func stateFrom(description: String?) -> KYCState? {
     switch description?.uppercased() {
     case "RESUBMIT_DETAILS":
-      return .resubmitDetails()
+      return .resubmitDetails
     case "UPLOAD_FILE":
-      return .uploadFile()
+      return .uploadFile
     case "UNDER_REVIEW":
-      return .underReview()
+      return .underReview
     case "PASSED":
       return .passed
     case "REJECTED":
-      return .rejected()
+      return .rejected
     case "TEMPORARY_ERROR":
-      return .temporaryError()
+      return .temporaryError
     default:
       return nil
     }
   }
-
 }
 
-@objc open class FinancialAccount: DataPoint {
+@objc open class FinancialAccount: DataPoint, Codable {
   public let accountId: String
   public let accountType: FinancialAccountType
   public let state: FinancialAccountState
@@ -101,6 +100,31 @@ public enum KYCState {
 
   open func quickDescription() -> String {
     return ""
+  }
+
+  // MARK: - Codable
+  public required init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.accountId = try container.decode(String.self, forKey: .accountId)
+    self.accountType = try container.decode(FinancialAccountType.self, forKey: .accountType)
+    self.state = try container.decode(FinancialAccountState.self, forKey: .state)
+    let verified = try container.decode(Bool.self, forKey: .verified)
+    super.init(type: .financialAccount, verified: verified)
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(accountId, forKey: .accountId)
+    try container.encode(accountType, forKey: .accountType)
+    try container.encode(state, forKey: .state)
+    try container.encode(verified ?? false, forKey: .verified)
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case accountId
+    case accountType
+    case state
+    case verified
   }
 }
 
@@ -121,9 +145,29 @@ public enum KYCState {
   override open func quickDescription() -> String {
     return "\(bankName) (...\(lastFourDigits))"
   }
+
+  // MARK: - Codable
+  public required init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.bankName = try container.decode(String.self, forKey: .bankName)
+    self.lastFourDigits = try container.decode(String.self, forKey: .lastFourDigits)
+    try super.init(from: decoder)
+  }
+
+  public override func encode(to encoder: Encoder) throws {
+    try super.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(bankName, forKey: .bankName)
+    try container.encode(lastFourDigits, forKey: .lastFourDigits)
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case bankName
+    case lastFourDigits
+  }
 }
 
-public enum CardIssuer {
+public enum CardIssuer: String, Codable {
   case marqeta
   case shift
   case other
@@ -148,7 +192,7 @@ public enum CardIssuer {
   }
 }
 
-public enum CardNetwork {
+public enum CardNetwork: String, Codable {
   case visa
   case mastercard
   case amex
@@ -180,24 +224,37 @@ public enum CardNetwork {
   }
 }
 
+public struct CardDetails {
+  public let expiration: String
+  public let pan: String
+  public let cvv: String
+}
+
+public enum OrderedStatus: String, Codable {
+  case notApplicable = "not_applicable"
+  case available
+  case ordered
+  case received
+}
+
 @objc open class Card: FinancialAccount {
   let cardNetwork: CardNetwork?
   let cardIssuer: CardIssuer?
   let cardBrand: String?
   let lastFourDigits: String
   var cardHolder: String?
-  var pan: String?
-  var cvv: String?
   let panToken: String?
   let cvvToken: String?
-  let expiration: String?
   let spendableToday: Amount?
   let nativeSpendableToday: Amount?
+  let totalBalance: Amount?
+  let nativeTotalBalance: Amount?
   var fundingSource: FundingSource?
   let kyc: KYCState?
-  let physicalCardActivationRequired: Bool?
+  let orderedStatus: OrderedStatus
   let features: CardFeatures?
   let cardStyle: CardStyle?
+  var details: CardDetails?
 
   public init(accountId: String,
               cardNetwork: CardNetwork?,
@@ -205,14 +262,13 @@ public enum CardNetwork {
               cardBrand: String?,
               state: FinancialAccountState,
               cardHolder: String? = nil,
-              pan: String? = nil,
-              cvv: String? = nil,
               lastFourDigits: String,
-              expiration: String?,
               spendableToday: Amount?,
               nativeSpendableToday: Amount?,
+              totalBalance: Amount?,
+              nativeTotalBalance: Amount?,
               kyc: KYCState?,
-              physicalCardActivationRequired: Bool?,
+              orderedStatus: OrderedStatus,
               features: CardFeatures? = nil,
               panToken: String? = nil,
               cvvToken: String? = nil,
@@ -221,17 +277,16 @@ public enum CardNetwork {
     self.cardNetwork = cardNetwork
     self.cardIssuer = cardIssuer
     self.cardHolder = cardHolder
-    self.pan = pan
-    self.cvv = cvv
     self.kyc = kyc
     self.spendableToday = spendableToday
     self.nativeSpendableToday = nativeSpendableToday
+    self.totalBalance = totalBalance
+    self.nativeTotalBalance = nativeTotalBalance
     self.lastFourDigits = lastFourDigits
-    self.expiration = expiration
     self.panToken = panToken
     self.cvvToken = cvvToken
     self.cardBrand = cardBrand
-    self.physicalCardActivationRequired = physicalCardActivationRequired
+    self.orderedStatus = orderedStatus
     self.features = features
     self.cardStyle = cardStyle
     super.init(accountId: accountId, type: .card, state: state, verified: verified)
@@ -245,18 +300,80 @@ public enum CardNetwork {
       return "(...\(lastFourDigits))"
     }
   }
+
+  // MARK: - Codable
+  public required init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.cardNetwork = try container.decodeIfPresent(CardNetwork.self, forKey: .cardNetwork)
+    self.cardIssuer = try container.decodeIfPresent(CardIssuer.self, forKey: .cardIssuer)
+    self.cardBrand = try container.decodeIfPresent(String.self, forKey: .cardBrand)
+    self.cardHolder = try container.decodeIfPresent(String.self, forKey: .cardHolder)
+    self.lastFourDigits = try container.decode(String.self, forKey: .lastFourDigits)
+    self.spendableToday = try container.decodeIfPresent(Amount.self, forKey: .spendableToday)
+    self.nativeSpendableToday = try container.decodeIfPresent(Amount.self, forKey: .nativeSpendableToday)
+    self.totalBalance = try container.decodeIfPresent(Amount.self, forKey: .totalBalance)
+    self.nativeTotalBalance = try container.decodeIfPresent(Amount.self, forKey: .nativeTotalBalance)
+    self.kyc = try container.decodeIfPresent(KYCState.self, forKey: .kyc)
+    self.orderedStatus = try container.decode(OrderedStatus.self, forKey: .orderedStatus)
+    self.features = try container.decodeIfPresent(CardFeatures.self, forKey: .features)
+    self.panToken = try container.decodeIfPresent(String.self, forKey: .panToken)
+    self.cvvToken = try container.decodeIfPresent(String.self, forKey: .cvvToken)
+    self.cardStyle = try container.decodeIfPresent(CardStyle.self, forKey: .cardStyle)
+    self.fundingSource = try container.decodeIfPresent(FundingSource.self, forKey: .fundingSource)
+    try super.init(from: decoder)
+  }
+
+  public override func encode(to encoder: Encoder) throws {
+    try super.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(cardNetwork, forKey: .cardNetwork)
+    try container.encode(cardIssuer, forKey: .cardIssuer)
+    try container.encode(cardBrand, forKey: .cardBrand)
+    try container.encode(cardHolder, forKey: .cardHolder)
+    try container.encode(lastFourDigits, forKey: .lastFourDigits)
+    try container.encode(spendableToday, forKey: .spendableToday)
+    try container.encode(nativeSpendableToday, forKey: .nativeSpendableToday)
+    try container.encode(totalBalance, forKey: .totalBalance)
+    try container.encode(nativeTotalBalance, forKey: .nativeTotalBalance)
+    try container.encode(kyc, forKey: .kyc)
+    try container.encode(orderedStatus, forKey: .orderedStatus)
+    try container.encode(features, forKey: .features)
+    try container.encode(panToken, forKey: .panToken)
+    try container.encode(cvvToken, forKey: .cvvToken)
+    try container.encode(cardStyle, forKey: .cardStyle)
+    try container.encode(fundingSource, forKey: .fundingSource)
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case cardNetwork
+    case cardIssuer
+    case cardHolder
+    case kyc
+    case spendableToday
+    case nativeSpendableToday
+    case totalBalance
+    case nativeTotalBalance
+    case lastFourDigits
+    case panToken
+    case cvvToken
+    case cardBrand
+    case orderedStatus
+    case features
+    case cardStyle
+    case fundingSource
+  }
 }
 
-public enum FundingSourceType: String {
+public enum FundingSourceType: String, Codable {
   case custodianWallet
 }
 
-public enum FundingSourceState: String {
+public enum FundingSourceState: String, Codable {
   case valid
   case invalid
 }
 
-@objc open class FundingSource: NSObject {
+@objc open class FundingSource: NSObject, Codable {
   public let fundingSourceId: String
   public let fundingSourceType: FundingSourceType
   public let balance: Amount?
@@ -282,6 +399,33 @@ public enum FundingSourceState: String {
 
   public static func ==(lhs: FundingSource, rhs: FundingSource) -> Bool { // swiftlint:disable:this operator_whitespace
     return lhs.fundingSourceId == rhs.fundingSourceId
+  }
+
+  // MARK: - Codable
+  public required init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.fundingSourceId = try container.decode(String.self, forKey: .fundingSourceId)
+    self.fundingSourceType = try container.decode(FundingSourceType.self, forKey: .fundingSourceType)
+    self.balance = try container.decodeIfPresent(Amount.self, forKey: .balance)
+    self.amountHold = try container.decodeIfPresent(Amount.self, forKey: .amountHold)
+    self.state = try container.decode(FundingSourceState.self, forKey: .state)
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(fundingSourceId, forKey: .fundingSourceId)
+    try container.encode(fundingSourceType, forKey: .fundingSourceType)
+    try container.encode(balance, forKey: .balance)
+    try container.encode(amountHold, forKey: .amountHold)
+    try container.encode(state, forKey: .state)
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case fundingSourceId
+    case fundingSourceType
+    case balance
+    case amountHold
+    case state
   }
 }
 
@@ -314,6 +458,26 @@ public enum FundingSourceState: String {
       return name
     }
     return ""
+  }
+
+  // MARK: - Codable
+  public required init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.nativeBalance = try container.decode(Amount.self, forKey: .nativeBalance)
+    self.custodian = try container.decode(Custodian.self, forKey: .custodian)
+    try super.init(from: decoder)
+  }
+
+  public override func encode(to encoder: Encoder) throws {
+    try super.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(nativeBalance, forKey: .nativeBalance)
+    try container.encode(custodian, forKey: .custodian)
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case nativeBalance
+    case custodian
   }
 }
 

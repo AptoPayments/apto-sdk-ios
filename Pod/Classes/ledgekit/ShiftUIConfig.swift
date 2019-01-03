@@ -13,10 +13,18 @@ public enum UITheme: String, Equatable {
   case theme2 = "theme_2"
 }
 
+public enum StatusBarStyle: String, Equatable {
+  case light
+  case dark
+  case auto
+}
+
 @objc open class ShiftUIConfig: NSObject {
+
   // General
 
-  open lazy var backgroundColor = UIColor.white
+  open lazy var uiBackgroundPrimaryColor = UIColor.white
+  open lazy var uiBackgroundSecondaryColor = UIColor.white
   open lazy var tintColor = UIColor.white
   open lazy var disabledTintColor = UIColor.colorFromHex(0x17a94f, alpha: 0.5)
   open lazy var disabledColor = UIColor.colorFromHex(0xcccccc)
@@ -35,6 +43,11 @@ public enum UITheme: String, Equatable {
   open lazy var uiErrorColor = UIColor.colorFromHex(0xdb1d0e)
   open lazy var uiToastMessagesColor = uiPrimaryColor.withAlphaComponent(0.15)
 
+  // Navigation bar
+
+  open lazy var uiNavigationPrimaryColor = uiPrimaryColor
+  open lazy var uiNavigationSecondaryColor = uiPrimaryColor
+
   // Icon colors
 
   open lazy var iconPrimaryColor = UIColor.colorFromHex(0x419743)
@@ -51,6 +64,7 @@ public enum UITheme: String, Equatable {
   open lazy var textTertiaryColor = UIColor.colorFromHex(0xbbbdbd)
   open lazy var textTopBarColor = UIColor.white
   open lazy var disabledTextTopBarColor = textTopBarColor.withAlphaComponent(0.4)
+  open lazy var textMessageColor = UIColor.white
 
   // Fonts
 
@@ -83,9 +97,58 @@ public enum UITheme: String, Equatable {
     }
   }()
 
+  open lazy var smallButtonCornerRadius: CGFloat = {
+    switch uiTheme {
+    case .theme1:
+      return 18
+    case .theme2:
+      return 12
+    }
+  }()
+
+  open lazy var buttonHeight: CGFloat = {
+    switch uiTheme {
+    case .theme1:
+      return 50
+    case .theme2:
+      return 56
+    }
+  }()
+
+  open lazy var smallButtonHeight: CGFloat = {
+    switch uiTheme {
+    case .theme1:
+      return 32
+    case .theme2:
+      return 48
+    }
+  }()
+
+  open lazy var formRowHeight: CGFloat = {
+    switch uiTheme {
+    case .theme1:
+      return 40
+    case .theme2:
+      return 56
+    }
+  }()
+
+  open lazy var formRowPadding: UIEdgeInsets = {
+    switch uiTheme {
+    case .theme1:
+      return UIEdgeInsets(top: 5, left: 16, bottom: 5, right: 16)
+    case .theme2:
+      return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+    }
+  }()
+
+  public lazy var lineSpacing: CGFloat = 1.38
+
+  public lazy var letterSpacing: CGFloat = 0.5
+
   // Status bar
 
-  open lazy var statusBarStyle: UIStatusBarStyle = .default
+  open lazy var uiStatusBarStyle: StatusBarStyle = .dark
 
   // View theme
 
@@ -128,23 +191,29 @@ public enum UITheme: String, Equatable {
 
   public init(projectConfiguration: ProjectConfiguration, fontCustomizationOptions: FontCustomizationOptions? = nil) {
     super.init()
+    let branding = projectConfiguration.branding
     // swiftlint:disable force_unwrapping
-    self.iconPrimaryColor = UIColor.colorFromHexString(projectConfiguration.branding.iconPrimaryColor)!
-    self.iconSecondaryColor = UIColor.colorFromHexString(projectConfiguration.branding.iconSecondaryColor)!
-    self.iconTertiaryColor = UIColor.colorFromHexString(projectConfiguration.branding.iconTertiaryColor)!
-    self.textPrimaryColor = UIColor.colorFromHexString(projectConfiguration.branding.textPrimaryColor)!
-    self.textSecondaryColor = UIColor.colorFromHexString(projectConfiguration.branding.textSecondaryColor)!
-    self.textTertiaryColor = UIColor.colorFromHexString(projectConfiguration.branding.textTertiaryColor)!
-    self.textTopBarColor = UIColor.colorFromHexString(projectConfiguration.branding.textTopBarColor)!
-    self.textLinkColor = UIColor.colorFromHexString(projectConfiguration.branding.textLinkColor)!
-    self.uiPrimaryColor = UIColor.colorFromHexString(projectConfiguration.branding.uiPrimaryColor)!
-    self.uiSecondaryColor = UIColor.colorFromHexString(projectConfiguration.branding.uiSecondaryColor)!
-    self.uiTertiaryColor = UIColor.colorFromHexString(projectConfiguration.branding.uiTertiaryColor)!
-    self.uiErrorColor = UIColor.colorFromHexString(projectConfiguration.branding.uiErrorColor)!
-    self.uiSuccessColor = UIColor.colorFromHexString(projectConfiguration.branding.uiSuccessColor)!
-    self.uiTheme = UITheme(rawValue: projectConfiguration.branding.uiTheme)!
+    self.uiBackgroundPrimaryColor = UIColor.colorFromHexString(branding.uiBackgroundPrimaryColor)!
+    self.uiBackgroundSecondaryColor = UIColor.colorFromHexString(branding.uiBackgroundSecondaryColor)!
+    self.iconPrimaryColor = UIColor.colorFromHexString(branding.iconPrimaryColor)!
+    self.iconSecondaryColor = UIColor.colorFromHexString(branding.iconSecondaryColor)!
+    self.iconTertiaryColor = UIColor.colorFromHexString(branding.iconTertiaryColor)!
+    self.textPrimaryColor = UIColor.colorFromHexString(branding.textPrimaryColor)!
+    self.textSecondaryColor = UIColor.colorFromHexString(branding.textSecondaryColor)!
+    self.textTertiaryColor = UIColor.colorFromHexString(branding.textTertiaryColor)!
+    self.textTopBarColor = UIColor.colorFromHexString(branding.textTopBarColor)!
+    self.textLinkColor = UIColor.colorFromHexString(branding.textLinkColor)!
+    self.uiPrimaryColor = UIColor.colorFromHexString(branding.uiPrimaryColor)!
+    self.uiSecondaryColor = UIColor.colorFromHexString(branding.uiSecondaryColor)!
+    self.uiTertiaryColor = UIColor.colorFromHexString(branding.uiTertiaryColor)!
+    self.uiErrorColor = UIColor.colorFromHexString(branding.uiErrorColor)!
+    self.uiSuccessColor = UIColor.colorFromHexString(branding.uiSuccessColor)!
+    self.uiNavigationPrimaryColor = UIColor.colorFromHexString(branding.uiNavigationPrimaryColor)!
+    self.uiNavigationSecondaryColor = UIColor.colorFromHexString(branding.uiNavigationSecondaryColor)!
+    self.textMessageColor = UIColor.colorFromHexString(branding.textMessageColor)!
+    self.uiStatusBarStyle = StatusBarStyle(rawValue: branding.uiStatusBarStyle)!
+    self.uiTheme = UITheme(rawValue: branding.uiTheme)!
     // swiftlint:enable force_unwrapping
-    self.statusBarStyle = .lightContent
     switch self.uiTheme {
     case .theme1:
       self.fontProvider = UITheme1FontProvider()

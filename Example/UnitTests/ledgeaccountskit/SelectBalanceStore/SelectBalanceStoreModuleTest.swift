@@ -176,6 +176,24 @@ class SelectBalanceStoreModuleTest: XCTestCase {
     XCTAssertTrue(shiftCardSession.setBalanceStoreCalled)
   }
 
+  func testDataConfirmationPresentedUpdateUserFailsDoNotSetBalanceStore() {
+    // Given
+    let externalOauthModule = givenExternalOauthModulePresented()
+    let custodian = dataProvider.custodian
+    custodian.externalCredentials = .oauth(OauthCredential(oauthToken: "token",
+                                                           refreshToken: "token",
+                                                           userData: dataProvider.emailDataPointList))
+    externalOauthModule.oauthSucceeded(custodian)
+    let dataConfirmationModule = serviceLocator.moduleLocatorFake.dataConfirmationModuleSpy
+    serviceLocator.sessionFake.nextUpdateUserDataResult = .failure(BackendError(code: .other))
+
+    // When
+    dataConfirmationModule.onFinish?(dataConfirmationModule)
+
+    // Then
+    XCTAssertFalse(shiftCardSession.setBalanceStoreCalled)
+  }
+
   func testDataConfirmationPresentOnBackDoNotSetBalanceStore() {
     // Given
     let externalOauthModule = givenExternalOauthModulePresented()

@@ -10,7 +10,7 @@ import Bond
 import ReactiveKit
 
 class FormRowCountryPickerView: FormRowView {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   private let label: UILabel
   private let textField: UITextField
   private let allowedCountries: [Country]
@@ -78,7 +78,7 @@ private extension FormRowCountryPickerView {
 // MARK: - Set up UI
 private extension FormRowCountryPickerView {
   func setUpUI() {
-    backgroundColor = uiConfig.backgroundColor
+    backgroundColor = uiConfig.uiBackgroundPrimaryColor
     setUpLabel()
     setUpTextField()
   }

@@ -15,7 +15,7 @@ class FormRowMultilineView: FormRowView {
 
   init(showSplitter:Bool = false, flashColor: UIColor?) {
     self.flashColor = flashColor
-    super.init(showSplitter: showSplitter, topPadding: 0, bottomPadding: 0, leftPadding: 0, rightPadding: 0, height: 44)
+    super.init(showSplitter: showSplitter, padding: .zero, height: 44)
   }
 
   required init?(coder aDecoder: NSCoder) {
@@ -34,7 +34,7 @@ class FormRowMultilineView: FormRowView {
   }
 
   func add(line:UIView, afterLine: UIView?, separatorOffset:CGFloat = 20) {
-    if afterLine != nil {
+    if afterLine != nil && showSplitter {
       let separatorView = UIView()
       self.addSubview(separatorView)
       separatorView.snp.makeConstraints{ make in

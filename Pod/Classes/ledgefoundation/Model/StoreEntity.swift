@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc open class Store: NSObject {
+@objc open class Store: NSObject, Codable {
   public let id: String?
   public var storeKey: String?
   public let name: String?

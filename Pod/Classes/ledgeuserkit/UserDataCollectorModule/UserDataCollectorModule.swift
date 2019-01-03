@@ -18,9 +18,6 @@ class UserDataCollectorModule: UIModule {
   private let disclaimers: [Content]
   private let mode: UserDataCollectorFinalStepMode
   private let backButtonMode: UIViewControllerLeftButtonMode
-  private let finalStepTitle: String
-  private let finalStepSubtitle: String
-  private let finalStepCallToAction: CallToAction
   private var presenter: UserDataCollectorPresenter?
 
   // swiftlint:disable implicitly_unwrapped_optional
@@ -30,25 +27,19 @@ class UserDataCollectorModule: UIModule {
 
   open var onUserDataCollected: ((_ userDataCollectorModule: UserDataCollectorModule, _ user: ShiftUser) -> Void)?
 
-  fileprivate var verifyPhoneModule: VerifyPhoneModule?
+  fileprivate var verifyPhoneModule: VerifyPhoneModuleProtocol?
   fileprivate var verifyEmailModule: VerifyEmailModule?
-  fileprivate var verifyBirthDateModule: VerifyBirthDateModule?
+  fileprivate var verifyBirthDateModule: VerifyBirthDateModuleProtocol?
 
   init(serviceLocator: ServiceLocatorProtocol,
        userRequiredData: RequiredDataPointList,
        mode: UserDataCollectorFinalStepMode,
        backButtonMode: UIViewControllerLeftButtonMode,
-       finalStepTitle: String,
-       finalStepSubtitle: String,
-       finalStepCallToAction: CallToAction,
        disclaimers: [Content] = []) {
     self.userRequiredData = userRequiredData
     self.disclaimers = disclaimers
     self.mode = mode
     self.backButtonMode = backButtonMode
-    self.finalStepTitle = finalStepTitle
-    self.finalStepSubtitle = finalStepSubtitle
-    self.finalStepCallToAction = finalStepCallToAction
 
     super.init(serviceLocator: serviceLocator)
   }
@@ -79,7 +70,7 @@ class UserDataCollectorModule: UIModule {
   fileprivate func buildUserDataCollectorViewController(_ initialUserData: DataPointList,
                                                         uiConfig: ShiftUIConfig,
                                                         config: UserDataCollectorConfig) -> UIViewController {
-    let presenter = UserDataCollectorPresenter(config: config, uiConfig: uiConfig, shiftSession: shiftSession)
+    let presenter = UserDataCollectorPresenter(config: config, uiConfig: uiConfig)
     let interactor = UserDataCollectorInteractor(session: self.shiftSession,
                                                  initialUserData: initialUserData,
                                                  config: self.config,
@@ -97,9 +88,6 @@ class UserDataCollectorModule: UIModule {
     config = UserDataCollectorConfig(contextConfiguration: contextConfiguration,
                                      mode: mode,
                                      backButtonMode: backButtonMode,
-                                     finalStepTitle: finalStepTitle,
-                                     finalStepSubtitle: finalStepSubtitle,
-                                     finalStepCallToAction: finalStepCallToAction,
                                      userRequiredData: userRequiredData,
                                      disclaimers: disclaimers)
   }
@@ -109,7 +97,7 @@ extension UserDataCollectorModule: UserDataCollectorRouterProtocol {
   func presentPhoneVerification(verificationType: VerificationParams<PhoneNumber, Verification>,
                                 modally: Bool?,
                                 completion: Result<Verification, NSError>.Callback?) {
-    let verifyPhoneModule = VerifyPhoneModule(serviceLocator: serviceLocator, verificationType: verificationType)
+    let verifyPhoneModule = serviceLocator.moduleLocator.verifyPhoneModule(verificationType: verificationType)
     verifyPhoneModule.onClose = { [weak self] module in
       self?.dismissModule {
         self?.verifyPhoneModule = nil
@@ -147,8 +135,7 @@ extension UserDataCollectorModule: UserDataCollectorRouterProtocol {
   func presentBirthdateVerification(verificationType: VerificationParams<BirthDate, Verification>,
                                     modally: Bool?,
                                     completion: (Result<Verification, NSError>.Callback)?) {
-    let verifyBirthDateModule = VerifyBirthDateModule(serviceLocator: serviceLocator,
-                                                      verificationType: verificationType)
+    let verifyBirthDateModule = serviceLocator.moduleLocator.verifyBirthDateModule(verificationType: verificationType)
     verifyBirthDateModule.onClose = { [weak self] _ in
       self?.dismissModule {
         self?.verifyBirthDateModule = nil

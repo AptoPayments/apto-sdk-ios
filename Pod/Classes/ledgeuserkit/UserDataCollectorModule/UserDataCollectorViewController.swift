@@ -76,15 +76,11 @@ class UserDataCollectorViewController: ShiftViewController, UserDataCollectorVie
   override func closeTapped() {
     self.eventHandler.closeTapped()
   }
-
-  func showLoadingSpinner() {
-    showLoadingSpinner(tintColor: uiConfiguration.uiPrimaryColor)
-  }
 }
 
 private extension UserDataCollectorViewController {
   func setUpUI() {
-    view.backgroundColor = self.uiConfiguration.backgroundColor
+    view.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     navigationController?.navigationBar.setUpWith(uiConfig: uiConfiguration)
     edgesForExtendedLayout = .top
     extendedLayoutIncludesOpaqueBars = true

@@ -14,6 +14,12 @@ fileprivate let balanceStoreAddressUnverified = 90193
 fileprivate let balanceStoreCurrencyUnsupported = 90194
 fileprivate let balanceStoreCannotCaptureFunds = 90195
 fileprivate let balanceStoreInsufficientFunds = 90196
+fileprivate let balanceStoreValidationsLegalNameMissing = 90221
+fileprivate let balanceStoreValidationsDateOfBirthMissing = 90222
+fileprivate let balanceStoreValidationsDateOfBirthError = 90223
+fileprivate let balanceStoreValidationsAddressMissing = 90224
+fileprivate let balanceStoreValidationsEmailMissing = 90225
+fileprivate let balanceStoreValidationsEmailError = 90226
 
 enum SelectBalanceStoreResultType: String {
   case valid
@@ -37,19 +43,32 @@ struct SelectBalanceStoreResult {
     }
     switch errorCode {
     case balanceStoreCountryUnsupported:
-      return "balance.validations.address.country.unsupported".podLocalized()
+      return "select_balance_store.login.error_wrong_country.message".podLocalized()
     case balanceStoreRegionUnsupported:
-      return "balance.validations.address.region.unsupported".podLocalized()
+      return "select_balance_store.login.error_wrong_region.message".podLocalized()
     case balanceStoreAddressUnverified:
-      return "balance.validations.address.unverified".podLocalized()
+      return "select_balance_store.login.error_unverified_address.message".podLocalized()
     case balanceStoreCurrencyUnsupported:
-      return "balance.validations.currency.unsupported".podLocalized()
+      return "select_balance_store.login.error_unsupported_currency.message".podLocalized()
     case balanceStoreCannotCaptureFunds:
-      return "balance.validations.funds.cannot.capture".podLocalized()
+      return "select_balance_store.login.error_cant_capture_funds.message".podLocalized()
     case balanceStoreInsufficientFunds:
-      return "balance.validations.funds.insuficient".podLocalized()
+      return "select_balance_store.login.error_insufficient_funds.message".podLocalized()
+    case balanceStoreValidationsLegalNameMissing:
+      return "select_balance_store.login.error_missing_legal_name.message".podLocalized()
+    case balanceStoreValidationsDateOfBirthMissing:
+      return "select_balance_store.login.error_missing_birthdate.message".podLocalized()
+    case balanceStoreValidationsDateOfBirthError:
+      return "select_balance_store.login.error_wrong_birthdate.message".podLocalized()
+    case balanceStoreValidationsAddressMissing:
+      return "select_balance_store.login.error_missing_address.message".podLocalized()
+    case balanceStoreValidationsEmailMissing:
+      return "select_balance_store.login.error_missing_email.message".podLocalized()
+    case balanceStoreValidationsEmailError:
+      return "select_balance_store.login.error_wrong_email.message".podLocalized()
     default:
-      return "balance.validations.unknown".podLocalized().replace(["<<ERROR_CODE>>": String(errorCode)])
+      let message = "select_balance_store.login.error_unknown.message".podLocalized()
+      return message.replace(["<<ERROR_CODE>>": String(errorCode)])
     }
   }
 }

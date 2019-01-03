@@ -1,6 +1,6 @@
 //
 //  FinancialAccountsStorage.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 19/10/2016.
 //
@@ -20,18 +20,25 @@ protocol FinancialAccountsStorageProtocol {
   func getFinancialAccount(_ apiKey: String,
                            userToken: String,
                            accountId: String,
-                           retrieveBalance: Bool,
+                           forceRefresh: Bool,
+                           retrieveBalances: Bool,
                            callback: @escaping Result<FinancialAccount, NSError>.Callback)
+  func getCardDetails(_ apiKey: String,
+                      userToken: String,
+                      accountId: String,
+                      callback: @escaping Result<CardDetails, NSError>.Callback)
   func getFinancialAccountTransactions(_ apiKey: String,
                                        userToken: String,
                                        accountId: String,
                                        page: Int?,
                                        rows: Int?,
                                        lastTransactionId: String?,
+                                       forceRefresh: Bool,
                                        callback: @escaping Result<[Transaction], NSError>.Callback)
   func getFinancialAccountFundingSource(_ apiKey: String,
                                         userToken: String,
                                         accountId: String,
+                                        forceRefresh: Bool,
                                         callback: @escaping Result<FundingSource?, NSError>.Callback)
   func setFinancialAccountFundingSource(_ apiKey: String,
                                         userToken: String,
@@ -75,6 +82,7 @@ protocol FinancialAccountsStorageProtocol {
                                       accountId: String,
                                       page: Int?,
                                       rows: Int?,
+                                      forceRefresh: Bool,
                                       callback: @escaping Result<[FundingSource], NSError>.Callback)
   func addFinancialAccountFundingSource(_ apiKey: String,
                                         userToken: String,
@@ -87,21 +95,71 @@ extension FinancialAccountsStorageProtocol {
   func getFinancialAccount(_ apiKey: String,
                            userToken: String,
                            accountId: String,
-                           retrieveBalance: Bool = true,
+                           forceRefresh: Bool = true,
+                           retrieveBalances: Bool = false,
                            callback: @escaping Result<FinancialAccount, NSError>.Callback) {
     getFinancialAccount(apiKey,
                         userToken: userToken,
                         accountId: accountId,
-                        retrieveBalance: retrieveBalance,
+                        forceRefresh: forceRefresh,
+                        retrieveBalances: retrieveBalances,
                         callback: callback)
+  }
+
+  func getFinancialAccountFundingSource(_ apiKey: String,
+                                        userToken: String,
+                                        accountId: String,
+                                        forceRefresh: Bool = true,
+                                        callback: @escaping Result<FundingSource?, NSError>.Callback) {
+    getFinancialAccountFundingSource(apiKey,
+                                     userToken: userToken,
+                                     accountId: accountId,
+                                     forceRefresh: forceRefresh,
+                                     callback: callback)
+  }
+
+  func getFinancialAccountTransactions(_ apiKey: String,
+                                       userToken: String,
+                                       accountId: String,
+                                       page: Int?,
+                                       rows: Int?,
+                                       lastTransactionId: String?,
+                                       forceRefresh: Bool = true,
+                                       callback: @escaping Result<[Transaction], NSError>.Callback) {
+    getFinancialAccountTransactions(apiKey,
+                                    userToken: userToken,
+                                    accountId: accountId,
+                                    page: page,
+                                    rows: rows,
+                                    lastTransactionId: lastTransactionId,
+                                    forceRefresh: forceRefresh,
+                                    callback: callback)
+  }
+
+  func financialAccountFundingSources(_ apiKey: String,
+                                      userToken: String,
+                                      accountId: String,
+                                      page: Int?,
+                                      rows: Int?,
+                                      forceRefresh: Bool = true,
+                                      callback: @escaping Result<[FundingSource], NSError>.Callback) {
+    financialAccountFundingSources(apiKey,
+                                   userToken: userToken,
+                                   accountId: accountId,
+                                   page: page,
+                                   rows: rows,
+                                   forceRefresh: forceRefresh,
+                                   callback: callback)
   }
 }
 
 class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
   private let transport: JSONTransport
+  private let cache: FinancialAccountCacheProtocol
 
-  init(transport: JSONTransport) {
+  init(transport: JSONTransport, cache: FinancialAccountCacheProtocol) {
     self.transport = transport
+    self.cache = cache
   }
 
   func get(financialAccountsOfType accountType: FinancialAccountType,
@@ -118,7 +176,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
   func getFinancialAccounts(_ apiKey: String,
                             userToken: String,
                             callback: @escaping Result<[FinancialAccount], NSError>.Callback) {
-    let url = URLWrapper(baseUrl: self.transport.environment.pciVaultBaseUrl(), url: JSONRouter.financialAccounts)
+    let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.financialAccounts)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
     self.transport.get(url,
@@ -142,13 +200,37 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
   func getFinancialAccount(_ apiKey: String,
                            userToken: String,
                            accountId: String,
-                           retrieveBalance: Bool = true,
+                           forceRefresh: Bool = true,
+                           retrieveBalances: Bool = false,
                            callback: @escaping Result<FinancialAccount, NSError>.Callback) {
-    let url = URLWrapper(baseUrl: self.transport.environment.pciVaultBaseUrl(),
+    if forceRefresh == false, let card = cache.cachedCard(accountId: accountId) {
+      if retrieveBalances == true, card.fundingSource == nil {
+        getFinancialAccountFundingSource(apiKey,
+                                         userToken: userToken,
+                                         accountId: accountId,
+                                         forceRefresh: false) { result in
+          switch result {
+          case .failure(let error):
+            callback(.failure(error))
+          case .success(let fundingSource):
+            card.fundingSource = fundingSource
+            callback(.success(card))
+          }
+        }
+        return
+      }
+      callback(.success(card))
+      return
+    }
+    let urlParameters = [
+      "show_details": "false",
+      "refresh_balances": retrieveBalances ? "true" : "false"
+    ]
+    let url = URLWrapper(baseUrl: transport.environment.baseUrl(),
                          url: JSONRouter.financialAccounts,
-                         urlTrailing: accountId)
-    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
-                                                             userToken: userToken)
+                         urlTrailing: accountId,
+                         urlParameters: urlParameters)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     self.transport.get(url,
                        authorization: auth,
                        parameters: nil,
@@ -163,12 +245,15 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
           callback(.failure(ServiceError(code: .jsonError)))
           return
         }
-        if retrieveBalance == true, let card = financialAccount as? Card, card.cardIssuer == .shift {
+        self.cache.saveCard(financialAccount)
+        if retrieveBalances == true, let card = financialAccount as? Card, card.cardIssuer == .shift {
           self.getFinancialAccountFundingSource(apiKey,
                                                 userToken: userToken,
-                                                accountId: accountId) { result in
+                                                accountId: accountId,
+                                                forceRefresh: forceRefresh) { result in
             callback(result.flatMap { fundingSource -> Result<FinancialAccount, NSError> in
               card.fundingSource = fundingSource
+              self.cache.saveCard(card)
               return .success(card)
             })
           }
@@ -180,21 +265,51 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
     }
   }
 
+  func getCardDetails(_ apiKey: String,
+                      userToken: String,
+                      accountId: String,
+                      callback: @escaping Result<CardDetails, NSError>.Callback) {
+    let urlParameters = [":accountId": accountId]
+    let url = URLWrapper(baseUrl: transport.environment.pciVaultBaseUrl(),
+                         url: JSONRouter.financialAccountsDetails,
+                         urlParameters: urlParameters)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+    transport.get(url, authorization: auth,
+                  parameters: nil,
+                  headers: nil,
+                  acceptRedirectTo: nil,
+                  filterInvalidTokenResult: true) { result in
+      switch result {
+      case .failure(let error):
+        callback(.failure(error))
+      case .success(let json):
+        guard let cardDetails = json.cardDetails else {
+          callback(.failure(ServiceError(code: .jsonError)))
+          return
+        }
+        callback(.success(cardDetails))
+      }
+    }
+  }
+
   func getFinancialAccountTransactions(_ apiKey: String,
                                        userToken: String,
                                        accountId: String,
                                        page: Int?,
                                        rows: Int?,
                                        lastTransactionId: String?,
+                                       forceRefresh: Bool = true,
                                        callback: @escaping Result<[Transaction], NSError>.Callback) {
-    var urlParameters: [String: String] = [
-      ":accountId": accountId
-    ]
+    if forceRefresh == false, let transactions = cache.cachedTransactions(accountId: accountId), !transactions.isEmpty {
+      callback(.success(transactions))
+      return
+    }
+    var urlParameters = [ ":accountId": accountId ]
     if let page = page {
-      urlParameters["page"] = "\(page)"
+      urlParameters["page"] = String(page)
     }
     if let rows = rows {
-      urlParameters["rows"] = "\(rows)"
+      urlParameters["rows"] = String(rows)
     }
     if let lastTransactionId = lastTransactionId {
       urlParameters["last_transaction_id"] = lastTransactionId
@@ -202,18 +317,18 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.financialAccountTransactions,
                          urlParameters: urlParameters)
-    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
-                                                             userToken: userToken)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     self.transport.get(url,
                        authorization: auth,
                        parameters: nil,
                        headers: nil,
                        acceptRedirectTo: nil,
-                       filterInvalidTokenResult: true) { result in
+                       filterInvalidTokenResult: true) { [weak self] result in
       callback(result.flatMap { json -> Result<[Transaction], NSError> in
         guard let transactions = json.linkObject as? [Transaction] else {
           return .failure(ServiceError(code: .jsonError))
         }
+        self?.cache.saveTransactions(transactions, accountId: accountId)
         return .success(transactions)
       })
     }
@@ -222,21 +337,23 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
   func getFinancialAccountFundingSource(_ apiKey: String,
                                         userToken: String,
                                         accountId: String,
+                                        forceRefresh: Bool = true,
                                         callback: @escaping Result<FundingSource?, NSError>.Callback) {
-    let urlParameters: [String: String] = [
-      ":accountId": accountId
-    ]
+    if forceRefresh == false, let cachedFundingSource = cache.cachedFundingSource(accountId: accountId) {
+      callback(.success(cachedFundingSource))
+      return
+    }
+    let urlParameters = [":accountId": accountId]
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.financialAccountFundingSource,
                          urlParameters: urlParameters)
-    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
-                                                             userToken: userToken)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     self.transport.get(url,
                        authorization: auth,
                        parameters: nil,
                        headers: nil,
                        acceptRedirectTo: nil,
-                       filterInvalidTokenResult: true) { result in
+                       filterInvalidTokenResult: true) { [weak self] result in
       switch result {
       case .failure(let error):
         if error.code == BackendError.ErrorCodes.primaryFundingSourceNotFound.rawValue {
@@ -250,6 +367,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
           callback(.failure(ServiceError(code: .jsonError)))
           return
         }
+        self?.cache.saveFundingSource(fundingSource, accountId: accountId)
         callback(.success(fundingSource))
       }
     }
@@ -327,13 +445,15 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
                     cardBrand: nil,
                     state: .active,
                     lastFourDigits: lastFourDigits,
-                    expiration: expiration,
                     spendableToday: nil,
                     nativeSpendableToday: nil,
+                    totalBalance: nil,
+                    nativeTotalBalance: nil,
                     kyc: nil,
-                    physicalCardActivationRequired: false,
+                    orderedStatus: .received,
                     panToken: cardNumber,
                     cvvToken: cvv)
+    card.details = CardDetails(expiration: expiration, pan: "", cvv: "")
     let data = card.jsonSerialize()
     self.transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<Card, NSError> in
@@ -350,7 +470,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
                  issuer: CardIssuer,
                  custodian: Custodian?,
                  callback: @escaping Result<Card, NSError>.Callback) {
-    let url = URLWrapper(baseUrl: self.transport.environment.pciVaultBaseUrl(), url: JSONRouter.issueVirtualCard)
+    let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.issueVirtualCard)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
     var data = [String: AnyObject]()
@@ -382,9 +502,14 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
     let parameters = [
       "code": code as AnyObject
     ]
+    let urlParameters = [
+      ":accountId": accountId,
+      "show_details": "false",
+      "refresh_spendable_today": "false"
+    ]
     let url = URLWrapper(baseUrl: transport.baseUrl(),
                          url: JSONRouter.activatePhysicalCard,
-                         urlParameters: [":accountId": accountId])
+                         urlParameters: urlParameters)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<PhysicalCardActivationResult, NSError> in
@@ -406,9 +531,11 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
     }
     let parameters = [
       ":accountId": accountId,
-      ":action": action
+      ":action": action,
+      "show_details": "false",
+      "refresh_spendable_today": "false"
     ]
-    let url = URLWrapper(baseUrl: self.transport.environment.pciVaultBaseUrl(),
+    let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.updateFinancialAccountState,
                          urlParameters: parameters)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
@@ -428,7 +555,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
                                  accountId: String,
                                  pin: String,
                                  callback: @escaping Result<FinancialAccount, NSError>.Callback) {
-    let url = URLWrapper(baseUrl: self.transport.environment.pciVaultBaseUrl(),
+    let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.updateFinancialAccountPIN,
                          urlParameters: [":accountId": accountId])
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
@@ -450,7 +577,12 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
                                       accountId: String,
                                       page: Int?,
                                       rows: Int?,
+                                      forceRefresh: Bool = true,
                                       callback: @escaping Result<[FundingSource], NSError>.Callback) {
+    if forceRefresh == false, let fundingSources = cache.cachedFundingSources(accountId: accountId) {
+      callback(.success(fundingSources))
+      return
+    }
     var urlParameters: [String: String] = [
       ":accountId": accountId
     ]
@@ -475,6 +607,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
         guard let fundingSources = json.linkObject as? [FundingSource] else {
           return .failure(ServiceError(code: .jsonError))
         }
+        self.cache.saveFundingSources(fundingSources, accountId: accountId)
         return .success(fundingSources)
       })
     }

@@ -46,13 +46,16 @@ class NewShiftCardModule: UIModule {
   // MARK: - Configuration HandlingApplication
 
   fileprivate func loadConfigurationFromServer(_ completion:@escaping Result<Void, NSError>.Callback) {
+    showLoadingView()
     shiftSession.contextConfiguration(true) { result in
       switch result {
       case .failure(let error):
+        self.hideLoadingView()
         completion(.failure(error))
       case .success (let contextConfiguration):
         self.contextConfiguration = contextConfiguration
-        self.shiftCardSession.shiftCardConfiguration(true) { result in
+        self.shiftCardSession.shiftCardConfiguration { result in
+          self.hideLoadingView()
           switch result {
           case .failure(let error):
             completion(.failure(error))
@@ -66,7 +69,9 @@ class NewShiftCardModule: UIModule {
   }
 
   private func startNewApplication(completion: @escaping Result<UIViewController, NSError>.Callback) {
+    showLoadingView()
     shiftCardSession.applyToCardProduct(shiftCardConfiguration.cardProduct) { result in
+      self.hideLoadingView()
       switch result {
       case .failure(let error):
         completion(.failure(error))
@@ -106,10 +111,12 @@ extension NewShiftCardModule: WorkflowObjectStatusRequester {
       return
     }
 
+    showLoadingView()
     shiftSession.shiftCardSession.applicationStatus(application.id) { result in
+      self.hideLoadingView()
       switch result {
       case .failure(let error):
-        UIApplication.topViewController()?.show(error: error)
+        self.show(error: error)
       case .success(let application):
         if application.status == .approved {
           self.onFinish?(self)

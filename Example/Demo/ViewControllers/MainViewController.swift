@@ -106,7 +106,7 @@ class MainViewController: UIViewController {
       self?.hideLoadingSpinner()
       switch result {
       case .failure(let error):
-        self?.show(error: error)
+        self?.show(error: error, uiConfig: nil)
       case .success:
         break
       }
@@ -120,7 +120,7 @@ class MainViewController: UIViewController {
       self?.hideLoadingSpinner()
       switch result {
       case .failure(let error):
-        self?.show(error: error)
+        self?.show(error: error, uiConfig: nil)
       case .success:
         break
       }

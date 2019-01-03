@@ -82,6 +82,7 @@ extension ShiftPlatform {
                         page: Int?,
                         rows: Int?,
                         lastTransactionId: String?,
+                        forceRefresh: Bool = true,
                         callback: @escaping Result<[Transaction], NSError>.Callback) {
     guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
@@ -93,6 +94,7 @@ extension ShiftPlatform {
                                                              page: page,
                                                              rows: rows,
                                                              lastTransactionId: lastTransactionId,
+                                                             forceRefresh: forceRefresh,
                                                              callback: callback)
   }
 
@@ -121,6 +123,7 @@ extension ShiftPlatform {
                                       accountId: String,
                                       page: Int?,
                                       rows: Int?,
+                                      forceRefresh: Bool = true,
                                       callback: @escaping Result<[FundingSource], NSError>.Callback) {
     guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
@@ -131,11 +134,13 @@ extension ShiftPlatform {
                                                             accountId: accountId,
                                                             page: page,
                                                             rows: rows,
+                                                            forceRefresh: forceRefresh,
                                                             callback: callback)
   }
 
   func getCardFundingSource(accessToken: AccessToken,
                             accountId: String,
+                            forceRefresh: Bool = true,
                             callback: @escaping Result<FundingSource?, NSError>.Callback) {
     guard let projectKey = self.apiKey else {
       callback(.failure(BackendError(code: .invalidSession)))
@@ -144,6 +149,7 @@ extension ShiftPlatform {
     financialAccountsStorage.getFinancialAccountFundingSource(projectKey,
                                                               userToken: accessToken.token,
                                                               accountId: accountId,
+                                                              forceRefresh: forceRefresh,
                                                               callback: callback)
   }
 

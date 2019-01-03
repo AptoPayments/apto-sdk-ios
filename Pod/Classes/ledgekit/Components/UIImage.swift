@@ -15,7 +15,11 @@ class PodBundle:Bundle {
 }
 
 extension UIImage {
-  static func imageFromPodBundle(_ imageName:String) -> UIImage? {
+  static func imageFromPodBundle(_ imageName: String, uiTheme: UITheme? = nil) -> UIImage? {
+    var imageName = imageName
+    if let uiTheme = uiTheme, uiTheme == .theme2 {
+      imageName = uiTheme.rawValue + imageName
+    }
     return UIImage(named: imageName, in: PodBundle.bundle(), compatibleWith: nil)
   }
 

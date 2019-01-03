@@ -7,6 +7,8 @@
 //
 
 import Alamofire
+import AlamofireNetworkActivityIndicator
+import FTLinearActivityIndicator
 import SwiftyJSON
 import TrustKit
 
@@ -71,6 +73,10 @@ final class NetworkManager: NetworkManagerProtocol {
     if let certPinningConfig = certPinningConfig {
       self.setupCertificatePinning(certPinningConfig)
     }
+    UIApplication.configureLinearNetworkActivityIndicatorIfNeeded()
+    NetworkActivityIndicatorManager.shared.isEnabled = true
+    NetworkActivityIndicatorManager.shared.startDelay = 0
+    NetworkActivityIndicatorManager.shared.completionDelay = 0.5
   }
 
   func request(_ request: NetworkRequest) {
@@ -122,6 +128,8 @@ final class NetworkManager: NetworkManagerProtocol {
       return processInvalidSession(response: response)
     case 412:
       return processSDKDeprecated(response: response)
+    case 503:
+      return processServerMaintenance(response: response)
     case .some(400..<500):
       return process400(response: response)
     case .some(500..<600):
@@ -147,7 +155,7 @@ final class NetworkManager: NetworkManagerProtocol {
   private func processInvalidSession(response: DataResponse<Any>) -> Result<AnyObject, NSError> {
     let json = JSON(response.value ?? "")
     let error = json.backendError ?? BackendError(code: .invalidSession)
-    if error.invalidSessionError() {
+    if error.invalidSessionError() || error.unknownSessionError() {
       NotificationCenter.default.post(Notification(name: .UserTokenSessionInvalidNotification,
                                                    object: nil,
                                                    userInfo: ["error": error]))
@@ -173,6 +181,11 @@ final class NetworkManager: NetworkManagerProtocol {
     return .failure(error)
   }
 
+  private func processServerMaintenance(response: DataResponse<Any>) -> Result<AnyObject, NSError> {
+    let error = BackendError(code: .serverMaintenance)
+    return .failure(error)
+  }
+
   private func process500(response: DataResponse<Any>) -> Result<AnyObject, NSError> {
     switch response.result {
     case .success(let data):
@@ -183,11 +196,11 @@ final class NetworkManager: NetworkManagerProtocol {
         return .failure(error)
       }
       else {
-        let error = BackendError(code: .serviceUnavailable, reason: response.error?.localizedDescription)
+        let error = BackendError(code: .serverMaintenance, reason: response.error?.localizedDescription)
         return .failure(error)
       }
     case .failure(_):
-      let error = BackendError(code: .serviceUnavailable, reason: response.error?.localizedDescription)
+      let error = BackendError(code: .serverMaintenance, reason: response.error?.localizedDescription)
       return .failure(error)
     }
   }

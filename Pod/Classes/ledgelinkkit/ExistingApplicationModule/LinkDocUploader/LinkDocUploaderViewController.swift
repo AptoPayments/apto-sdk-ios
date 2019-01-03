@@ -33,7 +33,7 @@ class LinkDocUploaderViewController : ShiftViewController, LinkDocUploaderViewPr
     super.viewDidLoad()
     self.edgesForExtendedLayout = UIRectEdge()
     self.title = "doc-uploader.title".podLocalized()
-    self.view.backgroundColor = uiConfiguration.backgroundColor
+    self.view.backgroundColor = uiConfiguration.uiBackgroundPrimaryColor
     self.showNavNextButton(title: "doc-uploader.nav.button.done".podLocalized(), tintColor: uiConfiguration.iconTertiaryColor)
     let _ = self.eventHandler.viewModel.requiredDocuments.observeNext { requiredDocuments in
       self.show(requiredDocuments:requiredDocuments)

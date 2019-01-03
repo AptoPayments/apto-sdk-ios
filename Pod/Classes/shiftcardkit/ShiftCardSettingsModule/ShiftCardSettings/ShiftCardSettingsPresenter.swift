@@ -17,19 +17,20 @@ struct ShiftCardSettingsPresenterConfig {
   let faq: Content?
 }
 
-class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
+class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterProtocol {
   // swiftlint:disable implicitly_unwrapped_optional
   var view: ShiftCardSettingsViewProtocol!
   var interactor: ShiftCardSettingsInteractorProtocol!
   weak var router: ShiftCardSettingsRouterProtocol!
   // swiftlint:enable implicitly_unwrapped_optional
-  var viewModel: ShiftCardSettingsViewModel
+  let viewModel: ShiftCardSettingsViewModel
   private let card: Card
   private let rowsPerPage = 20
   private let enableCardAction: EnableCardAction
   private let disableCardAction: DisableCardAction
   private let showCardInfoAction: ShowCardInfoAction
   private let reportLostCardAction: ReportLostCardAction
+  private let helpAction: HelpAction
   private let config: ShiftCardSettingsPresenterConfig
 
   init(shiftCardSession: ShiftCardSession,
@@ -51,7 +52,7 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
                                                      emailRecipients: emailRecipients,
                                                      uiConfig: uiConfig)
     self.showCardInfoAction = ShowCardInfoAction()
-    self.viewModel.showBalancesSection.next(self.shouldShowBalancesSection())
+    self.helpAction = HelpAction(emailRecipients: emailRecipients)
     let legalDocuments = LegalDocuments(cardHolderAgreement: config.cardholderAgreement,
                                         faq: config.faq,
                                         termsAndConditions: config.termsAndCondition,
@@ -111,43 +112,6 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
     viewModel.showGetPin.next(card.features?.ivr?.status == .enabled)
     viewModel.locked.next(card.state != .active)
     viewModel.showCardInfo.next(router.isCardInfoVisible())
-    guard self.shouldShowBalancesSection() else {
-      return
-    }
-    view.showLoadingSpinner()
-    interactor.provideFundingSources(rows: rowsPerPage) { result in
-      switch result {
-      case .failure(let error):
-        self.view.show(error: error)
-      case .success(let fundingSources):
-        self.interactor.activeCardFundingSource { result in
-          self.view.hideLoadingSpinner()
-          if self.viewModel.fundingSourcesLoaded.value == false {
-            self.viewModel.fundingSourcesLoaded.next(true)
-          }
-          switch result {
-          case .failure(let error):
-            self.view.show(error: error)
-          case .success(let activeFundingSource):
-            self.viewModel.fundingSources.next(fundingSources)
-            self.viewModel.activeFundingSource.next(activeFundingSource)
-            if let idx = fundingSources.index(where: { $0.fundingSourceId == activeFundingSource?.fundingSourceId }) {
-              self.viewModel.activeFundingSourceIdx.next(idx)
-            }
-            else {
-              self.viewModel.activeFundingSourceIdx.next(nil)
-            }
-          }
-        }
-      }
-    }
-  }
-
-  private func shouldShowBalancesSection() -> Bool {
-    if let allowedBalanceTypes = card.features?.allowedBalanceTypes {
-      return allowedBalanceTypes.count > 0
-    }
-    return false
   }
 
   func previousTapped() {
@@ -158,32 +122,8 @@ class ShiftCardSettingsPresenter: ShiftCardSettingsPresenterHandler {
     router.closeFromShiftCardSettings()
   }
 
-  func fundingSourceSelected(index: Int) {
-    guard index != viewModel.activeFundingSourceIdx.value else {
-      return
-    }
-    let fundingSources = viewModel.fundingSources.value
-    if index < fundingSources.count {
-      self.view.showLoadingSpinner()
-      interactor.setActive(fundingSource: fundingSources[index]) { [unowned self] result in
-        self.view.hideLoadingSpinner()
-        switch result {
-        case .failure(let error):
-          // If set new funding source fails restore the previous selection
-          self.viewModel.activeFundingSourceIdx.next(self.viewModel.activeFundingSourceIdx.value)
-          self.view.show(error: error)
-        case .success(_):
-          self.viewModel.activeFundingSourceIdx.next(index)
-          self.router.fundingSourceChanged()
-        }
-      }
-    }
-  }
-
-  func addFundingSourceTapped() {
-    router.addFundingSource { _ in
-      self.refreshData()
-    }
+  func helpTapped() {
+    helpAction.run()
   }
 
   func lostCardTapped() {

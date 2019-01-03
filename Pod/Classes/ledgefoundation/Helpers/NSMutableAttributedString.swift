@@ -22,12 +22,11 @@ extension NSMutableAttributedString {
     self.enumerateAttribute(NSAttributedStringKey.font,
                             in: range,
                             options: .longestEffectiveRangeNotRequired) { (attribute, range, stop) in
-      guard let existingFont = attribute as? UIFont else {
+      guard attribute is UIFont else {
         return
       }
-      let newFont = existingFont.fontByReplacing(fontFace: font.fontName)
       self.removeAttribute(NSAttributedStringKey.font, range: range)
-      self.addAttribute(NSAttributedStringKey.font, value: newFont, range: range)
+      self.addAttribute(NSAttributedStringKey.font, value: font, range: range)
       self.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
       let mutableParagraphStyle = NSMutableParagraphStyle()
       mutableParagraphStyle.lineSpacing = lineSpacing
@@ -47,7 +46,7 @@ extension NSMutableAttributedString {
       self.removeAttribute(NSAttributedStringKey.font, range: range)
       self.removeAttribute(NSAttributedStringKey.foregroundColor, range: range)
       self.addAttribute(NSAttributedStringKey.font, value: font, range: range)
-      self.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.red, range: range)
+      self.addAttribute(NSAttributedStringKey.foregroundColor, value: color, range: range)
       let mutableParagraphStyle = NSMutableParagraphStyle()
       mutableParagraphStyle.lineSpacing = lineSpacing
       mutableParagraphStyle.paragraphSpacing = paragraphSpacing

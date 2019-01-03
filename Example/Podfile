@@ -5,6 +5,8 @@ use_frameworks!
 def runtimepods
   pod 'ShiftSDK', :path => '../'
   pod 'Alamofire', '4.7.3'
+  pod 'AlamofireNetworkActivityIndicator', '~> 2.2'
+  pod 'FTLinearActivityIndicator'
   pod 'SwiftyJSON', '4.0.0'
   pod 'SnapKit', '4.0.0'
   pod 'Bond', '6.8.3'

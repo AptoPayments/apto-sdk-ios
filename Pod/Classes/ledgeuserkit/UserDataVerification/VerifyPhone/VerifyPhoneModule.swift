@@ -1,6 +1,6 @@
 //
-//  PhoneVerificatorWireframe.swift
-//  Pods
+//  VerifyPhoneModule.swift
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 12/10/2016.
 //
@@ -15,7 +15,7 @@ protocol VerifyPhoneModuleProtocol: UIModuleProtocol {
 
 class VerifyPhoneModule: UIModule, VerifyPhoneModuleProtocol {
   private let verificationType: VerificationParams<PhoneNumber, Verification>
-  private var presenter: VerifyPhonePresenter?
+  private var presenter: VerifyPhonePresenterProtocol?
   open var onVerificationPassed: ((_ verifyPhoneModule: VerifyPhoneModule, _ verification: Verification) -> Void)?
 
   init(serviceLocator: ServiceLocatorProtocol, verificationType: VerificationParams<PhoneNumber, Verification>) {
@@ -24,13 +24,12 @@ class VerifyPhoneModule: UIModule, VerifyPhoneModuleProtocol {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    let presenter = VerifyPhonePresenter()
-    let interactor = VerifyPhoneInteractor(session: shiftSession,
-                                           verificationType: verificationType,
-                                           dataReceiver: presenter)
+    let presenter = serviceLocator.presenterLocator.verifyPhonePresenter()
+    let interactor = serviceLocator.interactorLocator.verifyPhoneInteractor(verificationType: verificationType,
+                                                                            dataReceiver: presenter)
     presenter.interactor = interactor
     presenter.router = self
-    let viewController = PINVerificationViewController(uiConfig: uiConfig, eventHandler: presenter)
+    let viewController = serviceLocator.viewLocator.pinVerificationView(presenter: presenter)
     presenter.view = viewController
     addChild(viewController: viewController, completion: completion)
     self.presenter = presenter

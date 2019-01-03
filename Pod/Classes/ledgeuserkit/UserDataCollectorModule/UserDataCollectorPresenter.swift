@@ -13,7 +13,7 @@ func <<T: RawRepresentable>(lhs: T, rhs: T) -> Bool where T.RawValue: Comparable
   return lhs.rawValue < rhs.rawValue
 }
 
-protocol UserDataCollectorRouterProtocol: class, URLHandlerProtocol {
+protocol UserDataCollectorRouterProtocol: URLHandlerProtocol {
   func close()
   func back()
   func presentPhoneVerification(verificationType: VerificationParams<PhoneNumber, Verification>,
@@ -39,7 +39,7 @@ protocol UserDataCollectorViewProtocol: ViewControllerProtocol {
   func push(fields: [FormRowView])
   func pop(fields: [FormRowView])
   func update(progress: Float)
-  func showLoadingSpinner()
+  func showLoadingView()
 }
 
 enum DataCollectorStep: Int {
@@ -67,14 +67,12 @@ class UserDataCollectorPresenter: UserDataCollectorDataReceiver, UserDataCollect
   private var previousStep: DataCollectorStep = .info
   private let uiConfig: ShiftUIConfig
   private let config: UserDataCollectorConfig
-  private let shiftSession: ShiftSession
   private var userData: DataPointList! // swiftlint:disable:this implicitly_unwrapped_optional
   private var maxMonthlyNetIncome: Int = 0
 
-  init(config: UserDataCollectorConfig, uiConfig: ShiftUIConfig, shiftSession: ShiftSession) {
+  init(config: UserDataCollectorConfig, uiConfig: ShiftUIConfig) {
     self.uiConfig = uiConfig
     self.config = config
-    self.shiftSession = shiftSession
   }
 
   func viewLoaded() {
@@ -117,7 +115,6 @@ class UserDataCollectorPresenter: UserDataCollectorDataReceiver, UserDataCollect
                                                    googleGeocodingAPIKey: googleGeocodingAPIKey,
                                                    uiConfig: uiConfig,
                                                    config: config,
-                                                   shiftSession: shiftSession,
                                                    router: router)
     // Setup steps
     setupSteps(stepVisibility, stepFactory: stepFactory)
@@ -164,11 +161,11 @@ class UserDataCollectorPresenter: UserDataCollectorDataReceiver, UserDataCollect
   }
 
   func setDataCollectorError(_ error: NSError) {
-    viewController.show(error: error)
+    viewController.show(error: error, uiConfig: uiConfig)
   }
 
   func show(error: NSError) {
-    viewController.show(error: error)
+    viewController.show(error: error, uiConfig: uiConfig)
   }
 
   func showNextStep() {
@@ -178,12 +175,12 @@ class UserDataCollectorPresenter: UserDataCollectorDataReceiver, UserDataCollect
     step.next(nextStep)
   }
 
-  func showLoadingSpinner() {
-    viewController.showLoadingSpinner()
+  func showLoadingView() {
+    viewController.showLoadingView()
   }
 
-  func hideLoadingSpinner() {
-    viewController.hideLoadingSpinner()
+  func hideLoadingView() {
+    viewController.hideLoadingView()
   }
 
   func userReady(_ user: ShiftUser) {
@@ -228,14 +225,7 @@ class UserDataCollectorPresenter: UserDataCollectorDataReceiver, UserDataCollect
     stepVisibility.forEach {
       guard let step = $0 as? DataCollectorStep else { return }
       let handler = stepFactory.handler(for: step)
-      guard let birthdaySSNHandler = handler as? BirthdaySSNStep else {
-        store(step: step, handler: handler)
-        return
-      }
-      birthdaySSNHandler.callToActionTapHandler = { [unowned self] in
-        self.lastStepFinished()
-      }
-      store(step: step, handler: birthdaySSNHandler)
+      store(step: step, handler: handler)
     }
   }
 
@@ -243,7 +233,7 @@ class UserDataCollectorPresenter: UserDataCollectorDataReceiver, UserDataCollect
     interactor.allUserDataCollected(userData) { [weak self] result in
       switch result {
       case .failure(let error):
-        self?.viewController.show(error: error)
+        self?.viewController.show(error: error, uiConfig: self?.uiConfig)
       case .success(let user):
         self?.router.userDataCollected(user)
       }
@@ -295,13 +285,7 @@ class UserDataCollectorPresenter: UserDataCollectorDataReceiver, UserDataCollect
       self.viewController.showNavNextButton(title: "user-data-collector.next-button.title".podLocalized(),
                                             tintColor: self.uiConfig.iconTertiaryColor)
     }
-    if step == self.lastStep && step == .birthDaySSN {
-      self.viewController.hideNavNextButton()
-    }
     self.currentStepObserving = stepHandler.valid.distinct().observeNext { [weak self] validStep in
-      guard step != .birthDaySSN else {
-        return
-      }
       if validStep {
         self?.viewController.showNavNextButton(title: "user-data-collector.next-button.title".podLocalized(),
                                                tintColor: self?.uiConfig.iconTertiaryColor)

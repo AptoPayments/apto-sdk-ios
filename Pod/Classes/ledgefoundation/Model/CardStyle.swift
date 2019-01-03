@@ -12,7 +12,36 @@ public enum CardBackgroundStyle {
   case color(color: UIColor)
 }
 
-public struct CardStyle {
+extension CardBackgroundStyle: Codable {
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    if container.contains(.image) {
+      let url = try container.decode(URL.self, forKey: .image)
+      self = .image(url: url)
+    }
+    else {
+      let codableColor = try container.decode(UIColor.CodableWrapper.self, forKey: .color)
+      self = .color(color: codableColor.value)
+    }
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    switch self {
+    case .image(let url):
+      try container.encode(url, forKey: .image)
+    case .color(let color):
+      try container.encode(UIColor.CodableWrapper(color), forKey: .color)
+    }
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case image
+    case color
+  }
+}
+
+public struct CardStyle: Codable {
   public let background: CardBackgroundStyle
 }
 

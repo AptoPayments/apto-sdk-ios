@@ -1,68 +1,15 @@
 //
 //  ManageShiftCardPresenter.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 24/10/2017.
 //
 //
 
 import Foundation
-import Stripe
 import Bond
 
-protocol ManageShiftCardRouterProtocol: class {
-  func update(card newCard: Card)
-  func backFromManageShiftCardViewer()
-  func closeFromManageShiftCardViewer()
-  func accountSettingsTappedInManageShiftCardViewer()
-  func cardSettingsTappedInManageShiftCardViewer()
-  func showTransactionDetails(transaction: Transaction)
-  func physicalActivationSucceed()
-  func addFundingSource(completion: @escaping (FundingSource) -> Void)
-}
-
-protocol ManageShiftCardViewProtocol: ViewControllerProtocol {
-  func showLoadingSpinner()
-}
-
-protocol ManageShiftCardInteractorProtocol {
-  func provideCard(_ callback: @escaping Result<Card, NSError>.Callback)
-  func activateCard(_ callback: @escaping Result<Card, NSError>.Callback)
-  func provideTransactions(rows: Int,
-                           lastTransactionId: String?,
-                           callback: @escaping Result<[Transaction], NSError>.Callback)
-  func activatePhysicalCard(code: String, callback: @escaping Result<Void, NSError>.Callback)
-}
-
-open class ManageShiftCardViewModel {
-  open var state: Observable<FinancialAccountState?> = Observable(nil)
-  open var isActivateCardFeatureEnabled: Observable<Bool?> = Observable(nil)
-  open var cardInfoVisible: Observable<Bool?> = Observable(false)
-  open var pan: Observable<String?> = Observable(nil)
-  open var cvv: Observable<String?> = Observable(nil)
-  open var cardHolder: Observable<String?> = Observable(nil)
-  open var expirationMonth: Observable<UInt?> = Observable(nil)
-  open var expirationYear: Observable<UInt?> = Observable(nil)
-  open var lastFour: Observable<String?> = Observable(nil)
-  open var cardNetwork: Observable<CardNetwork?> = Observable(nil)
-  open var physicalCardActivationRequired: Observable<Bool?> = Observable(nil)
-  open var fundingSource: Observable<FundingSource?> = Observable(nil)
-  open var spendableToday: Observable<Amount?> = Observable(nil)
-  open var nativeSpendableToday: Observable<Amount?> = Observable(nil)
-  open var custodianLogo: Observable<UIImage?> = Observable(nil)
-  open var custodianName: Observable<String?> = Observable(nil)
-  open var transactions: MutableObservable2DArray<String, Transaction> = MutableObservable2DArray([])
-  open var transactionsLoaded: Observable<Bool> = Observable(false)
-  open var cardStyle: Observable<CardStyle?> = Observable(nil)
-}
-
-struct ManageShiftCardPresenterConfig {
-  let name: String?
-  let imageUrl: String?
-  let showActivateCardButton: Bool?
-}
-
-class ManageShiftCardPresenter: ManageShiftCardEventHandler {
+class ManageShiftCardPresenter: ManageShiftCardPresenterProtocol {
   // swiftlint:disable implicitly_unwrapped_optional
   var view: ManageShiftCardViewProtocol!
   var interactor: ManageShiftCardInteractorProtocol!
@@ -72,14 +19,39 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
   private let rowsPerPage = 20
   private var lastTransactionId: String?
   private let config: ManageShiftCardPresenterConfig
+  private var cardInfoRetrieved = false
+  private var transactionsInfoRetrieved = false
+  private var remoteInfoRetrieved: Bool {
+    return cardInfoRetrieved && transactionsInfoRetrieved
+  }
 
   init(config: ManageShiftCardPresenterConfig) {
     self.config = config
     self.viewModel = ManageShiftCardViewModel()
+    NotificationCenter.default.addObserver(self,
+                                           selector: #selector(backgroundRefresh),
+                                           name: NSNotification.Name.UIApplicationDidBecomeActive,
+                                           object: nil)
+  }
+
+  deinit {
+    NotificationCenter.default.removeObserver(self)
   }
 
   func viewLoaded() {
-    refreshInfo()
+    interactor.provideFundingSource(forceRefresh: false) { [weak self] result in
+      switch result {
+      case .failure(let error):
+        self?.view.show(error: error)
+      case .success(let card):
+        if let wself = self {
+          wself.updateViewModelWith(card: card)
+          wself.refreshTransactions(forceRefresh: false) { [weak self] _ in
+            self?.backgroundRefresh()
+          }
+        }
+      }
+    }
   }
 
   func previousTapped() {
@@ -95,7 +67,24 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
   }
 
   func cardTapped() {
+    // Disable card settings if the card is pending activation
+    guard viewModel.state.value != .created else { return }
+    if viewModel.fundingSource.value?.state == .invalid {
+      router.balanceTappedInManageShiftCardViewer()
+    }
+    else {
+      router.cardSettingsTappedInManageShiftCardViewer()
+    }
+  }
+
+  func cardSettingsTapped() {
+    // Disable card settings if the card is pending activation
+    guard viewModel.state.value != .created else { return }
     router.cardSettingsTappedInManageShiftCardViewer()
+  }
+
+  func balanceTapped() {
+    router.balanceTappedInManageShiftCardViewer()
   }
 
   func transactionSelected(indexPath: IndexPath) {
@@ -104,7 +93,7 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
 
   func activateCardTapped() {
     view.showLoadingSpinner()
-    interactor.activateCard { result in
+    interactor.activateCard { [unowned self] result in
       self.view.hideLoadingSpinner()
       switch result {
       case .failure(let error):
@@ -117,9 +106,29 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
 
   func refreshCard() {
     view.showLoadingSpinner()
-    refreshCard {
+    refreshCard { [unowned self] in
       self.view.hideLoadingSpinner()
     }
+  }
+
+  func showCardInfo() {
+    view.showLoadingSpinner()
+    interactor.loadCardInfo { [weak self] result in
+      self?.view.hideLoadingSpinner()
+      switch result {
+      case .failure(let error):
+        self?.view.show(error: error)
+      case .success(let cardDetails):
+        if let wself = self {
+          wself.updateViewModelWith(cardDetails: cardDetails)
+          wself.viewModel.cardInfoVisible.next(true)
+        }
+      }
+    }
+  }
+
+  func hideCardInfo() {
+    viewModel.cardInfoVisible.next(false)
   }
 
   func reloadTapped(showSpinner: Bool) {
@@ -127,45 +136,45 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
   }
 
   func moreTransactionsTapped(completion: @escaping (_ noMoreTransactions: Bool) -> Void) {
-    getMoreTransactions { transactionsLoaded in
+    guard remoteInfoRetrieved else { return completion(true) }
+    getMoreTransactions(forceRefresh: true) { transactionsLoaded in
       completion(transactionsLoaded == 0)
     }
   }
 
-  func activatePhysicalCard(code: String) {
-    view.showLoadingSpinner()
-    interactor.activatePhysicalCard(code: code) { [unowned self] result in
-      self.view.hideLoadingSpinner()
-      switch result {
-      case .failure(let error):
-        self.view.show(error: error)
-      case .success:
-        self.router.physicalActivationSucceed()
-      }
-    }
+  func activatePhysicalCardTapped() {
+    view.requestPhysicalActivationCode(completion: activatePhysicalCard)
   }
 
-  func addFundingSourceTapped() {
-    router.addFundingSource { _ in
-      self.refreshCard()
+  // MARK: - Private methods
+
+  @objc private func backgroundRefresh() {
+    refreshCard { [weak self] in
+      self?.cardInfoRetrieved = true
     }
+    lastTransactionId = nil
+    refreshTransactions { [weak self] _ in
+      self?.transactionsInfoRetrieved = true
+    }
+    interactor.loadFundingSources { _ in }
   }
 
-  fileprivate func refreshInfo(showSpinner: Bool = true) {
+  fileprivate func refreshInfo(showSpinner: Bool = true, completion: (() -> Void)? = nil) {
     if showSpinner {
       view.showLoadingSpinner()
     }
-    refreshCard {
+    refreshCard { [unowned self] in
       self.refreshTransactions { [unowned self] _ in
         if showSpinner {
           self.view.hideLoadingSpinner()
         }
+        completion?()
       }
     }
   }
 
   fileprivate func refreshCard(completion: @escaping () -> Void) {
-    interactor.provideCard { [weak self] result in
+    interactor.reloadCard { [weak self] result in
       switch result {
       case .failure(let error):
         self?.view.show(error: error)
@@ -181,25 +190,11 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
 
   private func updateViewModelWith(card: Card) {
     router.update(card: card)
-    viewModel.pan.next(card.pan)
-    viewModel.cvv.next(card.cvv)
     viewModel.cardHolder.next(card.cardHolder)
-    if let expiration = card.expiration {
-      let expirationComponents = expiration.split(separator: "-")
-      if var year = UInt(expirationComponents[0]), let month = UInt(expirationComponents[1]) {
-        if year > 99 { year = year - 2000 }
-        viewModel.expirationMonth.next(month)
-        viewModel.expirationYear.next(year)
-      }
-    }
-    else {
-      viewModel.expirationMonth.next(nil)
-      viewModel.expirationYear.next(nil)
-    }
     viewModel.lastFour.next(card.lastFourDigits)
     viewModel.cardNetwork.next(card.cardNetwork)
     viewModel.fundingSource.next(card.fundingSource)
-    viewModel.physicalCardActivationRequired.next(card.physicalCardActivationRequired)
+    viewModel.orderedStatus.next(card.orderedStatus)
     viewModel.spendableToday.next(card.spendableToday)
     viewModel.nativeSpendableToday.next(card.nativeSpendableToday)
     viewModel.cardStyle.next(card.cardStyle)
@@ -228,17 +223,35 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
     else {
       viewModel.isActivateCardFeatureEnabled.next(false)
     }
+    if viewModel.cardLoaded.value == false {
+      viewModel.cardLoaded.next(true)
+    }
   }
 
-  fileprivate func refreshTransactions(completion: @escaping (_ transactionsLoaded: Int) -> Void) {
+  private func updateViewModelWith(cardDetails: CardDetails) {
+    viewModel.pan.next(cardDetails.pan)
+    viewModel.cvv.next(cardDetails.cvv)
+    let expirationComponents = cardDetails.expiration.split(separator: "-")
+    if var year = UInt(expirationComponents[0]), let month = UInt(expirationComponents[1]) {
+      if year > 99 { year = year - 2000 }
+      viewModel.expirationMonth.next(month)
+      viewModel.expirationYear.next(year)
+    }
+  }
+
+  fileprivate func refreshTransactions(forceRefresh: Bool = true,
+                                       completion: @escaping (_ transactionsLoaded: Int) -> Void) {
     viewModel.transactionsLoaded.next(false)
-    viewModel.transactions.removeAllItemsAndSections()
     lastTransactionId = nil
-    getMoreTransactions(completion: completion)
+    getMoreTransactions(forceRefresh: forceRefresh, clearCurrent: true, completion: completion)
   }
 
-  fileprivate func getMoreTransactions(completion: @escaping (_ transactionsLoaded: Int) -> Void) {
-    interactor.provideTransactions(rows: rowsPerPage, lastTransactionId: lastTransactionId) { [weak self] result in
+  fileprivate func getMoreTransactions(forceRefresh: Bool,
+                                       clearCurrent: Bool = false,
+                                       completion: @escaping (_ transactionsLoaded: Int) -> Void) {
+    interactor.provideTransactions(rows: rowsPerPage,
+                                   lastTransactionId: lastTransactionId,
+                                   forceRefresh: forceRefresh) { [weak self] result in
       if self?.viewModel.transactionsLoaded.value == false {
         self?.viewModel.transactionsLoaded.next(true)
       }
@@ -247,6 +260,9 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
         self?.view.show(error: error)
         completion(0)
       case .success(let transactions):
+        if clearCurrent {
+          self?.viewModel.transactions.removeAllItemsAndSections()
+        }
         self?.process(newTransactions: transactions)
         completion(transactions.count)
       }
@@ -319,4 +335,17 @@ class ManageShiftCardPresenter: ManageShiftCardEventHandler {
     formatter.dateFormat = "MMMM, yyyy"
     return formatter
   }()
+
+  private func activatePhysicalCard(_ code: String) {
+    view.showLoadingSpinner()
+    interactor.activatePhysicalCard(code: code) { [unowned self] result in
+      self.view.hideLoadingSpinner()
+      switch result {
+      case .failure(let error):
+        self.view.show(error: error)
+      case .success:
+        self.router.physicalActivationSucceed()
+      }
+    }
+  }
 }

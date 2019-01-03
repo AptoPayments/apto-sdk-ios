@@ -9,7 +9,7 @@
 import Bond
 
 protocol LinkDocUploaderRouterProtocol {
-  func back(_ animated:Bool?)
+  func back(_ animated: Bool)
 }
 
 protocol LinkDocUploaderInteractorProtocol {
@@ -92,7 +92,7 @@ class DocUploaderPresenter: LinkDocUploaderEventHandlerProtocol, LinkDocUploader
   func addNewData(_ result: Result<[UIRequiredDocument], NSError>) {
     switch result {
     case .failure(let error):
-      self.view.show(error: error)
+      self.view.show(error: error, uiConfig: nil)
     case .success(let requiredDocuments):
       let requiredDocumentsViewModel = requiredDocuments.compactMap { requiredDocument -> RequiredDocumentViewModel in
         switch requiredDocument.requiredDocument {
@@ -142,9 +142,9 @@ class DocUploaderPresenter: LinkDocUploaderEventHandlerProtocol, LinkDocUploader
         }
         switch result {
         case .failure(let error):
-          wself.view.show(error: error)
+          wself.view.show(error: error, uiConfig: nil)
         case .success:
-          wself.view.showMessage("doc-uploader.documents-sent".podLocalized())
+          wself.view.showMessage("doc-uploader.documents-sent".podLocalized(), uiConfig: nil)
           wself.router.back(true)
         }
       }

@@ -35,7 +35,7 @@ class LinkOfferLoaderViewController: ShiftViewController, LinkOfferLoaderViewPro
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    self.view.backgroundColor = self.uiConfiguration.backgroundColor
+    self.view.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     self.title = "offer-loader.title".podLocalized()
     self.setupLoadingView()
     self.setupErrorView()

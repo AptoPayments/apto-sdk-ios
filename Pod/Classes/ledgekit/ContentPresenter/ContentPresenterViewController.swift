@@ -13,6 +13,7 @@ import Bond
 import ReactiveKit
 
 class ContentPresenterViewController: ShiftViewController {
+  private let disposeBag = DisposeBag()
   private unowned let presenter: ContentPresenterPresenterProtocol
   private let webView = UIWebView()
   private let textView = TTTAttributedLabel(frame: CGRect.zero)
@@ -42,9 +43,9 @@ class ContentPresenterViewController: ShiftViewController {
 // MARK: - Show content
 private extension ContentPresenterViewController {
   func setupViewModelSubscriptions() {
-    _ = presenter.viewModel.content.ignoreNil().observeNext { content in
+    presenter.viewModel.content.ignoreNil().observeNext { content in
       self.set(content: content)
-    }
+    }.dispose(in: disposeBag)
   }
 
   func set(content: Content) {
@@ -84,15 +85,23 @@ private extension ContentPresenterViewController {
 // MARK: - Setup UI
 private extension ContentPresenterViewController {
   func setUpUI() {
-    view.backgroundColor = uiConfiguration.backgroundColor
+    view.backgroundColor = uiConfiguration.uiBackgroundPrimaryColor
     setUpNavigationBar()
     setUpTextView()
     setUpWebView()
   }
 
   func setUpNavigationBar() {
-    navigationController?.navigationBar.setUpWith(uiConfig: uiConfiguration)
+    switch uiConfiguration.uiTheme {
+    case .theme1:
+      navigationController?.navigationBar.setUpWith(uiConfig: uiConfiguration)
+    case .theme2:
+      navigationController?.navigationBar.setUp(barTintColor: uiConfiguration.uiNavigationSecondaryColor,
+                                                tintColor: uiConfiguration.iconTertiaryColor)
+      navigationController?.navigationBar.hideShadow()
+    }
     showNavCancelButton(uiConfiguration.iconTertiaryColor)
+    setNeedsStatusBarAppearanceUpdate()
   }
 
   func setUpTextView() {

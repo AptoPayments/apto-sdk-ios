@@ -1,44 +1,10 @@
 //
 //  IssueCardModule.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Takeichi Kanzaki on 25/06/2018.
 //
 //
-
-import Bond
-
-
-enum IssueCardViewState: Int, Equatable {
-  case loading
-  case error
-}
-
-class IssueCardViewModel {
-  let state: Observable<IssueCardViewState>
-
-  init(state: IssueCardViewState) {
-    self.state = Observable(state)
-  }
-}
-
-protocol IssueCardInteractorProtocol {
-  func issueCard(completion: @escaping Result<Card, NSError>.Callback)
-}
-
-protocol IssueCardPresenterProtocol {
-  var viewModel: IssueCardViewModel { get }
-  func viewLoaded()
-  func retryTapped()
-}
-
-protocol IssueCardRouter: class {
-  func cardIssued(_ card: Card)
-  func show(error: Error)
-}
-
-protocol IssueCardModuleProtocol: UIModuleProtocol, IssueCardRouter {
-}
 
 class IssueCardModule: UIModule, IssueCardModuleProtocol {
   private let application: CardApplication
@@ -61,12 +27,23 @@ class IssueCardModule: UIModule, IssueCardModuleProtocol {
   private func buildIssueCardViewController(uiConfig: ShiftUIConfig) -> UIViewController {
     let interactor = serviceLocator.interactorLocator.issueCardInteractor(cardSession: shiftCardSession,
                                                                           application: application)
-    let presenter = serviceLocator.presenterLocator.issueCardPresenter(router: self, interactor: interactor)
+    let configuration = (application.nextAction.configuration as? IssueCardActionConfiguration) ?? nil
+    let presenter = serviceLocator.presenterLocator.issueCardPresenter(router: self,
+                                                                       interactor: interactor,
+                                                                       configuration: configuration)
 
     return serviceLocator.viewLocator.issueCardView(uiConfig: uiConfig, eventHandler: presenter)
   }
 
   func cardIssued(_ card: Card) {
     self.onFinish?(self)
+  }
+
+  func backTapped() {
+    back()
+  }
+
+  func show(url: URL) {
+    showExternal(url: url)
   }
 }

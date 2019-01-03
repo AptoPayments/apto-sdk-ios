@@ -23,11 +23,11 @@ class ReportLostCardAction {
   }
 
   func run(callback: @escaping Result<Card, NSError>.Callback) {
-    UIAlertController.confirm(title: "report-lost-card-action.title".podLocalized(),
-                              message: "report-lost-card-action.message".podLocalized(),
-                              okTitle: "report-lost-card-action.confirm".podLocalized(),
-                              cancelTitle: "general.button.cancel".podLocalized()) { [unowned self] action in
-      guard let title = action.title, title != "general.button.cancel".podLocalized() else {
+    UIAlertController.confirm(title: "card_settings.settings.confirm_report_lost_card.title".podLocalized(),
+                              message: "card_settings.settings.confirm_report_lost_card.message".podLocalized(),
+                              okTitle: "card_settings.settings.confirm_report_lost_card.ok_button".podLocalized(),
+                              cancelTitle: "card_settings.settings.confirm_report_lost_card.cancel_button".podLocalized()) { [unowned self] action in
+      guard let title = action.title, title != "card_settings.settings.confirm_report_lost_card.cancel_button".podLocalized() else {
         callback(.failure(ServiceError(code: .aborted)))
         return
       }
@@ -35,7 +35,7 @@ class ReportLostCardAction {
       self.session.lock(card: self.card) { result in
         switch result {
         case .failure(let error):
-          UIApplication.topViewController()?.show(error: error)
+          UIApplication.topViewController()?.show(error: error, uiConfig: self.uiConfig)
           callback(.failure(error))
         case .success(let card):
           UIApplication.topViewController()?.hideLoadingSpinner()

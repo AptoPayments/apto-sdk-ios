@@ -48,13 +48,13 @@ class AuthPresenter: AuthPresenterProtocol {
       break
     }
     viewController.show(fields: primaryCredentialStep.rows)
-    viewController.set(title: primaryCredentialStep.title)
-    viewController.showNavCancelButton(uiConfig.iconTertiaryColor)
-    viewController.showNavNextButton(title: "auth-presenter.next".podLocalized(), tintColor: uiConfig.iconTertiaryColor)
+    viewController.setTitle(primaryCredentialStep.title)
+    viewController.showCancelButton()
+    viewController.showNextButton()
     self.viewController.update(progress: 10)
     primaryCredentialStep.valid.distinct().observeNext { [weak self] validStep in
-      if validStep { self?.viewController.activateNavNextButton(self?.uiConfig.iconTertiaryColor) }
-      else { self?.viewController.deactivateNavNextButton(self?.uiConfig.disabledTextTopBarColor) }
+      if validStep { self?.viewController.activateNextButton() }
+      else { self?.viewController.deactivateNextButton() }
     }.dispose(in: disposeBag)
   }
 
@@ -64,6 +64,14 @@ class AuthPresenter: AuthPresenterProtocol {
 
   func closeTapped() {
     router.close()
+  }
+
+  func showLoadingView() {
+    viewController.showLoadingView()
+  }
+
+  func hideLoadingView() {
+    viewController.hideLoadingView()
   }
 
   // MARK: - AuthDataReceiver protocol

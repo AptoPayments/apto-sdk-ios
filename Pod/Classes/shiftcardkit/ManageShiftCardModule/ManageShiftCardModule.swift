@@ -11,15 +11,17 @@ import MapKit
 class ManageShiftCardModule: UIModule {
   private var card: Card
   private let mode: ShiftCardModuleMode
-  private var shiftCardSettingsModule: ShiftCardSettingsModule?
+  private var shiftCardSettingsModule: ShiftCardSettingsModuleProtocol?
   private var accountSettingsModule: UIModuleProtocol?
   private var projectConfiguration: ProjectConfiguration! // swiftlint:disable:this implicitly_unwrapped_optional
   private var mailSender: MailSender?
   private var shiftCardConfiguration: ShiftCardConfiguration?
-  private var presenter: ManageShiftCardPresenter?
-  private var kycPresenter: KYCPresenter?
-  private var physicalCardModule: PhysicalCardActivationSucceedModuleProtocol?
-  private var externalOAuthModule: ExternalOAuthModuleProtocol?
+  private var presenter: ManageShiftCardPresenterProtocol?
+  private var kycPresenter: KYCPresenterProtocol?
+  private var transactionDetailsPresenter: ShiftCardTransactionDetailsPresenterProtocol?
+  private var physicalCardActivationSucceedModule: PhysicalCardActivationSucceedModuleProtocol?
+  private var physicalCardActivationModule: PhysicalCardActivationModuleProtocol?
+  private var fundingSourceSelectorModule: FundingSourceSelectorModuleProtocol?
 
   public init(serviceLocator: ServiceLocatorProtocol, card: Card, mode: ShiftCardModuleMode) {
     self.card = card
@@ -28,20 +30,25 @@ class ManageShiftCardModule: UIModule {
   }
 
   override func initialize(completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.contextConfiguration { result in
+    shiftSession.contextConfiguration { [weak self] result in
+      guard let self = self else { return }
       switch result {
       case .failure(let error):
         completion(.failure(error))
       case .success(let contextConfiguration):
         self.projectConfiguration = contextConfiguration.projectConfiguration
-        self.shiftSession.shiftCardSession.shiftCardConfiguration { result in
+        self.shiftSession.shiftCardSession.shiftCardConfiguration { [weak self] result in
+          guard let self = self else { return }
           switch result {
           case .failure(let error):
             completion(.failure(error))
           case .success(let shiftCardConfiguration):
             self.shiftCardConfiguration = shiftCardConfiguration
             // Refresh the card data
-            self.shiftSession.getFinancialAccount(accountId: self.card.accountId, retrieveBalance: false) { result in
+            self.shiftSession.getFinancialAccount(accountId: self.card.accountId,
+                                                  forceRefresh: false,
+                                                  retrieveBalances: false) { [weak self] result in
+              guard let self = self else { return }
               switch result {
               case .failure(let error):
                 completion(.failure(error))
@@ -53,17 +60,17 @@ class ManageShiftCardModule: UIModule {
                 if let kyc = self.card.kyc {
                   switch kyc {
                   case .passed:
-                    self.loadBalanceAndShowManageCard(addChild: true,
-                                                      shiftCardConfiguration: shiftCardConfiguration,
-                                                      completion: completion)
+                    self.showManageCard(addChild: true,
+                                        shiftCardConfiguration: shiftCardConfiguration,
+                                        completion: completion)
                   default:
                     self.showKYCViewController(addChild: true, card: self.card, completion: completion)
                   }
                 }
                 else {
-                  self.loadBalanceAndShowManageCard(addChild: true,
-                                                    shiftCardConfiguration: shiftCardConfiguration,
-                                                    completion: completion)
+                  self.showManageCard(addChild: true,
+                                      shiftCardConfiguration: shiftCardConfiguration,
+                                      completion: completion)
                 }
               }
             }
@@ -73,22 +80,73 @@ class ManageShiftCardModule: UIModule {
     }
   }
 
-  private func loadBalanceAndShowManageCard(addChild: Bool,
-                                            shiftCardConfiguration: ShiftCardConfiguration,
-                                            completion: @escaping Result<UIViewController, NSError>.Callback) {
-    shiftSession.shiftCardSession.getCardFundingSource(card: card) { result in
-      switch result {
-      case .failure(let error):
-        completion(.failure(error))
-      case .success(_):
-        self.showManageCardViewController(addChild: addChild,
-                                          shiftCardConfiguration: shiftCardConfiguration,
-                                          completion: completion)
-      }
+  // MARK: - Manage Card View Controller
+
+  private func showManageCard(addChild: Bool,
+                              shiftCardConfiguration: ShiftCardConfiguration,
+                              completion: @escaping Result<UIViewController, NSError>.Callback) {
+    if card.state == .created && card.orderedStatus == .ordered {
+      showPhysicalCardActivationModule(addChild: addChild,
+                                       shiftCardConfiguration: shiftCardConfiguration,
+                                       completion: completion)
+    }
+    else {
+      showManageCardViewController(addChild: addChild,
+                                   shiftCardConfiguration: shiftCardConfiguration,
+                                   completion: completion)
     }
   }
 
-  // MARK: - Manage Card View Controller
+  private func showPhysicalCardActivationModule(addChild: Bool,
+                                                shiftCardConfiguration: ShiftCardConfiguration,
+                                                completion: @escaping Result<UIViewController, NSError>.Callback) {
+    let module = serviceLocator.moduleLocator.physicalCardActivationModule(card: card)
+    self.physicalCardActivationModule = module
+    if addChild {
+      module.onFinish = { [weak self] _ in
+        self?.reloadCardAndShowManageCardIfPossible(shiftCardConfiguration: shiftCardConfiguration) {_ in }
+      }
+      self.addChild(module: module, completion: completion)
+    }
+    else {
+      module.onFinish = { [weak self] _ in
+        self?.reloadCardAndShowManageCardIfPossible(shiftCardConfiguration: shiftCardConfiguration) {_ in }
+      }
+      push(module: module, completion: completion)
+    }
+  }
+
+  private func reloadCardAndShowManageCardIfPossible(shiftCardConfiguration: ShiftCardConfiguration,
+                                                     completion: @escaping Result<UIViewController, NSError>.Callback) {
+    showLoadingView()
+    shiftSession.getFinancialAccount(accountId: self.card.accountId,
+                                     forceRefresh: true,
+                                     retrieveBalances: false) { [weak self] result in
+      guard let self = self else { return }
+      self.hideLoadingView()
+      switch result {
+      case .failure(let error):
+        completion(.failure(error))
+      case .success(let financialAccount):
+        guard let shiftCard = financialAccount as? Card else {
+          return
+        }
+        self.card = shiftCard
+        if !(shiftCard.state == .created && shiftCard.orderedStatus == .ordered) {
+          self.showManageCardViewController(addChild: false,
+                                            shiftCardConfiguration: shiftCardConfiguration,
+                                            completion: completion)
+        }
+        else {
+          let userInfo = [
+            NSLocalizedDescriptionKey: "manage_card.activate_physical_card.card_not_activated".podLocalized()
+          ]
+          let error = NSError(domain: "com.shiftpayments.error", code: 90000, userInfo: userInfo)
+          self.show(error: error)
+        }
+      }
+    }
+  }
 
   fileprivate func showManageCardViewController(addChild: Bool = false,
                                                 shiftCardConfiguration: ShiftCardConfiguration,
@@ -109,16 +167,14 @@ class ManageShiftCardModule: UIModule {
 
   fileprivate func buildManageShiftCardViewController(_ uiConfig: ShiftUIConfig,
                                                       shiftCardConfiguration: ShiftCardConfiguration,
-                                                      card: Card) -> ManageShiftCardViewController {
+                                                      card: Card) -> ManageShiftCardViewControllerProtocol {
     let showActivateCardButton = shiftCardConfiguration.isFeatureEnabled(.showActivateCardButton)
     let config = ManageShiftCardPresenterConfig(name: projectConfiguration.name,
                                                 imageUrl: projectConfiguration.branding.logoUrl,
                                                 showActivateCardButton: showActivateCardButton)
-    let presenter = ManageShiftCardPresenter(config: config)
-    let interactor = ManageShiftCardInteractor(shiftSession: shiftSession,
-                                               accountId: card.accountId,
-                                               uiConfig: uiConfig)
-    let viewController = ManageShiftCardViewController(mode: mode, uiConfiguration: uiConfig, eventHandler: presenter)
+    let presenter = serviceLocator.presenterLocator.manageCardPresenter(config: config)
+    let interactor = serviceLocator.interactorLocator.manageCardInteractor(card: card)
+    let viewController = serviceLocator.viewLocator.manageCardView(mode: mode, presenter: presenter)
     presenter.router = self
     presenter.interactor = interactor
     presenter.view = viewController
@@ -144,10 +200,10 @@ class ManageShiftCardModule: UIModule {
     }
   }
 
-  fileprivate func buildKYCViewController(_ uiConfig: ShiftUIConfig, card: Card) -> KYCViewController {
-    let presenter = KYCPresenter()
-    let interactor = KYCInteractor(shiftSession: shiftSession, card: card)
-    let viewController = KYCViewController(uiConfiguration: uiConfig, eventHandler: presenter)
+  fileprivate func buildKYCViewController(_ uiConfig: ShiftUIConfig, card: Card) -> KYCViewControllerProtocol {
+    let presenter = serviceLocator.presenterLocator.kycPresenter()
+    let interactor = serviceLocator.interactorLocator.kycInteractor(card: card)
+    let viewController = serviceLocator.viewLocator.kycView(presenter: presenter)
     presenter.router = self
     presenter.interactor = interactor
     presenter.view = viewController
@@ -158,7 +214,34 @@ class ManageShiftCardModule: UIModule {
 
 extension ManageShiftCardModule: ManageShiftCardRouterProtocol {
   func update(card newCard: Card) {
-    self.card = newCard
+    if newCard.state != .cancelled {
+      self.card = newCard
+    }
+    else {
+      // Card has been cancelled, look for other user cards that are not closed, if any. If there are no non-closed
+      // cards, close the SDK
+      self.showLoadingView()
+      shiftSession.shiftCardSession.getCards(0, rows: 100) { [unowned self] result in
+        self.hideLoadingView()
+        switch result {
+        case .failure(let error):
+          // Close the SDK
+          self.show(error: error)
+          self.close()
+        case .success(let cards):
+          let nonClosedCards = cards.filter { $0.state != .cancelled }
+          if let card = nonClosedCards.first, let shiftCardConfiguration = self.shiftCardConfiguration {
+            self.card = card
+            self.showManageCard(addChild: false,
+                                shiftCardConfiguration: shiftCardConfiguration) { _ in }
+          }
+          else {
+            // Close the SDK
+            self.close()
+          }
+        }
+      }
+    }
   }
 
   func backFromManageShiftCardViewer() {
@@ -181,7 +264,7 @@ extension ManageShiftCardModule: ManageShiftCardRouterProtocol {
   }
 
   func cardSettingsTappedInManageShiftCardViewer() {
-    let module = ShiftCardSettingsModule(serviceLocator: serviceLocator, card: card, phoneCaller: PhoneCaller())
+    let module = serviceLocator.moduleLocator.cardSettingsModule(card: card)
     module.onClose = { [weak self] module in
       self?.dismissModule {
         self?.shiftCardSettingsModule = nil
@@ -192,8 +275,25 @@ extension ManageShiftCardModule: ManageShiftCardRouterProtocol {
     present(module: module) { _ in }
   }
 
+  func balanceTappedInManageShiftCardViewer() {
+    guard card.features?.allowedBalanceTypes?.isEmpty == false else { return }
+    let module = serviceLocator.moduleLocator.fundingSourceSelector(card: card)
+    module.onClose = { [weak self] _ in
+      self?.dismissModule {
+        self?.fundingSourceSelectorModule = nil
+      }
+    }
+    module.onFinish = { [weak self] _ in
+      self?.dismissModule {
+        self?.fundingSourceSelectorModule = nil
+        self?.presenter?.refreshCard()
+      }
+    }
+    self.fundingSourceSelectorModule = module
+    present(module: module, embedInNavigationController: false) { _ in }
+  }
+
   func showTransactionDetails(transaction: Transaction) {
-    // swiftlint:disable:next force_unwrapping
     let viewController = buildTransactionDetailsViewControllerFor(uiConfig, transaction: transaction)
     self.push(viewController: viewController) {}
   }
@@ -202,60 +302,30 @@ extension ManageShiftCardModule: ManageShiftCardRouterProtocol {
     let physicalCardModule = serviceLocator.moduleLocator.physicalCardActivationSucceedModule(card: card)
     physicalCardModule.onClose = { [unowned self] _ in
       self.dismissModule { [unowned self] in
-        self.physicalCardModule = nil
+        self.physicalCardActivationSucceedModule = nil
         self.presenter?.refreshCard()
       }
     }
     physicalCardModule.onFinish = { [unowned self] _ in
       self.dismissModule { [unowned self] in
-        self.physicalCardModule = nil
+        self.physicalCardActivationSucceedModule = nil
         self.presenter?.refreshCard()
       }
     }
     present(module: physicalCardModule) { _ in }
-    self.physicalCardModule = physicalCardModule
+    self.physicalCardActivationSucceedModule = physicalCardModule
   }
 
-  func addFundingSource(completion: @escaping (FundingSource) -> Void) {
-    guard let allowedBalanceTypes = card.features?.allowedBalanceTypes, !allowedBalanceTypes.isEmpty else {
-      return
-    }
-    let oauthModuleConfig = ExternalOAuthModuleConfig(title: "Coinbase", allowedBalanceTypes: allowedBalanceTypes)
-    let externalOAuthModule = serviceLocator.moduleLocator.externalOAuthModule(config: oauthModuleConfig,
-                                                                               uiConfig: uiConfig)
-    externalOAuthModule.onOAuthSucceeded = { [unowned self] _, custodian in
-      self.showLoadingSpinner()
-      self.shiftSession.addFinancialAccountFundingSource(accountId: self.card.accountId,
-                                                         custodian: custodian) { result in
-        self.hideLoadingSpinner()
-        switch result {
-        case .failure(let error):
-          self.show(error: error)
-        case .success(let fundingSource):
-          self.dismissModule {
-            self.externalOAuthModule = nil
-            completion(fundingSource)
-          }
-        }
-      }
-    }
-    externalOAuthModule.onClose = { [unowned self] _ in
-      self.dismissModule {
-        self.externalOAuthModule = nil
-      }
-    }
-    self.externalOAuthModule = externalOAuthModule
-    present(module: externalOAuthModule) { _ in }
-  }
-
-  fileprivate func buildTransactionDetailsViewControllerFor(_ uiConfig: ShiftUIConfig,
-                                                            transaction: Transaction) -> UIViewController {
-    let presenter = ShiftCardTransactionDetailsPresenter()
-    let interactor = ShiftCardTransactionDetailsInteractor(shiftSession: shiftSession, transaction: transaction)
-    let viewController = ShiftCardTransactionDetailsViewController(uiConfiguration: uiConfig, presenter: presenter)
+  fileprivate func buildTransactionDetailsViewControllerFor(
+    _ uiConfig: ShiftUIConfig,
+    transaction: Transaction) -> UIViewController {
+    let presenter = serviceLocator.presenterLocator.transactionDetailsPresenter()
+    let interactor = serviceLocator.interactorLocator.transactionDetailsInteractor(transaction: transaction)
+    let viewController = serviceLocator.viewLocator.transactionDetailsView(presenter: presenter)
     presenter.interactor = interactor
     presenter.router = self
     presenter.view = viewController
+    self.transactionDetailsPresenter = presenter
     return viewController
   }
 }
@@ -291,20 +361,39 @@ extension ManageShiftCardModule: KYCRouterProtocol {
 
   func kycPassed() {
     if let shiftCardConfiguration = self.shiftCardConfiguration {
-      self.popViewController(animated: false) {
-        self.showManageCardViewController(shiftCardConfiguration: shiftCardConfiguration) { _ in }
+      shiftSession.getFinancialAccount(accountId: self.card.accountId,
+                                       forceRefresh: true,
+                                       retrieveBalances: false) { [weak self] result in
+        guard let self = self else { return }
+        switch result {
+        case .failure(let error):
+          self.show(error: error)
+        case .success(let financialAccount):
+          guard let shiftCard = financialAccount as? Card else {
+            return
+          }
+          self.card = shiftCard
+          self.popViewController(animated: false) {
+            self.showManageCard(addChild: false,
+                                shiftCardConfiguration: shiftCardConfiguration) { _ in }
+          }
+        }
       }
     }
+  }
+
+  func show(url: URL) {
+    showExternal(url: url, useSafari: true)
   }
 }
 
 extension ManageShiftCardModule: ShiftCardSettingsModuleDelegate {
   func showCardInfo() {
-    presenter?.viewModel.cardInfoVisible.next(true)
+    presenter?.showCardInfo()
   }
 
   func hideCardInfo() {
-    presenter?.viewModel.cardInfoVisible.next(false)
+    presenter?.hideCardInfo()
   }
 
   func isCardInfoVisible() -> Bool {
@@ -312,10 +401,6 @@ extension ManageShiftCardModule: ShiftCardSettingsModuleDelegate {
   }
 
   func cardStateChanged() {
-    presenter?.refreshCard()
-  }
-
-  func fundingSourceChanged() {
     presenter?.refreshCard()
   }
 }

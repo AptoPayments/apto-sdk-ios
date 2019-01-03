@@ -19,5 +19,5 @@ struct CardApplication: WorkflowObject {
   let status: CardApplicationStatus
   let applicationDate: Date
   let workflowObjectId: String
-  let nextAction: WorkflowAction
+  var nextAction: WorkflowAction
 }

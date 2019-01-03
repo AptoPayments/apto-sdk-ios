@@ -37,7 +37,7 @@ class DisplayCardViewController: ShiftViewController, DisplayCardViewProtocol {
 
     super.viewDidLoad()
     self.title = "Card"
-    self.view.backgroundColor = self.uiConfiguration.backgroundColor
+    self.view.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     self.navigationController?.navigationBar.backgroundColor = self.uiConfiguration.uiPrimaryColor
     self.edgesForExtendedLayout = UIRectEdge()
     self.extendedLayoutIncludesOpaqueBars = true
@@ -133,9 +133,5 @@ class DisplayCardViewController: ShiftViewController, DisplayCardViewProtocol {
 
   override func previousTapped() {
     eventHandler.previousTapped()
-  }
-
-  func showLoadingSpinner() {
-    showLoadingSpinner(tintColor: uiConfiguration.uiPrimaryColor)
   }
 }

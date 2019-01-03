@@ -36,7 +36,7 @@ class VerifyEmailModule: UIModule, VerifyEmailModuleProtocol {
                                            dataReceiver: presenter)
     presenter.interactor = interactor
     presenter.router = self
-    let viewController = PINVerificationViewController(uiConfig: uiConfig, eventHandler: presenter)
+    let viewController = serviceLocator.viewLocator.pinVerificationView(presenter: presenter)
     presenter.view = viewController
     addChild(viewController: viewController, completion: completion)
     self.presenter = presenter

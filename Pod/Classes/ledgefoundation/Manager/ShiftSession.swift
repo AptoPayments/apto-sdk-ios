@@ -176,7 +176,8 @@ open class ShiftSession: NSObject {
   }
 
   func getFinancialAccount(accountId: String,
-                           retrieveBalance: Bool = true,
+                           forceRefresh: Bool = true,
+                           retrieveBalances: Bool = false,
                            callback: @escaping Result<FinancialAccount, NSError>.Callback) {
     guard let accessToken = shiftPlatform.currentToken() else {
       callback(.failure(BackendError(code: .invalidSession, reason: nil)))
@@ -184,8 +185,18 @@ open class ShiftSession: NSObject {
     }
     shiftPlatform.getFinancialAccount(accessToken,
                                       accountId: accountId,
-                                      retrieveBalance: retrieveBalance,
+                                      forceRefresh: forceRefresh,
+                                      retrieveBalances: retrieveBalances,
                                       callback: callback)
+  }
+
+  func getCardDetails(accountId: String,
+                      callback: @escaping Result<CardDetails, NSError>.Callback) {
+    guard let accessToken = shiftPlatform.currentToken() else {
+      callback(.failure(BackendError(code: .invalidSession, reason: nil)))
+      return
+    }
+    shiftPlatform.getCardDetails(accessToken, accountId: accountId, callback: callback)
   }
 
   func addCard(cardNumber: String,

@@ -9,7 +9,7 @@
 import Bond
 
 protocol LinkApplicationSummaryRouterProtocol: URLHandlerProtocol {
-  func backFromAppSummary(_ animated:Bool?)
+  func backFromAppSummary(_ animated: Bool)
   func appSummaryAgreed(offer:LoanOffer)
 }
 

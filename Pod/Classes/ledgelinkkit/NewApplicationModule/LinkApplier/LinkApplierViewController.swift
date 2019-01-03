@@ -30,7 +30,7 @@ class LinkApplierViewController: ShiftViewController, LinkApplicationFeedbackVie
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    self.view.backgroundColor = self.uiConfiguration.backgroundColor
+    self.view.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     self.navigationController?.navigationBar.backgroundColor = self.uiConfiguration.uiPrimaryColor
     self.edgesForExtendedLayout = UIRectEdge()
     self.setupLoadingView()

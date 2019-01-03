@@ -26,7 +26,7 @@ class DisplayCardInteractor: DisplayCardInteractorProtocol {
       case .failure(let error):
         callback(.failure(error))
       case .success(let user):
-        self.shiftSession.getFinancialAccount(accountId: self.accountId, retrieveBalance: false) { result in
+        self.shiftSession.getFinancialAccount(accountId: self.accountId, retrieveBalances: true) { result in
           callback(result.flatMap { financialAccount -> Result<Card, NSError> in
             guard let card = financialAccount as? Card else {
               return .failure(ServiceError(code: .jsonError))

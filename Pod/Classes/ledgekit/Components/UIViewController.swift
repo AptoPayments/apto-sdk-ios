@@ -19,21 +19,29 @@ public enum SubviewPosition {
 
 public protocol ViewControllerProtocol {
   func set(title: String)
-  func showNavPreviousButton(_ tintColor: UIColor?)
+  func showNavPreviousButton(_ tintColor: UIColor?, uiTheme: UITheme?)
   func showNavNextButton(title: String, tintColor: UIColor?)
   func showNavNextButton(icon: UIImage, tintColor: UIColor?)
   func showNavNextButton(tintColor: UIColor?)
   func hideNavNextButton()
-  func showNavCancelButton(_ tintColor: UIColor?)
+  func showNavCancelButton(_ tintColor: UIColor?, uiTheme: UITheme?)
   func activateNavNextButton(_ tintColor: UIColor?)
   func deactivateNavNextButton(_ deactivatedTintColor: UIColor?)
-  func show(error: Error)
+  func show(error: Error, uiConfig: ShiftUIConfig?)
   func showNetworkNotReachableError(_ uiConfig: ShiftUIConfig?)
   func hideNetworkNotReachableError()
   func showServerMaintenanceError()
-  func showMessage(_ message: String)
+  func showMessage(_ message: String, uiConfig: ShiftUIConfig?)
+  func show(message: String,
+            title: String,
+            animated: Bool,
+            isError: Bool,
+            uiConfig: ShiftUIConfig,
+            tapHandler: (() -> Void)?)
   func showLoadingSpinner(tintColor: UIColor, position: SubviewPosition)
   func hideLoadingSpinner()
+  func showLoadingView(uiConfig: ShiftUIConfig)
+  func hideLoadingView()
   func configureLeftNavButton(mode: UIViewControllerLeftButtonMode?, uiConfig: ShiftUIConfig?)
   var navigationController: UINavigationController? { get }
   func askPermissionToOpenExternalUrl(_ completion: @escaping Result<Bool, NSError>.Callback)
@@ -43,12 +51,48 @@ public extension ViewControllerProtocol {
   func showLoadingSpinner(tintColor: UIColor, position: SubviewPosition = .center) {
     showLoadingSpinner(tintColor: tintColor, position: position)
   }
+
+  func showNavPreviousButton(_ tintColor: UIColor?, uiTheme: UITheme? = nil) {
+    showNavPreviousButton(tintColor, uiTheme: uiTheme)
+  }
+
+  func showNavCancelButton(_ tintColor: UIColor?, uiTheme: UITheme? = nil) {
+    showNavCancelButton(tintColor, uiTheme: uiTheme)
+  }
+}
+
+extension ViewControllerProtocol where Self: ShiftViewController {
+  func show(error: Error, uiConfig: ShiftUIConfig? = nil) {
+    show(error: error, uiConfig: uiConfig ?? uiConfiguration)
+  }
+
+  func showMessage(_ message: String, uiConfig: ShiftUIConfig? = nil) {
+    showMessage(message, uiConfig: uiConfig ?? uiConfiguration)
+  }
+}
+
+extension ShiftViewController {
+  func show(error: Error) {
+    show(error: error, uiConfig: uiConfiguration)
+  }
+
+  func showMessage(_ message: String) {
+    showMessage(message, uiConfig: uiConfiguration)
+  }
+
+  func show(message: String, title: String, animated: Bool = true, tapHandler: (() -> Void)?) {
+    show(message: message, title: title, animated: animated, uiConfig: uiConfiguration, tapHandler: tapHandler)
+  }
+
+  func showLoadingView() {
+    showLoadingView(uiConfig: uiConfiguration)
+  }
 }
 
 extension UIViewController: ViewControllerProtocol {
 
-  public func showNavPreviousButton(_ tintColor: UIColor? = nil) {
-    self.installNavLeftButton(UIImage.imageFromPodBundle("top_back_default.png"),
+  public func showNavPreviousButton(_ tintColor: UIColor? = nil, uiTheme: UITheme?) {
+    self.installNavLeftButton(UIImage.imageFromPodBundle("top_back_default", uiTheme: uiTheme),
                               tintColor: tintColor,
                               accessibilityLabel: "Navigation Previous Button",
                               target: self,
@@ -82,8 +126,8 @@ extension UIViewController: ViewControllerProtocol {
                                action: #selector(UIViewController.nextTapped))
   }
 
-  public func showNavCancelButton(_ tintColor: UIColor? = nil) {
-    self.installNavLeftButton(UIImage.imageFromPodBundle("top_close_default.png"),
+  public func showNavCancelButton(_ tintColor: UIColor? = nil, uiTheme: UITheme? = nil) {
+    self.installNavLeftButton(UIImage.imageFromPodBundle("top_close_default", uiTheme: uiTheme),
                               tintColor: tintColor,
                               accessibilityLabel: "Navigation Close Button",
                               target: self,
@@ -190,11 +234,16 @@ extension UIViewController: ViewControllerProtocol {
     }
   }
 
-  public func show(error: Error) {
+  public func show(error: Error, uiConfig: ShiftUIConfig?) {
     self.hideLoadingSpinner()
+    let backgroundColor = uiConfig?.uiErrorColor ?? UIColor.colorFromHex(0xDC4337)
+    let font = uiConfig?.fontProvider.mainItemRegularFont
+    let textColor = uiConfig?.textMessageColor
     let toast = SwiftToast(text: error.localizedDescription,
                            textAlignment: .left,
-                           backgroundColor: UIColor.colorFromHex(0xDC4337),
+                           backgroundColor: backgroundColor,
+                           textColor: textColor,
+                           font: font,
                            duration: 5,
                            minimumHeight: 100,
                            style: .bottomToTop)
@@ -202,7 +251,18 @@ extension UIViewController: ViewControllerProtocol {
   }
 
   public func showNetworkNotReachableError(_ uiConfig: ShiftUIConfig?) {
-    let viewController = NetworkNotReachableErrorViewController(uiConfig: uiConfig)
+    let viewController: UIViewController
+    if let uiConfig = uiConfig {
+      switch uiConfig.uiTheme {
+      case .theme1:
+        viewController = NetworkNotReachableErrorViewControllerTheme1(uiConfig: uiConfig)
+      case .theme2:
+        viewController = NetworkNotReachableErrorViewControllerTheme2(uiConfig: uiConfig)
+      }
+    }
+    else {
+      viewController = NetworkNotReachableErrorViewControllerTheme1(uiConfig: uiConfig)
+    }
     present(viewController, animated: true)
   }
 
@@ -211,11 +271,12 @@ extension UIViewController: ViewControllerProtocol {
   }
 
   public func showServerMaintenanceError() {
-    let module = ServiceLocator.shared.moduleLocator.serverMaintenanceErrorModule()
+    let serviceLocator = ServiceLocator.shared
+    let module = serviceLocator.moduleLocator.serverMaintenanceErrorModule()
     module.initialize { result in
       switch result {
       case .failure(let error):
-        self.show(error: error)
+        self.show(error: error, uiConfig: serviceLocator.uiConfig )
       case .success(let viewController):
         self.present(viewController, animated: true)
       }
@@ -225,14 +286,36 @@ extension UIViewController: ViewControllerProtocol {
     }
   }
 
-  public func showMessage(_ message: String) {
+  public func showMessage(_ message: String, uiConfig: ShiftUIConfig?) {
+    let backgroundColor = uiConfig?.uiSuccessColor ?? UIColor.colorFromHex(0xDC4337)
+    let font = uiConfig?.fontProvider.mainItemRegularFont
+    let textColor = uiConfig?.textMessageColor
     let toast = SwiftToast(text: message,
                            textAlignment: .left,
-                           backgroundColor: UIColor.colorFromHex(0x009F4F),
+                           backgroundColor: backgroundColor,
+                           textColor: textColor,
+                           font: font,
                            duration: 5,
                            minimumHeight: 100,
                            style: .bottomToTop)
     present(toast, animated: true)
+  }
+
+  public func show(message: String,
+                   title: String,
+                   animated: Bool = true,
+                   isError: Bool = false,
+                   uiConfig: ShiftUIConfig,
+                   tapHandler: (() -> Void)?) {
+    let toastView = TitleSubtitleToastView(uiConfig: uiConfig)
+    let backgroundColor = isError ? uiConfig.uiErrorColor : uiConfig.uiPrimaryColor
+    let toast = TitleSubtitleToast(title: title,
+                                   message: message,
+                                   backgroundColor: backgroundColor,
+                                   duration: tapHandler == nil ? 5 : nil,
+                                   delegate: toastView)
+    toastView.tapHandler = tapHandler
+    present(toast, withCustomSwiftToastView: toastView, animated: animated)
   }
 
   public func showLoadingSpinner(tintColor: UIColor, position: SubviewPosition) {
@@ -283,6 +366,36 @@ extension UIViewController: ViewControllerProtocol {
     }
   }
 
+  public func showLoadingView(uiConfig: ShiftUIConfig) {
+    if let window = UIApplication.shared.keyWindow {
+      let loadingView = UIView(frame: .zero)
+      loadingView.backgroundColor = view.backgroundColor?.withAlphaComponent(0.9)
+      let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .white)
+      activityIndicator.color = uiConfig.uiPrimaryColor
+      loadingView.addSubview(activityIndicator)
+      activityIndicator.snp.makeConstraints { make in
+        make.center.equalToSuperview()
+      }
+      window.addSubview(loadingView)
+      loadingView.snp.makeConstraints { make in
+        make.edges.equalToSuperview()
+      }
+      activityIndicator.startAnimating()
+    }
+  }
+
+  public func hideLoadingView() {
+    if let window = UIApplication.shared.keyWindow {
+      for subview in window.subviews.reversed() {
+        // The spinner is inside a container
+        if subview.subviews.first is UIActivityIndicatorView {
+          subview.removeFromSuperview()
+          return
+        }
+      }
+    }
+  }
+
   public func set(title: String) {
     self.title = title
   }
@@ -323,6 +436,13 @@ extension UIViewController: ViewControllerProtocol {
     }
     optionMenu.addAction(cancelAction)
     present(optionMenu, animated: true, completion: nil)
+  }
+
+  public var edgesConstraint: ConstraintItem {
+    if #available(iOS 11, *) {
+      return view.safeAreaLayoutGuide.snp.edges
+    }
+    return view.snp.edges
   }
 }
 

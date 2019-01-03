@@ -9,8 +9,8 @@
 import Foundation
 
 protocol LinkOfferLoaderRouterProtocol {
-  func close(_ animated:Bool?)
-  func back(_ animated:Bool?)
+  func close(_ animated: Bool)
+  func back(_ animated: Bool)
   func offerListReceived(_ offerRequestId:String, initialOffers:[LoanOffer])
 }
 
@@ -25,48 +25,48 @@ protocol LinkOfferLoaderViewProtocol {
 }
 
 class LinkOfferLoaderPresenter: LinkOfferLoaderEventHandler {
-  
+
   var view: LinkOfferLoaderViewProtocol!
   var router: LinkOfferLoaderRouterProtocol!
   var interactor: LinkOfferLoaderInteractorProtocol!
-  
+
   // MARK: - OfferLoaderEventHandler
-  
+
   func viewLoaded() {
     view.showLoadingState()
   }
-  
+
   func viewShown() {
     self.loadOfferList()
   }
-  
+
   func retryTapped() {
     view.showLoadingState()
     self.loadOfferList()
   }
-  
+
   func closeTapped() {
     router.close(true)
   }
-  
+
   func updateRequestTapped() {
     router.back(true)
   }
-  
+
   func shouldShowRefreshOffersButton() -> Bool {
     return true
   }
-  
+
   func shouldShowTOSButton() -> Bool {
     return true
   }
-  
+
   func refreshOffersTapped() {
     self.retryTapped()
   }
-  
+
   // MARK: - Private methods
-  
+
   fileprivate func loadOfferList() {
     self.interactor.loadOfferList { [weak self] result in
       switch result {
@@ -81,5 +81,5 @@ class LinkOfferLoaderPresenter: LinkOfferLoaderEventHandler {
       }
     }
   }
-  
+
 }

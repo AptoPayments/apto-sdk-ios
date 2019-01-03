@@ -12,8 +12,8 @@ import Bond
 protocol UserDataCollectorDataReceiver: class {
   func setDataCollectorError(_ error: NSError)
   func showNextStep()
-  func showLoadingSpinner()
-  func hideLoadingSpinner()
+  func showLoadingView()
+  func hideLoadingView()
   func set(_ userData: DataPointList,
            missingData: RequiredDataPointList,
            requiredData: RequiredDataPointList,
@@ -87,13 +87,13 @@ class UserDataCollectorInteractor: UserDataCollectorInteractorProtocol {
 
   func allUserDataCollected(_ userData: DataPointList, callback: @escaping Result<ShiftUser, NSError>.Callback) {
     if self.shouldCreateUserAccount() {
-      dataReceiver.showLoadingSpinner()
+      dataReceiver.showLoadingView()
       self.createUser(userData) { result in
         switch result {
         case .failure(let error):
           self.dataReceiver.show(error: error)
         case .success(let newUser):
-          self.dataReceiver.hideLoadingSpinner()
+          self.dataReceiver.hideLoadingView()
           callback(.success(newUser))
         }
       }
@@ -101,13 +101,13 @@ class UserDataCollectorInteractor: UserDataCollectorInteractorProtocol {
     else {
       let differences = initialUserData.modifiedDataPoints(compareWith: userData)
       if !differences.dataPoints.isEmpty {
-        dataReceiver.showLoadingSpinner()
+        dataReceiver.showLoadingView()
         self.updateUser(differences) { result in
           switch result {
           case .failure(let error):
             self.dataReceiver.show(error: error)
           case .success(let updatedUser):
-            self.dataReceiver.hideLoadingSpinner()
+            self.dataReceiver.hideLoadingView()
             callback(.success(updatedUser))
           }
         }

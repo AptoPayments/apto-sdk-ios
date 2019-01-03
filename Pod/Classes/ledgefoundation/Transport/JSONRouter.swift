@@ -29,6 +29,7 @@ public enum JSONRouter {
   case verificationRestart
   case storeInfo
   case financialAccounts
+  case financialAccountsDetails
   case financialAccountTransactions
   case financialAccountFundingSource
   case addCard
@@ -73,6 +74,7 @@ public enum JSONRouter {
     case .verificationRestart: return "/verifications/:verificationId/restart"
     case .storeInfo: return "/stores"
     case .financialAccounts: return "/user/accounts"
+    case .financialAccountsDetails: return "/user/accounts/:accountId/details"
     case .financialAccountTransactions: return "/user/accounts/:accountId/transactions"
     case .financialAccountFundingSource: return "/user/accounts/:accountId/balance"
     case .addCard: return "/user/accounts"

@@ -1,32 +1,29 @@
 //
 //  KYCViewController.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Ivan Oliver Martínez on 09/04/2017.
 //
 //
 
 import UIKit
-import Stripe
 import Bond
 import ReactiveKit
 import SnapKit
-import PullToRefreshKit
 
-protocol KYCEventHandler: class {
-  var viewModel: KYCViewModel { get }
-  func viewLoaded()
-  func previousTapped()
-  func closeTapped()
-  func refreshTapped()
-}
+class KYCViewController: KYCViewControllerProtocol {
+  private let disposeBag = DisposeBag()
+  private unowned let presenter: KYCPresenterProtocol
+  private let statusLabel: UILabel
+  private let footerLabel: ContentPresenterView
+  private let imageView = UIImageView()
 
-class KYCViewController: ShiftViewController, KYCViewProtocol {
-  private unowned let eventHandler: KYCEventHandler
-  private var statusLabel: UILabel! // swiftlint:disable:this implicitly_unwrapped_optional
-
-  init(uiConfiguration: ShiftUIConfig, eventHandler: KYCEventHandler) {
-    self.eventHandler = eventHandler
+  init(uiConfiguration: ShiftUIConfig, presenter: KYCPresenterProtocol) {
+    self.presenter = presenter
+    self.statusLabel = ComponentCatalog.boldMessageLabelWith(text: "",
+                                                             textAlignment: .center,
+                                                             uiConfig: uiConfiguration)
+    self.footerLabel = ContentPresenterView(uiConfig: uiConfiguration)
     super.init(uiConfiguration: uiConfiguration)
   }
 
@@ -39,53 +36,67 @@ class KYCViewController: ShiftViewController, KYCViewProtocol {
 
     setUpUI()
     setupViewModelSubscriptions()
-    eventHandler.viewLoaded()
+    presenter.viewLoaded()
   }
 
   func setupViewModelSubscriptions() {
-    let viewModel = eventHandler.viewModel
+    let viewModel = presenter.viewModel
 
-    _ = viewModel.kycState.observeNext { kycState in
+    viewModel.kycState.observeNext { [unowned self] kycState in
       self.statusLabel.text = self.kycStateDescription(kyc: kycState)
-    }
+      self.imageView.image = self.image(forState: kycState)
+    }.dispose(in: disposeBag)
   }
 
   override func closeTapped() {
-    eventHandler.closeTapped()
+    presenter.closeTapped()
   }
 
   override func previousTapped() {
-    eventHandler.previousTapped()
+    presenter.previousTapped()
   }
 
-  fileprivate func kycStateDescription(kyc: KYCState?) -> String? {
+  private func kycStateDescription(kyc: KYCState?) -> String? {
     guard let kyc = kyc else {
       return nil
     }
     switch kyc {
     case .resubmitDetails:
-      return "kyc.state.resubmitDetails".podLocalized()
+      return "manage_card.kyc.state.resubmit_details".podLocalized()
     case .uploadFile:
-      return "kyc.state.uploadFile".podLocalized()
+      return "manage_card.kyc.state.upload_file".podLocalized()
     case .underReview:
-      return "kyc.state.underReview".podLocalized()
+      return "manage_card.kyc.state.under_review".podLocalized()
     case .passed:
-      return "kyc.state.passed".podLocalized()
+      return "manage_card.kyc.state.passed".podLocalized()
     case .rejected:
-      return "kyc.state.rejected".podLocalized()
+      return "manage_card.kyc.state.rejected".podLocalized()
     case .temporaryError:
-      return "kyc.state.temporaryError".podLocalized()
+      return "manage_card.kyc.state.temporary_error".podLocalized()
     }
+  }
+
+  private func image(forState kyc: KYCState?) -> UIImage? {
+    guard let kyc = kyc else { return nil }
+    let imageName: String
+    switch kyc {
+    case .rejected:
+      imageName = "kyc_failure"
+    default:
+      imageName = "kyc_reviewing"
+    }
+    return UIImage.imageFromPodBundle(imageName)?.asTemplate()
   }
 }
 
 private extension KYCViewController {
   func setUpUI() {
-    view.backgroundColor = uiConfiguration.backgroundColor
+    view.backgroundColor = uiConfiguration.uiBackgroundPrimaryColor
     setUpNavigationBar()
     let containerView = createContainerView()
     let icon = createIconView(containerView: containerView)
     setUpStatusLabel(containerView: containerView, icon: icon)
+    setUpFooterLabel()
     createRefreshButton()
   }
 
@@ -93,49 +104,65 @@ private extension KYCViewController {
     navigationController?.navigationBar.setUpWith(uiConfig: uiConfiguration)
     edgesForExtendedLayout = UIRectEdge()
     extendedLayoutIncludesOpaqueBars = true
-    self.title = "kyc.title".podLocalized()
+    self.title = "manage_card.kyc.title".podLocalized()
   }
 
   func createContainerView() -> UIView {
-    let containerview = UIView()
-    view.addSubview(containerview)
-    containerview.snp.makeConstraints { make in
+    let containerView = UIView()
+    view.addSubview(containerView)
+    containerView.snp.makeConstraints { make in
       make.left.right.equalTo(view).inset(20)
-      make.centerY.equalTo(view).offset(-32)
+      make.centerY.equalTo(view).offset(-72)
     }
-    return containerview
+    return containerView
   }
 
   func createIconView(containerView: UIView) -> UIImageView {
-    let icon = UIImageView(image: UIImage.imageFromPodBundle("CloudQueue"))
-    containerView.addSubview(icon)
-    icon.snp.makeConstraints { make in
+    imageView.tintColor = uiConfiguration.iconSecondaryColor
+    imageView.image = UIImage.imageFromPodBundle("kyc_reviewing")?.asTemplate()
+    containerView.addSubview(imageView)
+    imageView.snp.makeConstraints { make in
       make.centerX.equalTo(containerView)
       make.top.equalTo(containerView)
-      make.width.height.equalTo(100)
     }
-    return icon
+    return imageView
   }
 
   func setUpStatusLabel(containerView: UIView, icon: UIImageView) {
-    statusLabel = ComponentCatalog.mainItemRegularLabelWith(text: "",
-                                                            textAlignment: .center,
-                                                            uiConfig: uiConfiguration)
+    statusLabel.textColor = uiConfiguration.iconSecondaryColor
     containerView.addSubview(statusLabel)
     statusLabel.snp.makeConstraints { make in
-      make.top.equalTo(icon.snp.bottom).offset(40)
+      make.top.equalTo(icon.snp.bottom).offset(12)
       make.left.right.bottom.equalTo(containerView)
     }
   }
 
+  func setUpFooterLabel() {
+    view.addSubview(footerLabel)
+    footerLabel.textAlignment = .center
+    footerLabel.delegate = self
+    footerLabel.snp.makeConstraints { make in
+      make.left.right.equalToSuperview().inset(46)
+      make.bottom.equalTo(bottomConstraint).inset(16)
+    }
+    footerLabel.set(content: .plainText("manage_card.kyc.footer".podLocalized()))
+  }
+
   func createRefreshButton() {
-    let refreshButton = ComponentCatalog.buttonWith(title: "kyc.refresh_button.title".podLocalized(),
+    let refreshButton = ComponentCatalog.buttonWith(title: "manage_card.kyc.call_to_action.title".podLocalized(),
                                                     uiConfig: self.uiConfiguration) {
-                                                      self.eventHandler.refreshTapped()
+                                                      self.presenter.refreshTapped()
     }
     view.addSubview(refreshButton)
     refreshButton.snp.makeConstraints { make in
-      make.left.right.bottom.equalTo(view).inset(40)
+      make.left.right.equalToSuperview().inset(44)
+      make.bottom.equalTo(footerLabel.snp.top).offset(-16)
     }
+  }
+}
+
+extension KYCViewController: ContentPresenterViewDelegate {
+  func linkTapped(url: URL) {
+    presenter.show(url: url)
   }
 }

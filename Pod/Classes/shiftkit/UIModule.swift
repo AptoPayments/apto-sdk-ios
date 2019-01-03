@@ -85,33 +85,33 @@ open class UIModule: NSObject, UIModuleProtocol {
   // MARK: - Methods to add or remove content in the current module
 
   public func push(viewController: UIViewController,
-                   animated: Bool? = true,
-                   leftButtonMode : UIViewControllerLeftButtonMode? = .back,
+                   animated: Bool = true,
+                   leftButtonMode: UIViewControllerLeftButtonMode = .back,
                    completion: @escaping (() -> Void)) {
-    viewController.configureLeftNavButton(mode: leftButtonMode!, uiConfig: uiConfig)
-    navigationController?.pushViewController(viewController, animated: animated!) { [ weak self] in
+    viewController.configureLeftNavButton(mode: leftButtonMode, uiConfig: uiConfig)
+    navigationController?.pushViewController(viewController, animated: animated) { [ weak self] in
       self?.viewControllers.append(viewController)
       completion()
     }
   }
 
-  public func popViewController(animated: Bool? = true, completion: @escaping (() -> Void)) {
-    navigationController?.popViewController(animated!) { [ weak self] in
+  public func popViewController(animated: Bool = true, completion: @escaping (() -> Void)) {
+    navigationController?.popViewController(animated) { [ weak self] in
       self?.viewControllers.removeLast()
       completion()
     }
   }
 
-  public func present(viewController: UIViewController, animated: Bool? = true, completion: @escaping (() -> Void)) {
-    navigationController?.viewControllers.last?.present(viewController, animated: animated!) { [weak self] in
+  public func present(viewController: UIViewController, animated: Bool = true, completion: @escaping (() -> Void)) {
+    navigationController?.viewControllers.last?.present(viewController, animated: animated) { [weak self] in
       self?.presentedViewController = viewController
       completion()
     }
   }
 
   public func push(module: UIModuleProtocol,
-                   animated: Bool? = true,
-                   leftButtonMode : UIViewControllerLeftButtonMode? = .back,
+                   animated: Bool = true,
+                   leftButtonMode: UIViewControllerLeftButtonMode = .back,
                    completion: @escaping Result<UIViewController, NSError>.Callback) {
     guard let module = module as? UIModule else {
       fatalError("module must inherit from UIModule")
@@ -123,14 +123,14 @@ open class UIModule: NSObject, UIModuleProtocol {
       case .success(let initialViewController):
         module.parentUIModule = self
         self?.uiModules.append(module)
-        self?.push(viewController: initialViewController, animated: animated, leftButtonMode: leftButtonMode!) {
+        self?.push(viewController: initialViewController, animated: animated, leftButtonMode: leftButtonMode) {
           completion(.success(initialViewController))
         }
       }
     }
   }
 
-  public func popModule(animated: Bool? = true, completion: @escaping (() -> Void)) {
+  public func popModule(animated: Bool = true, completion: @escaping (() -> Void)) {
     if uiModules.count <= 1 && viewControllers.count == 0 {
       // Last child module to pop. Pop the current module instead
       self.back()
@@ -138,7 +138,7 @@ open class UIModule: NSObject, UIModuleProtocol {
     }
     else {
       if let module = uiModules.last {
-        module.removeFromNavigationController(animated: animated!) { [weak self] in
+        module.removeFromNavigationController(animated: animated) { [weak self] in
           self?.uiModules.removeLast()
           completion()
         }
@@ -162,7 +162,11 @@ open class UIModule: NSObject, UIModuleProtocol {
     }
   }
 
-  public func present(module: UIModuleProtocol, animated: Bool? = true, leftButtonMode : UIViewControllerLeftButtonMode? = .close, completion: @escaping Result<UIViewController, NSError>.Callback) {
+  public func present(module: UIModuleProtocol,
+                      animated: Bool = true,
+                      leftButtonMode: UIViewControllerLeftButtonMode = .close,
+                      embedInNavigationController: Bool = true,
+                      completion: @escaping Result<UIViewController, NSError>.Callback) {
     guard let module = module as? UIModule else {
       fatalError("module must inherit from UIModule")
     }
@@ -174,10 +178,19 @@ open class UIModule: NSObject, UIModuleProtocol {
       case .failure(let error):
         completion(.failure(error))
       case .success(let initialViewController):
-        let newNavigationController = UINavigationController(rootViewController: initialViewController)
-        module.navigationController = newNavigationController
-        initialViewController.configureLeftNavButton(mode: leftButtonMode!, uiConfig: uiConfig)
-        wself.navigationController?.viewControllers.last?.present(newNavigationController, animated: animated!) { [weak self] in
+        let viewController: UIViewController
+        if embedInNavigationController {
+          let newNavigationController = UINavigationController(rootViewController: initialViewController)
+          newNavigationController.navigationBar.setUpWith(uiConfig: uiConfig)
+          module.navigationController = newNavigationController
+          initialViewController.configureLeftNavButton(mode: leftButtonMode, uiConfig: uiConfig)
+          viewController = newNavigationController
+        }
+        else {
+          viewController = initialViewController
+        }
+        let presenterController = wself.navigationController?.viewControllers.last ?? UIApplication.topViewController()
+        presenterController?.present(viewController, animated: animated) { [weak self] in
           self?.presentedModule = module
           completion(.success(initialViewController))
         }
@@ -185,16 +198,17 @@ open class UIModule: NSObject, UIModuleProtocol {
     }
   }
 
-  public func dismissViewController(animated: Bool? = true, completion: @escaping (() -> Void)) {
-    navigationController?.viewControllers.last?.dismiss(animated: animated!, completion: completion)
+  public func dismissViewController(animated: Bool = true, completion: @escaping (() -> Void)) {
+    navigationController?.viewControllers.last?.dismiss(animated: animated, completion: completion)
   }
 
-  public func dismissModule(animated: Bool? = true, completion: @escaping (() -> Void)) {
-    navigationController?.viewControllers.last?.dismiss(animated: animated!, completion: completion)
+  public func dismissModule(animated: Bool = true, completion: @escaping (() -> Void)) {
+    let dismissController = navigationController?.viewControllers.last ?? UIApplication.topViewController()
+    dismissController?.dismiss(animated: animated, completion: completion)
   }
 
   public func addChild(module: UIModuleProtocol,
-                       leftButtonMode: UIViewControllerLeftButtonMode? = .back,
+                       leftButtonMode: UIViewControllerLeftButtonMode = .back,
                        completion: @escaping Result<UIViewController, NSError>.Callback) {
     guard let module = module as? UIModule else {
       fatalError("module must inherit from UIModule")
@@ -207,7 +221,7 @@ open class UIModule: NSObject, UIModuleProtocol {
         module.parentUIModule = self
         self?.uiModules.append(module)
         if let uiConfig = self?.uiConfig {
-          initialViewController.configureLeftNavButton(mode: leftButtonMode!, uiConfig: uiConfig)
+          initialViewController.configureLeftNavButton(mode: leftButtonMode, uiConfig: uiConfig)
         }
         completion(.success(initialViewController))
       }
@@ -215,7 +229,7 @@ open class UIModule: NSObject, UIModuleProtocol {
   }
 
   public func addChild(viewController: UIViewController,
-                       leftButtonMode: UIViewControllerLeftButtonMode? = .back,
+                       leftButtonMode: UIViewControllerLeftButtonMode = .back,
                        completion: @escaping Result<UIViewController, NSError>.Callback) {
     viewControllers.append(viewController)
     completion(.success(viewController))
@@ -232,8 +246,24 @@ open class UIModule: NSObject, UIModuleProtocol {
     UIApplication.topViewController()?.hideLoadingSpinner()
   }
 
+  public func showLoadingView() {
+    UIApplication.topViewController()?.showLoadingView(uiConfig: serviceLocator.uiConfig)
+  }
+
+  public func hideLoadingView() {
+    UIApplication.topViewController()?.hideLoadingView()
+  }
+
   public func show(error: Error) {
-    UIApplication.topViewController()?.show(error: error)
+    UIApplication.topViewController()?.show(error: error, uiConfig: uiConfig)
+  }
+
+  public func show(message: String, title: String, isError: Bool) {
+    UIApplication.topViewController()?.show(message: message,
+                                            title: title,
+                                            isError: isError,
+                                            uiConfig: uiConfig,
+                                            tapHandler: nil)
   }
 
   // MARK: - Private Methods to remove the current module from navigation controller
@@ -343,6 +373,7 @@ extension UIViewController {
         completion(.failure(error))
       case .success(let initialViewController):
         let newNavigationController = UINavigationController(rootViewController: initialViewController)
+        newNavigationController.navigationBar.setUpWith(uiConfig: uiConfig)
         module.navigationController = newNavigationController
         initialViewController.configureLeftNavButton(mode: leftButtonMode, uiConfig: uiConfig)
         self?.present(newNavigationController, animated: animated) {
@@ -359,11 +390,18 @@ extension UIViewController {
       return
     }
     if let mode = mode, let uiConfig = uiConfig {
+      let color: UIColor
+      switch uiConfig.uiTheme {
+      case .theme1:
+        color = uiConfig.textTopBarColor
+      case .theme2:
+        color = uiConfig.textSecondaryColor
+      }
       switch mode {
       case .back:
-        showNavPreviousButton(uiConfig.textTopBarColor)
+        showNavPreviousButton(color, uiTheme: uiConfig.uiTheme)
       case .close:
-        showNavCancelButton(uiConfig.textTopBarColor)
+        showNavCancelButton(color, uiTheme: uiConfig.uiTheme)
       case .none:
         hideNavPreviousButton()
       }

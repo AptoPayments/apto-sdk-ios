@@ -15,6 +15,11 @@ class ExternalOAuthPresenterSpy: ExternalOAuthPresenterProtocol {
   // swiftlint:enable implicitly_unwrapped_optional
   private(set) var viewModel = ExternalOAuthViewModel()
 
+  private(set) var viewLoadedCalled = false
+  func viewLoaded() {
+    viewLoadedCalled = true
+  }
+
   private(set) var showErrorCalled = false
   private(set) var lastErrorShown: Error?
   func show(error: NSError) {
@@ -58,7 +63,7 @@ class ExternalOAuthModuleSpy: UIModuleSpy, ExternalOAuthModuleProtocol {
 
   private(set) var backInExternalOAuthCalled = false
   private(set) var lastBackAnimated: Bool?
-  func backInExternalOAuth(_ animated: Bool?) {
+  func backInExternalOAuth(_ animated: Bool) {
     backInExternalOAuthCalled = true
     lastBackAnimated = animated
   }

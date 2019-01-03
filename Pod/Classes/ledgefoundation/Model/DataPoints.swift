@@ -105,7 +105,7 @@ public protocol CountryRestrictedDataPoint {
 }
 
 @objc open class PersonalName: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var firstName: Observable<String?> = Observable(nil)
   open var lastName: Observable<String?> = Observable(nil)
 
@@ -153,8 +153,8 @@ public protocol CountryRestrictedDataPoint {
   }
 }
 
-@objc open class PhoneNumber: DataPoint, CountryRestrictedDataPoint {
-  private var disposeBag = DisposeBag()
+@objc open class PhoneNumber: DataPoint, CountryRestrictedDataPoint, Codable {
+  private let disposeBag = DisposeBag()
   open var countryCode: Observable<Int?> = Observable(nil)
   open var phoneNumber: Observable<String?> = Observable(nil)
   public let country: Observable<Country?> = Observable(nil)
@@ -163,12 +163,8 @@ public protocol CountryRestrictedDataPoint {
     self.countryCode.value = countryCode
     self.phoneNumber.value = phoneNumber
     super.init(type: .phoneNumber, verified: verified)
-    self.countryCode.observeNext { [weak self] countryCode in
-      self?.invalidateVerification()
-      guard let countryCode = countryCode else { return }
-      self?.country.next(Country(isoCode: PhoneHelper.sharedHelper().region(for: countryCode)))
-    }.dispose(in: disposeBag)
-    self.phoneNumber.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+    setUpObservers()
+    self.verified = verified
   }
 
   @objc convenience public init(countryCode: Int, phoneNumber: String?, verified: Bool) {
@@ -192,16 +188,56 @@ public protocol CountryRestrictedDataPoint {
     }
     return retVal
   }
+
+  // MARK: - Codable
+  public required init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.countryCode.value = try container.decodeIfPresent(Int.self, forKey: .countryCode)
+    self.phoneNumber.value = try container.decodeIfPresent(String.self, forKey: .phoneNumber)
+    let verified = try container.decode(Bool.self, forKey: .verified)
+    super.init(type: .phoneNumber, verified: verified)
+    setUpObservers()
+    self.verified = verified
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    if let countryCode = self.countryCode.value {
+      try container.encode(countryCode, forKey: .countryCode)
+    }
+    if let phoneNumber = self.phoneNumber.value {
+      try container.encode(phoneNumber, forKey: .phoneNumber)
+    }
+    try container.encode(verified ?? false, forKey: .verified)
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case countryCode
+    case phoneNumber
+    case verified
+  }
+
+  // MARK: - Private methods
+
+  private func setUpObservers() {
+    self.countryCode.observeNext { [weak self] countryCode in
+      self?.invalidateVerification()
+      guard let countryCode = countryCode else { return }
+      self?.country.next(Country(isoCode: PhoneHelper.sharedHelper().region(for: countryCode)))
+    }.dispose(in: disposeBag)
+    self.phoneNumber.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+  }
 }
 
 @objc open class Email: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var email: Observable<String?> = Observable(nil)
 
   convenience public init(email: String?, verified: Bool?, notSpecified: Bool?) {
     self.init(type: .email, verified: verified, notSpecified: notSpecified)
     self.email.next(email)
     self.email.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+    self.verified = verified
   }
 
   @objc convenience public init(email: String?, verified: Bool, notSpecified: Bool) {
@@ -231,13 +267,14 @@ public protocol CountryRestrictedDataPoint {
 }
 
 @objc open class BirthDate: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var date: Observable<Date?> = Observable(nil)
 
   convenience public init(date: Date?, verified: Bool? = false) {
     self.init(type: .birthDate, verified: verified)
     self.date.next(date)
     self.date.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
+    self.verified = verified
   }
 
   @objc convenience public init(date: Date?, verified: Bool) {
@@ -306,7 +343,7 @@ public protocol CountryRestrictedDataPoint {
 }
 
 @objc open class IdDocument: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var documentType: Observable<IdDocumentType?> = Observable(nil)
   open var value: Observable<String?> = Observable(nil)
   open var country: Observable<Country?> = Observable(nil)
@@ -360,8 +397,8 @@ public protocol CountryRestrictedDataPoint {
   }
 }
 
-@objc open class Address: DataPoint, CountryRestrictedDataPoint {
-  private var disposeBag = DisposeBag()
+@objc open class Address: DataPoint, CountryRestrictedDataPoint, Codable {
+  private let disposeBag = DisposeBag()
   open var address: Observable<String?> = Observable(nil)
   open var apUnit: Observable<String?> = Observable(nil)
   open var country: Observable<Country?> = Observable(nil)
@@ -370,14 +407,14 @@ public protocol CountryRestrictedDataPoint {
   open var zip: Observable<String?> = Observable(nil)
   open var formattedAddress: String?
 
-  public convenience init(address: String?,
-                          apUnit: String?,
-                          country: Country?,
-                          city: String?,
-                          region: String?,
-                          zip: String?,
-                          verified: Bool? = false) {
-    self.init(type: .address, verified: verified)
+  public init(address: String?,
+              apUnit: String?,
+              country: Country?,
+              city: String?,
+              region: String?,
+              zip: String?,
+              verified: Bool? = false) {
+    super.init(type: .address, verified: verified)
     self.address.next(address)
     self.apUnit.next(apUnit)
     self.country.next(country)
@@ -456,10 +493,44 @@ public protocol CountryRestrictedDataPoint {
     }
     return retVal
   }
+
+  // MARK: - Codable
+  public required init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let verified = try container.decodeIfPresent(Bool.self, forKey: .verified) ?? false
+    super.init(type: .address, verified: verified)
+    self.address.next(try container.decodeIfPresent(String.self, forKey: .address))
+    self.apUnit.next(try container.decodeIfPresent(String.self, forKey: .apUnit))
+    self.country.next(try container.decodeIfPresent(Country.self, forKey: .country))
+    self.city.next(try container.decodeIfPresent(String.self, forKey: .city))
+    self.region.next(try container.decodeIfPresent(String.self, forKey: .region))
+    self.zip.next(try container.decodeIfPresent(String.self, forKey: .zip))
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(address.value, forKey: .address)
+    try container.encode(apUnit.value, forKey: .apUnit)
+    try container.encode(country.value, forKey: .country)
+    try container.encode(city.value, forKey: .city)
+    try container.encode(region.value, forKey: .region)
+    try container.encode(zip.value, forKey: .zip)
+    try container.encode(verified, forKey: .verified)
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case address
+    case apUnit
+    case country
+    case city
+    case region
+    case zip
+    case verified
+  }
 }
 
 @objc open class Housing: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var housingType: Observable<HousingType?> = Observable(nil)
 
   convenience public init(housingType: HousingType?, verified: Bool? = false) {
@@ -487,7 +558,7 @@ public protocol CountryRestrictedDataPoint {
 }
 
 @objc open class IncomeSource: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var salaryFrequency: Observable<SalaryFrequency?> = Observable(nil)
   open var incomeType: Observable<IncomeType?> = Observable(nil)
 
@@ -519,7 +590,7 @@ public protocol CountryRestrictedDataPoint {
 }
 
 @objc open class Income: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var netMonthlyIncome: Observable<Int?> = Observable(nil)
   open var grossAnnualIncome: Observable<Int?> = Observable(nil)
 
@@ -551,7 +622,7 @@ public protocol CountryRestrictedDataPoint {
 }
 
 @objc open class CreditScore: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var creditRange: Observable<Int?> = Observable(nil)
 
   convenience public init(creditRange: Int?, verified: Bool? = false) {
@@ -592,7 +663,7 @@ public protocol CountryRestrictedDataPoint {
 }
 
 @objc open class PaydayLoan: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var usedPaydayLoan: Observable<Bool?> = Observable(nil)
 
   convenience public init(usedPaydayLoan: Bool?, verified: Bool? = false) {
@@ -620,7 +691,7 @@ public protocol CountryRestrictedDataPoint {
 }
 
 @objc open class MemberOfArmedForces: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var memberOfArmedForces: Observable<Bool?> = Observable(nil)
 
   convenience public init(memberOfArmedForces: Bool?, verified: Bool? = false) {
@@ -648,7 +719,7 @@ public protocol CountryRestrictedDataPoint {
 }
 
 @objc open class TimeAtAddress: DataPoint {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   open var timeAtAddress: Observable<TimeAtAddressOption?> = Observable(nil)
 
   convenience public init(timeAtAddress: TimeAtAddressOption?, verified: Bool? = false) {

@@ -22,6 +22,16 @@ class InteractorLocatorFake: InteractorLocatorProtocol {
     return authInteractorSpy
   }
 
+  func verifyPhoneInteractor(verificationType: VerificationParams<PhoneNumber, Verification>,
+                             dataReceiver: VerifyPhoneDataReceiver) -> VerifyPhoneInteractorProtocol {
+    Swift.fatalError("verifyPhoneInteractor(verificationType:dataReceiver:) has not been implemented")
+  }
+
+  func verifyBirthDateInteractor(verificationType: VerificationParams<BirthDate, Verification>,
+                                 dataReceiver: VerifyBirthDateDataReceiver) -> VerifyBirthDateInteractorProtocol {
+    Swift.fatalError("verifyBirthDateInteractor(verificationType:dataReceiver:) has not been implemented")
+  }
+
   lazy var externalOauthInteractorSpy = ExternalOAuthInteractorSpy()
   func externalOAuthInteractor(session: ShiftSession) -> ExternalOAuthInteractorProtocol {
     return externalOauthInteractorSpy
@@ -51,9 +61,43 @@ class InteractorLocatorFake: InteractorLocatorProtocol {
     return dataConfirmationInteractorFake
   }
 
+  lazy var webBrowserInteractorSpy = WebBrowserInteractorSpy()
+  func webBrowserInteractor(url: URL,
+                            headers: [String: String]?,
+                            dataReceiver: WebBrowserDataReceiverProtocol) -> WebBrowserInteractorProtocol {
+    return webBrowserInteractorSpy
+  }
+
+  // MARK: - Manage card
+  func manageCardInteractor(card: Card) -> ManageShiftCardInteractorProtocol {
+    Swift.fatalError("manageCardInteractor(card:) has not been implemented")
+  }
+
+  func fundingSourceSelector(card: Card) -> FundingSourceSelectorInteractorProtocol {
+    Swift.fatalError("fundingSourceSelector(card:) has not been implemented")
+  }
+
+  func cardSettingsInteractor() -> ShiftCardSettingsInteractorProtocol {
+    Swift.fatalError("cardSettingsInteractor() has not been implemented")
+  }
+
+  func kycInteractor(card: Card) -> KYCInteractorProtocol {
+    Swift.fatalError("kycInteractor(card:) has not been implemented")
+  }
+
+  // MARK: - Physical card activation
+  func physicalCardActivationInteractor(card: Card, session: ShiftSession) -> PhysicalCardActivationInteractorProtocol {
+    Swift.fatalError("physicalCardActivationInteractor(card:session:) has not been implemented")
+  }
+
   lazy var physicalCardActivationSucceedInteractorFake = PhysicalCardActivationSucceedInteractorFake()
   func physicalCardActivationSucceedInteractor(card: Card) -> PhysicalCardActivationSucceedInteractorProtocol {
     physicalCardActivationSucceedInteractorFake.card = card
     return physicalCardActivationSucceedInteractorFake
+  }
+
+  // MARK: - Transaction Details
+  func transactionDetailsInteractor(transaction: Transaction) -> ShiftCardTransactionDetailsInteractorProtocol {
+    Swift.fatalError("transactionDetailsInteractor(transaction:) has not been implemented")
   }
 }

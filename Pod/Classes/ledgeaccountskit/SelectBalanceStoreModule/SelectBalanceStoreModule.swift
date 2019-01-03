@@ -24,7 +24,7 @@ class SelectBalanceStoreModule: UIModule, SelectBalanceStoreModuleProtocol {
     guard let action = application.nextAction.configuration as? SelectBalanceStoreActionConfiguration else {
       fatalError("Wrong select balance store configuration")
     }
-    externalOAuthModuleConfig = ExternalOAuthModuleConfig(title: "select-balance-store.title".podLocalized(),
+    externalOAuthModuleConfig = ExternalOAuthModuleConfig(title: "select_balance_store.login.title".podLocalized(),
                                                           allowedBalanceTypes: action.allowedBalanceTypes)
     super.init(serviceLocator: serviceLocator)
   }
@@ -78,10 +78,17 @@ class SelectBalanceStoreModule: UIModule, SelectBalanceStoreModuleProtocol {
       }
     }
     module.onFinish = { [unowned self] _ in
-      self.dataConfirmationModule = nil
+      self.showLoadingSpinner()
       userData.removeDataPointsOf(type: self.projectConfiguration.primaryAuthCredential)
-      self.shiftSession.updateUserData(userData) { _ in
-        self.saveBalanceStore(custodian: custodian)
+      self.shiftSession.updateUserData(userData) { [unowned self] result in
+        self.hideLoadingSpinner()
+        switch result {
+        case .failure(let error):
+          self.show(error: error)
+        case .success:
+          self.dataConfirmationModule = nil
+          self.saveBalanceStore(custodian: custodian)
+        }
       }
     }
     self.dataConfirmationModule = module
@@ -106,10 +113,11 @@ class SelectBalanceStoreModule: UIModule, SelectBalanceStoreModuleProtocol {
       self.onFinish?(self)
     }
     else {
-      let alert = UIAlertController(title: "external-oauth.coinbase.connect".podLocalized(),
+      let alert = UIAlertController(title: "select_balance_store.login.error.title".podLocalized(),
                                     message: result.errorMessage,
                                     preferredStyle: .alert)
-      alert.addAction(UIAlertAction(title: "general.button.ok".podLocalized(), style: .default))
+      alert.addAction(UIAlertAction(title: "select_balance_store.login.error.ok_button".podLocalized(),
+                                    style: .default))
       present(viewController: alert, animated: true) { }
     }
   }

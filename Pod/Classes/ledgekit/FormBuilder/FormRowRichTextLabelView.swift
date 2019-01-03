@@ -7,10 +7,12 @@
 //
 
 import UIKit
+import SnapKit
 import TTTAttributedLabel
 
 open class FormRowRichTextLabelView: FormRowView {
   let label: TTTAttributedLabel
+  let linkHandler: LinkHandler?
 
   public init(label: TTTAttributedLabel,
               showSplitter: Bool,
@@ -19,6 +21,7 @@ open class FormRowRichTextLabelView: FormRowView {
               linkHandler: LinkHandler? = nil) {
     self.label = label
     self.label.delegate = linkHandler
+    self.linkHandler = linkHandler
     super.init(showSplitter: showSplitter, height: height)
     self.layoutLabel(position: position)
   }
@@ -35,7 +38,8 @@ open class FormRowRichTextLabelView: FormRowView {
       case .top:
         make.top.equalTo(contentView)
       case .center:
-        make.centerY.equalTo(contentView)
+        make.top.equalTo(contentView)
+        make.bottom.equalTo(contentView)
       case .bottom:
         make.bottom.equalTo(contentView)
       }

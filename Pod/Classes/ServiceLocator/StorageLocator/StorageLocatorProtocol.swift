@@ -13,7 +13,8 @@ protocol StorageLocatorProtocol {
   func loanApplicationStorage(transport: JSONTransport) -> LoanApplicationsStorageProtocol
   func cardApplicationsStorage(transport: JSONTransport) -> CardApplicationsStorageProtocol
   func storeStorage(transport: JSONTransport) -> StoreStorageProtocol
-  func financialAccountsStorage(transport: JSONTransport) -> FinancialAccountsStorageProtocol
+  func financialAccountsStorage(transport: JSONTransport,
+                                localCacheManager: LocalCacheFileManagerProtocol) -> FinancialAccountsStorageProtocol
   func pushTokenStorage(transport: JSONTransport) -> PushTokenStorageProtocol
   func oauthStorage(transport: JSONTransport) -> OauthStorageProtocol
   func userTokenStorage() -> UserTokenStorageProtocol

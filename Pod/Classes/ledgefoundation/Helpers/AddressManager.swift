@@ -154,12 +154,12 @@ open class AddressManager {
     if let languageCode = Locale.current.languageCode {
       placeQuery.language = languageCode
     }
-    placeQuery.fetchDetails { placeDetails, error in
+    placeQuery.fetchDetails { [weak self] placeDetails, error in
       if let placeDetails = placeDetails as? PlaceDetails {
         let address = Address(address: placeDetails.name,
                               apUnit: nil,
                               country: Country(isoCode: placeDetails.country),
-                              city: placeDetails.locality ?? placeDetails.postalTown,
+                              city: self?.cityName(for: placeDetails),
                               region: placeDetails.administrativeAreaLevel1,
                               zip: placeDetails.postalCode)
         address.formattedAddress = placeDetails.formattedAddress
@@ -177,6 +177,10 @@ open class AddressManager {
   }
 
   // MARK: - Private methods and attributes
+
+  private func cityName(for placeDetails: PlaceDetails) -> String {
+    return placeDetails.locality ?? (placeDetails.postalTown ?? placeDetails.administrativeAreaLevel2)
+  }
 
   static var sharedValidator: AddressManager?
   let stateStorage = StateStorage()

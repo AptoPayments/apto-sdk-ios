@@ -15,13 +15,22 @@ final class PresenterLocator: PresenterLocatorProtocol {
     return AuthPresenter(config: authConfig, uiConfig: uiConfig)
   }
 
+  func verifyPhonePresenter() -> VerifyPhonePresenterProtocol {
+    return VerifyPhonePresenter()
+  }
+
+  func verifyBirthDatePresenter() -> VerifyBirthDatePresenterProtocol {
+    return VerifyBirthDatePresenter()
+  }
+
   func externalOAuthPresenter(config: ExternalOAuthModuleConfig) -> ExternalOAuthPresenterProtocol {
     return ExternalOAuthPresenter(config: config)
   }
 
   func issueCardPresenter(router: IssueCardRouter,
-                          interactor: IssueCardInteractorProtocol) -> IssueCardPresenterProtocol {
-    return IssueCardPresenter(router: router, interactor: interactor)
+                          interactor: IssueCardInteractorProtocol,
+                          configuration: IssueCardActionConfiguration?) -> IssueCardPresenterProtocol {
+    return IssueCardPresenter(router: router, interactor: interactor, configuration: configuration)
   }
 
   func serverMaintenanceErrorPresenter() -> ServerMaintenanceErrorPresenterProtocol {
@@ -40,7 +49,46 @@ final class PresenterLocator: PresenterLocatorProtocol {
     return DataConfirmationPresenter()
   }
 
+  func webBrowserPresenter() -> WebBrowserPresenterProtocol {
+    return WebBrowserPresenter()
+  }
+
+  // MARK: - Manage card
+  func manageCardPresenter(config: ManageShiftCardPresenterConfig) -> ManageShiftCardPresenterProtocol {
+    return ManageShiftCardPresenter(config: config)
+  }
+
+  func fundingSourceSelectorPresenter() -> FundingSourceSelectorPresenterProtocol {
+    return FundingSourceSelectorPresenter()
+  }
+
+  func cardSettingsPresenter(cardSession: ShiftCardSession,
+                             card: Card,
+                             config: ShiftCardSettingsPresenterConfig,
+                             emailRecipients: [String?],
+                             uiConfig: ShiftUIConfig) -> ShiftCardSettingsPresenterProtocol {
+    return ShiftCardSettingsPresenter(shiftCardSession: cardSession,
+                                      card: card,
+                                      config: config,
+                                      emailRecipients: emailRecipients,
+                                      uiConfig: uiConfig)
+  }
+
+  func kycPresenter() -> KYCPresenterProtocol {
+    return KYCPresenter()
+  }
+
+  // MARK: - Physical card activation
+  func physicalCardActivationPresenter() -> PhysicalCardActivationPresenterProtocol {
+    return PhysicalCardActivationPresenter()
+  }
+
   func physicalCardActivationSucceedPresenter() -> PhysicalCardActivationSucceedPresenterProtocol {
     return PhysicalCardActivationSucceedPresenter()
+  }
+
+  // MARK: - Transaction Details
+  func transactionDetailsPresenter() -> ShiftCardTransactionDetailsPresenterProtocol {
+    return ShiftCardTransactionDetailsPresenter()
   }
 }

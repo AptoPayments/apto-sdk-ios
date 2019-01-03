@@ -78,6 +78,8 @@ extension JSON {
       return self.bankAccount
     case "card":
       return self.card
+    case "card_details":
+      return self.cardDetails
     case "funding_source":
       return self.fundingSource
     case "money":
@@ -156,6 +158,8 @@ extension JSON {
       return self.allowedBalanceType
     case "select_balance_store_configuration":
       return self.selectBalanceStoreActionConfiguration
+    case "action_issue_card_config":
+      return self.issueCardActionConfiguration
     default:
       return nil
     }
@@ -419,11 +423,19 @@ extension JSON {
           let uiTertiaryColor = self["ui_tertiary_color"].string,
           let uiErrorColor = self["ui_error_color"].string,
           let uiSuccessColor = self["ui_success_color"].string,
+          let uiBackgroundPrimaryColor = self["ui_bg_primary_color"].string,
+          let uiBackgroundSecondaryColor = self["ui_bg_secondary_color"].string,
+          let uiNavigationBarPrimaryColor = self["ui_nav_primary_color"].string,
+          let uiNavigationBarSecondaryColor = self["ui_nav_secondary_color"].string,
+          let textMessageColor = self["text_message_color"].string,
+          let uiStatusBarStyle = self["ui_status_bar_style"].string,
           let uiTheme = self["ui_theme"].string else {
       return nil
     }
     let logoUrl = self["logo_url"].string
-    return ProjectBranding(iconPrimaryColor: iconPrimaryColor,
+    return ProjectBranding(uiBackgroundPrimaryColor: uiBackgroundPrimaryColor,
+                           uiBackgroundSecondaryColor: uiBackgroundSecondaryColor,
+                           iconPrimaryColor: iconPrimaryColor,
                            iconSecondaryColor: iconSecondaryColor,
                            iconTertiaryColor: iconTertiaryColor,
                            textPrimaryColor: textPrimaryColor,
@@ -436,6 +448,10 @@ extension JSON {
                            uiTertiaryColor: uiTertiaryColor,
                            uiErrorColor: uiErrorColor,
                            uiSuccessColor: uiSuccessColor,
+                           uiNavigationPrimaryColor: uiNavigationBarPrimaryColor,
+                           uiNavigationSecondaryColor: uiNavigationBarSecondaryColor,
+                           textMessageColor: textMessageColor,
+                           uiStatusBarStyle: uiStatusBarStyle,
                            logoUrl: logoUrl,
                            uiTheme: uiTheme)
   }
@@ -510,6 +526,11 @@ extension JSON {
 
     // Set the project language
     LocalLanguage.language = language
+
+    // Read the copies
+    if let copies = self["labels"].dictionaryObject as? [String: String] {
+      StringLocalizationStorage.shared.append(copies)
+    }
 
     return ProjectConfiguration(name:name,
                                 summary: summary,
@@ -1010,7 +1031,9 @@ extension JSON {
       return nil
     }
     let verified = self["verified"].bool
-    return PhoneNumber(countryCode: countryCode, phoneNumber: phoneNumber, verified: verified)
+    let number = PhoneNumber(countryCode: countryCode, phoneNumber: phoneNumber, verified: verified)
+    number.verification = self["verification"].verification
+    return number
   }
 
   var email: Email? {
@@ -1020,8 +1043,9 @@ extension JSON {
       return nil
     }
     let verified = self["verified"].bool
+    let emailAddress: Email
     if notSpecified {
-      return Email(email: nil, verified: verified, notSpecified: notSpecified)
+      emailAddress = Email(email: nil, verified: verified, notSpecified: notSpecified)
     }
     else {
       guard let email = self["email"].string else {
@@ -1029,8 +1053,10 @@ extension JSON {
                                                               reason: "Can't parse email \(self)"))
         return nil
       }
-      return Email(email: email, verified: verified, notSpecified: false)
+      emailAddress = Email(email: email, verified: verified, notSpecified: false)
     }
+    emailAddress.verification = self["verification"].verification
+    return emailAddress
   }
 
   var name: PersonalName? {
@@ -1071,7 +1097,9 @@ extension JSON {
         return nil
     }
     let verified = self["verified"].bool
-    return BirthDate(date: date, verified:verified)
+    let birthdate = BirthDate(date: date, verified: verified)
+    birthdate.verification = self["verification"].verification
+    return birthdate
   }
 
   var store: Store? {
@@ -1135,19 +1163,18 @@ extension JSON {
   }
 
   var card: Card? {
-    guard let
-      id = self["account_id"].string,
-      let state = self["state"].string,
-      let lastFourDigits = self["last_four"].string
+    guard let id = self["account_id"].string,
+          let state = self["state"].string,
+          let lastFourDigits = self["last_four"].string
       else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse card \(self)"))
-        return nil
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse card \(self)"))
+      return nil
     }
     guard let cState = FinancialAccountState.stateFrom(description: state) else {
       return nil
     }
 
-    let expiration = self["expiration"].string
     let verified = self["verified"].bool
     let cardIssuer = self["card_issuer"].string
     let cardNetwork = self["card_network"].string
@@ -1155,33 +1182,46 @@ extension JSON {
     let issuer = CardIssuer.issuerFrom(description: cardIssuer)
     let spendableToday = self["spendable_today"].amount
     let nativeSpendableToday = self["native_spendable_today"].amount
-    let physicalCardActivationRequired = self["physical_card_activation_required"].bool
+    let totalBalance = self["total_balance"].amount
+    let nativeTotalBalance = self["native_total_balance"].amount
+    var orderedStatus: OrderedStatus = .notApplicable
+    if let rawOrderedStatus = self["ordered_status"].string {
+      orderedStatus = OrderedStatus(rawValue: rawOrderedStatus) ?? .notApplicable
+    }
     let cardFeatures = self["features"].cardFeatures
     let cardStyle = self["card_style"].cardStyle
+    let firstName = self["cardholder_first_name"].string ?? ""
+    let lastName = self["cardholder_last_name"].string ?? ""
+    let cardholder = firstName + " " + lastName
 
-    let card = Card(accountId: id,
-                    cardNetwork: CardNetwork.cardNetworkFrom(description: cardNetwork),
-                    cardIssuer: issuer,
-                    cardBrand: cardBrand,
-                    state: cState,
-                    lastFourDigits: lastFourDigits,
-                    expiration: expiration,
-                    spendableToday: spendableToday,
-                    nativeSpendableToday: nativeSpendableToday,
-                    kyc: self.kyc,
-                    physicalCardActivationRequired: physicalCardActivationRequired,
-                    features: cardFeatures,
-                    cardStyle: cardStyle,
-                    verified:verified)
+    return Card(accountId: id,
+                cardNetwork: CardNetwork.cardNetworkFrom(description: cardNetwork),
+                cardIssuer: issuer,
+                cardBrand: cardBrand,
+                state: cState,
+                cardHolder: cardholder,
+                lastFourDigits: lastFourDigits,
+                spendableToday: spendableToday,
+                nativeSpendableToday: nativeSpendableToday,
+                totalBalance: totalBalance,
+                nativeTotalBalance: nativeTotalBalance,
+                kyc: self.kyc,
+                orderedStatus: orderedStatus,
+                features: cardFeatures,
+                cardStyle: cardStyle,
+                verified: verified)
+  }
 
-    if let pan = self["pan"].string {
-      card.pan = pan
+  var cardDetails: CardDetails? {
+    guard let expiration = self["expiration"].string,
+          let pan = self["pan"].string,
+          let cvv = self["cvv"].string else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse card details \(self)"))
+      return nil
     }
-    if let cvv = self["cvv"].string {
-      card.cvv = cvv
-    }
 
-    return card
+    return CardDetails(expiration: expiration, pan: pan, cvv: cvv)
   }
 
   var transaction: Transaction? {

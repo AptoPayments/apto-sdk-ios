@@ -13,4 +13,18 @@ extension UILabel {
     super.layoutSubviews()
     self.preferredMaxLayoutWidth = self.bounds.size.width
   }
+
+  func updateAttributedText(_ text: String?) {
+    guard let text = text else {
+      self.text = ""
+      return
+    }
+    guard let attributedText = self.attributedText else {
+      self.text = text
+      return
+    }
+    let mutableAttributedString = NSMutableAttributedString(attributedString: attributedText)
+    mutableAttributedString.mutableString.setString(text)
+    self.attributedText = mutableAttributedString
+  }
 }

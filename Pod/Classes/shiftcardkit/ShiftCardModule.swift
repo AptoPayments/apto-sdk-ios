@@ -22,9 +22,8 @@ open class ShiftCardModule: UIModule {
   let options: ShiftCardOptions?
   var welcomeScreenModule: ShowGenericMessageModule?
   var authModule: AuthModuleProtocol?
-  var existingShiftCardModule: ManageShiftCardModule?
+  var existingShiftCardModule: UIModuleProtocol?
   var newShiftCardModule: NewShiftCardModule?
-  var documentCaptureModule: VerifyDocumentModule?
 
   var contextConfiguration: ContextConfiguration! // swiftlint:disable:this implicitly_unwrapped_optional
   var projectConfiguration: ProjectConfiguration {
@@ -74,6 +73,16 @@ open class ShiftCardModule: UIModule {
         completion(.failure(error))
         return
       case .success:
+        // Register to the session expired event
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(self.didReceiveSessionExpiredEvent(_:)),
+                                               name: .UserTokenSessionExpiredNotification,
+                                               object: nil)
+        // Register to the session closed event
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(self.didReceiveSessionClosedEvent(_:)),
+                                               name: .UserTokenSessionClosedNotification,
+                                               object: nil)
         if self.shiftCardConfiguration.posMode == true {
           // POS Mode
           NotificationCenter.default.addObserver(self,
@@ -82,38 +91,9 @@ open class ShiftCardModule: UIModule {
                                                  object: nil)
           // Empty user data
           self.userDataPoints = DataPointList()
-          // Prepare the initial screen
-          self.prepareInitialScreen(completion)
-          // Register to the session expired event
-          NotificationCenter.default.addObserver(self,
-                                                 selector: #selector(self.didReceiveSessionExpiredEvent(_:)),
-                                                 name: .UserTokenSessionExpiredNotification,
-                                                 object: nil)
         }
-        else {
-          // try to get info about the current user
-          self.shiftSession.currentUser(filterInvalidTokenResult: false) { result in
-            switch result {
-            case .failure:
-              // There's no current user.
-              ShiftPlatform.defaultManager().clearUserToken()
-            case .success(let user):
-              self.userDataPoints = user.userData
-            }
-            // Prepare the initial screen
-            self.prepareInitialScreen(completion)
-            // Register to the session expired event
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(self.didReceiveSessionExpiredEvent(_:)),
-                                                   name: .UserTokenSessionExpiredNotification,
-                                                   object: nil)
-            // Register to the session closed event
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(self.didReceiveSessionClosedEvent(_:)),
-                                                   name: .UserTokenSessionClosedNotification,
-                                                   object: nil)
-          }
-        }
+        // Prepare the initial screen
+        self.prepareInitialScreen(completion)
       }
     }
   }
@@ -199,15 +179,15 @@ open class ShiftCardModule: UIModule {
   fileprivate func showExistingOrNewCardModule(addChild: Bool = false,
                                                pushModule: Bool = false,
                                                completion: @escaping Result<UIViewController, NSError>.Callback) {
-    showLoadingSpinner(position: .bottomCenter)
+    showLoadingView()
     shiftCardSession.getCards(0, rows: 100) { [unowned self] result in
+      self.hideLoadingView()
       switch result {
       case .failure(let error):
-        self.show(error: error)
+        completion(.failure(error))
       case .success(let cards):
         let nonClosedCards = cards.filter { $0.state != .cancelled }
         if let card = nonClosedCards.first {
-          self.hideLoadingSpinner()
           self.showManageCardModule(card: card, addChild: addChild, pushModule: pushModule, completion: completion)
         }
         else {
@@ -221,9 +201,7 @@ open class ShiftCardModule: UIModule {
                                     addChild: Bool,
                                     pushModule: Bool,
                                     completion: @escaping Result<UIViewController, NSError>.Callback) {
-    let existingCardModule = ManageShiftCardModule(serviceLocator: self.serviceLocator,
-                                             card: card,
-                                             mode: self.mode)
+    let existingCardModule = serviceLocator.moduleLocator.manageCardModule(card: card, mode: mode)
     existingCardModule.onClose = { [unowned self] _ in
       self.close()
     }
@@ -286,13 +264,12 @@ open class ShiftCardModule: UIModule {
   // MARK: - Configuration HandlingApplication
 
   fileprivate func loadConfigurationFromServer(_ completion:@escaping Result<Void, NSError>.Callback) {
-    self.shiftSession.contextConfiguration(true) { [unowned self] result in
+    shiftSession.contextConfiguration { [unowned self] result in
       switch result {
       case .failure(let error):
         completion(.failure(error))
       case .success (let contextConfiguration):
         self.contextConfiguration = contextConfiguration
-        self.serviceLocator.uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration)
         self.shiftCardSession.shiftCardConfiguration(true) { [unowned self] result in
           switch result {
           case .failure(let error):
@@ -310,6 +287,8 @@ open class ShiftCardModule: UIModule {
 
   @objc private func didReceiveSessionExpiredEvent(_ notification: Notification) {
     DispatchQueue.main.async {
+      self.hideLoadingView()
+      self.hideLoadingSpinner()
       UIAlertController.confirm(title: "error.transport.sessionExpired.title".podLocalized(),
                                 message: "error.transport.sessionExpired".podLocalized(),
                                 okTitle: "general.button.ok".podLocalized()) { _ in
@@ -319,6 +298,8 @@ open class ShiftCardModule: UIModule {
   }
 
   @objc private func didReceiveSessionClosedEvent(_ notification: Notification) {
+    self.hideLoadingView()
+    self.hideLoadingSpinner()
     close()
   }
 
@@ -351,6 +332,7 @@ extension ShiftSession {
         }
         let uiConfig = ShiftUIConfig(projectConfiguration: contextConfiguration.projectConfiguration,
                                      fontCustomizationOptions: options?.fontCustomizationOptions)
+        shiftCardModule.serviceLocator.uiConfig = uiConfig
         from.present(module: shiftCardModule, animated: true, leftButtonMode: .close, uiConfig: uiConfig) { result in
           switch result {
           case .failure(let error):

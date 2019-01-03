@@ -15,11 +15,6 @@ import SnapKit
 }
 
 class UIPinEntryTextField: UIView {
-  // Constants
-  fileprivate struct Constants {
-    static let InvisibleSign = "\u{200B}"
-  }
-
   // Variables
   private let stackView = UIStackView()
   private var textFields = [UITextField]()
@@ -35,40 +30,59 @@ class UIPinEntryTextField: UIView {
   weak var delegate: UIPinEntryTextFieldDelegate?
 
   // Outlets
-  @IBInspectable var pinCount: Int = 6
-  @IBInspectable var pinSpacing: Int = 4
-  @IBInspectable var pinWidth: Int = 32
-  @IBInspectable var pinHeight: Int = 44
-  @IBInspectable var pinCornerRadius: CGFloat = 5
-  @IBInspectable var pinBorderWidth: CGFloat = 1
-  @IBInspectable var textColor: UIColor = .black {
+  var pinCount: Int = 6
+  var pinSpacing: Int = 4
+  var pinWidth: Int = 32
+  var pinHeight: Int = 44
+  var pinCornerRadius: CGFloat = 5
+  var pinBorderWidth: CGFloat = 1
+  var textColor: UIColor = .black {
     didSet {
       textFields.forEach { $0.textColor = textColor }
     }
   }
-  @IBInspectable var pinBorderColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1.00) {
+  var font: UIFont = UIFont.systemFont(ofSize: 17) {
+    didSet {
+      textFields.forEach { $0.font = font }
+    }
+  }
+  var pinBorderColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1.00) {
     didSet {
       textFields.forEach { $0.layer.borderColor = pinBorderColor.cgColor }
       separatorView.backgroundColor = pinBorderColor
     }
   }
-  @IBInspectable var showMiddleSeparator: Bool = true {
+  var showMiddleSeparator: Bool = true {
     didSet {
       middleSeparatorView.isHidden = !showMiddleSeparator
     }
   }
-  @IBInspectable var middleSeparatorWidth: CGFloat = 12 {
+  var middleSeparatorWidth: CGFloat = 12 {
     didSet {
       separatorView.snp.updateConstraints { make in
         make.width.equalTo(middleSeparatorWidth)
       }
     }
   }
-  @IBInspectable var middleSeparatorHeight: CGFloat = 2 {
+  var middleSeparatorHeight: CGFloat = 2 {
     didSet {
       separatorView.snp.updateConstraints { make in
         make.width.equalTo(middleSeparatorHeight)
       }
+    }
+  }
+  var invisibleSign: String = "\u{200B}" {
+    didSet {
+      textFields.forEach {
+        if $0.text == oldValue {
+          $0.text = invisibleSign
+        }
+      }
+    }
+  }
+  var placeholder: String? = nil {
+    didSet {
+      textFields.forEach { $0.placeholder = placeholder }
     }
   }
 
@@ -172,7 +186,7 @@ class UIPinEntryTextField: UIView {
     guard let index = textFields.index(of: textField), index < (pinCount - 1) else {
       return
     }
-    textFields[index + 1].text = Constants.InvisibleSign
+    textFields[index + 1].text = invisibleSign
     textFields[index + 1].becomeFirstResponder()
   }
 
@@ -184,7 +198,7 @@ class UIPinEntryTextField: UIView {
       return
     }
     textFields[index].text = ""
-    textFields[index - 1].text = Constants.InvisibleSign
+    textFields[index - 1].text = invisibleSign
     textFields[index - 1].becomeFirstResponder()
   }
 
@@ -198,13 +212,13 @@ class UIPinEntryTextField: UIView {
         pin += text
       }
     }
-    return pin.replacingOccurrences(of: Constants.InvisibleSign, with: "")
+    return pin.replacingOccurrences(of: invisibleSign, with: "")
   }
 
   /// Reset text values
   func resetText() {
     textFields.forEach { $0.text = "" }
-    textFields[0].text = Constants.InvisibleSign
+    textFields[0].text = invisibleSign
   }
 
   /// Make the first textfield become first responder
@@ -222,8 +236,8 @@ class UIPinEntryTextField: UIView {
   @objc private func fieldChanged(_ notification: Notification) {
     if let sender = notification.object as? UITextField {
       if var text = sender.text {
-        if text.count == 1 && text != Constants.InvisibleSign {
-          text = Constants.InvisibleSign + text
+        if text.count == 1 && text != invisibleSign {
+          text = invisibleSign + text
           sender.text = text
         }
       }
@@ -246,7 +260,7 @@ extension UIPinEntryTextField: UITextFieldDelegate {
 
     if isBackSpace == -92 {
       if var string = textField.text {
-        string = string.replacingOccurrences(of: Constants.InvisibleSign, with: "")
+        string = string.replacingOccurrences(of: invisibleSign, with: "")
         if string.isEmpty {
           //last visible character, if needed u can skip replacement and detect once even in empty text field
           //for example u can switch to prev textField

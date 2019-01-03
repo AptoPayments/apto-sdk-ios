@@ -10,7 +10,7 @@ import Bond
 
 protocol LinkApplierRouterProtocol: URLHandlerProtocol {
   func offerApplied(application: LoanApplication)
-  func close(_ animated:Bool?)
+  func close(_ animated: Bool)
 }
 
 protocol LinkApplierInteractorProtocol {

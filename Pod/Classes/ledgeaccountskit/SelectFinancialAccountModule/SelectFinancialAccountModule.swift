@@ -148,7 +148,7 @@ extension SelectFinancialAccountModule: SelectFinancialAccountTypeRouterProtocol
     self.push(viewController: buildAddCardViewController(self.uiConfig)) {}
   }
 
-  func backInFinancialAccountType(_ animated: Bool?) {
+  func backInFinancialAccountType(_ animated: Bool) {
     if initiallyAvailableFinancialAccounts {
       self.popViewController() {}
     }
@@ -166,7 +166,7 @@ extension SelectFinancialAccountModule: PLKPlaidLinkViewDelegate {
       self.shiftSession.addBankAccounts(publicToken) { result in
         switch result {
         case .failure(let error):
-          UIApplication.topViewController()?.show(error:error)
+          self.show(error:error)
         case .success:
           self.showAccountList()
         }

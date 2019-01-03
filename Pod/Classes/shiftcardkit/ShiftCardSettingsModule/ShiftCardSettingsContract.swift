@@ -13,13 +13,11 @@ protocol ShiftCardSettingsModuleDelegate: class {
   func hideCardInfo()
   func isCardInfoVisible() -> Bool
   func cardStateChanged()
-  func fundingSourceChanged()
 }
 
 protocol ShiftCardSettingsRouterProtocol: class {
   func backFromShiftCardSettings()
   func closeFromShiftCardSettings()
-  func addFundingSource(completion: @escaping (FundingSource) -> Void)
   func changeCardPin()
   func call(url: URL, completion: @escaping () -> Void)
   func showCardInfo()
@@ -27,17 +25,20 @@ protocol ShiftCardSettingsRouterProtocol: class {
   func isCardInfoVisible() -> Bool
   func cardStateChanged()
   func show(content: Content, title: String)
-  func fundingSourceChanged()
+}
+
+protocol ShiftCardSettingsModuleProtocol: UIModuleProtocol {
+  var delegate: ShiftCardSettingsModuleDelegate? { get set }
 }
 
 protocol ShiftCardSettingsViewProtocol: ViewControllerProtocol {
   func showLoadingSpinner()
+  func show(error: Error)
 }
 
+typealias ShiftCardSettingsViewControllerProtocol = ShiftViewController & ShiftCardSettingsViewProtocol
+
 protocol ShiftCardSettingsInteractorProtocol {
-  func provideFundingSources(rows: Int, callback: @escaping Result<[FundingSource], NSError>.Callback)
-  func activeCardFundingSource(callback: @escaping Result<FundingSource?, NSError>.Callback)
-  func setActive(fundingSource: FundingSource, callback: @escaping Result<FundingSource, NSError>.Callback)
 }
 
 public struct LegalDocuments {
@@ -54,26 +55,25 @@ extension LegalDocuments {
 }
 
 open class ShiftCardSettingsViewModel {
-  open var expendableBalance: Observable<Amount?> = Observable(nil)
-  open var fundingSources: Observable<[FundingSource]> = Observable([])
-  open var fundingSourcesLoaded: Observable<Bool> = Observable(false)
-  open var activeFundingSource: Observable<FundingSource?> = Observable(nil)
-  open var activeFundingSourceIdx: Observable<Int?> = Observable(nil)
-  open var showBalancesSection: Observable<Bool?> = Observable(nil)
-  open var locked: Observable<Bool?> = Observable(nil)
-  open var showCardInfo: Observable<Bool?> = Observable(nil)
-  open var legalDocuments: Observable<LegalDocuments> = Observable(LegalDocuments())
-  open var showChangePin: Observable<Bool> = Observable(false)
-  open var showGetPin: Observable<Bool> = Observable(false)
+  public let locked: Observable<Bool?> = Observable(nil)
+  public let showCardInfo: Observable<Bool?> = Observable(nil)
+  public let legalDocuments: Observable<LegalDocuments> = Observable(LegalDocuments())
+  public let showChangePin: Observable<Bool> = Observable(false)
+  public let showGetPin: Observable<Bool> = Observable(false)
 }
 
-protocol ShiftCardSettingsPresenterHandler: class {
+protocol ShiftCardSettingsPresenterProtocol: class {
+  // swiftlint:disable implicitly_unwrapped_optional
+  var view: ShiftCardSettingsViewProtocol! { get set }
+  var interactor: ShiftCardSettingsInteractorProtocol! { get set }
+  var router: ShiftCardSettingsRouterProtocol! { get set }
+  // swiftlint:enable implicitly_unwrapped_optional
   var viewModel: ShiftCardSettingsViewModel { get }
+
   func viewLoaded()
   func previousTapped()
   func closeTapped()
-  func fundingSourceSelected(index: Int)
-  func addFundingSourceTapped()
+  func helpTapped()
   func lostCardTapped()
   func changePinTapped()
   func getPinTapped()

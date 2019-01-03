@@ -9,7 +9,7 @@
 import Foundation
 
 protocol SelectFinancialAccountTypeRouterProtocol {
-  func backInFinancialAccountType(_ animated:Bool?)
+  func backInFinancialAccountType(_ animated: Bool)
   func showPlaidFlow(_ completion:@escaping Result<Void, NSError>.Callback)
   func showAddCardFlow()
   func accountSelected(_ financialAccount:FinancialAccount)
@@ -47,7 +47,7 @@ class SelectFinancialAccountTypePresenter: SelectFinancialAccountTypeEventHandle
     router.showPlaidFlow() { result in
       switch result {
       case .failure(let error):
-        self.view.show(error:error)
+        self.view.show(error:error, uiConfig: nil)
       case .success():
         self.view.hideLoadingSpinner()
       }
@@ -64,7 +64,7 @@ class SelectFinancialAccountTypePresenter: SelectFinancialAccountTypeEventHandle
       self?.view.hideLoadingSpinner()
       switch result {
       case .failure(let error):
-        self?.view.show(error:error)
+        self?.view.show(error:error, uiConfig: nil)
       case .success (let card):
         self?.router.accountSelected(card)
       }

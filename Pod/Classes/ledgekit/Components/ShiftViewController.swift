@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class ShiftViewController: UIViewController {
   let uiConfiguration: ShiftUIConfig
@@ -21,6 +22,38 @@ class ShiftViewController: UIViewController {
   }
 
   open override var preferredStatusBarStyle: UIStatusBarStyle {
-    return uiConfiguration.statusBarStyle
+    switch uiConfiguration.uiStatusBarStyle {
+    case .light:
+      return .lightContent
+    case .dark:
+      return .default
+    case .auto:
+      if let navigationBarColor = navigationController?.navigationBar.barTintColor,
+         navigationController?.isNavigationBarHidden == false {
+        return navigationBarColor.isLight ? .default : .lightContent
+      }
+      if let backgroundColor = view.backgroundColor {
+        return backgroundColor.isLight ? .default : .lightContent
+      }
+      return .default
+    }
+  }
+
+  var topConstraint: ConstraintItem {
+    if #available(iOS 11, *) {
+      return view.safeAreaLayoutGuide.snp.top
+    }
+    return view.snp.top
+  }
+
+  var bottomConstraint: ConstraintItem {
+    if #available(iOS 11, *) {
+      return view.safeAreaLayoutGuide.snp.bottom
+    }
+    return view.snp.bottom
+  }
+
+  func showLoadingSpinner() {
+    showLoadingSpinner(tintColor: uiConfiguration.uiPrimaryColor, position: .center)
   }
 }

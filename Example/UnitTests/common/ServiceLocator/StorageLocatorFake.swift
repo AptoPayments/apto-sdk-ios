@@ -34,7 +34,8 @@ class StorageLocatorFake: StorageLocatorProtocol {
     Swift.fatalError("storeStorage(transport:) has not been implemented")
   }
 
-  func financialAccountsStorage(transport: JSONTransport) -> FinancialAccountsStorageProtocol {
+  func financialAccountsStorage(transport: JSONTransport,
+                                localCacheManager: LocalCacheFileManagerProtocol) -> FinancialAccountsStorageProtocol {
     Swift.fatalError("financialAccountsStorage(transport:) has not been implemented")
   }
 

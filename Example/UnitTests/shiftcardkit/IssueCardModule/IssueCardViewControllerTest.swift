@@ -10,7 +10,7 @@ import XCTest
 @testable import ShiftSDK
 
 class IssueCardViewControllerTest: XCTestCase {
-  private var sut: IssueCardViewController! // swiftlint:disable:this implicitly_unwrapped_optional
+  private var sut: IssueCardViewControllerTheme1! // swiftlint:disable:this implicitly_unwrapped_optional
 
   // Collaborators
   private lazy var dataProvider = ModelDataProvider.provider
@@ -20,7 +20,7 @@ class IssueCardViewControllerTest: XCTestCase {
   override func setUp() {
     super.setUp()
 
-    sut = IssueCardViewController(uiConfiguration: uiConfig, eventHandler: eventHandler)
+    sut = IssueCardViewControllerTheme1(uiConfiguration: uiConfig, eventHandler: eventHandler)
   }
 
   func testViewDidLoadNotifyEventHandler() {

@@ -55,7 +55,7 @@ class FileCommanderViewController: CarouselViewcontroller, FileCommanderViewCont
   fileprivate func setupUI() {
 
     self.title = "file-commander.title".podLocalized()
-    self.view.backgroundColor = self.uiConfiguration.backgroundColor
+    self.view.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     self.showNavPreviousButton(self.uiConfiguration.iconTertiaryColor)
 
     self.view.addSubview(navigationView)

@@ -15,7 +15,7 @@ class FormRowIdDocumentTypePickerView: FormRowView {
       documentTypePicker.allowedDocumentTypes = self.allowedDocumentTypes
     }
   }
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   private let label: UILabel
   private let textField: UITextField
   private let uiConfig: ShiftUIConfig
@@ -80,7 +80,7 @@ private extension FormRowIdDocumentTypePickerView {
 // MARK: - Set up UI
 private extension FormRowIdDocumentTypePickerView {
   func setUpUI() {
-    backgroundColor = uiConfig.backgroundColor
+    backgroundColor = uiConfig.uiBackgroundPrimaryColor
     setUpLabel()
     setUpTextField()
   }

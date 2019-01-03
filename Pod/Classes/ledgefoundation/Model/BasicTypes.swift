@@ -11,17 +11,9 @@ import Bond
 
 // MARK: - Basic Data Types
 
-var currencySymbols: [String: String] = [
-  // We need the whitespaces to cheat NumberFormatter and have a whitespace between the value and symbol
-  "BTC": " BTC ",
-  "BTH": " BTH ",
-  "ETH": " ETH ",
-  "ETC": " ETC ",
-  "LTC": " LTC ",
-  "ZRX": " ZRX "
-]
+fileprivate var currencySymbols: [String: String] = [:]
 
-@objc open class Amount: NSObject {
+@objc open class Amount: NSObject, Codable {
   open var amount: Observable<Double?> = Observable(0)
   open var currency: Observable<String?> = Observable("USD")
   open var currencySymbol: String? {
@@ -30,10 +22,13 @@ var currencySymbols: [String: String] = [
         return symbol
       }
       else {
-        guard let identifier = Locale.availableIdentifiers.first(where: { Locale(identifier: $0).currencyCode == currency }) else {
-          return nil
+        if let identifier = Locale.availableIdentifiers.first(where: { Locale(identifier: $0).currencyCode == currency }) {
+          currencySymbols[currency] = Locale(identifier: identifier).currencySymbol
         }
-        currencySymbols[currency] = Locale(identifier: identifier).currencySymbol
+        else {
+          // We need the whitespaces to cheat NumberFormatter and have a whitespace between the value and symbol
+          currencySymbols[currency] = " \(currency) "
+        }
         return currencySymbols[currency]
       }
     }
@@ -87,6 +82,30 @@ var currencySymbols: [String: String] = [
       value = amount
     }
     return formatter.string(from: NSNumber(value: value))?.trimmingCharacters(in: CharacterSet.whitespaces) ?? "-"
+  }
+
+  // MARK: - Codable
+  public required init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let amount = try container.decodeIfPresent(Double.self, forKey: .amount)
+    let currency = try container.decodeIfPresent(String.self, forKey: .currency)
+    self.amount.next(amount)
+    self.currency.next(currency)
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    if let amount = amount.value {
+      try container.encode(amount, forKey: .amount)
+    }
+    if let currency = currency.value {
+      try container.encode(currency, forKey: .currency)
+    }
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case amount
+    case currency
   }
 }
 
@@ -165,7 +184,7 @@ public func ==(lhs: CreditScoreOption, rhs: CreditScoreOption) -> Bool {
   return lhs.creditScoreId == rhs.creditScoreId
 }
 
-public struct Country : Hashable {
+public struct Country : Hashable, Codable {
   public var isoCode: String
   public var name: String
 

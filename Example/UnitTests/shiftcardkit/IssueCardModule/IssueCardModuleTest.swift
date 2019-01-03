@@ -51,4 +51,18 @@ class IssueCardModuleTest: XCTestCase {
     // Then
     XCTAssertTrue(onFinishCalled)
   }
+
+  func testBackTappedCallBack() {
+    // Given
+    var onBackCalled = false
+    sut.onBack = { _ in
+      onBackCalled = true
+    }
+
+    // When
+    sut.backTapped()
+
+    // Then
+    XCTAssertTrue(onBackCalled)
+  }
 }

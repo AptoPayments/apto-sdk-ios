@@ -1,6 +1,6 @@
 //
 //  UINavigationBar.swift
-//  Pods
+//  ShiftSDK
 //
 //  Created by Takeichi Kanzaki on 01/08/2018.
 //
@@ -9,11 +9,21 @@
 extension UINavigationBar {
 
   func setUpWith(uiConfig: ShiftUIConfig) {
-    backgroundColor = uiConfig.uiPrimaryColor
-    barTintColor = uiConfig.uiPrimaryColor
+    backgroundColor = uiConfig.uiNavigationPrimaryColor
+    barTintColor = uiConfig.uiNavigationPrimaryColor
     tintColor = uiConfig.textPrimaryColor
     titleTextAttributes = [
       NSAttributedStringKey.foregroundColor: uiConfig.textTopBarColor
+    ]
+    isTranslucent = false
+  }
+
+  func setUp(barTintColor: UIColor, tintColor: UIColor) {
+    self.backgroundColor = barTintColor
+    self.barTintColor = barTintColor
+    self.tintColor = tintColor
+    titleTextAttributes = [
+      NSAttributedStringKey.foregroundColor: tintColor
     ]
     isTranslucent = false
   }
@@ -34,12 +44,12 @@ extension UINavigationBar {
     backgroundColor = .clear
   }
 
-  func setOpaque(uiConfig: ShiftUIConfig) {
+  func setOpaque(uiConfig: ShiftUIConfig, bgColor: UIColor? = nil, tintColor: UIColor? = nil) {
     setBackgroundImage(nil, for: .default)
     isTranslucent = false
     showShadow()
-    barTintColor = uiConfig.uiPrimaryColor
-    backgroundColor = uiConfig.uiPrimaryColor
+    barTintColor = tintColor ?? uiConfig.uiPrimaryColor
+    backgroundColor = bgColor ?? uiConfig.uiPrimaryColor
   }
 
 }

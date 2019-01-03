@@ -28,7 +28,7 @@ class SelectFinancialAccountTypeViewController: ShiftViewController, SelectFinan
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    self.view.backgroundColor = self.uiConfiguration.backgroundColor
+    self.view.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     self.navigationController?.navigationBar.backgroundColor = self.uiConfiguration.uiPrimaryColor
     self.edgesForExtendedLayout = UIRectEdge()
     self.extendedLayoutIncludesOpaqueBars = true
@@ -217,9 +217,5 @@ class SelectFinancialAccountTypeViewController: ShiftViewController, SelectFinan
 
   override func previousTapped() {
     eventHandler.backTapped()
-  }
-
-  func showLoadingSpinner() {
-    showLoadingSpinner(tintColor: uiConfiguration.uiPrimaryColor)
   }
 }

@@ -30,6 +30,8 @@ open class TeamConfiguration {
 }
 
 public struct ProjectBranding {
+  public let uiBackgroundPrimaryColor: String
+  public let uiBackgroundSecondaryColor: String
   public let iconPrimaryColor: String
   public let iconSecondaryColor: String
   public let iconTertiaryColor: String
@@ -43,6 +45,10 @@ public struct ProjectBranding {
   public let uiTertiaryColor: String
   public let uiErrorColor: String
   public let uiSuccessColor: String
+  public let uiNavigationPrimaryColor: String
+  public let uiNavigationSecondaryColor: String
+  public let textMessageColor: String
+  public let uiStatusBarStyle: String
   public let logoUrl: String?
   public let uiTheme: String
 }

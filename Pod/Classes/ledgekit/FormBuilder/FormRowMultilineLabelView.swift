@@ -11,9 +11,10 @@ open class FormRowMultilineLabelView: FormRowView {
   let label: UILabel
 
   public init(label: UILabel,
+              height: CGFloat = 40,
               showSplitter: Bool = false) {
     self.label = label
-    super.init(showSplitter: showSplitter)
+    super.init(showSplitter: showSplitter, height: height)
     self.layoutLabel()
   }
 

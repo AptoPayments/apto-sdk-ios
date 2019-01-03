@@ -21,15 +21,18 @@ extension Content {
     }
   }
 
-  func attributedString(font: UIFont, color: UIColor, linkColor: UIColor) -> NSAttributedString? {
+  func attributedString(font: UIFont,
+                        color: UIColor,
+                        linkColor: UIColor,
+                        lineSpacing: CGFloat = 4) -> NSAttributedString? {
     switch self {
     case .plainText(let value):
-      return value.formattedHtmlString(font: font, color: color, linkColor: linkColor)
+      return value.formattedHtmlString(font: font, color: color, linkColor: linkColor, lineSpacing: lineSpacing)
     case .markdown(let value):
       let down = Down(markdownString: value)
       if let retVal = try? down.toAttributedString().mutableCopy() as? NSMutableAttributedString {
-        retVal?.replacePlainTextStyle(font: font, color: color, lineSpacing: 4)
-        retVal?.replaceLinkStyle(font: font, color: linkColor, lineSpacing: 4)
+        retVal?.replacePlainTextStyle(font: font, color: color, lineSpacing: lineSpacing)
+        retVal?.replaceLinkStyle(font: font, color: linkColor, lineSpacing: lineSpacing)
         return retVal
       }
       return nil

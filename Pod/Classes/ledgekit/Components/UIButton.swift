@@ -47,6 +47,16 @@ extension UIButton {
     let _ = button.reactive.tap.observeNext(with: tapHandler)
     return button
   }
+
+  func updateAttributedTitle(_ title: String?, for state: UIControl.State) {
+    guard let attributedTitle = self.attributedTitle(for: state), let newTitle = title else {
+      self.setTitle(title, for: state)
+      return
+    }
+    let mutableAttributedString = NSMutableAttributedString(attributedString: attributedTitle)
+    mutableAttributedString.mutableString.setString(newTitle)
+    self.setAttributedTitle(mutableAttributedString, for: state)
+  }
 }
 
 extension UIButton {

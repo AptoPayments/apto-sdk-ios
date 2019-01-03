@@ -8,14 +8,6 @@
 
 import Foundation
 
-protocol VerifyBirthDateDataReceiver: class {
-  func submitBirthDateError(_ error: NSError)
-  func verificationStartError(_ error: NSError)
-  func verificationReceived(_ verification: Verification)
-  func verificationSucceeded(_ verification: Verification)
-  func verificationFailed()
-}
-
 class VerifyBirthDateInteractor: VerifyBirthDateInteractorProtocol {
   private unowned let dataReceiver: VerifyBirthDateDataReceiver
   private let verificationType: VerificationParams<BirthDate, Verification>

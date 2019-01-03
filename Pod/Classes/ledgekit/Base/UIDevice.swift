@@ -34,5 +34,4 @@ public extension UIDevice {
     }
     return .unknown
   }
-
 }

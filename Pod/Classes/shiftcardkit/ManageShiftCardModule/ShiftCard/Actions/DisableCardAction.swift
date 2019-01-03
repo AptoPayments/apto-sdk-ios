@@ -19,11 +19,11 @@ class DisableCardAction {
   }
 
   func run(callback: @escaping Result<Card, NSError>.Callback) {
-    UIAlertController.confirm(title: "Confirm".podLocalized(),
-                              message: "Do you want to deactivate your card?".podLocalized(),
-                              okTitle: "general.button.ok".podLocalized(),
-                              cancelTitle: "general.button.cancel".podLocalized(), handler: { action in
-      guard action.title! != "general.button.cancel".podLocalized() else {
+    UIAlertController.confirm(title: "card_settings.settings.confirm_lock_card.title".podLocalized(),
+                              message: "card_settings.settings.confirm_lock_card.message".podLocalized(),
+                              okTitle: "card_settings.settings.confirm_lock_card.ok_button".podLocalized(),
+                              cancelTitle: "card_settings.settings.confirm_lock_card.cancel_button".podLocalized(), handler: { action in
+      guard action.title! != "card_settings.settings.confirm_lock_card.cancel_button".podLocalized() else {
         callback(.failure(ServiceError(code: .aborted)))
         return
       }
@@ -31,7 +31,7 @@ class DisableCardAction {
       self.shiftCardSession.lock(card: self.card) { result in
         switch result {
         case .failure(let error):
-          UIApplication.topViewController()?.show(error: error)
+          UIApplication.topViewController()?.show(error: error, uiConfig: self.uiConfig)
           callback(.failure(error))
         case .success(let card):
           UIApplication.topViewController()?.hideLoadingSpinner()

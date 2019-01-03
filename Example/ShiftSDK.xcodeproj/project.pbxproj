@@ -30,6 +30,7 @@
 		2C526ADB1DD5FE5D00537C86 /* BuildInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C526ACD1DD5FE5D00537C86 /* BuildInformation.swift */; };
 		2C526ADC1DD5FE5D00537C86 /* PreProcessorMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C526AD01DD5FE5D00537C86 /* PreProcessorMacros.m */; };
 		2C526ADD1DD5FE5D00537C86 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C526AD21DD5FE5D00537C86 /* MainViewController.swift */; };
+		2C8F9B8521DC1285000D650C /* TransactionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8F9B8421DC1285000D650C /* TransactionTest.swift */; };
 		2C9357441F444DD300E95F40 /* XCTestCase+ProgrammerAssertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF426011E7FF47900ABAB94 /* XCTestCase+ProgrammerAssertions.swift */; };
 		2CA355BB1C5D5020000479DC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C22177A1C5CE33F00558F0F /* CoreLocation.framework */; };
 		2CBD0C6C1FB1D4B6004FE5F2 /* ApplicationSummaryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBD0C6B1FB1D4B6004FE5F2 /* ApplicationSummaryScreen.swift */; };
@@ -67,8 +68,10 @@
 		A84D8538568516E8C78356BF /* Pods_AutomationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B45F2957E27CE6A1407A11B4 /* Pods_AutomationTests.framework */; };
 		C52B6C24207C06C92BF5C7A4 /* Pods_LedgeAutomationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A416E664DA23FB4D803A70A /* Pods_LedgeAutomationTests.framework */; };
 		D99BD060761F786F67492C76 /* IssueCardPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD340218337FFF291E14D /* IssueCardPresenterTest.swift */; };
+		D99BD081A219A7CB2656A6E0 /* ManageShiftCardTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDC9720C4867D6F3C2DF9 /* ManageShiftCardTestDoubles.swift */; };
 		D99BD0893BF2053BB285C279 /* ShiftCardSessionTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD2C739D16C9C80CA21C3 /* ShiftCardSessionTestDoubles.swift */; };
 		D99BD09BF570ED3CE7A53606 /* IssueCardInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDCF7398ED5703351D598 /* IssueCardInteractorTest.swift */; };
+		D99BD0C95CE9E838E24A3C30 /* WebBrowserTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDB8C13937EEAD8C14217 /* WebBrowserTestDoubles.swift */; };
 		D99BD0D3B76E2A681556D3A1 /* ShiftPlatformTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDE8FA3C180E4E7030125 /* ShiftPlatformTestDoubles.swift */; };
 		D99BD106FA7689F59B3B745F /* IssueCardModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD042115A0913247DF648 /* IssueCardModuleTest.swift */; };
 		D99BD12A735EFE87609776FC /* AuthInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD4ACFC6276EC0D5F351E /* AuthInteractorTest.swift */; };
@@ -76,9 +79,11 @@
 		D99BD18C7F82C6C36CC05F59 /* ModelDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDF58D71F168C290407FC /* ModelDataProvider.swift */; };
 		D99BD19670282880C2D4670B /* FullScreenDisclaimerTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD3C9A32F4272EDA6C9E2 /* FullScreenDisclaimerTestDoubles.swift */; };
 		D99BD1D9EF9E49B603764E57 /* ViewControllerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDA8B88C9D5375834E9D4 /* ViewControllerSpy.swift */; };
+		D99BD20A1531E63CA0B39792 /* WebBrowserPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD18EAD682CCBEC0EA64D /* WebBrowserPresenterTest.swift */; };
 		D99BD2137BA65D58FF6DEA55 /* NetworkLocatorFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDC2FDC2845B7677B51D6 /* NetworkLocatorFake.swift */; };
 		D99BD23C6667DB4E1566431C /* AuthModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDC0B3A3D17A6E28B3F3D /* AuthModuleTest.swift */; };
 		D99BD249397C573CA4FD2382 /* InteractorLocatorFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD639C1E08F321E36C066 /* InteractorLocatorFake.swift */; };
+		D99BD26FF1FD4D34B94FDA67 /* SelectBalanceStoreTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDE42E53A84E6C7B83D67 /* SelectBalanceStoreTestDoubles.swift */; };
 		D99BD2B646DECFF5E8005E4A /* VerifyBirthDateTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDF112F78AF668E19A23E /* VerifyBirthDateTestDoubles.swift */; };
 		D99BD2EEFBD3110DAC190C0F /* ExternalOAuthModuleTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD718BDAD72E2E8C61D11 /* ExternalOAuthModuleTestDoubles.swift */; };
 		D99BD31F56E362E159AACE4F /* ContentPresenterTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD3A2E2B2BB8D9583480D /* ContentPresenterTestDoubles.swift */; };
@@ -86,6 +91,7 @@
 		D99BD3BE1018BB59A43BD780 /* ModuleLocatorFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD9A62DB2E14989227464 /* ModuleLocatorFake.swift */; };
 		D99BD3F3138B3E161AE38551 /* VerifyPhoneTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD6C432953070B1D34097 /* VerifyPhoneTestDoubles.swift */; };
 		D99BD4119BE5F49FB1D31A51 /* FullScreenDisclaimerInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD56190C5C4551B635532 /* FullScreenDisclaimerInteractorTest.swift */; };
+		D99BD442A1EA03E07CF47611 /* ManageShiftCardInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDB329550D080F898DD71 /* ManageShiftCardInteractorTest.swift */; };
 		D99BD466641EDE6E07ABF939 /* ContentPresenterInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD5E15145A4AE8EB03459 /* ContentPresenterInteractorTest.swift */; };
 		D99BD4706AFF825E65A1784D /* ServerMaintenanceErrorTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD1C5C4E36F47B0A52BC5 /* ServerMaintenanceErrorTestDoubles.swift */; };
 		D99BD4A4D9B91A49FB0E498F /* UIModuleSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD8FBB7EC375FF455E37A /* UIModuleSpy.swift */; };
@@ -93,6 +99,7 @@
 		D99BD4D2A74CC4948F8AFD42 /* PresenterLocatorFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD0F4A245B34F36E3355E /* PresenterLocatorFake.swift */; };
 		D99BD57E029C8267620CF0F7 /* PhoneCallerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDE3142093307782DC7C3 /* PhoneCallerSpy.swift */; };
 		D99BD5DE2B51A91002A694EB /* ServerMaintenanceErrorModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDAD6274ACA8C47D46970 /* ServerMaintenanceErrorModuleTest.swift */; };
+		D99BD5E64F7D7AE7F448626C /* WebBrowserInteractorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD4AF473116442D2350A2 /* WebBrowserInteractorTest.swift */; };
 		D99BD6233DCDEC877BB1FCF7 /* AuthModuleTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD12ED8909ACDE7F3A71B /* AuthModuleTestDoubles.swift */; };
 		D99BD62AFD7D84FCA5EAB0ED /* FullScreenDisclaimerPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDF21C640DE79B64E1579 /* FullScreenDisclaimerPresenterTest.swift */; };
 		D99BD66D0E10456D1329D316 /* ShiftSessionTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD342852361FB17B91780 /* ShiftSessionTestDoubles.swift */; };
@@ -113,9 +120,12 @@
 		D99BDDB0ECA66C340B635B14 /* ServiceLocatorFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD3B9E1A2986ECFECFEBE /* ServiceLocatorFake.swift */; };
 		D99BDDFA7B0996FB54697F0A /* NetworkManagerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD86821F2C34BA8F94D62 /* NetworkManagerSpy.swift */; };
 		D99BDE1E2A95F86112A63746 /* ExternalOAuthPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD6B194BF7F5FD9BD6B87 /* ExternalOAuthPresenterTest.swift */; };
+		D99BDE987A50FFA4277C6A69 /* ManageShiftCardPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD08F1BC1BA3779ECA526 /* ManageShiftCardPresenterTest.swift */; };
+		D99BDEDD6BCCD184AB185BDD /* WebBrowserModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD383C506D53A55B5167F /* WebBrowserModuleTest.swift */; };
 		D99BDF2A84167D22586F4DDE /* ShowDisclaimerActionModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDDEC7F89BAF6E9D29BCB /* ShowDisclaimerActionModuleTest.swift */; };
 		D99BDF62ADEF2BDA29B28F57 /* ShiftSessionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BD7753DC33167295EF8BD /* ShiftSessionTest.swift */; };
 		D99BDF698B2C2D89446637E1 /* ContentPresenterModuleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDCE6644036FFBFDFD9FF /* ContentPresenterModuleTest.swift */; };
+		D99BDF76F660A45FCC1CFD3A /* ShowDisclaimerActionTestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99BDF72B85C701A643826E2 /* ShowDisclaimerActionTestDoubles.swift */; };
 		E068F49835C36AE634935FEA /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C626AD8E822159591786DCC3 /* Pods_UnitTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -188,6 +198,7 @@
 		2C526ACF1DD5FE5D00537C86 /* PreProcessorMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreProcessorMacros.h; sourceTree = "<group>"; };
 		2C526AD01DD5FE5D00537C86 /* PreProcessorMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreProcessorMacros.m; sourceTree = "<group>"; };
 		2C526AD21DD5FE5D00537C86 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		2C8F9B8421DC1285000D650C /* TransactionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionTest.swift; sourceTree = "<group>"; };
 		2CB71FB5205AAECB00DC072B /* ShiftSDK.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ShiftSDK.podspec; path = ../ShiftSDK.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		2CB71FB9205AAFE800DC072B /* Pods_Link.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Link.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CBD0C6B1FB1D4B6004FE5F2 /* ApplicationSummaryScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationSummaryScreen.swift; sourceTree = "<group>"; };
@@ -247,10 +258,12 @@
 		D6B4E40FE9ED468F059FA29D /* Pods_Shift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Shift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D99BD011C1A46F756FF8093B /* FullScreenDisclaimerModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullScreenDisclaimerModuleTest.swift; sourceTree = "<group>"; };
 		D99BD042115A0913247DF648 /* IssueCardModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IssueCardModuleTest.swift; sourceTree = "<group>"; };
+		D99BD08F1BC1BA3779ECA526 /* ManageShiftCardPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManageShiftCardPresenterTest.swift; sourceTree = "<group>"; };
 		D99BD0F4A245B34F36E3355E /* PresenterLocatorFake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresenterLocatorFake.swift; sourceTree = "<group>"; };
 		D99BD12ED8909ACDE7F3A71B /* AuthModuleTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthModuleTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD15DF029C42C8368ADA4 /* IssueCardTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IssueCardTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD17D7D29814E184641A3 /* PhysicalCardActivationSucceedModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhysicalCardActivationSucceedModuleTest.swift; sourceTree = "<group>"; };
+		D99BD18EAD682CCBEC0EA64D /* WebBrowserPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebBrowserPresenterTest.swift; sourceTree = "<group>"; };
 		D99BD1C5C4E36F47B0A52BC5 /* ServerMaintenanceErrorTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerMaintenanceErrorTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD22B8085FFA59A8FE39B /* VerifyEmailTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyEmailTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD22F5A0E6180A4D3B8F1 /* ContentPresenterPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentPresenterPresenterTest.swift; sourceTree = "<group>"; };
@@ -260,10 +273,12 @@
 		D99BD340218337FFF291E14D /* IssueCardPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IssueCardPresenterTest.swift; sourceTree = "<group>"; };
 		D99BD342852361FB17B91780 /* ShiftSessionTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShiftSessionTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD365E662EBC2ADCB1131 /* ServerMaintenanceErrorInteractorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerMaintenanceErrorInteractorTest.swift; sourceTree = "<group>"; };
+		D99BD383C506D53A55B5167F /* WebBrowserModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebBrowserModuleTest.swift; sourceTree = "<group>"; };
 		D99BD3A2E2B2BB8D9583480D /* ContentPresenterTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentPresenterTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD3B9E1A2986ECFECFEBE /* ServiceLocatorFake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceLocatorFake.swift; sourceTree = "<group>"; };
 		D99BD3C9A32F4272EDA6C9E2 /* FullScreenDisclaimerTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullScreenDisclaimerTestDoubles.swift; sourceTree = "<group>"; };
 		D99BD4ACFC6276EC0D5F351E /* AuthInteractorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthInteractorTest.swift; sourceTree = "<group>"; };
+		D99BD4AF473116442D2350A2 /* WebBrowserInteractorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebBrowserInteractorTest.swift; sourceTree = "<group>"; };
 		D99BD4E2D1B5822248215826 /* ServerMaintenanceErrorPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerMaintenanceErrorPresenterTest.swift; sourceTree = "<group>"; };
 		D99BD4ED0CB0C5B41A5ECC71 /* ExternalOAuthModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExternalOAuthModuleTest.swift; sourceTree = "<group>"; };
 		D99BD56190C5C4551B635532 /* FullScreenDisclaimerInteractorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullScreenDisclaimerInteractorTest.swift; sourceTree = "<group>"; };
@@ -282,18 +297,23 @@
 		D99BD9D0B89C886FF66E9459 /* ActionConfirmerFake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionConfirmerFake.swift; sourceTree = "<group>"; };
 		D99BDA8B88C9D5375834E9D4 /* ViewControllerSpy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerSpy.swift; sourceTree = "<group>"; };
 		D99BDAD6274ACA8C47D46970 /* ServerMaintenanceErrorModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerMaintenanceErrorModuleTest.swift; sourceTree = "<group>"; };
+		D99BDB329550D080F898DD71 /* ManageShiftCardInteractorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManageShiftCardInteractorTest.swift; sourceTree = "<group>"; };
+		D99BDB8C13937EEAD8C14217 /* WebBrowserTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebBrowserTestDoubles.swift; sourceTree = "<group>"; };
 		D99BDC0B3A3D17A6E28B3F3D /* AuthModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthModuleTest.swift; sourceTree = "<group>"; };
 		D99BDC2FDC2845B7677B51D6 /* NetworkLocatorFake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkLocatorFake.swift; sourceTree = "<group>"; };
+		D99BDC9720C4867D6F3C2DF9 /* ManageShiftCardTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManageShiftCardTestDoubles.swift; sourceTree = "<group>"; };
 		D99BDCE6644036FFBFDFD9FF /* ContentPresenterModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentPresenterModuleTest.swift; sourceTree = "<group>"; };
 		D99BDCF7398ED5703351D598 /* IssueCardInteractorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IssueCardInteractorTest.swift; sourceTree = "<group>"; };
 		D99BDDD8406A82AD07D3B172 /* AuthPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthPresenterTest.swift; sourceTree = "<group>"; };
 		D99BDDEC7F89BAF6E9D29BCB /* ShowDisclaimerActionModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDisclaimerActionModuleTest.swift; sourceTree = "<group>"; };
 		D99BDDF38E2B5EE55621A6EE /* ExternalOAuthInteractorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExternalOAuthInteractorTest.swift; sourceTree = "<group>"; };
 		D99BDE3142093307782DC7C3 /* PhoneCallerSpy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneCallerSpy.swift; sourceTree = "<group>"; };
+		D99BDE42E53A84E6C7B83D67 /* SelectBalanceStoreTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectBalanceStoreTestDoubles.swift; sourceTree = "<group>"; };
 		D99BDE8FA3C180E4E7030125 /* ShiftPlatformTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShiftPlatformTestDoubles.swift; sourceTree = "<group>"; };
 		D99BDF112F78AF668E19A23E /* VerifyBirthDateTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifyBirthDateTestDoubles.swift; sourceTree = "<group>"; };
 		D99BDF21C640DE79B64E1579 /* FullScreenDisclaimerPresenterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullScreenDisclaimerPresenterTest.swift; sourceTree = "<group>"; };
 		D99BDF58D71F168C290407FC /* ModelDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelDataProvider.swift; sourceTree = "<group>"; };
+		D99BDF72B85C701A643826E2 /* ShowDisclaimerActionTestDoubles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDisclaimerActionTestDoubles.swift; sourceTree = "<group>"; };
 		D99BDFAEC0A452DD70C262B8 /* SelectBalanceStoreModuleTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectBalanceStoreModuleTest.swift; sourceTree = "<group>"; };
 		EC2196586EFC4A6E319E36B9 /* Pods_Link.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Link.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED11BED063CB67EC457CA7C8 /* Pods_LedgeLink_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LedgeLink_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -405,6 +425,15 @@
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
+		};
+		2C8F9B8321DC1285000D650C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2C8F9B8421DC1285000D650C /* TransactionTest.swift */,
+			);
+			name = Model;
+			path = UnitTests/ledgefoundation/Model;
+			sourceTree = SOURCE_ROOT;
 		};
 		2CD2B86F1F45E6C0005B85D0 /* AutomationTests */ = {
 			isa = PBXGroup;
@@ -660,6 +689,16 @@
 			path = VerifyPhone;
 			sourceTree = "<group>";
 		};
+		D99BD40B8DD70EDE35227E35 /* ShiftCard */ = {
+			isa = PBXGroup;
+			children = (
+				D99BDC9720C4867D6F3C2DF9 /* ManageShiftCardTestDoubles.swift */,
+				D99BD08F1BC1BA3779ECA526 /* ManageShiftCardPresenterTest.swift */,
+				D99BDB329550D080F898DD71 /* ManageShiftCardInteractorTest.swift */,
+			);
+			path = ShiftCard;
+			sourceTree = "<group>";
+		};
 		D99BD44D9505EB968BB6B904 /* ledgekit */ = {
 			isa = PBXGroup;
 			children = (
@@ -667,6 +706,7 @@
 				D99BDB88F55A79DB8F64EFC4 /* ServerMaintenanceError */,
 				D99BDC137CEB9D88652E5702 /* ContentPresenter */,
 				D99BD7626B446FC612E69E82 /* Base */,
+				D99BD75223B79B7EA0E9614D /* WebBrowser */,
 			);
 			path = ledgekit;
 			sourceTree = "<group>";
@@ -683,6 +723,7 @@
 			isa = PBXGroup;
 			children = (
 				D99BDFAEC0A452DD70C262B8 /* SelectBalanceStoreModuleTest.swift */,
+				D99BDE42E53A84E6C7B83D67 /* SelectBalanceStoreTestDoubles.swift */,
 			);
 			path = SelectBalanceStore;
 			sourceTree = "<group>";
@@ -693,6 +734,17 @@
 				D99BD86821F2C34BA8F94D62 /* NetworkManagerSpy.swift */,
 			);
 			path = NetworkManager;
+			sourceTree = "<group>";
+		};
+		D99BD75223B79B7EA0E9614D /* WebBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				D99BDB8C13937EEAD8C14217 /* WebBrowserTestDoubles.swift */,
+				D99BD4AF473116442D2350A2 /* WebBrowserInteractorTest.swift */,
+				D99BD18EAD682CCBEC0EA64D /* WebBrowserPresenterTest.swift */,
+				D99BD383C506D53A55B5167F /* WebBrowserModuleTest.swift */,
+			);
+			path = WebBrowser;
 			sourceTree = "<group>";
 		};
 		D99BD7626B446FC612E69E82 /* Base */ = {
@@ -747,6 +799,7 @@
 			isa = PBXGroup;
 			children = (
 				D99BD7DC49993979DBF809FB /* Manager */,
+				2C8F9B8321DC1285000D650C /* Model */,
 			);
 			path = ledgefoundation;
 			sourceTree = "<group>";
@@ -783,10 +836,19 @@
 			path = ContentPresenter;
 			sourceTree = "<group>";
 		};
+		D99BDC217A8E09D10E0FE35F /* ManageShiftCardModule */ = {
+			isa = PBXGroup;
+			children = (
+				D99BD40B8DD70EDE35227E35 /* ShiftCard */,
+			);
+			path = ManageShiftCardModule;
+			sourceTree = "<group>";
+		};
 		D99BDCA9ED15BB20C3BD366B /* ShowDisclaimerActionModule */ = {
 			isa = PBXGroup;
 			children = (
 				D99BDDEC7F89BAF6E9D29BCB /* ShowDisclaimerActionModuleTest.swift */,
+				D99BDF72B85C701A643826E2 /* ShowDisclaimerActionTestDoubles.swift */,
 			);
 			path = ShowDisclaimerActionModule;
 			sourceTree = "<group>";
@@ -806,6 +868,7 @@
 				3C65E0B8217E1083000207B1 /* PhysicalCardActivationSucceed */,
 				D99BDCA9ED15BB20C3BD366B /* ShowDisclaimerActionModule */,
 				D99BD0CB375DFF6344BECB10 /* IssueCardModule */,
+				D99BDC217A8E09D10E0FE35F /* ManageShiftCardModule */,
 			);
 			path = shiftcardkit;
 			sourceTree = "<group>";
@@ -1082,9 +1145,11 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Demo/Pods-Demo-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/AlamofireNetworkActivityIndicator/AlamofireNetworkActivityIndicator.framework",
 				"${BUILT_PRODUCTS_DIR}/Bond/Bond.framework",
 				"${BUILT_PRODUCTS_DIR}/Differ/Differ.framework",
 				"${BUILT_PRODUCTS_DIR}/Down/Down.framework",
+				"${BUILT_PRODUCTS_DIR}/FTLinearActivityIndicator/FTLinearActivityIndicator.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleKit/GoogleKit.framework",
 				"${BUILT_PRODUCTS_DIR}/HTAutocompleteTextField/HTAutocompleteTextField.framework",
 				"${BUILT_PRODUCTS_DIR}/PhoneNumberKit/PhoneNumberKit.framework",
@@ -1103,9 +1168,11 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireNetworkActivityIndicator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bond.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Differ.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Down.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FTLinearActivityIndicator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HTAutocompleteTextField.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PhoneNumberKit.framework",
@@ -1205,6 +1272,7 @@
 				D99BD0893BF2053BB285C279 /* ShiftCardSessionTestDoubles.swift in Sources */,
 				D99BD09BF570ED3CE7A53606 /* IssueCardInteractorTest.swift in Sources */,
 				D99BDAF0178946C15015F56F /* IssueCardTestDoubles.swift in Sources */,
+				2C8F9B8521DC1285000D650C /* TransactionTest.swift in Sources */,
 				D99BD760B7BC6330BBC4C775 /* IssueCardViewControllerTest.swift in Sources */,
 				D99BD060761F786F67492C76 /* IssueCardPresenterTest.swift in Sources */,
 				D99BD106FA7689F59B3B745F /* IssueCardModuleTest.swift in Sources */,
@@ -1233,6 +1301,15 @@
 				D99BD17D72A003D1EBBE47A1 /* PhysicalCardActivationSucceedPresenterTest.swift in Sources */,
 				D99BDAF3D5B7458F0BBC74CD /* PhysicalCardActivationSucceedModuleTest.swift in Sources */,
 				D99BD57E029C8267620CF0F7 /* PhoneCallerSpy.swift in Sources */,
+				D99BD0C95CE9E838E24A3C30 /* WebBrowserTestDoubles.swift in Sources */,
+				D99BD5E64F7D7AE7F448626C /* WebBrowserInteractorTest.swift in Sources */,
+				D99BD20A1531E63CA0B39792 /* WebBrowserPresenterTest.swift in Sources */,
+				D99BDEDD6BCCD184AB185BDD /* WebBrowserModuleTest.swift in Sources */,
+				D99BD26FF1FD4D34B94FDA67 /* SelectBalanceStoreTestDoubles.swift in Sources */,
+				D99BDF76F660A45FCC1CFD3A /* ShowDisclaimerActionTestDoubles.swift in Sources */,
+				D99BD081A219A7CB2656A6E0 /* ManageShiftCardTestDoubles.swift in Sources */,
+				D99BDE987A50FFA4277C6A69 /* ManageShiftCardPresenterTest.swift in Sources */,
+				D99BD442A1EA03E07CF47611 /* ManageShiftCardInteractorTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

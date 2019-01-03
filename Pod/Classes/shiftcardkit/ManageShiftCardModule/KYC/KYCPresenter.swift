@@ -10,23 +10,7 @@ import Foundation
 import Stripe
 import Bond
 
-protocol KYCRouterProtocol: class {
-  func backFromKYC()
-  func closeFromKYC()
-  func kycPassed()
-}
-
-protocol KYCViewProtocol: ViewControllerProtocol {}
-
-protocol KYCInteractorProtocol {
-  func provideKYCInfo(_ callback: @escaping Result<KYCState?, NSError>.Callback)
-}
-
-open class KYCViewModel {
-  open var kycState: Observable<KYCState?> = Observable(nil)
-}
-
-class KYCPresenter: KYCEventHandler {
+class KYCPresenter: KYCPresenterProtocol {
   // swiftlint:disable implicitly_unwrapped_optional
   var view: KYCViewProtocol!
   var interactor: KYCInteractorProtocol!
@@ -74,5 +58,9 @@ class KYCPresenter: KYCEventHandler {
         }
       }
     }
+  }
+
+  func show(url: URL) {
+    router.show(url: url)
   }
 }

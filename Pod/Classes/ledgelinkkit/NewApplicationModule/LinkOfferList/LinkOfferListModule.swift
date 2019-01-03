@@ -123,11 +123,11 @@ extension LinkOfferListModule: LinkOfferLoaderRouterProtocol {
     }
   }
 
-  func back(_ animated: Bool?) {
+  func back(_ animated: Bool) {
     onBack?(self)
   }
 
-  func close(_ animated: Bool?) {
+  func close(_ animated: Bool) {
     onClose?(self)
   }
 
@@ -157,7 +157,7 @@ extension LinkOfferListModule: LinkOfferListRouterProtocol {
 
 extension LinkOfferListModule: LinkApplicationSummaryRouterProtocol {
 
-  func backFromAppSummary(_ animated:Bool?) {
+  func backFromAppSummary(_ animated: Bool) {
     self.popViewController(animated: animated) {}
   }
 
@@ -177,7 +177,7 @@ extension LinkOfferListModule: LinkApplicationSummaryRouterProtocol {
     UIApplication.topViewController()!.askPermissionToOpenExternalUrl { [weak self] result in
       switch result {
       case .failure (let error):
-        UIApplication.topViewController()!.show(error:error)
+        self?.show(error:error)
         completion()
       case .success(let show):
         if show {

@@ -14,8 +14,7 @@ open class FormRowSeparatorView: FormRowView {
               showTopLine: Bool = false,
               showBottomLine: Bool = false) {
     super.init(showSplitter: false,
-               topPadding: 0,
-               bottomPadding: 0,
+               padding: UIEdgeInsets(top: 0, left: 16, bottom: 16, right: 0),
                height: height,
                maxHeight: height)
     self.backgroundColor = backgroundColor

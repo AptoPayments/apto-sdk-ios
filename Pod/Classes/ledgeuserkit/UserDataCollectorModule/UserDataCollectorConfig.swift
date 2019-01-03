@@ -11,9 +11,6 @@ import Foundation
 @objc open class UserDataCollectorConfig: NSObject {
   open var mode: UserDataCollectorFinalStepMode
   open var backButtonMode: UIViewControllerLeftButtonMode
-  open var finalStepTitle: String
-  open var finalStepSubtitle: String
-  open var finalStepCallToAction: CallToAction
   open var skipSteps: Bool
   open var allowUserLogin: Bool
   open var strictAddressValidation: Bool
@@ -32,9 +29,6 @@ import Foundation
 
   public init(mode: UserDataCollectorFinalStepMode,
               backButtonMode: UIViewControllerLeftButtonMode,
-              finalStepTitle: String,
-              finalStepSubtitle: String,
-              finalStepCallToAction: CallToAction,
               skipSteps: Bool,
               allowUserLogin: Bool,
               strictAddressValidation: Bool,
@@ -51,9 +45,6 @@ import Foundation
               grossIncomeRange: AmountRangeConfiguration) {
     self.mode = mode
     self.backButtonMode = backButtonMode
-    self.finalStepTitle = finalStepTitle
-    self.finalStepSubtitle = finalStepSubtitle
-    self.finalStepCallToAction = finalStepCallToAction
     self.skipSteps = skipSteps
     self.allowUserLogin = allowUserLogin
     self.strictAddressValidation = strictAddressValidation
@@ -73,30 +64,23 @@ import Foundation
   public convenience init(contextConfiguration: ContextConfiguration,
                           mode: UserDataCollectorFinalStepMode,
                           backButtonMode: UIViewControllerLeftButtonMode,
-                          finalStepTitle: String,
-                          finalStepSubtitle: String,
-                          finalStepCallToAction: CallToAction,
                           userRequiredData: RequiredDataPointList,
                           disclaimers: [Content]) {
-    self.init(
-      mode: mode,
-      backButtonMode: backButtonMode,
-      finalStepTitle: finalStepTitle,
-      finalStepSubtitle: finalStepSubtitle,
-      finalStepCallToAction: finalStepCallToAction,
-      skipSteps: contextConfiguration.projectConfiguration.skipSteps,
-      allowUserLogin: contextConfiguration.projectConfiguration.allowUserLogin,
-      strictAddressValidation: contextConfiguration.projectConfiguration.strictAddressValidation,
-      googleGeocodingAPIKey: contextConfiguration.projectConfiguration.googleGeocodingAPIKey,
-      userRequiredData: userRequiredData,
-      incomeTypes: contextConfiguration.projectConfiguration.incomeTypes,
-      housingTypes: contextConfiguration.projectConfiguration.housingTypes,
-      salaryFrequencies: contextConfiguration.projectConfiguration.salaryFrequencies,
-      timeAtAddressOptions: contextConfiguration.projectConfiguration.timeAtAddressOptions,
-      creditScoreOptions: contextConfiguration.projectConfiguration.creditScoreOptions,
-      disclaimers: disclaimers,
-      primaryAuthCredential: contextConfiguration.projectConfiguration.primaryAuthCredential,
-      secondaryAuthCredential: contextConfiguration.projectConfiguration.secondaryAuthCredential,
-      grossIncomeRange: contextConfiguration.projectConfiguration.grossIncomeRange)
+    self.init(mode: mode,
+              backButtonMode: backButtonMode,
+              skipSteps: contextConfiguration.projectConfiguration.skipSteps,
+              allowUserLogin: contextConfiguration.projectConfiguration.allowUserLogin,
+              strictAddressValidation: contextConfiguration.projectConfiguration.strictAddressValidation,
+              googleGeocodingAPIKey: contextConfiguration.projectConfiguration.googleGeocodingAPIKey,
+              userRequiredData: userRequiredData,
+              incomeTypes: contextConfiguration.projectConfiguration.incomeTypes,
+              housingTypes: contextConfiguration.projectConfiguration.housingTypes,
+              salaryFrequencies: contextConfiguration.projectConfiguration.salaryFrequencies,
+              timeAtAddressOptions: contextConfiguration.projectConfiguration.timeAtAddressOptions,
+              creditScoreOptions: contextConfiguration.projectConfiguration.creditScoreOptions,
+              disclaimers: disclaimers,
+              primaryAuthCredential: contextConfiguration.projectConfiguration.primaryAuthCredential,
+              secondaryAuthCredential: contextConfiguration.projectConfiguration.secondaryAuthCredential,
+              grossIncomeRange: contextConfiguration.projectConfiguration.grossIncomeRange)
   }
 }

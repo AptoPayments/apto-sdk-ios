@@ -88,16 +88,9 @@ extension LinkLoanDataCollectorModule: LinkLoanDataCollectorRouterProtocol {
     let disclaimers = config.loanProducts.compactMap { $0.prequalificationDisclaimer }
     let moduleLocator = serviceLocator.moduleLocator
     let userRequiredData = config.requiredDataPoints
-    let finalStepTitle = "birthday-collector.update-user.title".podLocalized()
-    let finalStepSubtitle = "birthday-collector.update-user.subtitle".podLocalized()
-    let callToAction = CallToAction(title: "birthday-collector.button.update-profile".podLocalized(),
-                                    callToActionType: .continueFlow)
     let userDataCollectorModule = moduleLocator.userDataCollectorModule(userRequiredData: userRequiredData,
                                                                         mode: .updateUser,
                                                                         backButtonMode: .close,
-                                                                        finalStepTitle: finalStepTitle,
-                                                                        finalStepSubtitle: finalStepSubtitle,
-                                                                        finalStepCallToAction: callToAction,
                                                                         disclaimers: disclaimers)
 
     userDataCollectorModule.onClose = { [weak self] _ in

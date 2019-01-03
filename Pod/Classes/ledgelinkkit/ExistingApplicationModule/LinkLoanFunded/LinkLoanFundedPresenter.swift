@@ -64,7 +64,7 @@ class LinkLoanFundedPresenter: LinkLoanFundedEventHandler, LinkLoanFundedDataRec
       }
       switch result {
       case .failure(let error):
-        wself.view.show(error:error)
+        wself.view.show(error:error, uiConfig: nil)
       case .success(let application):
         guard let wself = self else {
           return
@@ -103,7 +103,7 @@ extension LinkLoanFundedPresenter: LinkLoanFundedPresenterStrategyDelegate {
   }
 
   func sendSMSTo(card:Card) {
-    view.showMessage("Coming soon")
+    view.showMessage("Coming soon", uiConfig: nil)
   }
 
 }

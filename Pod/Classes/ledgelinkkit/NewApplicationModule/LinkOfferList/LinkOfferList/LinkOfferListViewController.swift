@@ -38,7 +38,7 @@ class LinkOfferListViewController : ShiftViewController, LinkOfferListView {
     tableView.rowHeight = UITableViewAutomaticDimension
     tableView.estimatedRowHeight = 271
     tableView.separatorStyle = .none
-    tableView.backgroundColor = self.uiConfiguration.backgroundColor
+    tableView.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     navigationMenu = NavigationMenu(viewController: self, uiConfiguration: self.uiConfiguration, menuListener: eventHandler)
     navigationMenu?.install()
     showNavCancelButton(self.uiConfiguration.iconTertiaryColor)

@@ -9,6 +9,7 @@
 import Foundation
 
 class ExternalOAuthPresenter: ExternalOAuthPresenterProtocol {
+  let config: ExternalOAuthModuleConfig
   // swiftlint:disable implicitly_unwrapped_optional
   var interactor: ExternalOAuthInteractorProtocol!
   weak var router: ExternalOAuthRouterProtocol!
@@ -16,12 +17,11 @@ class ExternalOAuthPresenter: ExternalOAuthPresenterProtocol {
   let viewModel = ExternalOAuthViewModel()
 
   init(config: ExternalOAuthModuleConfig) {
+    self.config = config
+  }
+
+  func viewLoaded() {
     viewModel.title.next(config.title)
-    viewModel.imageName.next(config.imageName)
-    viewModel.provider.next(config.provider)
-    viewModel.accessDescription.next(config.accessDescription)
-    viewModel.callToActionTitle.next(config.callToActionTitle)
-    viewModel.description.next(config.description)
     viewModel.allowedBalanceTypes.next(config.allowedBalanceTypes)
   }
 

@@ -30,7 +30,7 @@ class LinkOfferListCarouselViewController: ShiftViewController, LinkOfferListVie
   override func viewDidLoad() {
 
     title = "offer-list-carousel.title".podLocalized()
-    view.backgroundColor = uiConfiguration.backgroundColor
+    view.backgroundColor = uiConfiguration.uiBackgroundPrimaryColor
 
     setupTopView()
 
@@ -81,8 +81,8 @@ class LinkOfferListCarouselViewController: ShiftViewController, LinkOfferListVie
                                                             uiConfig: self.uiConfiguration,
                                                             linkHandler: eventHandler.linkHandler)
       disclosureLabel.label.numberOfLines = 0
-      disclosureLabel.backgroundColor = self.uiConfiguration.backgroundColor
-      disclosureLabel.label.backgroundColor = self.uiConfiguration.backgroundColor
+      disclosureLabel.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
+      disclosureLabel.label.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
       rows.append(disclosureLabel)
     }
 
@@ -95,7 +95,7 @@ class LinkOfferListCarouselViewController: ShiftViewController, LinkOfferListVie
   fileprivate var lenderName: String!
 
   fileprivate func setupTopView() {
-    topView.backgroundColor = uiConfiguration.backgroundColor
+    topView.backgroundColor = uiConfiguration.uiBackgroundPrimaryColor
 
     lenderNameLabel.isHidden = true
     lenderNameLabel.font = UIFont(name: "HelveticaNeue-Light", size: 24)!

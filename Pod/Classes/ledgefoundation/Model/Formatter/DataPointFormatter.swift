@@ -34,7 +34,7 @@ class PhoneFormatter: DataPointFormatter {
   private let phoneHelper = PhoneHelper.sharedHelper()
 
   fileprivate override var title: String {
-    return "data-point.formatter.phone.title".podLocalized()
+    return "select_balance_store.oauth_confirm.phone_number".podLocalized()
   }
 
   fileprivate override var value: String {
@@ -49,7 +49,7 @@ class PhoneFormatter: DataPointFormatter {
 
 class EmailFormatter: DataPointFormatter {
   fileprivate override var title: String {
-    return "data-point.formatter.email.title".podLocalized()
+    return "select_balance_store.oauth_confirm.email".podLocalized()
   }
 
   fileprivate override var value: String {
@@ -68,15 +68,15 @@ class PersonalNameFormatter: DataPointFormatter {
       return []
     }
     return [
-      TitleValue(title: "data-point.formatter.first-name.title".podLocalized(), value: firstName),
-      TitleValue(title: "data-point.formatter.last-name.title".podLocalized(), value: lastName),
+      TitleValue(title: "select_balance_store.oauth_confirm.first_name".podLocalized(), value: firstName),
+      TitleValue(title: "select_balance_store.oauth_confirm.last_name".podLocalized(), value: lastName),
     ]
   }
 }
 
 class AddressFormatter: DataPointFormatter {
   fileprivate override var title: String {
-    return "data-point.formatter.address.title".podLocalized()
+    return "select_balance_store.oauth_confirm.address".podLocalized()
   }
 
   fileprivate override var value: String {
@@ -122,7 +122,7 @@ class BirthDateFormatter: DataPointFormatter {
   }
 
   fileprivate override var title: String {
-    return "data-point.formatter.birth-date.title".podLocalized()
+    return "select_balance_store.oauth_confirm.birth_date".podLocalized()
   }
 
   fileprivate override var value: String {
@@ -135,7 +135,7 @@ class BirthDateFormatter: DataPointFormatter {
 
 class SSNFormatter: DataPointFormatter {
   fileprivate override var title: String {
-    return "birthday-collector.id-document.type.ssn".podLocalized()
+    return "select_balance_store.oauth_confirm.id_document".podLocalized()
   }
 
   fileprivate override var value: String {
@@ -151,7 +151,7 @@ class SSNFormatter: DataPointFormatter {
 class IdDocumentFormatter: DataPointFormatter {
   fileprivate override var title: String {
     guard let idDocument = dataPoint as? IdDocument, let documentType = idDocument.documentType.value else {
-      return "data-point.formatter.id-document.title".podLocalized()
+      return "select_balance_store.oauth_confirm.id_document".podLocalized()
     }
 
     return documentType.localizedDescription

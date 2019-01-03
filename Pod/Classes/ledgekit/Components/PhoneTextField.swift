@@ -11,7 +11,14 @@ import Bond
 import ReactiveKit
 import PhoneNumberKit
 
-public class PhoneTextField: UIView {
+protocol PhoneTextFieldProtocol {
+  var isValid: Observable<Bool> { get }
+  var bndValue: Observable<InternationalPhoneNumber?> { get }
+}
+
+typealias PhoneTextFieldView = PhoneTextFieldProtocol & UIView
+
+class PhoneTextField: PhoneTextFieldView {
   private let allowedCountries: [Country]
   private let uiConfig: ShiftUIConfig
 
@@ -104,6 +111,7 @@ private extension PhoneTextField {
   }
 
   func layoutCountryTextField() {
+    countryTextField.font = uiConfig.fontProvider.formFieldFont
     countryTextField.tintColor = .clear
     countryTextField.adjustsFontSizeToFitWidth = true
     countryTextField.delegate = self
@@ -114,6 +122,7 @@ private extension PhoneTextField {
   }
 
   func layoutPhoneNumber() {
+    phoneNumberField.font = uiConfig.fontProvider.formFieldFont
     phoneNumberField.delegate = self
     phoneNumberField.snp.makeConstraints { make in
       make.left.equalTo(countryTextField.snp.right)

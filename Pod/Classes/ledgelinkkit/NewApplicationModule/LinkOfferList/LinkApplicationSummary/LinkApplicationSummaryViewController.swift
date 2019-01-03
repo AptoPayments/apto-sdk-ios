@@ -29,7 +29,7 @@ class LinkApplicationSummaryViewController: ShiftViewController, LinkApplication
   override func viewDidLoad() {
 
     self.title = "application-summary.title".podLocalized()
-    self.view.backgroundColor = self.uiConfiguration.backgroundColor
+    self.view.backgroundColor = self.uiConfiguration.uiBackgroundPrimaryColor
     self.edgesForExtendedLayout = UIRectEdge()
 
     self.showNavPreviousButton(uiConfiguration.iconTertiaryColor)

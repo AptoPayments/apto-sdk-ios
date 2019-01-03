@@ -32,8 +32,10 @@ class StorageLocator: StorageLocatorProtocol {
     return StoreStorage(transport: transport)
   }
 
-  func financialAccountsStorage(transport: JSONTransport) -> FinancialAccountsStorageProtocol {
-    return FinancialAccountsStorage(transport: transport)
+  func financialAccountsStorage(transport: JSONTransport,
+                                localCacheManager: LocalCacheFileManagerProtocol) -> FinancialAccountsStorageProtocol {
+    let cache = FinancialAccountCache(localCacheFileManager: localCacheManager)
+    return FinancialAccountsStorage(transport: transport, cache: cache)
   }
 
   func pushTokenStorage(transport: JSONTransport) -> PushTokenStorageProtocol {

@@ -72,10 +72,10 @@ class ShowDisclaimerActionModule: UIModule, ShowDisclaimerActionModuleProtocol {
 
   private func confirmClose(onConfirm: @escaping () -> ()) {
     if let cardApplication = self.workflowObject as? CardApplication {
-      let cancelTitle = "general.button.cancel".podLocalized()
-      actionConfirmer.confirm(title: "disclaimer-action.cancel-confirmation.title".podLocalized(),
-                              message: "disclaimer-action.cancel-confirmation.message".podLocalized(),
-                              okTitle: "disclaimer-action.cancel-confirmation.confirm-button.title".podLocalized(),
+      let cancelTitle = "disclaimer.disclaimer.cancel_action.cancel_button".podLocalized()
+      actionConfirmer.confirm(title: "disclaimer.disclaimer.cancel_action.title".podLocalized(),
+                              message: "disclaimer.disclaimer.cancel_action.message".podLocalized(),
+                              okTitle: "disclaimer.disclaimer.cancel_action.ok_button".podLocalized(),
                               cancelTitle: cancelTitle) { [unowned self] action in
         guard let title = action.title, title != cancelTitle else {
           return

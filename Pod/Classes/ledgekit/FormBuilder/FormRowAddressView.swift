@@ -10,7 +10,7 @@ import Bond
 import ReactiveKit
 
 class FormRowAddressView: FormRowView {
-  private var disposeBag = DisposeBag()
+  private let disposeBag = DisposeBag()
   private let label: UILabel
   private let textField: UITextField
   private let addressManager: AddressManager
@@ -118,7 +118,7 @@ extension FormRowAddressView: UITableViewDelegate {
 // MARK: - Set up UI
 private extension FormRowAddressView {
   func setUpUI() {
-    backgroundColor = uiConfig.backgroundColor
+    backgroundColor = uiConfig.uiBackgroundPrimaryColor
     setUpLabel()
     setUpTextField()
     setUpSearchResults()
@@ -143,7 +143,7 @@ private extension FormRowAddressView {
   }
 
   func setUpSearchResults() {
-    searchResults.backgroundColor = uiConfig.backgroundColor
+    searchResults.backgroundColor = uiConfig.uiBackgroundPrimaryColor
     searchResults.separatorStyle = .none
     searchResults.estimatedRowHeight = CGFloat(rowHeight)
     searchResults.isHidden = true
