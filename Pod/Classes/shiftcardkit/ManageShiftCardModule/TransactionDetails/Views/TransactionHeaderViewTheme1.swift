@@ -50,10 +50,12 @@ private extension TransactionHeaderViewTheme1 {
 
   func setupDescriptionLabel() {
     descriptionLabel.textColor = uiConfiguration.textTopBarColor
+    descriptionLabel.numberOfLines = 2
+    descriptionLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     contentView.addSubview(descriptionLabel)
     descriptionLabel.snp.makeConstraints { make in
-      make.centerY.equalToSuperview()
-      make.left.right.equalToSuperview()
+      make.centerY.equalToSuperview().offset(2)
+      make.left.equalToSuperview()
     }
   }
 
@@ -61,8 +63,9 @@ private extension TransactionHeaderViewTheme1 {
     fiatAmountLabel.textColor = uiConfiguration.textTopBarColor
     contentView.addSubview(fiatAmountLabel)
     fiatAmountLabel.snp.makeConstraints { make in
+      make.left.greaterThanOrEqualTo(descriptionLabel.snp.right).offset(16)
       make.right.equalToSuperview()
-      make.centerY.equalToSuperview()
+      make.centerY.equalTo(descriptionLabel)
     }
   }
 }

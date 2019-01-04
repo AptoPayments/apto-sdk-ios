@@ -31,6 +31,7 @@ class ManageShiftCardMainViewTheme2: UIView, CardPresentationProtocol {
   private let creditCardView: CreditCardView
   private unowned let delegate: ManageShiftCardMainViewDelegate
   private let uiConfiguration: ShiftUIConfig
+  private var showPhysicalCardActivationMessage = true
 
   init(uiConfiguration: ShiftUIConfig, cardStyle: CardStyle?, delegate: ManageShiftCardMainViewDelegate) {
     self.uiConfiguration = uiConfiguration
@@ -117,7 +118,8 @@ class ManageShiftCardMainViewTheme2: UIView, CardPresentationProtocol {
     refreshLayoutConstraints()
   }
 
-  func set(physicalCardActivationRequired: Bool?) {
+  func set(physicalCardActivationRequired: Bool?, showMessage: Bool) {
+    showPhysicalCardActivationMessage = showMessage
     // If balance is not valid ignore the physical card activation
     guard topMessageViewType != .invalidBalance || topMessageViewType != .noBalance else { return }
     if physicalCardActivationRequired == true {
@@ -225,6 +227,7 @@ private extension ManageShiftCardMainViewTheme2 {
   }
 
   func showActivatePhysicalCardMessage() {
+    guard showPhysicalCardActivationMessage else { return }
     show(message: "manage_card.activate_physical_card_overlay.message".podLocalized(),
          title: "manage_card.activate_physical_card_overlay.title".podLocalized(),
          animated: false,

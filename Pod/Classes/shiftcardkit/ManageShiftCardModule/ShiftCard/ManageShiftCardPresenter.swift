@@ -194,6 +194,12 @@ class ManageShiftCardPresenter: ManageShiftCardPresenterProtocol {
     viewModel.lastFour.next(card.lastFourDigits)
     viewModel.cardNetwork.next(card.cardNetwork)
     viewModel.fundingSource.next(card.fundingSource)
+    if card.orderedStatus == .ordered && card.orderedStatus != viewModel.orderedStatus.value {
+      viewModel.showPhysicalCardActivationMessage.next(true)
+    }
+    else {
+      viewModel.showPhysicalCardActivationMessage.next(false)
+    }
     viewModel.orderedStatus.next(card.orderedStatus)
     viewModel.spendableToday.next(card.spendableToday)
     viewModel.nativeSpendableToday.next(card.nativeSpendableToday)

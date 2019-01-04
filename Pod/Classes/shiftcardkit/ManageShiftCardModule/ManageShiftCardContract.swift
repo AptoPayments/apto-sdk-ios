@@ -79,6 +79,7 @@ open class ManageShiftCardViewModel {
   public let transactionsLoaded: Observable<Bool> = Observable(false)
   public let cardStyle: Observable<CardStyle?> = Observable(nil)
   public let cardLoaded: Observable<Bool> = Observable(false)
+  public let showPhysicalCardActivationMessage: Observable<Bool> = Observable(true)
 }
 
 protocol ManageShiftCardPresenterProtocol: ManageShiftCardEventHandler {

@@ -180,6 +180,26 @@ class ModelDataProvider {
     return card
   }()
 
+  lazy var orderedCard: Card = {
+    let card = Card(accountId: "card_id",
+                    cardNetwork: .other,
+                    cardIssuer: .shift,
+                    cardBrand: "Shift",
+                    state: .active,
+                    cardHolder: "Holder Name",
+                    lastFourDigits: "7890",
+                    spendableToday: Amount(value: 12.34, currency: "GBP"),
+                    nativeSpendableToday: Amount(value: 0.034, currency: "BTC"),
+                    totalBalance: Amount(value: 12.34, currency: "GBP"),
+                    nativeTotalBalance: Amount(value: 0.034, currency: "BTC"),
+                    kyc: .passed,
+                    orderedStatus: .ordered,
+                    panToken: "pan_token",
+                    cvvToken: "cvv_token",
+                    verified: true)
+    return card
+  }()
+
   lazy var cardDetails = CardDetails(expiration: "99-03", pan: "1234234134124123", cvv: "123")
 
   lazy var transaction = Transaction(transactionId: "transactionId",

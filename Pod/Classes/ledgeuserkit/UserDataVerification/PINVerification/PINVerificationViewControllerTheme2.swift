@@ -135,7 +135,6 @@ private extension PINVerificationViewControllerTheme2 {
     pinEntryView.pinBorderColor = .clear
     pinEntryView.font = uiConfiguration.fontProvider.formFieldFont
     pinEntryView.textColor = uiConfiguration.textSecondaryColor
-    pinEntryView.invisibleSign = ""
     pinEntryView.placeholder = "-"
     container.addSubview(pinEntryView)
     pinEntryView.snp.makeConstraints { make in

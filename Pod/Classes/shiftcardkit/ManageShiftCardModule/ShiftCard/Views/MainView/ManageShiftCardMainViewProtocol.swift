@@ -30,7 +30,7 @@ protocol CardPresentationProtocol {
   func set(cardNetwork: CardNetwork?)
   func set(expirationMonth: UInt, expirationYear: UInt)
   func set(fundingSource: FundingSource?)
-  func set(physicalCardActivationRequired: Bool?)
+  func set(physicalCardActivationRequired: Bool?, showMessage: Bool)
   func setSpendable(amount: Amount?, nativeAmount: Amount?)
   func set(cardState: FinancialAccountState?)
   func set(cardStyle: CardStyle?)

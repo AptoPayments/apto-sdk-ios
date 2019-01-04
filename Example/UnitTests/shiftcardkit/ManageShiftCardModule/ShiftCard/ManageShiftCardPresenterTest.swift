@@ -61,6 +61,44 @@ class ManageShiftCardPresenterTest: XCTestCase {
     XCTAssertEqual(card.cardNetwork, viewModel.cardNetwork.value)
   }
 
+  func testOrderedCardLoadedSetShowPhysicalCardActivationToTrue() {
+    // Given
+    let card = dataProvider.orderedCard
+    interactor.nextProvideFundingSourceResult = .success(card)
+
+    // When
+    sut.viewLoaded()
+
+    // Then
+    XCTAssertTrue(sut.viewModel.showPhysicalCardActivationMessage.value)
+  }
+
+  func testOrderedCardReloadedSetShowPhysicalCardActivationToFalse() {
+    // Given
+    let card = dataProvider.orderedCard
+    interactor.nextProvideFundingSourceResult = .success(card)
+    sut.viewLoaded()
+
+    // When
+    interactor.nextReloadCardResult = .success(card)
+    sut.refreshCard()
+
+    // Then
+    XCTAssertFalse(sut.viewModel.showPhysicalCardActivationMessage.value)
+  }
+
+  func testReceivedCardLoadedSetShowPhysicalCardActivationToFalse() {
+    // Given
+    let card = dataProvider.card
+    interactor.nextProvideFundingSourceResult = .success(card)
+
+    // When
+    sut.viewLoaded()
+
+    // Then
+    XCTAssertFalse(sut.viewModel.showPhysicalCardActivationMessage.value)
+  }
+
   func testProvideFundingSourceSucceedLoadTransactions() {
     // Given
     let card = dataProvider.card

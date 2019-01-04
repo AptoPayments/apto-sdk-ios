@@ -104,7 +104,7 @@ class ManageShiftCardMainViewTheme1: UIView, CardPresentationProtocol {
     refreshLayoutConstraints()
   }
 
-  func set(physicalCardActivationRequired: Bool?) {
+  func set(physicalCardActivationRequired: Bool?, showMessage: Bool) {
     // If balance is not valid ignore the physical card activation
     guard topMessageViewType != .invalidBalance || topMessageViewType != .noBalance else { return }
     if physicalCardActivationRequired == true {

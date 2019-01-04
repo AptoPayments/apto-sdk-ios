@@ -272,6 +272,9 @@ extension UIPinEntryTextField: UITextFieldDelegate {
       }
     }
     else {
+      if textField == textFields.last && textField.text != invisibleSign {
+        return false
+      }
       let delayTime = DispatchTime.now() + Double(Int64(0.001 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
       DispatchQueue.main.asyncAfter(deadline: delayTime) {
         self.moveFrom(currentTextField: textField)

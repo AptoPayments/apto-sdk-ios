@@ -113,7 +113,7 @@ extension ManageShiftCardViewControllerTheme2: ManageShiftCardMainViewDelegate, 
                              placeholder: "manage.shift.card.enter-code.placeholder".podLocalized(),
                              keyboardType: .numberPad,
                              okTitle: "manage.shift.card.enter-code.submit".podLocalized(),
-                             cancelTitle: "general.button.cancel".podLocalized()) { [unowned self] code in
+                             cancelTitle: "general.button.cancel".podLocalized()) { code in
       guard let code = code, !code.isEmpty else { return }
       completion(code)
     }
@@ -369,7 +369,8 @@ private extension ManageShiftCardViewControllerTheme2 {
                   viewModel.cardLoaded).observeNext { [unowned self] orderedStatus, cardLoaded in
       guard cardLoaded == true else { return }
       let activationNeeded: Bool = orderedStatus == .ordered
-      self.mainView.set(physicalCardActivationRequired: activationNeeded)
+      self.mainView.set(physicalCardActivationRequired: activationNeeded,
+                        showMessage: viewModel.showPhysicalCardActivationMessage.value)
       self.updateNavigationBar(showActivateButton: activationNeeded)
     }.dispose(in: disposeBag)
 

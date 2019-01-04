@@ -65,7 +65,12 @@ class ShiftCardTransactionDetailsPresenter: ShiftCardTransactionDetailsPresenter
       transaction.merchant?.mcc?.description() ?? "transaction_details.basic_info.category.unavailable".podLocalized()
     )
     // Funding source
-    viewModel.fee.next(transaction.feeAmount?.text)
+    if let fee = transaction.feeAmount?.amount.value, abs(fee) > Double(0) {
+      viewModel.fee.next(transaction.feeAmount?.text)
+    }
+    else {
+      viewModel.fee.next(nil)
+    }
     // Currency exchange???
     if let (nativeAmount, fiatAmount) = computeExchangeRateFor(adjustments: transaction.adjustments),
       let nativeCurrencySymbol = nativeAmount.currencySymbol {
