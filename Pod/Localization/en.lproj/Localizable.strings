@@ -282,7 +282,7 @@
 
 "birthday-collector.birthday.placeholder" = "month / day / year";
 
-"birthday-collector.birthday.warning.minimum-age" = "You must be 18 years old to get offers.";
+"birthday-collector.birthday.warning.minimum-age" = "Were you born in the future?";
 
 "birthday-collector.id-document.country" = "Citizenship";
 
@@ -610,9 +610,9 @@
 
 "manage.shift.card.title" = "Card";
 
-"manage.shift.card.empty-balance" = "-";
+"manage_card.balance.invalid_balance.title" = "-";
 
-"manage.shift.card.current-balance" = "Current balance";
+"manage_card.balance.total_balance" = "Current balance";
 
 "manage.shift.card.spendable-today" = "Spendable today";
 
@@ -724,24 +724,6 @@
 
 "verify_document.retake_selfie_button.title" = "RETAKE SELFIE";
 
-/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/KYC/KYCViewController.swift */
-
-"kyc.title" = "Application Status";
-
-"kyc.refresh_button.title" = "Refresh";
-
-"kyc.state.resubmitDetails" = "Your application is under review";
-
-"kyc.state.uploadFile" = "Your application is under review";
-
-"kyc.state.underReview" = "Your application is under review";
-
-"kyc.state.passed" = "";
-
-"kyc.state.rejected" = "Your application is under review";
-
-"kyc.state.temporaryError" = "Your application is under review";
-
 /* * ./Pod/Classes/shiftcardkit/ShiftCardSettingsModule/ShiftCardSettings/FundingSourceEmptyCaseView.swift */
 
 "funding-source-empty-case.title" = "You have no Funding sources linked with your card.";
@@ -782,6 +764,10 @@
 
 "transaction_details.adjustment.transfer_to.text" = "To your %@ account";
 
+"transaction_details.adjustment.amount.text" = "Amount = ";
+
+"transaction_details.adjustment.fee.text" = "Fee = ";
+
 "transaction_details.adjustment.id.text" = "ID: %@";
 
 "transaction_details.basic_info.category.plane_mcc" = "Travel & Holidays";
@@ -808,23 +794,45 @@
 
 "transaction_details.basic_info.category.road_mcc" = "Travel & Holidays";
 
-"transaction_details.basic_info.transaction_status.pending" = "PENDING";
+"transaction_details.basic_info.category.other_mcc" = "Other";
 
-"transaction_details.basic_info.transaction_status.authorized" = "AUTHORIZED";
+"transaction_details.basic_info.transaction_status.pending" = "Pending";
 
-"transaction_details.basic_info.transaction_status.disputed" = "DISPUTED";
+"transaction_details.basic_info.transaction_status.declined" = "Declined";
+
+"transaction_details.basic_info.transaction_status.complete" = "Complete";
 
 "transaction_details.basic_info.transaction_status.other" = "Other";
 
-"transaction_details.details.transaction_type.atm_withdrawal" = "ATM Withdrawal";
-
-"transaction_details.details.transaction_type.authorised" = "Authorised";
-
 "transaction_details.details.transaction_type.pending" = "Pending";
 
-"transaction_details.details.transaction_type.declined" = "Declined";
+"transaction_details.details.transaction_type.reversal" = "Reversal";
 
-"transaction_details.details.transaction_type.reversed" = "Reversed";
+"transaction_details.details.transaction_type.purchase" = "Purchase";
+
+"transaction_details.details.transaction_type.pin_purchase" = "PIN Purchase";
+
+"transaction_details.details.transaction_type.refund" = "Refund";
+
+"transaction_details.details.transaction_type.decline" = "Decline";
+
+"transaction_details.details.transaction_type.balance_inquiry" = "Balance Inquiry";
+
+"transaction_details.details.transaction_type.atm_withdrawal" = "ATM Withdrawal";
+
+"transaction_details.details.transaction_type.credit" = "Credit";
+
+"transaction_details.details.transaction_type.other" = "Other";
+
+"transaction_details.details.transaction_class.authorised" = "Authorised";
+
+"transaction_details.details.transaction_class.atm_withdrawal" = "ATM Withdrawal";
+
+"transaction_details.details.transaction_class.pending" = "Pending";
+
+"transaction_details.details.transaction_class.declined" = "Declined";
+
+"transaction_details.details.transaction_class.reversed" = "Reversed";
 
 "transaction_details.details.device_type.ecommerce" = "eCommerce";
 
@@ -833,6 +841,34 @@
 "transaction_details.details.device_type.international" = "INT.";
 
 "transaction_details.details.device_type.emv" = "EMV";
+
+"transaction_details.basic_info.declined_transaction_banner.title" = "Declined transaction";
+
+"transaction_details.details.decline_default" = "This transaction was declined. Please get in contact with our team if you need assistance.";
+
+"transaction_details.details.decline_nsf" = "Insufficient funds";
+
+"transaction_details.details.decline_bad_pin" = "Wrong PIN";
+
+"transaction_details.details.decline_06" = "Error";
+
+"transaction_details.details.decline_42" = "International transaction not allowed";
+
+"transaction_details.details.decline_70" = "Invalid transaction. Contact customer support";
+
+"transaction_details.details.decline_60" = "Below withdrawal amount limit";
+
+"transaction_details.details.decline_61" = "Exceeds withdrawal amount limit";
+
+"transaction_details.details.decline_65" = "Exceeds withdrawal frequency limit";
+
+"transaction_details.details.decline_75" = "Allowed number of PIN tries exceeded";
+
+"transaction_details.details.decline_bad_cvv_or_exp" = "Wrong CVC or Expiration date";
+
+"transaction_details.details.decline_bad_cvv" = "Wrong CVV";
+
+"transaction_details.details.decline_pre_active" = "Physical card is not active yet";
 
 /* Support */
 
@@ -888,7 +924,7 @@
 
 "maintenance.title" = "Error";
 
-"maintenance.description" = "We’re currently undergoing system maintenance. Please check back later";
+"maintenance.description" = "We're currently undergoing system maintenance. Please check back later";
 
 "maintenance.retry.title" = "Try again";
 
@@ -896,11 +932,11 @@
 
 "issue-card.navigationBar.title" = "Card";
 
-"issue-card.error.title" = "Error";
+"issue_card.issue_card.generic_error.title" = "Error";
 
-"issue-card.error.message" = "There was an error issuing your card. Please check back later";
+"issue_card.issue_card.generic_error.description" = "There was an error issuing your card. Please check back later";
 
-"issue-card.action.retry" = "Try again";
+"issue_card.issue_card.generic_error.primary_cta" = "Try again";
 
 /* API Error Messages */
 
@@ -915,6 +951,8 @@
 "error.transport.networkNotAvailable" = "There is no internet connection";
 
 "error.transport.incorrectParameters" = "Something went wrong<<ERROR_CODE>>.";
+
+"error.transport.emailNotVerified" = "This pin is incorrect";
 
 "error.transport.invalidSession" = "For your security, your session has timed out due to inactivity.";
 
@@ -947,6 +985,62 @@
 "error.transport.physicalCardAlreadyActivated" = "Your card is already enabled, please pull to refresh the information or contact with Customer Support.";
 
 "error.transport.physicalCardActivationNotSupported" = "Your card can not be enabled, please contact with Customer Support.";
+
+"issue_card.issue_card.error.required_phone" = "Phone number required.";
+
+"issue_card.issue_card.error.invalid_phone" = "Invalid phone number.";
+
+"issue_card.issue_card.error.not_allowed_phone" = "Phone number not allowed.";
+
+"issue_card.issue_card.error.signup_not_allowed" = "Card can't be issued.";
+
+"issue_card.issue_card.error.required_first_name" = "First name required.";
+
+"issue_card.issue_card.error.invalid_first_name" = "Invalid first name.";
+
+"issue_card.issue_card.error.required_last_name" = "Last name required.";
+
+"issue_card.issue_card.error.invalid_last_name" = "Invalid last name.";
+
+"issue_card.issue_card.error.invalid_email" = "Invalid email address.";
+
+"issue_card.issue_card.error.not_allowed_email" = "Email address not allowed.";
+
+"issue_card.issue_card.error.required_dob" = "Date of Birth required";
+
+"issue_card.issue_card.error.dob_too_young" = "You must be at least 18 years old to apply for a card.";
+
+"issue_card.issue_card.error.invalid_id_document" = "ID Document invalid.";
+
+"issue_card.issue_card.error.invalid_address" = "Invalid address.";
+
+"issue_card.issue_card.error.invalid_postal_code" = "Invalid postal code.";
+
+"issue_card.issue_card.error.invalid_locality" = "Invalid City.";
+
+"issue_card.issue_card.error.invalid_region" = "Invalid State.";
+
+"issue_card.issue_card.error.invalid_country" = "Invalid Country.";
+
+"issue_card.issue_card.error.card_already_issued" = "Card is already issued.";
+
+"issue_card.issue_card.error.token_revoked" = "Please, sign in again";
+
+"issue_card.issue_card.error_insufficient_funds.title" = "Add more funds";
+
+"issue_card.issue_card.error_insufficient_funds.description" = "You don't have enough balance to issue the card. \n\nAdd your funds, then try again.";
+
+"issue_card.issue_card.error_insufficient_funds.primary_cta" = "Try again";
+
+"issue_card.issue_card.error_insufficient_funds.secondary_cta" = "";
+
+"issue_card.issue_card.generic_error.title" = "Error";
+
+"issue_card.issue_card.generic_error.description" = "There was an error while issuing your card. Please try again.";
+
+"issue_card.issue_card.generic_error.primary_cta" = "Try again";
+
+"issue_card.issue_card.generic_error.secondary_cta" = "";
 
 /* * ./Pod/Classes/ledgeaccountskit/SelectBalanceStoreModule/SelectBalanceStoreModule.swift */
 
@@ -1008,6 +1102,14 @@
 
 "phone-collector.phone.placeholder" = "phone number";
 
+"auth.input_phone.error.can_not_send_sms" = "Looks like we can’t send you a code, as you’ve already requested to stop receiving SMS messages from us. Chat to our team for more help.";
+
+"auth.input_phone.error.invalid_phone_number" = "Looks like the number you’ve entered isn’t a valid mobile number. Check it’s been entered correctly and isn’t a landline number.";
+
+"auth.input_phone.error.unreachable_phone_number" = "Looks like we can’t send you your code as the number you’ve provided isn’t currently reachable by SMS. Please try again.";
+
+"auth.input_phone.error.invalid_called_phone_number" = "Looks like the phone number you’ve entered isn’t valid. Please try again.";
+
 /* * PIN verification */
 
 "auth.verify_phone.title" = "Verify phone number";
@@ -1018,9 +1120,17 @@
 
 "auth.verify_phone.resend_button.title" = "Re-send Code";
 
+"auth.verify_phone.resent_wait_text" = "Resend your code if it doesn't arrive in <<WAIT_TIME>>";
+
 "auth.verify_phone.error_wrong_code.title" = "Error";
 
 "auth.verify_phone.error_wrong_code.message" = "This pin is incorrect";
+
+"auth.verify_phone.resent.message" = "We've just sent a new 6-digit code to your phone.";
+
+"auth.verify_phone.resent.title" = "Good news";
+
+"auth.verify_phone.expired_pin.text" = "Code expired, too many attempts.\nPlease request a new code via SMS";
 
 /* * Verify birth date */
 
@@ -1058,6 +1168,16 @@
 
 "select_balance_store.login.call_to_action.title" = "Connect to Coinbase";
 
+"select_balance_store.login.new_user.title" = "<a href='https://www.coinbase.com/signup'>Not a Coinbase user? Tap here.</a>";
+
+"select_balance_store.oauth_confirm.address.confirmation_start" = "Your card will be sent to address:";
+
+"select_balance_store.oauth_confirm.address.confirmation_end" = "is that correct?";
+
+"select_balance_store.oauth_confirm.address.ok_button" = "Confirm";
+
+"select_balance_store.oauth_confirm.address.cancel_button" = "Cancel";
+
 "select_balance_store.login.error.title" = "Coinbase Connect";
 
 "select_balance_store.login.error.ok_button" = "Ok";
@@ -1067,6 +1187,12 @@
 "select_balance_store.login.error_wrong_region.message" = "Region not supported";
 
 "select_balance_store.login.error_insufficient_funds.message" = "Insufficient balance";
+
+"select_balance_store.login.error_balance_not_found.message" = "Balance not found";
+
+"select_balance_store.login.error_access_token_invalid.message" = "Invalid Access Credentials";
+
+"select_balance_store.login.error_scopes_required.message" = "Scopes Required";
 
 "select_balance_store.login.error_unsupported_currency.message" = "Currency not supported";
 
@@ -1087,6 +1213,12 @@
 "select_balance_store.login.error_wrong_email.message" = "The email address retrieved from your Coinbase account was invalid";
 
 "select_balance_store.login.error_unknown.message" = "An error occurred, please try again or contact support (Error: <<ERROR_CODE>>)";
+
+"select_balance_store.login.error_email_sends_disabled.message" = "You've disabled the ability to send funds to an email address.";
+
+"select_balance_store.login.error_insufficient_application_limit.message" = "To continue, you must increase the authorised amount of funds accesibles per day.";
+
+"select_balance_store.login.error_identity_not_verified.message" = "Account not verified";
 
 /* * Data confirmation */
 
@@ -1111,6 +1243,14 @@
 "select_balance_store.oauth_confirm.phone_number" = "Phone number";
 
 "select_balance_store.oauth_confirm.call_to_action.title" = "Confirm";
+
+"select_balance_store.oauth_confirm.refresh.title" = "Updated your personal details?";
+
+"select_balance_store.oauth_confirm.updated_pii_message.title" = "Your personal details";
+
+"select_balance_store.oauth_confirm.updated_pii_message.message" = "Looks like you've updated your personal details in your Coinbase account.";
+
+"select_balance_store.oauth_confirm.updated_pii_message.ok_button" = "Continue";
 
 /* * Disclaimer */
 
@@ -1256,7 +1396,11 @@
 
 "card_settings.help.title" = "Help and Support";
 
+"card_settings.help.ivr_support.title" = "Get help";
+
 "card_settings.help.contact_support.title" = "Contact Support";
+
+"card_settings.help.ivr_support.description" = "Call for customer support";
 
 "card_settings.help.contact_support.description" = "Email our Customer Support team";
 
@@ -1276,23 +1420,35 @@
 
 "card_settings.legal.cardholder_agreement.title" = "Cardholder agreement";
 
-"card_settings.legal.cardholder_agreement.description" = "";
+"card_settings.legal.cardholder_agreement.description" = "Read our cardholder agreement";
 
 "card_settings.legal.privacy_policy.title" = "Privacy policy";
 
-"card_settings.legal.privacy_policy.description" = "";
+"card_settings.legal.privacy_policy.description" = "Read our privacy policy";
 
 "card_settings.legal.terms_of_service.title" = "Terms and conditions";
 
-"card_settings.legal.terms_of_service.description" = "";
+"card_settings.legal.terms_of_service.description" = "Read our terms and conditions";
 
 "card_settings.legal.faq.title" = "FAQ";
 
 "card_settings.legal.faq.description" = "Some answers to your questions";
 
+"card_settings.transactions.title" = "Transactions";
+
+"card_settings.transactions.detailed_card_activity.title" = "Detailed card activity";
+
+"card_settings.transactions.detailed_card_activity.description" = "Show all activity: declines, balance inquiries, etc.";
+
 /* * Account Settings */
 
 "account_settings.settings.title" = "Account settings";
+
+"account_settings.app_settings.title" = "App settings";
+
+"account_settings.app_settings.notifications.title" = "Notifications";
+
+"account_settings.app_settings.notifications.description" = "Your push and email notification preferences";
 
 "account_settings.help.title" = "Support";
 
@@ -1331,3 +1487,107 @@
 "manage_card.funding_source_selector.error.title" = "Error";
 
 "manage_card.funding_source_selector.error.message" = "We were unable to proceed your request, please try again";
+
+/* * Card monthly stats */
+
+"stats.monthly_spending.title" = "Stats for <<YEAR>>";
+
+"stats.monthly_spending.graph.title" = "Total Spent";
+
+"stats.monthly_spending.graph.default_currency" = "USD";
+
+"stats.monthly_spending.graph.grouped.title" = "...";
+
+"stats.monthly_spending.list.title" = "Categories";
+
+"stats.monthly_spending.list.empty_case" = "You've not made any transactions.";
+
+/* * Transaction list */
+
+"transactions.list.title" = "Transactions";
+
+/* * Wait list */
+
+"wait_list.wait_list.title" = "You're top of the waitlist!";
+
+"wait_list.wait_list.description.main" = "Very soon you'll be able to spend your crypto anywhere, using your contactless Shift Card.";
+
+"wait_list.wait_list.description.secondary" = "We'll be in touch the moment Shift Card launches; until then, let your friends know all about it by tapping below.";
+
+/* * Notification preferences */
+
+"notification_preferences.title" = "Notifications";
+
+"notification_preferences.send_push_email.title" = "SEND VIA PUSH OR EMAIL";
+
+"notification_preferences.send_push_sms.title" = "SEND VIA PUSH OR SMS";
+
+"notification_preferences.card_activity.title" = "Card activity";
+
+"notification_preferences.card_activity.description" = "Handy notifications to help you see what you're spending";
+
+"notification_preferences.card_activity.payment_successful.title" = "Successful Transactions";
+
+"notification_preferences.card_activity.payment_declined.title" = "Declined Transactions";
+
+"notification_preferences.card_activity.atm_withdrawal.title" = "ATM Withdrawals";
+
+"notification_preferences.card_activity.incoming_transfer.title" = "Incoming transfer";
+
+"notification_preferences.card_status.title" = "Card status";
+
+"notification_preferences.card_status.description" = "Notifications about your Card";
+
+"notification_preferences.legal.title" = "Legal";
+
+"notification_preferences.legal.description" = "Updates regarding privacy and cardholder agreements, etc.";
+
+"auth.input_email.title" = "Get Started";
+
+"auth.input_email.explanation" = "Enter your email address";
+
+"auth.input_email.call_to_action.title" = "Continue";
+
+/* * Select card product */
+
+"select_card_product.select_country.title" = "Country of residence 🏠";
+
+"select_card_product.select_country.explanation" = "Select your country of tax residence.";
+
+"select_card_product.select_country.call_to_action" = "Select country";
+
+/* * Set card PIN */
+
+"manage_card.set_pin.title" = "Change your PIN";
+
+"manage_card.set_pin.explanation" = "Please type the new PIN";
+
+"manage_card.confirm_pin.title" = "Confirm your PIN";
+
+"manage_card.confirm_pin.explanation" = "Please confirm the new PIN";
+
+"manage_card.confirm_pin.error_wrong_code.title" = "Oops!";
+
+"manage_card.confirm_pin.error_wrong_code.message" = "Your PIN didn't match. Please try again.";
+
+"manage_card.confirm_pin.pin_created.title" = "Congrats!";
+
+"manage_card.confirm_pin.pin_created.message" = "You've successfully created your PIN. Your physical card is now ready to use.";
+
+"manage_card.confirm_pin.pin_updated.title" = "Congrats!";
+
+"manage_card.confirm_pin.pin_updated.message" = "You've successfully changed your PIN.";
+
+/* * VoIP */
+
+"manage_card.get_pin_voip.title" = "Card Help";
+
+"manage_card.get_pin_voip.message" = "Calling..";
+
+"manage_card.get_pin_voip.speaker" = "speaker";
+
+"manage_card.get_pin_voip.mute" = "mute";
+
+"manage_card.get_pin_voip.keypad" = "keypad";
+
+"manage_card.get_pin_voip.hide" = "hide";
