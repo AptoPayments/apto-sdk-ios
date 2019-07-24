@@ -48,10 +48,10 @@ Typical steps to obtain a user token involve:
 
 1. Verify user's primary credential. Once verified, the verification contains data showing if the credential belongs to an existing user or to a new user.
 
-2.1) If the credential belongs to an existing user, verify user's secondary credential.
-2.2) Obtain a user session token by using the login method on the SDK. That method receives the two previous verifications. The user token will be stored and handled by the SDK.
+1. If the credential belongs to an existing user, verify user's secondary credential.
+   1. Obtain a user session token by using the login method on the SDK. That method receives the two previous verifications. The user token will be stored and handled by the SDK.
 
-3.1) If the credential doesn't belong to any existing user, create a new user with the verified credential and obtain a user token. The user token will be stored and handled by the SDK.
+1. If the credential doesn't belong to any existing user, create a new user with the verified credential and obtain a user token. The user token will be stored and handled by the SDK.
 
 ## Verifications
 
