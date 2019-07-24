@@ -1,135 +1,390 @@
-# Shift SDK
-Shift iOS SDK.
+# Apto SDK for iOS [![CocoaPods](https://img.shields.io/cocoapods/v/AptoSDK.svg?style=plastic)](https://cocoapods.org/pods/AptoSDK)
 
-For more information, see the [website](https://developer.ledge.me).
+Welcome to the Apto iOS SDK. This SDK gives access to the Apto's mobile API, designed to be used from a mobile app. Using this SDK there's no need to integrate the API itself, all the API endpoints are exposed as simple to use methods, and the data returned by the API is properly encapsulated and easy to access.
+
+With this SDK, you'll be able to onboard new users, issue cards, obtain card activity information and manage the card (set pin, freeze / unfreeze, etc.)
+
+For more information, see the [Apto developer portal](https://aptopayments.com/developer).
 
 ## Requirements
 
-* iOS version; 10.0+
+    * Xcode 10
+    * Swift 5
+    * CocoaPods
 
-## Developer Guides
+### Installation (Using [CocoaPods](https://cocoapods.org))
 
-### Installation
+1. In your `Podfile`, add the following dependency:
 
-1. In your Podfile, add the following dependency:
+    ```
+    platform :ios, '10.0'
+    use_frameworks!
 
-```
-pod ShiftSDK
-```
+    pod 'AptoSDK'
+    ```
 
-#### Distributing your app via Testflight or App Store
+2. Run `pod install`.
 
-The Shift SDK includes the [Plaid iOS SDK](https://github.com/plaid/link/tree/master/ios) as a dependency in order to
-handle the communication with bank entities. Plaid SDK requires to run a
-[shell script](https://github.com/plaid/link/blob/master/ios/LinkKit.framework/prepare_for_distribution.sh) that removes
-any non-iOS device code from the framework which is included to support running their framework in the iOS Simulator but
-may not be distributed via the App Store.
+## Using the SDK
 
-To run execute this script you have to add a New Run Script Phase in the Build Phases of your project with the following
-content:
-
-```bash
-LINK_ROOT=${PODS_ROOT:+$PODS_ROOT/Plaid/ios}
-cp "${LINK_ROOT:-$PROJECT_DIR}"/LinkKit.framework/prepare_for_distribution.sh "${CODESIGNING_FOLDER_PATH "/Frameworks/LinkKit.framework/prepare_for_distribution.sh
-"${CODESIGNING_FOLDER_PATH}"/Frameworks/LinkKit.framework/prepare_for_distribution.sh
-```
-
-More details in the <a href="https://plaid.com/docs/link/ios/#add-run-script" target="_blank">Plaid SDK documentation</a>
-
-### Example app
-
-There is an example app which make use of the SDK. You can install the example app to check out the Link flow.
-
-1. In the `Example/Demo/ViewControllers/MainViewController.swift`, edit the organization and project keys (from Sandbox):
-  * Define the `<Organization Key>`.
-  * Define the `<Project Key>`.
-1. Select Scheme `ShiftSDK Demo Sandbox`
-1. Build and Run (CMD+R)
-
-### Using the SDKs
-
-To run the SDK first you need to set it up with your keys and the current context:
-```swift
-ShiftPlatform.defaultManager().initializeWithDeveloperKey("<Organization Key>",
-                                                           projectKey: "<Project Key>")
-```
-This is required for both the Link SDK and the Card SDK.
-Optionally, you can configure if you want to enable certificate pinning, if you want to trust self-signed certificates, and which environment you want to target ("sanbox" or "production")
+To run the SDK you must first register a project in order to get a `API KEY`. Please contact Apto to create a project for you. Then, initialise the SDK by passing the public api key:
 
 ```swift
-ShiftPlatform.defaultManager().initializeWithDeveloperKey("<Organization Key>",
-                                                          projectKey: "<Project Key>",
-                                                          environment: .sandbox,
-                                                          setupCertPinning: true)
+AptoPlatform.defaultManager().initializeWithApiKey("API KEY")
 ```
 
-After you have done the setup, you can launch the desired SDK passing in the context.
+This will initialise the SDK to operate in production mode. If you want to use it in sandbox mode, an additional parameter can be sent during initialization:
 
-For the Link flow use:
 ```swift
-let shiftSession = ShiftSession()
-shiftSession.startLinkFlow(from: self)
-```
-For the Shift card flow use:
-```swift
-let shiftSession = ShiftSession()
-shiftSession.startCardFlow(from: self)
+AptoPlatform.defaultManager().initializeWithApiKey("API KEY",
+                                                   environment: .sandbox)
 ```
 
-Additionally, you can initialize the SDK with the datapoints you already have:
+## User session token
+
+In order to authenticate a user and retrieve a user session token, the Apto mobile API provides mechanisms to sign up or sign in. Both mechanisms are based on verifying the user primary credentials, which can be user's phone or email, depending on the configuration of your project. Please contact us to set up the proper primary credential for your users.
+
+Typical steps to obtain a user token involve:
+
+1. Verify user's primary credential. Once verified, the verification contains data showing if the credential belongs to an existing user or to a new user.
+
+2.1) If the credential belongs to an existing user, verify user's secondary credential.
+2.2) Obtain a user session token by using the login method on the SDK. That method receives the two previous verifications. The user token will be stored and handled by the SDK.
+
+3.1) If the credential doesn't belong to any existing user, create a new user with the verified credential and obtain a user token. The user token will be stored and handled by the SDK.
+
+## Verifications
+
+### Start a new verification
+
+To start a new verification, you can use the following SDK methods:
 
 ```swift
-let userDataPoints = DataPointList()
-(... add datapoints to the datapoint list)
-
-let shiftSession = ShiftSession()
-shiftSession.startLinkFlow(from: self initialUserData: userDataPoints)
+AptoPlatform.defaultManager().startPhoneVerification(phone) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let verification):
+    // The verification started and the user received an SMS with a single use code.
+  }
+}
 ```
 
 ```swift
-let userDataPoints = DataPointList()
-(... add datapoints to the datapoint list)
-
-let shiftSession = ShiftSession()
-shiftSession.startCardFlow(from: self initialUserData: userDataPoints)
+AptoPlatform.defaultManager().startEmailVerification(email) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let verification):
+    // The verification started and the user received an email with a single use code.
+  }
+}
 ```
 
-In all previous cases you **must retain** the `shiftSession` object.
+### Restart a verification
 
-#### Platform delegate
-
-You can set a delegate to the `ShiftPlatform` class to be notified some events.
+Verifications can be restarted, by using the following SDK method:
 
 ```swift
-ShiftPlatform.defaultManager().delegate = delegateObject
+AptoPlatform.defaultManager().restartVerification(verification) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let verification):
+    // The verification started and the user received a new secret via email or phone.
+  }
+}
 ```
 
-The `delegate` methods are called in response to important events happening in the SDK:
+### Complete a verification
 
-1. Once the SDK is completely initialized and ready to be use (see section **Using the SDKs**) the method
-`shiftSDKInitialized(developerKey:, projectKey:)` is called.
-2. Every time the user authentication status change (sign up, sign in or logout) the method `newUserTokenReceived(_:)`
-is called with the user authentication token or `nil` for logout.
+To complete a new verification, you can use the following SDK method:
 
-The other two methods in the `ShiftPlatformDelegate` are **optional** and related to handling network reachability
-issues. Those methods are optional because the SDK already implement a way to handle reachability issues (a UI blocking
-view with a message is presented and automatically dismissed when the connection is restored). You can still receive
-the notification and kept the responsibility of handling the issues to the SDK by returning `false` from the
-implementation of the method `networkConnectionError()`.
+```swift
+verification.secret = pin // pin entered by the user
+AptoPlatform.defaultManager().completeVerification(verification) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let verification):
+    if verification.status == .passed {
+      // The verification succeeded. If it belongs to an existing user, it will contain a non null `secondaryCredential`.
+    }
+    else {
+      // The verification failed: the secret is invalid.
+    }
+  }
+}
+```
 
-**Note:** Once the connection is restored all failed requests will be automatically sent independently if the issue is
-handled by you or by the SDK.
+## Users management
 
-3. When a network request fails due to reachability issues we call the function `networkConnectionError() -> Bool`. As
-previously mentioned you can decide if you want to handle the issue or if you transfer the responsibility to the
-Shift SDK.
-4. Once the Internet connection is restored we call the method `networkConnectionRestored()`. The behaviour of the SDK
-in this case will depends on the value returned from the previous call to `networkConnectionError()`.
+### Creating a new user
 
-### Github pages
+Once the primary credential has been verified, you can use the following SDK method to create a new user:
 
-The Github pages website is stored in the `dev-gh-pages` branch.
+```swift
+// Prepare a DataPointList containing the verified user's primary credential.
+let primaryCredential = PhoneNumber(countryCode, phoneNumber)
+primaryCredential.verification = verification // The verification obtained before.
+let userPII = DataPointList()
+userPII.add(primaryCredential)
 
-# License
+AptoPlatform.defaultManager().createUser(userData: userPII) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let user):
+    // The user created. It contains the user id and the user session token.
+  }
+}
+```
 
-All rights reserved Shift Financial, Inc (C) 2018. See the [LICENSE](LICENSE.md) file for more info.
+### Login with an existing user
+
+Once the primary and secondary credentials have been verified, you can use the following SDK method to obtain a user token for an existing user:
+
+```swift
+AptoPlatform.defaultManager().loginUserWith([phoneVerification, dobVerification]) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let user):
+    // The user logged in. The user variable contains the user id and the user session token.
+  }
+}
+```
+
+### Update user info
+
+To update user's info, use the following SDK method:
+
+```swift
+let userPII = DataPointList()
+// Add to userPII the datapoints that you want to update
+AptoPlatform.defaultManager().updateUserInfo(userPII) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let user):
+    // Update successful
+  }
+}
+```
+
+### Close user session
+
+To close the current user's session, use the following SDK method:
+
+```swift
+AptoPlatform.defaultManager().logout()
+```
+
+## Cards management
+
+### Get cards
+
+To retrieve the user cards, you can use the following SDK method:
+
+```swift
+AptoPlatform.defaultManager().fetchCards() { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let cards):
+    // cards contain an array of Card objects
+  }
+}
+```
+
+### Physical card activation
+
+Physical cards need to be activated by providing an activation code that is sent to the cardholder. In order to activate the physical card, you can use this SDK method:
+
+```swift
+AptoPlatform.defaultManager().activatePhysicalCard(cardId) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let result):
+    // Result contains information about the activation process and, if it failed, the reason why it failed.
+  }
+}
+```
+
+### Change card PIN
+
+In order to set the card PIN, you can use the following SDK method:
+
+```swift
+AptoPlatform.defaultManager().changeCardPIN(cardId, newPIN) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let card):
+    // Operation successful
+  }
+}
+```
+
+### Freeze / unfreeze card
+
+Cards can be freezed and unfreezed at any moment. Transactions of a freezed card will be rejected in the merchant's POS. To freeze / unfreeze cards, you can ue the following SDK methods:
+
+```swift
+AptoPlatform.defaultManager().lockCard(cardId) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let card):
+    // Operation successful
+  }
+}
+```
+
+```swift
+AptoPlatform.defaultManager().unlockCard(cardId) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let card):
+    // Operation successful
+  }
+}
+```
+
+## Funding Sources management
+
+Apto cards can be connected to different funding sources. You can obtain a list of the available funding sources for the current user, and connect one of them to a user's card.
+
+### Get a list of the available funding sources
+
+```swift
+AptoPlatform.defaultManager().fetchCardFundingSources(cardId) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let fundingSources):
+    // fundingSources contain a list of FundingSource objects.
+  }
+}
+```
+
+### Get the funding source connected to a card
+
+```swift
+AptoPlatform.defaultManager().fetchCardFundingSource(cardId) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let fundingSource):
+    // fundingSource is a FundingSource object.
+  }
+}
+```
+
+### Connect a funding source to a card
+
+```swift
+AptoPlatform.defaultManager().setCardFundingSource(cardId, fundingSourceId) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let fundingSource):
+    // Operation successful
+  }
+}
+```
+
+## Monthly spending stats
+
+To obtain information about the monthly spendings of a given card, classified by Category, you can use the following SDK method:
+
+```swift
+AptoPlatform.defaultManager().cardMonthlySpending(cardId, date) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let monthlySpending):
+    // monthlySpending contains the stats of the given month; spendings classified by transaction category and difference with the previous month.
+  }
+}
+```
+
+date represents the month of the spending stats.
+
+## Notification preferences
+
+Users can be notified via push notifications regarding several events (transactions, card status changes, etc.). The SDK offers some functions that allow the users to decide how they receive these notifications.
+
+### Obtain the current user notification preferences
+
+```swift
+AptoPlatform.defaultManager().fetchNotificationPreferences() { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let notificationPreferences):
+    // notificationPreferences contains all the information regarding the current user preferences.
+  }
+}
+```
+
+### Update the current user notification preferences
+
+```swift
+let preferences = NotificationPreferences()
+// Set the user preferences in `preferences`
+AptoPlatform.defaultManager().updateNotificationPreferences(preferences) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let notificationPreferences):
+    // Operation successful
+  }
+}
+```
+
+## Transactions management
+
+To get a list of transactions, you can use the following SDK method:
+
+```swift
+AptoPlatform.defaultManager().fetchCardTransactions(cardId, filters, forceRefresh) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let transactions):
+    // Operation successful
+  }
+}
+```
+
+The filters parameter allows you to filter the type of transactions that are returned by the SDK.
+
+The forceRefresh parameter controls whenever the SDK returns the local cached transaction list of whenever it asks for the transaction list through the Apto mobile API.
+
+## Contributing & Development
+
+We're looking forward to receive your feedback including new feature requests, bug fixes and documentation improvements. If you waht to help us, please take a look at the [issues](https://github.com/ShiftFinancial/apto-sdk-ios/issues) section in the repository first; maybe someone else had the same idea and it's an ongoing or even better a finished task! If what you want to share with us is not in the issues section, please [create one](https://github.com/ShiftFinancial/apto-sdk-ios/issues/new) and we'll get back to you as soon as possible.
+
+And, if you want to help us improve our SDK by adding a new feature or fixing a bug, we'll be glad to see your [pull requests!](https://github.com/ShiftFinancial/apto-sdk-ios/compare)
