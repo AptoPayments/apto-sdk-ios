@@ -81,7 +81,7 @@ public class NotificationGroup {
     public var email: Bool?
     public var sms: Bool?
 
-    init(push: Bool? = nil, email: Bool? = nil, sms: Bool? = nil) {
+    public init(push: Bool? = nil, email: Bool? = nil, sms: Bool? = nil) {
       self.push = push
       self.email = email
       self.sms = sms
@@ -93,10 +93,8 @@ public class NotificationGroup {
   public let state: NotificationGroup.State
   public let channel: NotificationGroup.Channel
 
-  init(groupId: NotificationGroup.GroupId,
-       category: NotificationGroup.Category,
-       state: NotificationGroup.State,
-       channel: NotificationGroup.Channel) {
+  public init(groupId: NotificationGroup.GroupId, category: NotificationGroup.Category, state: NotificationGroup.State,
+              channel: NotificationGroup.Channel) {
     self.groupId = groupId
     self.category = category
     self.state = state

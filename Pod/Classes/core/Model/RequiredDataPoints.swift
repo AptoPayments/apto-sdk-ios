@@ -53,7 +53,7 @@ func ==(lhs: RequiredDataPoint, rhs: RequiredDataPoint) -> Bool {
 
   open func add(requiredDataPoint: RequiredDataPoint) {
     requiredDataPoints[requiredDataPoint.type] = requiredDataPoint
-    if orderedDataPoints.index(where: { $0.type == requiredDataPoint.type }) == nil {
+    if orderedDataPoints.firstIndex(where: { $0.type == requiredDataPoint.type }) == nil {
       orderedDataPoints.append(requiredDataPoint)
     }
   }
@@ -62,7 +62,7 @@ func ==(lhs: RequiredDataPoint, rhs: RequiredDataPoint) -> Bool {
     if let _ = requiredDataPoints[type] {
       requiredDataPoints.removeValue(forKey: type)
     }
-    if let index = orderedDataPoints.index(where: { $0.type == type }) {
+    if let index = orderedDataPoints.firstIndex(where: { $0.type == type }) {
       orderedDataPoints.remove(at: index)
     }
   }

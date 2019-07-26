@@ -122,7 +122,7 @@ import TrustKit
   }
 
   @objc public func initializeWithApiKey(_ apiKey: String) {
-    self.initializeWithApiKey(apiKey, environment: .sandbox)
+    self.initializeWithApiKey(apiKey, environment: .production)
   }
 
   public func currentToken() -> AccessToken? {
@@ -659,8 +659,8 @@ import TrustKit
                                                               callback: callback)
   }
 
-  public func fetchCardConfiguration(forceRefresh: Bool = false, cardProductId: String,
-                                     callback: @escaping Result<CardConfiguration, NSError>.Callback) {
+  public func fetchCardProduct(cardProductId: String, forceRefresh: Bool = false,
+                               callback: @escaping Result<CardProduct, NSError>.Callback) {
     guard let projectKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
@@ -735,6 +735,17 @@ import TrustKit
     let balanceVersion: BalanceVersion = isFeatureEnabled(.useBalanceVersionV2) ? .v2 : .v1
     cardApplicationsStorage.issueCard(projectKey, userToken: accessToken.token, applicationId: applicationId,
                                       balanceVersion: balanceVersion, callback: callback)
+  }
+
+  public func issueCard(cardProduct: CardProduct, custodian: Custodian?,
+                        callback: @escaping Result<Card, NSError>.Callback) {
+    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+    let balanceVersion: BalanceVersion = isFeatureEnabled(.useBalanceVersionV2) ? .v2 : .v1
+    financialAccountsStorage.issueCard(apiKey, userToken: accessToken.token, cardProduct: cardProduct,
+                                       custodian: custodian, balanceVersion: balanceVersion, callback: callback)
   }
 
   public func cardMonthlySpending(_ cardId: String, date: Date,

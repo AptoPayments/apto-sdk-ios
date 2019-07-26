@@ -84,13 +84,13 @@ fileprivate var currencySymbols: [String: String] = [:]
   }
 
   override public init() {
-    self.amount.next(nil)
-    self.currency.next(nil)
+    self.amount.send(nil)
+    self.currency.send(nil)
   }
 
   public init(value: Double?, currency: String?) {
-    self.amount.next(value)
-    self.currency.next(currency)
+    self.amount.send(value)
+    self.currency.send(currency)
   }
 
   open func complete() -> Bool {
@@ -117,8 +117,8 @@ fileprivate var currencySymbols: [String: String] = [:]
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let amount = try container.decodeIfPresent(Double.self, forKey: .amount)
     let currency = try container.decodeIfPresent(String.self, forKey: .currency)
-    self.amount.next(amount)
-    self.currency.next(currency)
+    self.amount.send(amount)
+    self.currency.send(currency)
   }
 
   public func encode(to encoder: Encoder) throws {

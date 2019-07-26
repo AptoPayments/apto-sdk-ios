@@ -111,8 +111,8 @@ public protocol CountryRestrictedDataPoint {
 
   convenience public init(firstName: String?, lastName: String?, verified: Bool? = false) {
     self.init(type: .personalName, verified: verified)
-    self.firstName.next(firstName)
-    self.lastName.next(lastName)
+    self.firstName.send(firstName)
+    self.lastName.send(lastName)
     self.firstName.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.lastName.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
@@ -223,7 +223,7 @@ public protocol CountryRestrictedDataPoint {
     self.countryCode.observeNext { [weak self] countryCode in
       self?.invalidateVerification()
       guard let countryCode = countryCode else { return }
-      self?.country.next(Country(isoCode: PhoneHelper.sharedHelper().region(for: countryCode)))
+      self?.country.send(Country(isoCode: PhoneHelper.sharedHelper().region(for: countryCode)))
     }.dispose(in: disposeBag)
     self.phoneNumber.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
@@ -235,7 +235,7 @@ public protocol CountryRestrictedDataPoint {
 
   convenience public init(email: String?, verified: Bool?, notSpecified: Bool?) {
     self.init(type: .email, verified: verified, notSpecified: notSpecified)
-    self.email.next(email)
+    self.email.send(email)
     self.email.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.verified = verified
   }
@@ -272,7 +272,7 @@ public protocol CountryRestrictedDataPoint {
 
   convenience public init(date: Date?, verified: Bool? = false) {
     self.init(type: .birthDate, verified: verified)
-    self.date.next(date)
+    self.date.send(date)
     self.date.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.verified = verified
   }
@@ -354,9 +354,9 @@ public protocol CountryRestrictedDataPoint {
                           verified: Bool? = false,
                           notSpecified: Bool? = false) {
     self.init(type: .idDocument, verified: verified, notSpecified: notSpecified)
-    self.documentType.next(documentType)
-    self.value.next(value)
-    self.country.next(country)
+    self.documentType.send(documentType)
+    self.value.send(value)
+    self.country.send(country)
     self.documentType.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.value.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.country.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
@@ -415,12 +415,12 @@ public protocol CountryRestrictedDataPoint {
               zip: String?,
               verified: Bool? = false) {
     super.init(type: .address, verified: verified)
-    self.address.next(address)
-    self.apUnit.next(apUnit)
-    self.country.next(country)
-    self.city.next(city)
-    self.region.next(region)
-    self.zip.next(zip)
+    self.address.send(address)
+    self.apUnit.send(apUnit)
+    self.country.send(country)
+    self.city.send(city)
+    self.region.send(region)
+    self.zip.send(zip)
     self.address.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.apUnit.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.country.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
@@ -499,12 +499,12 @@ public protocol CountryRestrictedDataPoint {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let verified = try container.decodeIfPresent(Bool.self, forKey: .verified) ?? false
     super.init(type: .address, verified: verified)
-    self.address.next(try container.decodeIfPresent(String.self, forKey: .address))
-    self.apUnit.next(try container.decodeIfPresent(String.self, forKey: .apUnit))
-    self.country.next(try container.decodeIfPresent(Country.self, forKey: .country))
-    self.city.next(try container.decodeIfPresent(String.self, forKey: .city))
-    self.region.next(try container.decodeIfPresent(String.self, forKey: .region))
-    self.zip.next(try container.decodeIfPresent(String.self, forKey: .zip))
+    self.address.send(try container.decodeIfPresent(String.self, forKey: .address))
+    self.apUnit.send(try container.decodeIfPresent(String.self, forKey: .apUnit))
+    self.country.send(try container.decodeIfPresent(Country.self, forKey: .country))
+    self.city.send(try container.decodeIfPresent(String.self, forKey: .city))
+    self.region.send(try container.decodeIfPresent(String.self, forKey: .region))
+    self.zip.send(try container.decodeIfPresent(String.self, forKey: .zip))
   }
 
   public func encode(to encoder: Encoder) throws {
@@ -535,7 +535,7 @@ public protocol CountryRestrictedDataPoint {
 
   convenience public init(housingType: HousingType?, verified: Bool? = false) {
     self.init(type: .housing, verified: verified)
-    self.housingType.next(housingType)
+    self.housingType.send(housingType)
     self.housingType.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 
@@ -564,8 +564,8 @@ public protocol CountryRestrictedDataPoint {
 
   convenience public init(salaryFrequency: SalaryFrequency?, incomeType: IncomeType?, verified: Bool? = false) {
     self.init(type: .incomeSource, verified: verified)
-    self.salaryFrequency.next(salaryFrequency)
-    self.incomeType.next(incomeType)
+    self.salaryFrequency.send(salaryFrequency)
+    self.incomeType.send(incomeType)
     self.salaryFrequency.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.incomeType.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
@@ -596,8 +596,8 @@ public protocol CountryRestrictedDataPoint {
 
   convenience public init(netMonthlyIncome: Int?, grossAnnualIncome: Int?, verified: Bool?) {
     self.init(type: .income, verified: verified)
-    self.netMonthlyIncome.next(netMonthlyIncome)
-    self.grossAnnualIncome.next(grossAnnualIncome)
+    self.netMonthlyIncome.send(netMonthlyIncome)
+    self.grossAnnualIncome.send(grossAnnualIncome)
     self.netMonthlyIncome.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
     self.grossAnnualIncome.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
@@ -627,7 +627,7 @@ public protocol CountryRestrictedDataPoint {
 
   convenience public init(creditRange: Int?, verified: Bool? = false) {
     self.init(type: .creditScore, verified: verified)
-    self.creditRange.next(creditRange)
+    self.creditRange.send(creditRange)
     self.creditRange.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 
@@ -668,7 +668,7 @@ public protocol CountryRestrictedDataPoint {
 
   convenience public init(usedPaydayLoan: Bool?, verified: Bool? = false) {
     self.init(type: .paydayLoan, verified: verified)
-    self.usedPaydayLoan.next(usedPaydayLoan)
+    self.usedPaydayLoan.send(usedPaydayLoan)
     self.usedPaydayLoan.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 
@@ -696,7 +696,7 @@ public protocol CountryRestrictedDataPoint {
 
   convenience public init(memberOfArmedForces: Bool?, verified: Bool? = false) {
     self.init(type: .memberOfArmedForces, verified: verified)
-    self.memberOfArmedForces.next(memberOfArmedForces)
+    self.memberOfArmedForces.send(memberOfArmedForces)
     self.memberOfArmedForces.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 
@@ -724,7 +724,7 @@ public protocol CountryRestrictedDataPoint {
 
   convenience public init(timeAtAddress: TimeAtAddressOption?, verified: Bool? = false) {
     self.init(type: .timeAtAddress, verified: verified)
-    self.timeAtAddress.next(timeAtAddress)
+    self.timeAtAddress.send(timeAtAddress)
     self.timeAtAddress.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 

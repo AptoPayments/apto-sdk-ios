@@ -1,5 +1,5 @@
 //
-//  CardConfiguration.swift
+//  CardProject.swift
 //  AptoSDK
 //
 //  Created by Ivan Oliver Martínez on 18/02/2018.
@@ -35,14 +35,6 @@ public struct CardProduct {
   public let waitListBackgroundImage: String?
   public let waitListBackgroundColor: String?
   public let waitListAsset: String?
-}
-
-public class CardConfiguration {
-  public let cardProduct: CardProduct
-
-  init(cardProduct: CardProduct) {
-    self.cardProduct = cardProduct
-  }
 }
 
 extension JSON {

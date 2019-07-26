@@ -9,6 +9,7 @@ import UIKit
 
 public enum ExternalCredential {
   case oauth (OauthCredential)
+  case externalOauth(ExternalOauthCredential)
   case none
 }
 
@@ -29,6 +30,8 @@ extension ExternalCredential: Codable {
     switch self {
     case .oauth(let credentials):
       try container.encode(credentials, forKey: .oauth)
+    case .externalOauth(let externalCredentials):
+      try container.encode(externalCredentials, forKey: .externalOauth)
     case .none:
       break
     }
@@ -36,16 +39,18 @@ extension ExternalCredential: Codable {
 
   private enum CodingKeys: String, CodingKey {
     case oauth
+    case externalOauth
   }
 }
 
-public class OauthCredential: Codable {
+public class OauthCredential: NSObject, Codable {
   public let oauthTokenId: String
   public let userData: DataPointList?
 
   init(oauthTokenId: String, userData: DataPointList? = nil) {
     self.oauthTokenId = oauthTokenId
     self.userData = userData
+    super.init()
   }
 
   public required init(from decoder: Decoder) throws {
@@ -61,5 +66,15 @@ public class OauthCredential: Codable {
 
   private enum CodingKeys: String, CodingKey {
     case oauthTokenId
+  }
+}
+
+public class ExternalOauthCredential: NSObject, Codable {
+  public let oauthToken: String
+  public let refreshToken: String
+
+  public init(oauthToken: String, refreshToken: String) {
+    self.oauthToken = oauthToken
+    self.refreshToken = refreshToken
   }
 }

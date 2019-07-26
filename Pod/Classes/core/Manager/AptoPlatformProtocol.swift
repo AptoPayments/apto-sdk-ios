@@ -53,12 +53,6 @@ import Foundation
   @objc func sdkDeprecated()
 }
 
-extension AptoPlatformDelegate {
-  func shouldHandleNetworkConnectionError() -> Bool {
-    return true
-  }
-}
-
 public protocol AptoPlatformProtocol {
   var delegate: AptoPlatformDelegate? { get set }
 
@@ -71,10 +65,10 @@ public protocol AptoPlatformProtocol {
   func setCardOptions(_ cardOptions: CardOptions?)
   func fetchContextConfiguration(_ forceRefresh: Bool,
                                  callback: @escaping Result<ContextConfiguration, NSError>.Callback)
-  func fetchCardConfiguration(forceRefresh: Bool, cardProductId: String,
-                              callback: @escaping Result<CardConfiguration, NSError>.Callback)
   func fetchUIConfig() -> UIConfig?
   func fetchCardProducts(callback: @escaping Result<[CardProductSummary], NSError>.Callback)
+  func fetchCardProduct(cardProductId: String, forceRefresh: Bool,
+                        callback: @escaping Result<CardProduct, NSError>.Callback)
   func isFeatureEnabled(_ featureKey: FeatureKey) -> Bool
   func isShowDetailedCardActivityEnabled() -> Bool
   func setShowDetailedCardActivityEnabled(_ isEnabled: Bool)
@@ -125,6 +119,7 @@ public protocol AptoPlatformProtocol {
                         callback: @escaping Result<Void, NSError>.Callback)
   func cancelCardApplication(_ applicationId: String, callback: @escaping Result<Void, NSError>.Callback)
   func issueCard(applicationId: String, callback: @escaping Result<Card, NSError>.Callback)
+  func issueCard(cardProduct: CardProduct, custodian: Custodian?, callback: @escaping Result<Card, NSError>.Callback)
 
   // Card handling
   func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback)
@@ -170,9 +165,9 @@ public extension AptoPlatformProtocol {
     fetchContextConfiguration(forceRefresh, callback: callback)
   }
 
-  func fetchCardConfiguration(forceRefresh: Bool = false, cardProductId: String,
-                              callback: @escaping Result<CardConfiguration, NSError>.Callback) {
-    fetchCardConfiguration(forceRefresh: forceRefresh, cardProductId: cardProductId, callback: callback)
+  func fetchCardProduct(cardProductId: String, forceRefresh: Bool = false,
+                        callback: @escaping Result<CardProduct, NSError>.Callback) {
+    fetchCardProduct(cardProductId: cardProductId, forceRefresh: forceRefresh, callback: callback)
   }
 
   func fetchCurrentUserInfo(forceRefresh: Bool = false, filterInvalidTokenResult: Bool = false,

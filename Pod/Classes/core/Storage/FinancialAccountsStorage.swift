@@ -133,6 +133,9 @@ protocol FinancialAccountsStorageProtocol {
                        accountId: String,
                        date: Date,
                        callback: @escaping Result<MonthlySpending, NSError>.Callback)
+
+  func issueCard(_ apiKey: String, userToken: String, cardProduct: CardProduct, custodian: Custodian?,
+                 balanceVersion: BalanceVersion, callback: @escaping Result<Card, NSError>.Callback)
 }
 
 extension FinancialAccountsStorageProtocol {
@@ -588,7 +591,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.financialAccountFundingSources,
                          urlParameters: urlParameters)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
-    var data: [String: AnyObject] = [
+    let data: [String: AnyObject] = [
       "funding_source_type": "custodian_wallet" as AnyObject,
       "oauth_token_id": oauthCredentials.oauthTokenId as AnyObject
     ]
@@ -635,6 +638,32 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
         }
         return .success(spending)
       })
+    }
+  }
+
+  func issueCard(_ apiKey: String, userToken: String, cardProduct: CardProduct, custodian: Custodian?,
+                 balanceVersion: BalanceVersion, callback: @escaping Result<Card, NSError>.Callback) {
+    var data: [String: AnyObject] = [
+      "type": "card" as AnyObject,
+      "card_product_id": cardProduct.id as AnyObject,
+      "balance_version": balanceVersion.rawValue as AnyObject
+    ]
+    if let custodian = custodian {
+      data.merge(custodian.asJson, uniquingKeysWith: { $1 })
+    }
+    let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .issueCard)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+    transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
+      switch result {
+      case .failure(let error):
+        callback(.failure(error))
+      case .success(let json):
+        guard let card = json.card else {
+          callback(.failure(ServiceError(code: .jsonError)))
+          return
+        }
+        callback(.success(card))
+      }
     }
   }
 }

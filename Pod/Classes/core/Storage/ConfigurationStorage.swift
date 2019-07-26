@@ -19,7 +19,7 @@ protocol ConfigurationStorageProtocol {
                          userToken: String,
                          forceRefresh: Bool,
                          cardProductId: String,
-                         callback: @escaping Result<CardConfiguration, NSError>.Callback)
+                         callback: @escaping Result<CardProduct, NSError>.Callback)
   func cardProducts(_ apiKey: String, userToken: String,
                     callback: @escaping Result<[CardProductSummary], NSError>.Callback)
   func uiConfig() -> UIConfig?
@@ -36,7 +36,7 @@ extension ConfigurationStorageProtocol {
                          userToken: String,
                          forceRefresh: Bool = false,
                          cardProductId: String,
-                         callback: @escaping Result<CardConfiguration, NSError>.Callback) {
+                         callback: @escaping Result<CardProduct, NSError>.Callback) {
     cardConfiguration(apiKey, userToken: userToken, forceRefresh: forceRefresh, cardProductId: cardProductId,
                       callback: callback)
   }
@@ -50,7 +50,7 @@ extension ConfigurationStorageProtocol {
 class ConfigurationStorage: ConfigurationStorageProtocol {
   private let transport: JSONTransport
   private(set) var contextConfigurationCache: ContextConfiguration?
-  private var cardConfigurationCache: [String: CardConfiguration] = [:]
+  private var cardProductCache: [String: CardProduct] = [:]
   private let cache: ProjectBrandingCacheProtocol
   var cardOptions: CardOptions?
 
@@ -96,9 +96,9 @@ class ConfigurationStorage: ConfigurationStorageProtocol {
                          userToken: String,
                          forceRefresh: Bool = false,
                          cardProductId: String,
-                         callback: @escaping Result<CardConfiguration, NSError>.Callback) {
-    if let cardConfiguration = cardConfigurationCache[cardProductId], forceRefresh == false {
-      return callback(.success(cardConfiguration))
+                         callback: @escaping Result<CardProduct, NSError>.Callback) {
+    if let cardProduct = cardProductCache[cardProductId], forceRefresh == false {
+      return callback(.success(cardProduct))
     }
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.cardProduct,
                          urlParameters: [":cardProductId": cardProductId])
@@ -111,13 +111,13 @@ class ConfigurationStorage: ConfigurationStorageProtocol {
         callback(.failure(error))
         return
       case .success:
-        callback(result.flatMap { json -> Result<CardConfiguration, NSError> in
-          guard let cardConfiguration = json.linkObject as? CardConfiguration else {
+        callback(result.flatMap { json -> Result<CardProduct, NSError> in
+          guard let cardProduct = json["card_product"].cardProduct else {
             return .failure(ServiceError(code: .jsonError))
           }
 
-          self.cardConfigurationCache[cardProductId] = cardConfiguration
-          return .success(cardConfiguration)
+          self.cardProductCache[cardProductId] = cardProduct
+          return .success(cardProduct)
         })
       }
     }

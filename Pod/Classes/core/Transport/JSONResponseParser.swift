@@ -49,8 +49,6 @@ extension JSON {
       return self.teamConfiguration
     case "project_configuration":
       return self.projectConfiguration
-    case "card_configuration":
-      return self.cardConfiguration
     case "card_product":
       return self.cardProduct
     case "application":
@@ -533,16 +531,6 @@ extension JSON {
                                 allowedCountries: allowedCountries,
                                 isTrackerActive: isTrackerActive,
                                 trackerAccessToken: trackerAccessToken)
-  }
-
-  var cardConfiguration: CardConfiguration? {
-    guard let cardProduct = self["card_product"].cardProduct else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse card config \(self)"))
-      return nil
-    }
-
-    return CardConfiguration(cardProduct: cardProduct)
   }
 
   var cardProduct: CardProduct? {

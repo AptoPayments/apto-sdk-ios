@@ -142,7 +142,7 @@ class UserStorage: UserStorageProtocol {
               $0.housingTypeId == housing.housingType.value!.housingTypeId // swiftlint:disable:this force_unwrapping
             }
             if let first = originalHousing.first {
-              housing.housingType.next(first)
+              housing.housingType.send(first)
             }
           }
         }
@@ -152,14 +152,14 @@ class UserStorage: UserStorageProtocol {
               $0.incomeTypeId == incomeSource.incomeType.value!.incomeTypeId // swiftlint:disable:this force_unwrapping
             }
             if let first = originalIncomeType.first {
-              incomeSource.incomeType.next(first)
+              incomeSource.incomeType.send(first)
             }
             let originalSalaryFrequency = availableSalaryFrequencies.filter {
               // swiftlint:disable:next force_unwrapping
               $0.salaryFrequencyId == incomeSource.salaryFrequency.value!.salaryFrequencyId
             }
             if let first = originalSalaryFrequency.first {
-              incomeSource.salaryFrequency.next(first)
+              incomeSource.salaryFrequency.send(first)
             }
           }
         }

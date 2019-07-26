@@ -68,7 +68,7 @@ open class AddressManager {
           return
         }
         else {
-          if let found = results.index(where: { $0.postalCode == address.zip.value }) {
+          if let found = results.firstIndex(where: { $0.postalCode == address.zip.value }) {
             let obj = results[found]
             result(Result.success(obj))
             return

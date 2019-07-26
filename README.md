@@ -48,10 +48,10 @@ Typical steps to obtain a user token involve:
 
 1. Verify user's primary credential. Once verified, the verification contains data showing if the credential belongs to an existing user or to a new user.
 
-1. If the credential belongs to an existing user, verify user's secondary credential.
-   1. Obtain a user session token by using the login method on the SDK. That method receives the two previous verifications. The user token will be stored and handled by the SDK.
+2.1) If the credential belongs to an existing user, verify user's secondary credential.
+2.2) Obtain a user session token by using the login method on the SDK. That method receives the two previous verifications. The user token will be stored and handled by the SDK.
 
-1. If the credential doesn't belong to any existing user, create a new user with the verified credential and obtain a user token. The user token will be stored and handled by the SDK.
+3.1) If the credential doesn't belong to any existing user, create a new user with the verified credential and obtain a user token. The user token will be stored and handled by the SDK.
 
 ## Verifications
 
@@ -187,7 +187,39 @@ To close the current user's session, use the following SDK method:
 AptoPlatform.defaultManager().logout()
 ```
 
-## Cards management
+## Card programs management
+
+### Get available card programs
+
+To get a list of all the available card programs that can be used to issue cards, you can use the following SDK method:
+
+```swift
+AptoPlatform.defaultManager().fetchCardProducts() { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let cardProductSummary):
+    // cardProductSummary is a CardProductSummary object
+  }
+}
+```
+
+### Get card program details
+
+To get the details of a specific card program, you can use the following SDK method:
+
+```swift
+AptoPlatform.defaultManager().fetchCardProduct(cardProductId) { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let cardProduct):
+    // cardProduct is a CardProduct object
+  }
+}
+```
 
 ### Get cards
 
@@ -200,7 +232,51 @@ AptoPlatform.defaultManager().fetchCards() { [weak self] result in
   case .failure(let error):
     // Do something with the error
   case .success(let cards):
-    // cards contain an array of Card objects
+    // cards contains an array of Card objects
+  }
+}
+```
+
+## Cards management
+
+### Issue a card
+
+To issue a card, you can use the following SDK methods:
+
+```swift
+let custodian = Custodian() // Set up custodian data here. You might need to set the externalCredentials property.
+AptoPlatform.defaultManager().fetchCardProducts { result in
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let cardProducts):
+    // Dependong on the card program setup you might need to allow the user to select the appropriate card product
+    // instead of using the first one. You can use the fetchCardProduct(cardProductId:forceRefresh:callback:) method
+    // to get more details about the card product.
+    AptoPlatform.defaultManager().issueCard(cardProducts[0], custodian: custodian) { result in
+      switch result {
+      case .failure(let error):
+        // Do something with the error
+      case .success(let card):
+        // card contains the issued Card object
+      }
+    }
+  }
+}
+```
+
+### Get cards
+
+To retrieve the user cards, you can use the following SDK method:
+
+```swift
+AptoPlatform.defaultManager().fetchCards() { [weak self] result in
+  guard let self = self else { return }
+  switch result {
+  case .failure(let error):
+    // Do something with the error
+  case .success(let cards):
+    // cards contains an array of Card objects
   }
 }
 ```
