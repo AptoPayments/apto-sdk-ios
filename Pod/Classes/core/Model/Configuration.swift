@@ -37,8 +37,12 @@ public struct ProjectBranding: Codable {
   public let textPrimaryColor: String
   public let textSecondaryColor: String
   public let textTertiaryColor: String
-  public let textTopBarColor: String
+  public let textTopBarPrimaryColor: String
+  public let textTopBarSecondaryColor: String
   public let textLinkColor: String
+  public let textLinkUnderlined: Bool
+  public let textButtonColor: String
+  public let buttonCornerRadius: Float
   public let uiPrimaryColor: String
   public let uiSecondaryColor: String
   public let uiTertiaryColor: String
@@ -46,7 +50,13 @@ public struct ProjectBranding: Codable {
   public let uiSuccessColor: String
   public let uiNavigationPrimaryColor: String
   public let uiNavigationSecondaryColor: String
+  public let uiBackgroundOverlayColor: String
   public let textMessageColor: String
+  public let badgeBackgroundPositiveColor: String
+  public let badgeBackgroundNegativeColor: String
+  public let showToastTitle: Bool
+  public let transactionDetailsCollapsable: Bool
+  public let disclaimerBackgroundColor: String
   public let uiStatusBarStyle: String
   public let logoUrl: String?
   public let uiTheme: String

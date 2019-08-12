@@ -32,10 +32,11 @@ public enum StatusBarStyle: String, Equatable {
 
   // UI colors
 
+  private let uiColorDisabledAlpha: CGFloat = 0.2
   open lazy var uiPrimaryColor = UIColor.colorFromHex(0x419743)
-  open lazy var uiPrimaryColorDisabled = uiPrimaryColor.withAlphaComponent(0.2)
+  open lazy var uiPrimaryColorDisabled = uiPrimaryColor.withAlphaComponent(uiColorDisabledAlpha)
   open lazy var uiSecondaryColor = UIColor.colorFromHex(0x2b2d35)
-  open lazy var uiSecondaryColorDisabled = uiSecondaryColor.withAlphaComponent(0.2)
+  open lazy var uiSecondaryColorDisabled = uiSecondaryColor.withAlphaComponent(uiColorDisabledAlpha)
   open lazy var uiTertiaryColor = UIColor.colorFromHex(0xd5d5d7)
   open lazy var uiSuccessColor = UIColor.colorFromHex(0x161d24)
   open lazy var uiErrorColor = UIColor.colorFromHex(0xdb1d0e)
@@ -43,8 +44,13 @@ public enum StatusBarStyle: String, Equatable {
 
   // Navigation bar
 
+  private let navBarDisabledAlpha: CGFloat = 0.4
   open lazy var uiNavigationPrimaryColor = uiPrimaryColor
   open lazy var uiNavigationSecondaryColor = uiPrimaryColor
+  open lazy var textTopBarPrimaryColor = UIColor.white
+  open lazy var disabledTextTopPrimaryBarColor = textTopBarPrimaryColor.withAlphaComponent(navBarDisabledAlpha)
+  open lazy var textTopBarSecondaryColor = UIColor.white
+  open lazy var disabledTextTopBarSecondaryColor = textTopBarSecondaryColor.withAlphaComponent(navBarDisabledAlpha)
 
   // Icon colors
 
@@ -54,21 +60,37 @@ public enum StatusBarStyle: String, Equatable {
 
   // Text colors
 
+  private let textDisabledAlpha: CGFloat = 0.3
   open lazy var textLinkColor = UIColor.colorFromHex(0x419743)
   open lazy var textPrimaryColor = UIColor.colorFromHex(0x2b2d35)
-  open lazy var textPrimaryColorDisabled = textPrimaryColor.withAlphaComponent(0.3)
+  open lazy var textPrimaryColorDisabled = textPrimaryColor.withAlphaComponent(textDisabledAlpha)
   open lazy var textSecondaryColor = UIColor.colorFromHex(0x54565f)
-  open lazy var textSecondaryColorDisabled = textSecondaryColor.withAlphaComponent(0.3)
+  open lazy var textSecondaryColorDisabled = textSecondaryColor.withAlphaComponent(textDisabledAlpha)
   open lazy var textTertiaryColor = UIColor.colorFromHex(0xbbbdbd)
+  @available(*, deprecated, renamed: "textTopBarPrimaryColor")
   open lazy var textTopBarColor = UIColor.white
-  open lazy var disabledTextTopBarColor = textTopBarColor.withAlphaComponent(0.4)
+  @available(*, deprecated, renamed: "disabledTextTopPrimaryBarColor")
+  open lazy var disabledTextTopBarColor = textTopBarColor.withAlphaComponent(navBarDisabledAlpha)
   open lazy var textMessageColor = UIColor.white
   open lazy var textButtonColor = UIColor.white
+  open lazy var underlineLinks = true
 
   // Stats
 
   open lazy var statsDifferenceIncreaseBackgroundColor = UIColor.colorFromHex(0x61CA00)
   open lazy var statsDifferenceDecreaseBackgroundColor = UIColor.colorFromHex(0x326700)
+
+  // Toast
+
+  open lazy var showToastTitle = true
+
+  // Transaction details
+
+  open lazy var transactionDetailsShowDetailsSectionTitle = true
+
+  // Disclaimer
+
+  open lazy var disclaimerBackgroundColor = UIColor.colorFromHex(0xf2f3f4)
 
   // Fonts
 
@@ -78,7 +100,8 @@ public enum StatusBarStyle: String, Equatable {
   open lazy var shiftTitleFont = UIFont.systemFont(ofSize: 26)
   open lazy var shiftFont = UIFont.systemFont(ofSize: 18)
 
-  open lazy var overlayBackgroundColor = UIColor.colorFromHex(0x3C4A5B, alpha: 0.65)
+  private let overlayBackgroundAlpha: Double = 0.65
+  open lazy var overlayBackgroundColor = UIColor.colorFromHex(0x3C4A5B, alpha: overlayBackgroundAlpha)
 
   // Form customization
 
@@ -183,8 +206,13 @@ private extension UIConfig {
     textPrimaryColor = UIColor.colorFromHexString(branding.textPrimaryColor)!
     textSecondaryColor = UIColor.colorFromHexString(branding.textSecondaryColor)!
     textTertiaryColor = UIColor.colorFromHexString(branding.textTertiaryColor)!
-    textTopBarColor = UIColor.colorFromHexString(branding.textTopBarColor)!
+    textTopBarColor = UIColor.colorFromHexString(branding.textTopBarPrimaryColor)!
+    textTopBarPrimaryColor = UIColor.colorFromHexString(branding.textTopBarPrimaryColor)!
+    textTopBarSecondaryColor = UIColor.colorFromHexString(branding.textTopBarSecondaryColor)!
     textLinkColor = UIColor.colorFromHexString(branding.textLinkColor)!
+    underlineLinks = branding.textLinkUnderlined
+    textButtonColor = UIColor.colorFromHexString(branding.textButtonColor)!
+    buttonCornerRadius = CGFloat(branding.buttonCornerRadius)
     uiPrimaryColor = UIColor.colorFromHexString(branding.uiPrimaryColor)!
     uiSecondaryColor = UIColor.colorFromHexString(branding.uiSecondaryColor)!
     uiTertiaryColor = UIColor.colorFromHexString(branding.uiTertiaryColor)!
@@ -192,7 +220,14 @@ private extension UIConfig {
     uiSuccessColor = UIColor.colorFromHexString(branding.uiSuccessColor)!
     uiNavigationPrimaryColor = UIColor.colorFromHexString(branding.uiNavigationPrimaryColor)!
     uiNavigationSecondaryColor = UIColor.colorFromHexString(branding.uiNavigationSecondaryColor)!
+    overlayBackgroundColor = UIColor.colorFromHexString(branding.uiBackgroundOverlayColor,
+                                                        alpha: overlayBackgroundAlpha)!
     textMessageColor = UIColor.colorFromHexString(branding.textMessageColor)!
+    statsDifferenceIncreaseBackgroundColor = UIColor.colorFromHexString(branding.badgeBackgroundPositiveColor)!
+    statsDifferenceDecreaseBackgroundColor = UIColor.colorFromHexString(branding.badgeBackgroundNegativeColor)!
+    showToastTitle = branding.showToastTitle
+    transactionDetailsShowDetailsSectionTitle = branding.transactionDetailsCollapsable
+    disclaimerBackgroundColor = UIColor.colorFromHexString(branding.disclaimerBackgroundColor)!
     uiStatusBarStyle = StatusBarStyle(rawValue: branding.uiStatusBarStyle)!
     uiTheme = UITheme(rawValue: branding.uiTheme)!
     // swiftlint:enable force_unwrapping

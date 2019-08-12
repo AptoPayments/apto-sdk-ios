@@ -150,28 +150,7 @@ extension JSONTransportEnvironment: BaseURLProvider {
     case .development:
       return "https://ux.dev2.8583.io/v1"
     case .staging:
-      return "https://stg.ledge.me/v1"
-    case .sandbox:
-      return "https://api.ux.sbx.aptopayments.com/v1"
-    case .live:
-      return "https://api.ux.8583.io/v1"
-    }
-  }
-}
-
-protocol DocsBaseURLProvider {
-  func docsBaseUrl() -> String
-}
-
-extension JSONTransportEnvironment: DocsBaseURLProvider {
-  func docsBaseUrl() -> String {
-    switch self {
-    case .local:
-      return "http://local.ledge.me:5001/v1"
-    case .development:
-      return "https://api.ux.dev2.8583.io/v1"
-    case .staging:
-      return "https://stg.ledge.me/v1"
+      return "https://ux.stg.8583.io/v1"
     case .sandbox:
       return "https://api.ux.sbx.aptopayments.com/v1"
     case .live:
@@ -196,7 +175,7 @@ extension JSONTransportEnvironment: PCIVaultURLProvider {
     case .development:
       return "https://vault.ux.dev2.8583.io/v1"
     case .staging:
-      return "https://vault.stg.ledge.me/v1"
+      return "https://vault.ux.stg.8583.io/v1"
     case .sandbox:
       return "https://vault.ux.sbx.aptopayments.com/v1"
     case .live:
