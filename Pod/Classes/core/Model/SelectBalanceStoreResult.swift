@@ -35,6 +35,7 @@ public enum SelectBalanceStoreResultType: String {
 public struct SelectBalanceStoreResult {
   public let result: SelectBalanceStoreResultType
   public let errorCode: Int?
+  private let errorMessageKeys: [String]?
 
   public var isSuccess: Bool {
     return result == .valid
@@ -46,6 +47,9 @@ public struct SelectBalanceStoreResult {
   public var errorMessage: String {
     guard isError, let errorCode = self.errorCode else {
       return ""
+    }
+    if let customMessage = self.message {
+      return customMessage.podLocalized().replace(["<<ERROR_CODE>>": String(errorCode)])
     }
     switch errorCode {
     case balanceStoreCountryUnsupported:
@@ -90,9 +94,56 @@ public struct SelectBalanceStoreResult {
     }
   }
 
-  public init(result: SelectBalanceStoreResultType, errorCode: Int?) {
+  private var message: String? {
+    guard isError, let errorCode = self.errorCode else {
+      return nil
+    }
+    switch errorCode {
+    case balanceStoreCountryUnsupported:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_wrong_country.message") })
+    case balanceStoreRegionUnsupported:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_wrong_region.message") })
+    case balanceStoreAddressUnverified:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_unverified_address.message") })
+    case balanceStoreCurrencyUnsupported:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_unsupported_currency.message") })
+    case balanceStoreCannotCaptureFunds:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_cant_capture_funds.message") })
+    case balanceStoreInsufficientFunds:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_insufficient_funds.message") })
+    case balanceStoreBalanceNotFound:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_balance_not_found.message") })
+    case balanceStoreAccessTokenInvalid:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_access_token_invalid.message") })
+    case balanceStoreScopesRequired:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_scopes_required.message") })
+    case balanceStoreValidationsLegalNameMissing:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_missing_legal_name.message") })
+    case balanceStoreValidationsDateOfBirthMissing:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_missing_birthdate.message") })
+    case balanceStoreValidationsDateOfBirthError:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_wrong_birthdate.message") })
+    case balanceStoreValidationsAddressMissing:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_missing_address.message") })
+    case balanceStoreValidationsEmailMissing:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_missing_email.message") }) 
+    case balanceStoreValidationsEmailError:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_wrong_email.message") })
+    case balanceValidationsEmailSendsDisabled:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_email_sends_disabled.message") })
+    case balanceValidationsInsufficientApplicationLimit:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_insufficient_application_limit.message") })
+    case identityNotVerified:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_identity_not_verified.message") })
+    default:
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_unknown.message") })
+    }
+  }
+
+  public init(result: SelectBalanceStoreResultType, errorCode: Int?, errorMessageKeys: [String]? = nil) {
     self.result = result
     self.errorCode = errorCode
+    self.errorMessageKeys = errorMessageKeys
   }
 }
 

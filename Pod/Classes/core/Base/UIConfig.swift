@@ -105,6 +105,8 @@ public enum StatusBarStyle: String, Equatable {
 
   // Form customization
 
+  open lazy var fieldCornerRadius: CGFloat = 12
+
   open lazy var buttonCornerRadius: CGFloat = {
     switch uiTheme {
     case .theme1:

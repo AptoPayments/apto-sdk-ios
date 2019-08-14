@@ -567,6 +567,11 @@ extension JSON {
         return nil
     }
 
+    // Copies
+    if let copies = self["labels"].dictionaryObject as? [String: String] {
+      StringLocalizationStorage.shared.append(copies)
+    }
+
     // Optional properties
     let summary = self["name"].string
     let website = self["website"].string

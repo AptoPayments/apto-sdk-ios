@@ -626,7 +626,7 @@
 
 "manage.shift.card.most-recents" = "Most recent";
 
-"manage.shift.card.no.transactions" = "You have no transactions yet.\nStart now!";
+"manage_card.transaction_list.empty_case.title" = "You have no transactions yet.\nStart now!";
 
 "manage.shift.card.activate-card-button.title" = "Activate my Card";
 
@@ -1169,6 +1169,14 @@
 "select_balance_store.login.call_to_action.title" = "Connect to Coinbase";
 
 "select_balance_store.login.new_user.title" = "<a href='https://www.coinbase.com/signup'>Not a Coinbase user? Tap here.</a>";
+
+"external_oauth.login.title" = "Link your account";
+
+"external_oauth.login.explanation" = "Link your Coinbase account with your Card.";
+
+"external_oauth.login.call_to_action.title" = "Connect to Coinbase";
+
+"external_oauth.login.new_user.title" = "<a href='https://www.coinbase.com/signup'>Not a Coinbase user? Tap here.</a>";
 
 "select_balance_store.oauth_confirm.address.confirmation_start" = "Your card will be sent to address:";
 

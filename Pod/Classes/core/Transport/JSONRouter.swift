@@ -148,7 +148,7 @@ extension JSONTransportEnvironment: BaseURLProvider {
     case .local:
       return "http://local.ledge.me:5001/v1"
     case .development:
-      return "https://ux.dev2.8583.io/v1"
+      return "https://api.ux.dev2.8583.io/v1"
     case .staging:
       return "https://ux.stg.8583.io/v1"
     case .sandbox:
