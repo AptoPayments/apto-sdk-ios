@@ -11,6 +11,7 @@ public struct OauthAttempt {
   public enum Status: String {
     case pending
     case passed
+    case failed
   }
 
   public let id: String
