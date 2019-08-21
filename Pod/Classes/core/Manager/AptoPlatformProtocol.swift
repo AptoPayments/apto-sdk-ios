@@ -79,7 +79,8 @@ public protocol AptoPlatformProtocol {
   func currentPushToken() -> String?
 
   // User handling
-  func createUser(userData: DataPointList, callback: @escaping Result<ShiftUser, NSError>.Callback)
+  func createUser(userData: DataPointList, custodianUid: String?,
+                  callback: @escaping Result<ShiftUser, NSError>.Callback)
   func loginUserWith(verifications: [Verification], callback: @escaping Result<ShiftUser, NSError>.Callback)
   func fetchCurrentUserInfo(forceRefresh: Bool, filterInvalidTokenResult: Bool,
                             callback: @escaping Result<ShiftUser, NSError>.Callback)
@@ -119,7 +120,8 @@ public protocol AptoPlatformProtocol {
                         callback: @escaping Result<Void, NSError>.Callback)
   func cancelCardApplication(_ applicationId: String, callback: @escaping Result<Void, NSError>.Callback)
   func issueCard(applicationId: String, callback: @escaping Result<Card, NSError>.Callback)
-  func issueCard(cardProduct: CardProduct, custodian: Custodian?, callback: @escaping Result<Card, NSError>.Callback)
+  func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]?,
+                 callback: @escaping Result<Card, NSError>.Callback)
 
   // Card handling
   func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback)
@@ -170,10 +172,20 @@ public extension AptoPlatformProtocol {
     fetchCardProduct(cardProductId: cardProductId, forceRefresh: forceRefresh, callback: callback)
   }
 
+  func createUser(userData: DataPointList, custodianUid: String? = nil,
+                  callback: @escaping Result<ShiftUser, NSError>.Callback) {
+    createUser(userData: userData, custodianUid: custodianUid, callback: callback)
+  }
+
   func fetchCurrentUserInfo(forceRefresh: Bool = false, filterInvalidTokenResult: Bool = false,
                             callback: @escaping Result<ShiftUser, NSError>.Callback) {
     fetchCurrentUserInfo(forceRefresh: forceRefresh, filterInvalidTokenResult: filterInvalidTokenResult,
                          callback: callback)
+  }
+
+  func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,
+                 callback: @escaping Result<Card, NSError>.Callback) {
+    issueCard(cardProduct: cardProduct, custodian: custodian, additionalFields: additionalFields, callback: callback)
   }
 
   func fetchFinancialAccount(_ accountId: String, forceRefresh: Bool = true, retrieveBalances: Bool = false,

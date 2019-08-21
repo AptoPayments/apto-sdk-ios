@@ -9,7 +9,6 @@
 import Foundation
 
 protocol ConfigurationStorageProtocol {
-  var contextConfigurationCache: ContextConfiguration? { get }
   var cardOptions: CardOptions? {get set}
 
   func contextConfiguration(_ apiKey: String,

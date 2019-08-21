@@ -135,7 +135,8 @@ protocol FinancialAccountsStorageProtocol {
                        callback: @escaping Result<MonthlySpending, NSError>.Callback)
 
   func issueCard(_ apiKey: String, userToken: String, cardProduct: CardProduct, custodian: Custodian?,
-                 balanceVersion: BalanceVersion, callback: @escaping Result<Card, NSError>.Callback)
+                 balanceVersion: BalanceVersion, additionalFields: [String: AnyObject]?,
+                 callback: @escaping Result<Card, NSError>.Callback)
 }
 
 extension FinancialAccountsStorageProtocol {
@@ -642,7 +643,8 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
   }
 
   func issueCard(_ apiKey: String, userToken: String, cardProduct: CardProduct, custodian: Custodian?,
-                 balanceVersion: BalanceVersion, callback: @escaping Result<Card, NSError>.Callback) {
+                 balanceVersion: BalanceVersion, additionalFields: [String: AnyObject]?,
+                 callback: @escaping Result<Card, NSError>.Callback) {
     var data: [String: AnyObject] = [
       "type": "card" as AnyObject,
       "card_product_id": cardProduct.id as AnyObject,
@@ -650,6 +652,9 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
     ]
     if let custodian = custodian {
       data.merge(custodian.asJson, uniquingKeysWith: { $1 })
+    }
+    if let additionalFields = additionalFields {
+      data["additional_fields"] = additionalFields as AnyObject
     }
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .issueCard)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)

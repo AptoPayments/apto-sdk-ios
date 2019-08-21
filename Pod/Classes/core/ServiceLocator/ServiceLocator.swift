@@ -12,6 +12,6 @@ class ServiceLocator: ServiceLocatorProtocol {
   lazy var networkLocator: NetworkLocatorProtocol = NetworkLocator()
   lazy var storageLocator: StorageLocatorProtocol = StorageLocator()
 
-  private(set) var platform: AptoPlatformProtocol = AptoPlatform.defaultManager()
+  private(set) lazy var platform: AptoPlatformProtocol = AptoPlatform.defaultManager()
   lazy var analyticsManager: AnalyticsServiceProtocol = AnalyticsManager.instance
 }

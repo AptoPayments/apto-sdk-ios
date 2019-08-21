@@ -61,7 +61,12 @@ import TrustKit
   private lazy var userPreferencesStorage = serviceLocator.storageLocator.userPreferencesStorage()
   private lazy var userTokenStorage = serviceLocator.storageLocator.userTokenStorage()
   private let pushNotificationsManager = PushNotificationsManager()
-  private lazy var serviceLocator = ServiceLocator.shared
+  private lazy var serviceLocator: ServiceLocatorProtocol = ServiceLocator.shared
+
+  init(serviceLocator: ServiceLocatorProtocol = ServiceLocator.shared) {
+    super.init()
+    self.serviceLocator = serviceLocator
+  }
 
   deinit {
     self.removeNotificationObservers()
@@ -167,14 +172,15 @@ import TrustKit
     serviceLocator.analyticsManager.logoutUser()
   }
 
-  public func createUser(userData: DataPointList, callback: @escaping Result<ShiftUser, NSError>.Callback) {
+  public func createUser(userData: DataPointList, custodianUid: String? = nil,
+                         callback: @escaping Result<ShiftUser, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
       return
     }
 
-    userStorage.createUser(apiKey, userData: userData) { [weak self] result in
+    userStorage.createUser(apiKey, userData: userData, custodianUid: custodianUid) { [weak self] result in
       guard let self = self else { return }
       switch result {
       case .failure(let error): callback(.failure(error))
@@ -737,7 +743,7 @@ import TrustKit
                                       balanceVersion: balanceVersion, callback: callback)
   }
 
-  public func issueCard(cardProduct: CardProduct, custodian: Custodian?,
+  public func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,
                         callback: @escaping Result<Card, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
@@ -745,7 +751,8 @@ import TrustKit
     }
     let balanceVersion: BalanceVersion = isFeatureEnabled(.useBalanceVersionV2) ? .v2 : .v1
     financialAccountsStorage.issueCard(apiKey, userToken: accessToken.token, cardProduct: cardProduct,
-                                       custodian: custodian, balanceVersion: balanceVersion, callback: callback)
+                                       custodian: custodian, balanceVersion: balanceVersion,
+                                       additionalFields: additionalFields, callback: callback)
   }
 
   public func cardMonthlySpending(_ cardId: String, date: Date,

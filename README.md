@@ -145,6 +145,17 @@ AptoPlatform.defaultManager().createUser(userData: userPII) { [weak self] result
 }
 ```
 
+The `createUser` method also accepts an optional `custodianUid` parameter:
+
+```swift
+let custodianUid = "your_platform_user_id"
+AptoPlatform.defaultManager().createUser(userData: userPII, custodianUid: custodianUid) { [weak self] result in
+  ...
+}
+```
+
+this parameter can be used to send Apto the id of the user in your platform so future notifications (webhooks) can contain that information, making easier matching the event with the user in your platform.
+
 ### Login with an existing user
 
 Once the primary and secondary credentials have been verified, you can use the following SDK method to obtain a user token for an existing user:
@@ -253,7 +264,7 @@ AptoPlatform.defaultManager().fetchCardProducts { result in
     // Dependong on the card program setup you might need to allow the user to select the appropriate card product
     // instead of using the first one. You can use the fetchCardProduct(cardProductId:forceRefresh:callback:) method
     // to get more details about the card product.
-    AptoPlatform.defaultManager().issueCard(cardProducts[0], custodian: custodian) { result in
+    AptoPlatform.defaultManager().issueCard(cardProduct: cardProducts[0], custodian: custodian) { result in
       switch result {
       case .failure(let error):
         // Do something with the error
@@ -262,6 +273,19 @@ AptoPlatform.defaultManager().fetchCardProducts { result in
       }
     }
   }
+}
+```
+
+The `issueCard` method also accepts an optional `additionalFields` parameter that can be used to send Apto additional data required to card issuance that is not captured during the user creation process. For a list of allowed fields and values contact us.
+
+```swift
+let additionalFields: [String: AnyObject] = [
+  "field1": "value1",
+  "field2": 2
+]
+AptoPlatform.defaultManager().issueCard(cardProduct: cardProduct, custodian: custodian,
+                                        additionalFields: additionalFields) { result in
+  ...
 }
 ```
 

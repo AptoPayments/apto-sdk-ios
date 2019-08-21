@@ -37,6 +37,29 @@ public struct CardProduct {
   public let waitListAsset: String?
 }
 
+// Useful extension to easily create a CardProduct in the ObjC wrapper issueCard method
+public extension CardProduct {
+  init(id: String, teamId: String, name: String) {
+    self.id = id
+    self.teamId = teamId
+    self.name = name
+    self.summary = nil
+    self.website = nil
+    self.cardholderAgreement = nil
+    self.privacyPolicy = nil
+    self.termsAndConditions = nil
+    self.faq = nil
+    self.status = .enabled
+    self.shared = false
+    self.disclaimerAction = WorkflowAction(actionId: nil, name: nil, order: nil, status: nil, actionType: .issueCard,
+                                           configuration: nil)
+    self.cardIssuer = "Shift"
+    self.waitListBackgroundImage = nil
+    self.waitListBackgroundColor = nil
+    self.waitListAsset = nil
+  }
+}
+
 extension JSON {
   var cardProductSummary: CardProductSummary? {
     guard let id = self["id"].string else {
