@@ -75,6 +75,7 @@ public protocol AptoPlatformProtocol {
 
   // User tokens handling
   func currentToken() -> AccessToken?
+  func setUserToken(_ userToken: String)
   func clearUserToken()
   func currentPushToken() -> String?
 
@@ -121,7 +122,7 @@ public protocol AptoPlatformProtocol {
   func cancelCardApplication(_ applicationId: String, callback: @escaping Result<Void, NSError>.Callback)
   func issueCard(applicationId: String, callback: @escaping Result<Card, NSError>.Callback)
   func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]?,
-                 callback: @escaping Result<Card, NSError>.Callback)
+                 initialFundingSourceId: String?, callback: @escaping Result<Card, NSError>.Callback)
 
   // Card handling
   func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback)
@@ -184,8 +185,9 @@ public extension AptoPlatformProtocol {
   }
 
   func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,
-                 callback: @escaping Result<Card, NSError>.Callback) {
-    issueCard(cardProduct: cardProduct, custodian: custodian, additionalFields: additionalFields, callback: callback)
+                 initialFundingSourceId: String? = nil, callback: @escaping Result<Card, NSError>.Callback) {
+    issueCard(cardProduct: cardProduct, custodian: custodian, additionalFields: additionalFields,
+              initialFundingSourceId: initialFundingSourceId, callback: callback)
   }
 
   func fetchFinancialAccount(_ accountId: String, forceRefresh: Bool = true, retrieveBalances: Bool = false,

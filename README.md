@@ -53,6 +53,14 @@ Typical steps to obtain a user token involve:
 
 3.1) If the credential doesn't belong to any existing user, create a new user with the verified credential and obtain a user token. The user token will be stored and handled by the SDK.
 
+### Set user token
+
+Use this method to specify a user session token (obtained using the Apto B2B API) to be used by the SDK. This is optional, if a session token is not provided, the SDK will verify the user to obtain one.
+
+```swift
+AptoPlatform.defaultManager().setUserToken("user_token")
+```
+
 ## Verifications
 
 ### Start a new verification
@@ -276,15 +284,17 @@ AptoPlatform.defaultManager().fetchCardProducts { result in
 }
 ```
 
-The `issueCard` method also accepts an optional `additionalFields` parameter that can be used to send Apto additional data required to card issuance that is not captured during the user creation process. For a list of allowed fields and values contact us.
+The `issueCard` method also accepts an optional `additionalFields` parameter that can be used to send Apto additional data required to card issuance that is not captured during the user creation process. For a list of allowed fields and values contact us. You can also use `initialFundingSourceId` to specify the id of the wallet that will be connected to the card when issued. Only applies to debit card programs. For additional information regarding this parameter, contact us.
 
 ```swift
 let additionalFields: [String: AnyObject] = [
   "field1": "value1",
   "field2": 2
 ]
+let initialFundingSourceId = "initial_funding_source_id"
 AptoPlatform.defaultManager().issueCard(cardProduct: cardProduct, custodian: custodian,
-                                        additionalFields: additionalFields) { result in
+                                        additionalFields: additionalFields,
+                                        initialFundingSourceId: initialFundingSourceId) { result in
   ...
 }
 ```

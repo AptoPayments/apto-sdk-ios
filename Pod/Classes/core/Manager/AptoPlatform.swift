@@ -130,6 +130,13 @@ import TrustKit
     self.initializeWithApiKey(apiKey, environment: .production)
   }
 
+  public func setUserToken(_ userToken: String) {
+    let primaryCredential: DataPointType = userTokenStorage.currentTokenPrimaryCredential() ?? .phoneNumber
+    let secondaryCredential: DataPointType = userTokenStorage.currentTokenSecondaryCredential() ?? .email
+    userTokenStorage.setCurrent(token: userToken, withPrimaryCredential: primaryCredential,
+                                andSecondaryCredential: secondaryCredential)
+  }
+
   public func currentToken() -> AccessToken? {
     guard let token = self.userTokenStorage.currentToken() else {
       return nil
@@ -744,7 +751,7 @@ import TrustKit
   }
 
   public func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,
-                        callback: @escaping Result<Card, NSError>.Callback) {
+                        initialFundingSourceId: String? = nil, callback: @escaping Result<Card, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
@@ -752,7 +759,8 @@ import TrustKit
     let balanceVersion: BalanceVersion = isFeatureEnabled(.useBalanceVersionV2) ? .v2 : .v1
     financialAccountsStorage.issueCard(apiKey, userToken: accessToken.token, cardProduct: cardProduct,
                                        custodian: custodian, balanceVersion: balanceVersion,
-                                       additionalFields: additionalFields, callback: callback)
+                                       additionalFields: additionalFields,
+                                       initialFundingSourceId: initialFundingSourceId, callback: callback)
   }
 
   public func cardMonthlySpending(_ cardId: String, date: Date,
