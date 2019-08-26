@@ -1078,13 +1078,13 @@
 
 "physical.card.activation.succeed.title" = "Physical Card";
 
-"physical.card.activation.succeed.label.title" = "Congratulations!";
+"manage_card.get_pin_nue.title" = "Congratulations!";
 
-"physical.card.activation.succeed.label.message" = "Your physical Shift Card has been enabled. We've set a random PIN code for your card.";
+"manage_card.get_pin_nue.explanation" = "Your physical Shift Card has been enabled. We've set a random PIN code for your card.";
 
-"physical.card.activation.succeed.button.title" = "Get my PIN";
+"manage_card.get_pin_nue.call_to_action.title" = "Get my PIN";
 
-"physical.card.activation.succeed.call.charge" = "PIN is obtained via phone call and charge may be applied by your mobile network operator.";
+"manage_card.get_pin_nue.footer" = "PIN is obtained via phone call and charge may be applied by your mobile network operator.";
 
 "card.settings.funding_sources.title" = "Funding Sources";
 
