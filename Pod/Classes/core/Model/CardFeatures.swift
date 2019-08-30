@@ -78,7 +78,7 @@ public struct IVR: Codable {
 }
 
 public struct AllowedBalanceType: Codable {
-  public let type: CustodianType
+  public let type: String
   public let baseUri: String
 }
 
@@ -107,7 +107,7 @@ extension JSON {
   }
 
   var allowedBalanceType: AllowedBalanceType? {
-    guard let rawType = self["balance_type"].string, let balanceType = CustodianType(rawValue: rawType),
+    guard let balanceType = self["balance_type"].string,
           let uri = self["base_uri"].string else {
       ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                             reason: "Can't parse AllowedBalanceType \(self)"))

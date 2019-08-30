@@ -53,8 +53,6 @@ extension JSON {
       return self.cardProduct
     case "application":
       return self.application
-    case "bank_account":
-      return self.bankAccount
     case "card":
       return self.card
     case "card_details":
@@ -873,19 +871,6 @@ extension JSON {
       icon: icon)
   }
 
-  var bankAccount: BankAccount? {
-    guard let
-      id = self["account_id"].string,
-      let bankName = self["bank_name"].string,
-      let lastFourDigits = self["last_four"].string
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse bank account \(self)"))
-        return nil
-    }
-    let verified = self["verified"].bool
-    return BankAccount(accountId: id, bankName: bankName, lastFourDigits: lastFourDigits, state: .active, verified:verified)
-  }
-
   var card: Card? {
     guard let id = self["account_id"].string,
           let state = self["state"].string,
@@ -1111,9 +1096,8 @@ extension JSON {
   }
 
   var custodian: Custodian? {
-    guard let rawCustodianType = self["custodian_type"].string,
-          let name = self["name"].string,
-          let custodianType = CustodianType(rawValue: rawCustodianType) else {
+    guard let custodianType = self["custodian_type"].string,
+          let name = self["name"].string else {
       ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                             reason: "Can't parse custodian \(self)"))
       return nil

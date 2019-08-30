@@ -412,7 +412,7 @@ class UserStorage: UserStorageProtocol {
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     let parameters = [
       "data_points": userData.jsonSerialize() as AnyObject,
-      "provider": custodian.custodianType.name().lowercased() as AnyObject,
+      "provider": custodian.custodianType.lowercased() as AnyObject,
       "oauth_token_id": oauthCredentials.oauthTokenId as AnyObject
     ]
     transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
@@ -435,7 +435,7 @@ class UserStorage: UserStorageProtocol {
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .fetchOauthUserData)
     let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     let parameters = [
-      "provider": custodian.custodianType.name().lowercased() as AnyObject,
+      "provider": custodian.custodianType.lowercased() as AnyObject,
       "oauth_token_id": oauthCredentials.oauthTokenId as AnyObject
     ]
     transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in

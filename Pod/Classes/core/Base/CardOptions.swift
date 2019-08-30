@@ -6,7 +6,6 @@
 //
 @objc public enum FeatureKey: Int {
   case showActivateCardButton
-  case useBalanceVersionV2
   case showStatsButton
   case showNotificationPreferences
   case showDetailedCardActivityOption
@@ -19,7 +18,6 @@
   override init() {
     self.features = [
       .showActivateCardButton: true,
-      .useBalanceVersionV2: false,
       .showStatsButton: false,
       .showNotificationPreferences: false,
       .showDetailedCardActivityOption: false

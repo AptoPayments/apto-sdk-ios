@@ -37,7 +37,6 @@ protocol CardApplicationsStorageProtocol {
   func issueCard(_ apiKey: String,
                  userToken: String,
                  applicationId: String,
-                 balanceVersion: BalanceVersion,
                  callback: @escaping Result<Card, NSError>.Callback)
 }
 
@@ -167,11 +166,9 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
   func issueCard(_ apiKey: String,
                  userToken: String,
                  applicationId: String,
-                 balanceVersion: BalanceVersion,
                  callback: @escaping Result<Card, NSError>.Callback) {
     let parameters = [
-      "application_id": applicationId as AnyObject,
-      "balance_version": balanceVersion.rawValue as AnyObject
+      "application_id": applicationId as AnyObject
     ]
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.issueCard)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)

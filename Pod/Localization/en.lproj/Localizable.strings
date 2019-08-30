@@ -636,14 +636,6 @@
 
 "manage_card.activate_physical_card.top_bar_item.title" = "Enable your physical card!";
 
-"manage.shift.card.enter-code.title" = "Enable your physical card";
-
-"manage.shift.card.enter-code.message" = "Enable your card by entering the activation code that came attached with your physical card.";
-
-"manage.shift.card.enter-code.placeholder" = "Activation code";
-
-"manage.shift.card.enter-code.submit" = "Submit";
-
 /* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Views/ManageShiftCardMainViewTheme1.swift */
 
 "invalid-balance.title" = "Invalid funding source";
@@ -663,6 +655,16 @@
 "manage_card.activate_physical_card_overlay.message" = "Received your physical Shift Card? Nice! Tap here to enable it.";
 
 "manage_card.activate_physical_card_overlay.call_to_action.title" = "Enable now";
+
+"manage_card.activate_physical_card_code.title" = "Enable your physical card";
+
+"manage_card.activate_physical_card_code.message" = "Enable your card by entering the activation code that came attached with your physical card.";
+
+"manage_card.activate_physical_card_code.placeholder" = "Activation code";
+
+"manage_card.activate_physical_card_code.call_to_action" = "Submit";
+
+"manage_card.activate_physical_card_code.cancel" = "Cancel";
 
 /* * ./Pod/Classes/ledgeaccountskit/SelectFinancialAccountModule/Add Card/CreditCardView.swift */
 

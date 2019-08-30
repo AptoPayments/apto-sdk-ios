@@ -14,7 +14,7 @@ extension Custodian {
     }
     var data: [String: AnyObject] = [
       "type" : "custodian" as AnyObject,
-      "custodian_type": custodianType.rawValue as AnyObject
+      "custodian_type": custodianType as AnyObject
     ]
     if let credentials = self.externalCredentials {
       data["credential"] = credentials.asJson as AnyObject

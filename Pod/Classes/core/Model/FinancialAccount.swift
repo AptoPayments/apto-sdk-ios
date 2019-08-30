@@ -128,45 +128,6 @@ public enum KYCState: String, Codable {
   }
 }
 
-@objc open class BankAccount: FinancialAccount {
-  let bankName: String
-  let lastFourDigits: String
-
-  public init(accountId: String,
-              bankName: String,
-              lastFourDigits: String,
-              state: FinancialAccountState,
-              verified: Bool? = false) {
-    self.bankName = bankName
-    self.lastFourDigits = lastFourDigits
-    super.init(accountId: accountId, type: .bank, state: state, verified: verified)
-  }
-
-  override open func quickDescription() -> String {
-    return "\(bankName) (...\(lastFourDigits))"
-  }
-
-  // MARK: - Codable
-  public required init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.bankName = try container.decode(String.self, forKey: .bankName)
-    self.lastFourDigits = try container.decode(String.self, forKey: .lastFourDigits)
-    try super.init(from: decoder)
-  }
-
-  public override func encode(to encoder: Encoder) throws {
-    try super.encode(to: encoder)
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(bankName, forKey: .bankName)
-    try container.encode(lastFourDigits, forKey: .lastFourDigits)
-  }
-
-  private enum CodingKeys: String, CodingKey {
-    case bankName
-    case lastFourDigits
-  }
-}
-
 public enum CardIssuer: String, Codable {
   case marqeta
   case shift
@@ -491,9 +452,4 @@ public enum FundingSourceState: String, Codable {
     case nativeBalance
     case custodian
   }
-}
-
-public enum BalanceVersion: String {
-  case v1
-  case v2
 }

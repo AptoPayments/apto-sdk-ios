@@ -423,17 +423,6 @@ import TrustKit
     userStorage.restartVerification(apiKey, verificationId: verification.verificationId, callback: callback)
   }
 
-  // TODO: Review the whole BankAccount functionality
-  func addBankAccounts(_ publicToken: String, callback: @escaping Result<[BankAccount], NSError>.Callback) {
-    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
-      let error = BackendError(code: .invalidSession, reason: nil)
-      callback(.failure(error))
-      return
-    }
-    financialAccountsStorage.addBankAccounts(userToken: accessToken.token, apiKey: apiKey, publicToken: publicToken,
-                                             callback: callback)
-  }
-
   public func completeVerification(_ verification: Verification,
                                    callback: @escaping Result<Verification, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
@@ -525,7 +514,7 @@ import TrustKit
                                           callback: callback)
   }
 
-  public func verifyOauthAttemptStatus(_ attempt: OauthAttempt, custodianType: CustodianType,
+  public func verifyOauthAttemptStatus(_ attempt: OauthAttempt, custodianType: String,
                                        callback: @escaping Result<Custodian?, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
@@ -745,9 +734,8 @@ import TrustKit
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    let balanceVersion: BalanceVersion = isFeatureEnabled(.useBalanceVersionV2) ? .v2 : .v1
     cardApplicationsStorage.issueCard(projectKey, userToken: accessToken.token, applicationId: applicationId,
-                                      balanceVersion: balanceVersion, callback: callback)
+                                      callback: callback)
   }
 
   public func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,
@@ -756,10 +744,8 @@ import TrustKit
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    let balanceVersion: BalanceVersion = isFeatureEnabled(.useBalanceVersionV2) ? .v2 : .v1
     financialAccountsStorage.issueCard(apiKey, userToken: accessToken.token, cardProduct: cardProduct,
-                                       custodian: custodian, balanceVersion: balanceVersion,
-                                       additionalFields: additionalFields,
+                                       custodian: custodian, additionalFields: additionalFields,
                                        initialFundingSourceId: initialFundingSourceId, callback: callback)
   }
 

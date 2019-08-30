@@ -97,10 +97,6 @@ protocol FinancialAccountsStorageProtocol {
                                         accountId: String,
                                         fundingSourceId: String,
                                         callback: @escaping Result<FundingSource, NSError>.Callback)
-  func addBankAccounts(userToken: String,
-                       apiKey: String,
-                       publicToken: String,
-                       callback: @escaping Result<[BankAccount], NSError>.Callback)
   func activatePhysical(_ apiKey: String,
                         userToken: String,
                         accountId: String,
@@ -135,8 +131,8 @@ protocol FinancialAccountsStorageProtocol {
                        callback: @escaping Result<MonthlySpending, NSError>.Callback)
 
   func issueCard(_ apiKey: String, userToken: String, cardProduct: CardProduct, custodian: Custodian?,
-                 balanceVersion: BalanceVersion, additionalFields: [String: AnyObject]?,
-                 initialFundingSourceId: String?, callback: @escaping Result<Card, NSError>.Callback)
+                 additionalFields: [String: AnyObject]?, initialFundingSourceId: String?,
+                 callback: @escaping Result<Card, NSError>.Callback)
 }
 
 extension FinancialAccountsStorageProtocol {
@@ -435,29 +431,6 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
     }
   }
 
-  func addBankAccounts(userToken: String,
-                       apiKey: String,
-                       publicToken: String,
-                       callback: @escaping Result<[BankAccount], NSError>.Callback) {
-    let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.addBankAccounts)
-    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
-                                                             userToken: userToken)
-    var data = [String: AnyObject]()
-    data["public_token"] = publicToken as AnyObject
-    data["type"] = "bank_account" as AnyObject
-    self.transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
-      callback(result.flatMap { json -> Result<[BankAccount], NSError> in
-        guard let bankAccounts = json.linkObject as? [Any] else {
-          return .failure(ServiceError(code: .jsonError))
-        }
-        let parsedBankAccounts = bankAccounts.compactMap { obj -> BankAccount? in
-          return obj as? BankAccount
-        }
-        return .success(parsedBankAccounts)
-      })
-    }
-  }
-
   func activatePhysical(_ apiKey: String,
                         userToken: String,
                         accountId: String,
@@ -643,12 +616,11 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
   }
 
   func issueCard(_ apiKey: String, userToken: String, cardProduct: CardProduct, custodian: Custodian?,
-                 balanceVersion: BalanceVersion, additionalFields: [String: AnyObject]?,
-                 initialFundingSourceId: String?, callback: @escaping Result<Card, NSError>.Callback) {
+                 additionalFields: [String: AnyObject]?, initialFundingSourceId: String?,
+                 callback: @escaping Result<Card, NSError>.Callback) {
     var data: [String: AnyObject] = [
       "type": "card" as AnyObject,
-      "card_product_id": cardProduct.id as AnyObject,
-      "balance_version": balanceVersion.rawValue as AnyObject
+      "card_product_id": cardProduct.id as AnyObject
     ]
     if let custodian = custodian {
       data.merge(custodian.asJson, uniquingKeysWith: { $1 })

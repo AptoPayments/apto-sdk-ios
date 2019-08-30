@@ -16,7 +16,7 @@ protocol OauthStorageProtocol {
   func verifyOauthAttemptStatus(_ apiKey: String,
                                 userToken: String,
                                 attempt: OauthAttempt,
-                                custodianType: CustodianType,
+                                custodianType: String,
                                 callback: @escaping Result<Custodian?, NSError>.Callback)
 }
 
@@ -32,7 +32,7 @@ class OauthStorage: OauthStorageProtocol {
                                 balanceType: AllowedBalanceType,
                                 callback: @escaping Result<OauthAttempt, NSError>.Callback) {
     let parameters = [
-      "provider": balanceType.type.name() as AnyObject,
+      "provider": balanceType.type as AnyObject,
       "base_uri": balanceType.baseUri as AnyObject,
       "redirect_url": "shift-sdk://oauth-finish" as AnyObject
     ]
@@ -51,7 +51,7 @@ class OauthStorage: OauthStorageProtocol {
   func verifyOauthAttemptStatus(_ apiKey: String,
                                 userToken: String,
                                 attempt: OauthAttempt,
-                                custodianType: CustodianType,
+                                custodianType: String,
                                 callback: @escaping Result<Custodian?, NSError>.Callback) {
     checkAttemptStatus(apiKey, userToken: userToken, attempt: attempt) { result in
       switch result {
@@ -63,7 +63,7 @@ class OauthStorage: OauthStorageProtocol {
             callback(.failure(BackendError(code: .incorrectParameters)))
             return
           }
-          let custodian = Custodian(custodianType: custodianType, name: custodianType.name())
+          let custodian = Custodian(custodianType: custodianType, name: custodianType)
           custodian.externalCredentials = .oauth(credentials)
           callback(.success(custodian))
         }

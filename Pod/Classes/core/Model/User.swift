@@ -37,17 +37,4 @@ extension ShiftUser {
     }
     return retVal
   }
-
-  public func bankAccountList() -> [BankAccount] {
-    var retVal = [BankAccount]()
-    guard let financialAccounts = self.userData.getDataPointsOf(type: .financialAccount) as? [FinancialAccount] else {
-      return retVal
-    }
-    for financialAccount in financialAccounts where financialAccount.accountType == .bank {
-      if let bankAccount = financialAccount as? BankAccount {
-        retVal.append(bankAccount)
-      }
-    }
-    return retVal
-  }
 }
