@@ -1048,13 +1048,9 @@
 
 "select-balance-store.title" = "Link your account";
 
-"external-oauth.coinbase.connect" = "Coinbase Connect";
+"external-oauth.coinbase.connect" = "Oauth Connect";
 
-"external-oauth.coinbase.access" = "Link your Coinbase account with your Card.";
-
-"external-oauth.coinbase.action" = "Connect to Coinbase";
-
-"external-oauth.coinbase.description" = "Connect Coinbase to spend online and offline at over 38 million merchants worldwide.";
+"external-oauth.coinbase.description" = "Connect your account to spend online and offline at over 38 million merchants worldwide.";
 
 "external-oauth.wrong-type.error" = "Funding source not supported";
 
@@ -1166,19 +1162,19 @@
 
 "select_balance_store.login.title" = "Link your account";
 
-"select_balance_store.login.explanation" = "Link your Coinbase account with your Card.";
+"select_balance_store.login.explanation" = "Link your account with your Card.";
 
-"select_balance_store.login.call_to_action.title" = "Connect to Coinbase";
+"select_balance_store.login.call_to_action.title" = "Connect to your account";
 
-"select_balance_store.login.new_user.title" = "<a href='https://www.coinbase.com/signup'>Not a Coinbase user? Tap here.</a>";
+"select_balance_store.login.new_user.title" = "<a href='https://www.aptopayments.com'>Don't have an account? Tap here.</a>";
 
 "external_oauth.login.title" = "Link your account";
 
-"external_oauth.login.explanation" = "Link your Coinbase account with your Card.";
+"external_oauth.login.explanation" = "Link your account with your Card.";
 
-"external_oauth.login.call_to_action.title" = "Connect to Coinbase";
+"external_oauth.login.call_to_action.title" = "Connect to your account";
 
-"external_oauth.login.new_user.title" = "<a href='https://www.coinbase.com/signup'>Not a Coinbase user? Tap here.</a>";
+"external_oauth.login.new_user.title" = "<a href='https://www.aptopayments.com'>Don't have an account? Tap here.</a>";
 
 "select_balance_store.oauth_confirm.address.confirmation_start" = "Your card will be sent to address:";
 
@@ -1188,7 +1184,7 @@
 
 "select_balance_store.oauth_confirm.address.cancel_button" = "Cancel";
 
-"select_balance_store.login.error.title" = "Coinbase Connect";
+"select_balance_store.login.error.title" = "Oauth Connect";
 
 "select_balance_store.login.error.ok_button" = "Ok";
 
@@ -1210,17 +1206,17 @@
 
 "select_balance_store.login.error_cant_capture_funds.message" = "Cannot retrieve the balance";
 
-"select_balance_store.login.error_missing_legal_name.message" = "We were unable to retrieve your name from your Coinbase account";
+"select_balance_store.login.error_missing_legal_name.message" = "We were unable to retrieve your name from your account";
 
-"select_balance_store.login.error_missing_birthdate.message" = "We were unable to retrieve your date of birth from your Coinbase account";
+"select_balance_store.login.error_missing_birthdate.message" = "We were unable to retrieve your date of birth from your account";
 
-"select_balance_store.login.error_wrong_birthdate.message" = "The date of birth retrieved from your Coinbase account was invalid";
+"select_balance_store.login.error_wrong_birthdate.message" = "The date of birth retrieved from your account was invalid";
 
-"select_balance_store.login.error_missing_address.message" = "We were unable to retrieve your address from your Coinbase account";
+"select_balance_store.login.error_missing_address.message" = "We were unable to retrieve your address from your account";
 
-"select_balance_store.login.error_missing_email.message" = "We were unable to retrieve your email address from your Coinbase account";
+"select_balance_store.login.error_missing_email.message" = "We were unable to retrieve your email address from your account";
 
-"select_balance_store.login.error_wrong_email.message" = "The email address retrieved from your Coinbase account was invalid";
+"select_balance_store.login.error_wrong_email.message" = "The email address retrieved from your account was invalid";
 
 "select_balance_store.login.error_unknown.message" = "An error occurred, please try again or contact support (Error: <<ERROR_CODE>>)";
 
@@ -1234,9 +1230,9 @@
 
 "select_balance_store.oauth_confirm.title" = "Nice to meet you :)";
 
-"select_balance_store.oauth_confirm.explanation" = "These are the personal details you've saved securely on your Coinbase account. Tap below to confirm they're correct.";
+"select_balance_store.oauth_confirm.explanation" = "These are the personal details you've saved securely on your account. Tap below to confirm they're correct.";
 
-"select_balance_store.oauth_confirm.footer" = "Having issues with your delivery address?<br/><a href='https://www.coinbase.com/settings'>To make changes, go to the settings section in your Coinbase account and update your information</a>";
+"select_balance_store.oauth_confirm.footer" = "Having issues with your delivery address?<br/><a href='https://www.aptopayments.com'>To make changes, go to the settings section in your account and update your information</a>";
 
 "select_balance_store.oauth_confirm.first_name" = "First name";
 
@@ -1258,7 +1254,7 @@
 
 "select_balance_store.oauth_confirm.updated_pii_message.title" = "Your personal details";
 
-"select_balance_store.oauth_confirm.updated_pii_message.message" = "Looks like you've updated your personal details in your Coinbase account.";
+"select_balance_store.oauth_confirm.updated_pii_message.message" = "Looks like you've updated your personal details in your account.";
 
 "select_balance_store.oauth_confirm.updated_pii_message.ok_button" = "Continue";
 
@@ -1488,7 +1484,7 @@
 
 "manage_card.funding_source_selector.empty_case.message" = "Looks like you currently have no funding sources linked with your card.";
 
-"manage_card.funding_source_selector.empty_case.call_to_action" = "Connect to Coinbase";
+"manage_card.funding_source_selector.empty_case.call_to_action" = "Connect to your account";
 
 "manage_card.funding_source_selector.success.title" = "Congrats!";
 
