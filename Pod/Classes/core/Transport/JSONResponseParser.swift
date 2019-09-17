@@ -1133,7 +1133,15 @@ extension JSON {
       credentials = OauthCredential(oauthTokenId: accessTokenId, userData: userData)
     }
 
-    return OauthAttempt(id: id, status: status, url: url, credentials: credentials)
+    let error = self["error"].string
+    let errorMessage = self["error_message"].string
+
+    return OauthAttempt(id: id,
+                        status: status,
+                        url: url,
+                        credentials: credentials,
+                        error: error,
+                        errorMessage: errorMessage)
   }
 
   var amount: Amount? {

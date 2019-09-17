@@ -1176,9 +1176,9 @@
 
 "external_oauth.login.new_user.title" = "<a href='https://www.aptopayments.com'>Don't have an account? Tap here.</a>";
 
-"select_balance_store.oauth_confirm.address.confirmation_start" = "Your card will be sent to address:";
+"select_balance_store.oauth_confirm.address.confirmation_title" = "Get your physical card";
 
-"select_balance_store.oauth_confirm.address.confirmation_end" = "is that correct?";
+"select_balance_store.oauth_confirm.address.confirmation_message" = "We'll send your physical card to the address below:\n\n<<ADDRESS>>";
 
 "select_balance_store.oauth_confirm.address.ok_button" = "Confirm";
 
@@ -1225,6 +1225,38 @@
 "select_balance_store.login.error_insufficient_application_limit.message" = "To continue, you must increase the authorised amount of funds accesibles per day.";
 
 "select_balance_store.login.error_identity_not_verified.message" = "Account not verified";
+
+"select_balance_store.login.error_oauth_invalid_request.message" = "Invalid request";
+
+"select_balance_store.login.error_oauth_unauthorised_client.message" = "Unauthorised client";
+
+"select_balance_store.login.error_oauth_access_denied.message" = "Access deined";
+
+"select_balance_store.login.error_oauth_unsupported_response_type.message" = "Unsupported response type";
+
+"select_balance_store.login.error_oauth_invalid_scope.message" = "Invalid scope";
+
+"select_balance_store.login.error_oauth_server_error.message" = "Server error";
+
+"select_balance_store.login.error_oauth_temporarily_unavailable.message" = "Temporarily unavailable";
+
+"select_balance_store.login.error_oauth_unknown.message" = "Unknown error";
+
+"external_auth.login.error_oauth_invalid_request.message" = "Invalid request";
+
+"external_auth.login.error_oauth_unauthorised_client.message" = "Unauthorised client";
+
+"external_auth.login.error_oauth_access_denied.message" = "Access deined";
+
+"external_auth.login.error_oauth_unsupported_response_type.message" = "Unsupported response type";
+
+"external_auth.login.error_oauth_invalid_scope.message" = "Invalid scope";
+
+"external_auth.login.error_oauth_server_error.message" = "Server error";
+
+"external_auth.login.error_oauth_temporarily_unavailable.message" = "Temporarily unavailable";
+
+"external_auth.login.error_oauth_unknown.message" = "Unknown error";
 
 /* * Data confirmation */
 

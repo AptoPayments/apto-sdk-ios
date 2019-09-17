@@ -514,8 +514,8 @@ import TrustKit
                                           callback: callback)
   }
 
-  public func verifyOauthAttemptStatus(_ attempt: OauthAttempt, custodianType: String,
-                                       callback: @escaping Result<Custodian?, NSError>.Callback) {
+  public func verifyOauthAttemptStatus(_ attempt: OauthAttempt,
+                                       callback: @escaping Result<OauthAttempt, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
@@ -523,7 +523,6 @@ import TrustKit
     oauthStorage.verifyOauthAttemptStatus(apiKey,
                                           userToken: accessToken.token,
                                           attempt: attempt,
-                                          custodianType: custodianType,
                                           callback: callback)
   }
 

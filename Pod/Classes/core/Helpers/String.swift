@@ -85,7 +85,7 @@ extension String {
     }
   }
 
-  public func replace(_ occurrences: [String:String]) -> String {
+  public func replace(_ occurrences: [String: String]) -> String {
     var retVal = self
     for key in occurrences.keys {
       retVal = retVal.replacingOccurrences(of: key, with: occurrences[key]!)
@@ -93,15 +93,15 @@ extension String {
     return retVal
   }
 
-  public func prefixOf(_ size:Int) -> String? {
+  public func prefixOf(_ size: Int) -> String? {
     return String(self.prefix(size))
   }
 
-  func suffixOf(_ size:Int) -> String? {
+  func suffixOf(_ size: Int) -> String? {
     return String(self.suffix(size))
   }
 
-  func prefixUntil(_ string:String) -> String {
+  func prefixUntil(_ string: String) -> String {
     if let range = self.range(of: string) {
       let intIndex: Int = self.distance(from: self.startIndex, to: range.lowerBound)
       return self.prefixOf(intIndex)!
@@ -109,11 +109,11 @@ extension String {
     return self
   }
 
-  func startsWith(_ string:String) -> Bool {
+  func startsWith(_ string: String) -> Bool {
     return self.prefixOf(string.count) == string
   }
 
-  func endsWith(_ string:String) -> Bool {
+  public func endsWith(_ string: String) -> Bool {
     return self.suffixOf(string.count) == string
   }
 

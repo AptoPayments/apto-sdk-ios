@@ -91,8 +91,8 @@ public protocol AptoPlatformProtocol {
   // Oauth handling
   func startOauthAuthentication(balanceType: AllowedBalanceType,
                                 callback: @escaping Result<OauthAttempt, NSError>.Callback)
-  func verifyOauthAttemptStatus(_ attempt: OauthAttempt, custodianType: String,
-                                callback: @escaping Result<Custodian?, NSError>.Callback)
+  func verifyOauthAttemptStatus(_ attempt: OauthAttempt,
+                                callback: @escaping Result<OauthAttempt, NSError>.Callback)
   func saveOauthUserData(_ userData: DataPointList, custodian: Custodian,
                          callback: @escaping Result<OAuthSaveUserDataResult, NSError>.Callback)
   func fetchOAuthData(_ custodian: Custodian, callback: @escaping Result<OAuthUserData, NSError>.Callback)

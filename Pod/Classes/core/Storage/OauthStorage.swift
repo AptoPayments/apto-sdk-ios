@@ -16,8 +16,7 @@ protocol OauthStorageProtocol {
   func verifyOauthAttemptStatus(_ apiKey: String,
                                 userToken: String,
                                 attempt: OauthAttempt,
-                                custodianType: String,
-                                callback: @escaping Result<Custodian?, NSError>.Callback)
+                                callback: @escaping Result<OauthAttempt, NSError>.Callback)
 }
 
 class OauthStorage: OauthStorageProtocol {
@@ -51,33 +50,7 @@ class OauthStorage: OauthStorageProtocol {
   func verifyOauthAttemptStatus(_ apiKey: String,
                                 userToken: String,
                                 attempt: OauthAttempt,
-                                custodianType: String,
-                                callback: @escaping Result<Custodian?, NSError>.Callback) {
-    checkAttemptStatus(apiKey, userToken: userToken, attempt: attempt) { result in
-      switch result {
-      case .failure(let error):
-        callback(.failure(error))
-      case .success(let attempt):
-        if attempt.status == .passed {
-          guard let credentials = attempt.credentials else {
-            callback(.failure(BackendError(code: .incorrectParameters)))
-            return
-          }
-          let custodian = Custodian(custodianType: custodianType, name: custodianType)
-          custodian.externalCredentials = .oauth(credentials)
-          callback(.success(custodian))
-        }
-        else {
-          callback(.success(nil))
-        }
-      }
-    }
-  }
-
-  private func checkAttemptStatus(_ apiKey: String,
-                                  userToken: String,
-                                  attempt: OauthAttempt,
-                                  callback: @escaping Result<OauthAttempt, NSError>.Callback) {
+                                callback: @escaping Result<OauthAttempt, NSError>.Callback) {
     let urlParameters = [":attemptId": attempt.id]
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .oauthStatus, urlParameters: urlParameters)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
