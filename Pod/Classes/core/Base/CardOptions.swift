@@ -10,6 +10,8 @@
   case showNotificationPreferences
   case showDetailedCardActivityOption
   case hideFundingSourcesReconnectButton
+  case showAccountSettingsButton
+  case showMonthlyStatementsOption
 }
 
 @objc public class CardOptions: NSObject {
@@ -22,7 +24,9 @@
       .showStatsButton: false,
       .showNotificationPreferences: false,
       .showDetailedCardActivityOption: false,
-      .hideFundingSourcesReconnectButton: false
+      .hideFundingSourcesReconnectButton: false,
+      .showAccountSettingsButton: true,
+      .showMonthlyStatementsOption: true
     ]
     self.fontCustomizationOptions = nil
     super.init()

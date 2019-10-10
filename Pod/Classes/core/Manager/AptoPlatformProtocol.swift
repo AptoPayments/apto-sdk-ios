@@ -137,7 +137,13 @@ public protocol AptoPlatformProtocol {
   func changeCardPIN(_ cardId: String, pin: String, callback: @escaping Result<Card, NSError>.Callback)
   func fetchCardTransactions(_ cardId: String, filters: TransactionListFilters, forceRefresh: Bool,
                              callback: @escaping Result<[Transaction], NSError>.Callback)
+  @available(*, deprecated, renamed: "fetchMonthlySpending(cardId:month:year:callback:)")
   func cardMonthlySpending(_ cardId: String, date: Date, callback: @escaping Result<MonthlySpending, NSError>.Callback)
+  func fetchMonthlySpending(cardId: String, month: Int, year: Int,
+                            callback: @escaping Result<MonthlySpending, NSError>.Callback)
+  func fetchMonthlyStatementsPeriod(callback: @escaping Result<MonthlyStatementsPeriod, NSError>.Callback)
+  func fetchMonthlyStatementReport(month: Int, year: Int,
+                                   callback: @escaping Result<MonthlyStatementReport, NSError>.Callback)
 
   // Card funding sources handling
   func fetchCardFundingSources(_ cardId: String, page: Int?, rows: Int?, forceRefresh: Bool,

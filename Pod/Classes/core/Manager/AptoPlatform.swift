@@ -750,12 +750,34 @@ import TrustKit
 
   public func cardMonthlySpending(_ cardId: String, date: Date,
                                   callback: @escaping Result<MonthlySpending, NSError>.Callback) {
+    fetchMonthlySpending(cardId: cardId, month: date.month, year: date.year, callback: callback)
+  }
+
+  public func fetchMonthlySpending(cardId: String, month: Int, year: Int,
+                                   callback: @escaping Result<MonthlySpending, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    financialAccountsStorage.monthlySpending(apiKey, userToken: accessToken.token, accountId: cardId, date: date,
-                                             callback: callback)
+    financialAccountsStorage.fetchMonthlySpending(apiKey, userToken: accessToken.token, accountId: cardId, month: month,
+                                                  year: year, callback: callback)
+  }
+
+  public func fetchMonthlyStatementsPeriod(callback: @escaping Result<MonthlyStatementsPeriod, NSError>.Callback) {
+    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+    userStorage.fetchStatementsPeriod(apiKey, userToken: accessToken.token, callback: callback)
+  }
+
+  public func fetchMonthlyStatementReport(month: Int, year: Int,
+                                          callback: @escaping Result<MonthlyStatementReport, NSError>.Callback) {
+    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+    userStorage.fetchStatement(apiKey, userToken: accessToken.token, month: month, year: year, callback: callback)
   }
 
   public func runPendingNetworkRequests() {

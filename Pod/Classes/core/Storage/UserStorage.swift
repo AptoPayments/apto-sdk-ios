@@ -63,6 +63,10 @@ protocol UserStorageProtocol {
   func fetchOauthData(_ apiKey: String,
                       custodian: Custodian,
                       callback: @escaping Result<OAuthUserData, NSError>.Callback)
+  func fetchStatementsPeriod(_ apiKey: String, userToken: String,
+                             callback: @escaping Result<MonthlyStatementsPeriod, NSError>.Callback)
+  func fetchStatement(_ apiKey: String, userToken: String, month: Int, year: Int,
+                      callback: @escaping Result<MonthlyStatementReport, NSError>.Callback)
 }
 
 class UserStorage: UserStorageProtocol {
@@ -445,6 +449,47 @@ class UserStorage: UserStorageProtocol {
         }
         return .success(oauthUserData)
       })
+    }
+  }
+
+  func fetchStatementsPeriod(_ apiKey: String, userToken: String,
+                             callback: @escaping Result<MonthlyStatementsPeriod, NSError>.Callback) {
+    let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .monthlyStatementsPeriod)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+    transport.get(url, authorization: auth, parameters: nil, headers: nil, acceptRedirectTo: nil,
+                  filterInvalidTokenResult: true) { result in
+                    switch result {
+                    case .failure(let error):
+                      callback(.failure(error))
+                    case .success(let json):
+                      guard let period = json.monthlyStatementsPeriod else {
+                        callback(.failure(ServiceError(code: .jsonError)))
+                        return
+                      }
+                      callback(.success(period))
+                    }
+    }
+  }
+
+  func fetchStatement(_ apiKey: String, userToken: String, month: Int, year: Int,
+                      callback: @escaping Result<MonthlyStatementReport, NSError>.Callback) {
+    let parameters = [
+      "month": String(month) as AnyObject,
+      "year": String(year) as AnyObject,
+    ]
+    let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .monthlyStatements)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+    transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
+      switch result {
+      case .failure(let error):
+        callback(.failure(error))
+      case .success(let json):
+        guard let statementReport = json.monthlyStatementReport else {
+          callback(.failure(ServiceError(code: .jsonError)))
+          return
+        }
+        callback(.success(statementReport))
+      }
     }
   }
 }

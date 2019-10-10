@@ -22,50 +22,55 @@ fileprivate var currencySymbols: [String: String] = [:]
         return symbol
       }
       else if let symbol = customCurrencySymbols[currency] {
-        // We need the whitespaces to cheat NumberFormatter and have a whitespace between the value and symbol
-        let spacedSymbol = " \(symbol) "
-        currencySymbols[currency] = spacedSymbol
-        return spacedSymbol
+        currencySymbols[currency] = addSymbolSpaces(symbol: symbol)
       }
       else {
         if let identifier = Locale.availableIdentifiers.first(where: { Locale(identifier: $0).currencyCode == currency }) {
           currencySymbols[currency] = Locale(identifier: identifier).currencySymbol
         }
         else {
-          // We need the whitespaces to cheat NumberFormatter and have a whitespace between the value and symbol
-          currencySymbols[currency] = " \(currency) "
+          currencySymbols[currency] = addSymbolSpaces(symbol: currency)
         }
-        return currencySymbols[currency]
       }
+      return currencySymbols[currency]
     }
     return nil
   }
   open var text: String {
-    let formatter = NumberFormatter()
-    formatter.maximumFractionDigits = 10
-    formatter.numberStyle = .currency
-    if let currencySymbol = self.currencySymbol {
-      formatter.currencySymbol = currencySymbol
+    if let value = self.amount.value {
+      return textRepresentation(amount: value)
     }
-    var value: Double = 0
-    if let amount = self.amount.value {
-      value = round(amount, toSignificantDecimalFigures: 2)
-    }
-    return formatter.string(from: NSNumber(value: value))?.trimmingCharacters(in: CharacterSet.whitespaces) ?? "-"
+    return textRepresentation(amount: 0)
   }
   open var absText: String {
+    if let value = self.amount.value {
+      return textRepresentation(amount: abs(value))
+    }
+    return textRepresentation(amount: 0)
+  }
+
+  fileprivate func textRepresentation(amount: Double) -> String {
     let formatter = NumberFormatter()
     formatter.maximumFractionDigits = 10
     formatter.numberStyle = .currency
     if let currencySymbol = self.currencySymbol {
       formatter.currencySymbol = currencySymbol
     }
-    var value: Double = 0
-    if let amount = self.amount.value {
-      value = abs(round(amount, toSignificantDecimalFigures: 2))
-    }
+    let value = round(amount, toSignificantDecimalFigures: 2)
     return formatter.string(from: NSNumber(value: value))?.trimmingCharacters(in: CharacterSet.whitespaces) ?? "-"
+      .replacingOccurrences(of: " ", with: "\u{A0}")
   }
+
+  fileprivate func addSymbolSpaces(symbol: String) -> String {
+    if #available(iOS 13, *) {
+      return" \(symbol)"
+    }
+    else {
+      // We need the whitespaces to cheat NumberFormatter and have a whitespace between the value and symbol
+      return " \(symbol) "
+    }
+  }
+
   open var exchangeText: String {
     let formatter = NumberFormatter()
     formatter.maximumFractionDigits = 10

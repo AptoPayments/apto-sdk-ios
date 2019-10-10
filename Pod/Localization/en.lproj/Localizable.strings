@@ -1446,6 +1446,10 @@
 
 "card_settings.help.report_lost_card.description" = "Close your card and request a replacement";
 
+"card_settings.help.monthly_statements.title" = "Monthly Statements";
+
+"card_settings.help.monthly_statements.description" = "Download transactions info into a PDF";
+
 "card_settings.settings.confirm_report_lost_card.title" = "Report Lost or Stolen card";
 
 "card_settings.settings.confirm_report_lost_card.message" = "Just as a heads up, once you confirm your card is lost or stolen, it'll instantly be locked so no one can use it.";
@@ -1629,3 +1633,13 @@
 "manage_card.get_pin_voip.keypad" = "keypad";
 
 "manage_card.get_pin_voip.hide" = "hide";
+
+/* * Monthly statements */
+
+"monthly_statements.list.title" = "Monthly Statements";
+
+"monthly_statements.list.error_generating_report.message" = "There was an error generating the report. Please try again later or contact customer support if the error persist";
+
+"monthly_statements.report.title" = "Statement <<MONTH>> <<YEAR>>";
+
+"monthly_statements.report.error_url_expired.message" = "For security reasons this file has expired, please request it again";

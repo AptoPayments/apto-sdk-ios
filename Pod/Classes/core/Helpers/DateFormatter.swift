@@ -62,8 +62,9 @@ extension Date {
     return retVal
   }
 
-  static func parse(dateFormat: String, dateValue: String) -> Date? {
+  static func parse(dateFormat: String, dateValue: String, timeZone: TimeZone? = TimeZone.current) -> Date? {
     let formatter = DateFormatter.customDateFormatter(dateFormat: dateFormat)
+    formatter.timeZone = timeZone
     let retVal = formatter.date(from: dateValue)
     return retVal
   }
@@ -84,6 +85,35 @@ extension Date {
       return nil
     }
     return Date.parse(dateFormat: "yyyy-MM-dd'T'HH:mm:ssZZZZZ", dateValue: time)
+  }
+
+  public static func dateFromISO8601(string: String) -> Date? {
+    let date: Date?
+    if #available(iOS 11, *) {
+      date = parseISO8601DateiOS11(string: string)
+    }
+    else {
+      date = parseISO8601DateiOS10(string: string)
+    }
+    return date
+  }
+
+  @available(iOS 11, *)
+  private static func parseISO8601DateiOS11(string: String) -> Date? {
+    let dateFormatter = ISO8601DateFormatter()
+    dateFormatter.formatOptions = [
+      .withInternetDateTime, .withDashSeparatorInDate, .withFractionalSeconds, .withColonSeparatorInTime, .withTimeZone
+    ]
+    return dateFormatter.date(from: string)
+  }
+
+  @available(iOS 10, *)
+  private static func parseISO8601DateiOS10(string: String) -> Date? {
+    let dateFormatter = ISO8601DateFormatter()
+    dateFormatter.formatOptions = [
+      .withInternetDateTime, .withDashSeparatorInDate, .withColonSeparatorInTime, .withTimeZone
+    ]
+    return dateFormatter.date(from: string.replacingOccurrences(of: "\\.\\d+", with: "", options: .regularExpression))
   }
 
   public static func timeFromJSONAPIFormat(_ time: Double?) -> Date? {

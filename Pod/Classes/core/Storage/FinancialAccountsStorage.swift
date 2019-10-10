@@ -124,11 +124,8 @@ protocol FinancialAccountsStorageProtocol {
                                         accountId: String,
                                         custodian: Custodian,
                                         callback: @escaping Result<FundingSource, NSError>.Callback)
-  func monthlySpending(_ apiKey: String,
-                       userToken: String,
-                       accountId: String,
-                       date: Date,
-                       callback: @escaping Result<MonthlySpending, NSError>.Callback)
+  func fetchMonthlySpending(_ apiKey: String, userToken: String, accountId: String, month: Int, year: Int,
+                            callback: @escaping Result<MonthlySpending, NSError>.Callback)
 
   func issueCard(_ apiKey: String, userToken: String, cardProduct: CardProduct, custodian: Custodian?,
                  additionalFields: [String: AnyObject]?, initialFundingSourceId: String?,
@@ -582,19 +579,16 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
     }
   }
 
-  private let months = [
+  private lazy var months = [
     "january", "february", "march", "april", "may", "june",
     "july", "august", "september", "october", "november", "december"
   ]
-  func monthlySpending(_ apiKey: String,
-                       userToken: String,
-                       accountId: String,
-                       date: Date,
-                       callback: @escaping Result<MonthlySpending, NSError>.Callback) {
+  func fetchMonthlySpending(_ apiKey: String, userToken: String, accountId: String, month: Int, year: Int,
+                            callback: @escaping Result<MonthlySpending, NSError>.Callback) {
     let urlParameters: [String: String] = [
       ":accountId": accountId,
-      ":month": months[date.month - 1],
-      ":year": String(date.year)
+      ":month": months[month - 1],
+      ":year": String(year)
     ]
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
                          url: JSONRouter.financialAccountMonthlySpending,

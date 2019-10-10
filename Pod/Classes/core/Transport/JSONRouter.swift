@@ -26,6 +26,8 @@ public enum JSONRouter {
   case financialAccountTransactions
   case financialAccountFundingSource
   case financialAccountMonthlySpending
+  case monthlyStatementsPeriod
+  case monthlyStatements
   case addBankAccounts
   case bankOauthConfig
   case issueVirtualCard
@@ -69,6 +71,8 @@ public enum JSONRouter {
     case .financialAccountTransactions: return "/user/accounts/:accountId/transactions"
     case .financialAccountFundingSource: return "/user/accounts/:accountId/balance"
     case .financialAccountMonthlySpending: return "/user/accounts/:accountId/stats/monthly_spending?month=:month&year=:year"
+    case .monthlyStatementsPeriod: return "/user/statements/period"
+    case .monthlyStatements: return "/user/statements"
     case .addBankAccounts: return "/user/accounts"
     case .bankOauthConfig: return "/bankoauth"
     case .issueVirtualCard: return "/user/accounts/issuecard"

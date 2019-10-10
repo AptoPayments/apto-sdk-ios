@@ -139,6 +139,12 @@ extension JSON {
       return self.categorySpending
     case "monthly_spending":
       return self.monthlySpending
+    case "monthly_statement_report":
+      return self.monthlyStatementReport
+    case "month":
+      return self.month
+    case "monthly_statements_period":
+      return self.monthlyStatementsPeriod
     case "action_waitlist_config":
       return self.waitListActionConfiguration
     case "notification_preferences":
