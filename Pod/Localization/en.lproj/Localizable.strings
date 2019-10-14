@@ -1544,6 +1544,8 @@
 
 "stats.monthly_spending.list.empty_case" = "You've not made any transactions.";
 
+"stats.monthly_spending.statements_report.view" = "View monthly statement";
+
 /* * Transaction list */
 
 "transactions.list.title" = "Transactions";
