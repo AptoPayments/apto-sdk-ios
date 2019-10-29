@@ -111,7 +111,14 @@ extension JSON {
                                                             reason: "Can't select balance store action \(self)"))
       return nil
     }
-    return SelectBalanceStoreActionConfiguration(allowedBalanceTypes: allowedBalanceTypes)
+    let assetUrl: URL?
+    if let string = self["action_asset"].string, let url = URL(string: string) {
+      assetUrl = url
+    }
+    else {
+      assetUrl = nil
+    }
+    return SelectBalanceStoreActionConfiguration(allowedBalanceTypes: allowedBalanceTypes, assetUrl: assetUrl)
   }
 
   var issueCardActionConfiguration: IssueCardActionConfiguration? {

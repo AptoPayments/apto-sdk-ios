@@ -27,7 +27,7 @@ public struct Month: Equatable {
   }
 }
 
-public struct MonthlyStatementsPeriod {
+public struct MonthlyStatementsPeriod: Equatable {
   public let start: Month
   public let end: Month
 

@@ -152,13 +152,13 @@ extension JSONTransportEnvironment: BaseURLProvider {
     case .local:
       return "http://local.ledge.me:5001/v1"
     case .development:
-      return "https://api.ux.dev2.8583.io/v1"
+      return "https://api.ux.dev2.aptopayments.com/v1"
     case .staging:
-      return "https://ux.stg.8583.io/v1"
+      return "https://api.ux.stg.aptopayments.com/v1"
     case .sandbox:
       return "https://api.ux.sbx.aptopayments.com/v1"
     case .live:
-      return "https://api.ux.8583.io/v1"
+      return "https://api.ux.aptopayments.com/v1"
     }
   }
 }
@@ -177,13 +177,13 @@ extension JSONTransportEnvironment: PCIVaultURLProvider {
     case .local:
       return self.baseUrl()
     case .development:
-      return "https://vault.ux.dev2.8583.io/v1"
+      return "https://vault.ux.dev2.aptopayments.com/v1"
     case .staging:
-      return "https://vault.ux.stg.8583.io/v1"
+      return "https://vault.ux.stg.aptopayments.com/v1"
     case .sandbox:
       return "https://vault.ux.sbx.aptopayments.com/v1"
     case .live:
-      return "https://vault.ux.8583.io/v1"
+      return "https://vault.ux.aptopayments.com/v1"
     }
   }
 }

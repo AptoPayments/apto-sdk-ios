@@ -108,6 +108,7 @@ public class ShowGenericMessageActionConfiguration: WorkflowActionConfiguration 
 
 public struct SelectBalanceStoreActionConfiguration: WorkflowActionConfiguration {
   public let allowedBalanceTypes: [AllowedBalanceType]
+  public let assetUrl: URL?
 }
 
 public struct IssueCardActionConfiguration: WorkflowActionConfiguration {

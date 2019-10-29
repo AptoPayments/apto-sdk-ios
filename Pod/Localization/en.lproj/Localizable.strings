@@ -1642,6 +1642,8 @@
 
 "monthly_statements.list.error_generating_report.message" = "There was an error generating the report. Please try again later or contact customer support if the error persist";
 
+"monthly_statements.list.empty_case.message" = "No statements available yet.";
+
 "monthly_statements.report.title" = "Statement <<MONTH>> <<YEAR>>";
 
 "monthly_statements.report.error_url_expired.message" = "For security reasons this file has expired, please request it again";
