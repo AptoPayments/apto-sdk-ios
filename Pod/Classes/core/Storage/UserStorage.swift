@@ -69,7 +69,7 @@ protocol UserStorageProtocol {
                       callback: @escaping Result<MonthlyStatementReport, NSError>.Callback)
 }
 
-class UserStorage: UserStorageProtocol {
+class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_length
   private let transport: JSONTransport
 
   init(transport: JSONTransport) {
@@ -294,7 +294,7 @@ class UserStorage: UserStorageProtocol {
     let imagesData = documentImages.map { image -> [String: String] in
       return ["image_array": image.toBase64()]
     }
-    var selfieData: [String: String]? = nil
+    var selfieData: [String: String]?
     if let selfie = selfie {
       selfieData = ["image_array": selfie.toBase64()]
     }
@@ -475,7 +475,7 @@ class UserStorage: UserStorageProtocol {
                       callback: @escaping Result<MonthlyStatementReport, NSError>.Callback) {
     let parameters = [
       "month": String(month) as AnyObject,
-      "year": String(year) as AnyObject,
+      "year": String(year) as AnyObject
     ]
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .monthlyStatements)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)

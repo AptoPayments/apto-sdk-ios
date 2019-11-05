@@ -12,8 +12,9 @@ open class ErrorLogger: NSObject {
 
   @objc public static func defaultInstance() -> ErrorLogger {
     guard let sharedInstance = ErrorLogger.sharedInstance else {
-      ErrorLogger.sharedInstance = ErrorLogger()
-      return ErrorLogger.sharedInstance!
+      let logger = ErrorLogger()
+      ErrorLogger.sharedInstance = logger
+      return logger
     }
     return sharedInstance
   }
@@ -28,7 +29,7 @@ public extension Error {
     let nserror = self as NSError
     var properties: [String: String] = [
       "domain": nserror.domain,
-      "code": "\(nserror.code)",
+      "code": "\(nserror.code)"
     ]
     if let details = nserror.userInfo[NSLocalizedFailureReasonErrorKey], let detailsAsString = details as? String {
       properties["details"] = detailsAsString

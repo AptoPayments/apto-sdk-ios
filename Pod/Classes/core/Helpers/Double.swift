@@ -34,6 +34,6 @@ public func round(_ num: Double, toSignificantDecimalFigures places: Int) -> Dou
     adjustedPlaces += 1
     number /= 10
   }
-  let n = floor(log10(abs(num))) + Double(1 - adjustedPlaces)
-  return round(pow(10, -n) * num) * pow(10, n)
+  let numb = floor(log10(abs(num))) + Double(1 - adjustedPlaces)
+  return round(pow(10, -numb) * num) * pow(10, numb)
 }

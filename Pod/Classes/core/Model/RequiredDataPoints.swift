@@ -35,7 +35,7 @@ public protocol RequiredDataPointConfigProtocol {}
   }
 }
 
-func ==(lhs: RequiredDataPoint, rhs: RequiredDataPoint) -> Bool {
+func ==(lhs: RequiredDataPoint, rhs: RequiredDataPoint) -> Bool { // swiftlint:disable:this operator_whitespace
   return lhs.type == rhs.type
     && lhs.verificationRequired == rhs.verificationRequired
     && lhs.optional == rhs.optional
@@ -59,9 +59,7 @@ func ==(lhs: RequiredDataPoint, rhs: RequiredDataPoint) -> Bool {
   }
 
   open func removeDataPointsOf(type: DataPointType) {
-    if let _ = requiredDataPoints[type] {
-      requiredDataPoints.removeValue(forKey: type)
-    }
+    requiredDataPoints.removeValue(forKey: type)
     if let index = orderedDataPoints.firstIndex(where: { $0.type == type }) {
       orderedDataPoints.remove(at: index)
     }
@@ -86,13 +84,7 @@ func ==(lhs: RequiredDataPoint, rhs: RequiredDataPoint) -> Bool {
         continue
       }
       if requiredDataPoint.verificationRequired {
-        var found = false
-        for userDataPoint in userDataPoints {
-          if userDataPoint.verified == true {
-            found = true
-          }
-        }
-        if !found {
+        if userDataPoints.filter({ $0.verified == true }).isEmpty {
           retVal.add(requiredDataPoint: requiredDataPoint)
         }
       }
@@ -103,7 +95,7 @@ func ==(lhs: RequiredDataPoint, rhs: RequiredDataPoint) -> Bool {
   @objc func copyWithZone(_ zone: NSZone?) -> AnyObject {
     let retVal = RequiredDataPointList()
     for requiredDataPoint in self.orderedDataPoints {
-      retVal.add(requiredDataPoint: requiredDataPoint.copy() as! RequiredDataPoint)
+      retVal.add(requiredDataPoint: requiredDataPoint.copy() as! RequiredDataPoint) // swiftlint:disable:this force_cast
     }
     return retVal
   }

@@ -10,9 +10,10 @@ import Foundation
 
 extension Date {
 
-  func differenceTo(date:Date, units:Calendar.Component) -> Int {
+  func differenceTo(date: Date, units: Calendar.Component) -> Int {
     let cal = Calendar.current
     let components = cal.dateComponents([units], from: self, to: date)
+    // swiftlint:disable force_unwrapping
     switch units {
     case Calendar.Component.year:
       return components.year!
@@ -29,6 +30,7 @@ extension Date {
     default:
       return 0
     }
+    // swiftlint:enable force_unwrapping
   }
 
   public func isGreaterThanDate(_ dateToCompare: Date) -> Bool {
@@ -57,7 +59,7 @@ extension Date {
 
   public func add(_ count: Int, units: Calendar.Component) -> Date? {
     var components: DateComponents = DateComponents()
-    components.setValue(count, for: units);
+    components.setValue(count, for: units)
     return Calendar.current.date(byAdding: components, to: self)
   }
 

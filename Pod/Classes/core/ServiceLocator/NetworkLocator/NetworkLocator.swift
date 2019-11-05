@@ -9,6 +9,12 @@
 import UIKit
 
 class NetworkLocator: NetworkLocatorProtocol {
+  private unowned let serviceLocator: ServiceLocatorProtocol
+
+  init(serviceLocator: ServiceLocatorProtocol) {
+    self.serviceLocator = serviceLocator
+  }
+
   private var _networkManager: NetworkManager?
   func networkManager(baseURL: URL?,
                       certPinningConfig: [String: [String: AnyObject]]?,
@@ -17,9 +23,9 @@ class NetworkLocator: NetworkLocatorProtocol {
       return manager
     }
 
-    let manager = NetworkManager(baseURL: baseURL,
-                                 certPinningConfig: certPinningConfig,
-                                 allowSelfSignedCertificate: allowSelfSignedCertificate)
+    let manager = NetworkManager(baseURL: baseURL, certPinningConfig: certPinningConfig,
+                                 allowSelfSignedCertificate: allowSelfSignedCertificate,
+                                 notificationHandler: serviceLocator.notificationHandler)
     _networkManager = manager
 
     return manager

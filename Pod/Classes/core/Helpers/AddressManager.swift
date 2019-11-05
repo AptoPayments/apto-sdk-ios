@@ -256,6 +256,7 @@ class PlaceDetailsQuery: GKPlaceDetailsQuery {
   // We need to use the short_name returned by the Google Maps API for the country and for the
   // administrative_area_level_1. Instead of rewriting the full feature we are modifying the response to set the
   // long_name equal to the short_name for those two attributes.
+  // swiftlint:disable:next implicitly_unwrapped_optional
   override func handleQueryResponse(_ response: [AnyHashable: Any]!, error: Error!) {
     if let error = error {
       super.handleQueryResponse(nil, error: error)
@@ -267,7 +268,7 @@ class PlaceDetailsQuery: GKPlaceDetailsQuery {
       return
     }
     var components = [Any]()
-    if let addressComponents = dictionary["address_components"] as? [Dictionary<String, Any>] {
+    if let addressComponents = dictionary["address_components"] as? [[String: Any]] {
       for addressComponent in addressComponents {
         guard let types = addressComponent["types"] as? [String],
               let type = types.first,
@@ -296,9 +297,9 @@ class PlaceDetailsQuery: GKPlaceDetailsQuery {
 class PlaceDetails: GKPlaceDetails {
   let postalTown: String?
 
-  override init!(dictionary: [AnyHashable: Any]!) {
-    var postalTown: String? = nil
-    if let addressComponents = dictionary["address_components"] as? [Dictionary<String, Any>] {
+  override init!(dictionary: [AnyHashable: Any]!) { // swiftlint:disable:this implicitly_unwrapped_optional
+    var postalTown: String?
+    if let addressComponents = dictionary["address_components"] as? [[String: Any]] {
       for addressComponent in addressComponents {
         guard let types = addressComponent["types"] as? [String],
               types.first == "postal_town",

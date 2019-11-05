@@ -9,7 +9,6 @@
 import Foundation
 
 extension UIDevice {
-  
   public var platform: String {
     var systemInfo = utsname()
     uname(&systemInfo)
@@ -19,5 +18,4 @@ extension UIDevice {
       return identifier + String(UnicodeScalar(UInt8(value)))
     }
   }
-  
 }

@@ -22,7 +22,7 @@ extension JSON {
       guard let jsonList = self.list else {
         return nil
       }
-      guard jsonList.count > 0 else {
+      guard !jsonList.isEmpty else {
         let retVal: [Any] = []
         return retVal
       }
@@ -86,7 +86,7 @@ extension JSON {
     case "id_document":
       return self.idDocument
     case "income_source":
-      return self.income_source
+      return self.incomeSource
     case "housing":
       return self.housing
     case "payday_loan":
@@ -168,80 +168,73 @@ extension JSON {
   }
 
   var accessToken: AccessToken? {
-    guard let
-      token = self["user_token"].string
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse accessToken \(self)"))
-        return nil
+    guard let token = self["user_token"].string else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse accessToken \(self)"))
+      return nil
     }
     return AccessToken(token: token, primaryCredential: nil, secondaryCredential: nil)
   }
 
   var housing: Housing? {
-    guard let
-      housingTypeId = self["housing_type_id"].int
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse housing \(self)"))
-        return nil
+    guard let housingTypeId = self["housing_type_id"].int else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse housing \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
-    return Housing(housingType: HousingType(housingTypeId:housingTypeId), verified: verified)
+    return Housing(housingType: HousingType(housingTypeId: housingTypeId), verified: verified)
   }
 
   var income: Income? {
-    guard let
-      netMonthlyIncome = self["net_monthly_income"].int,
-      let grossAnnualIncome = self["gross_annual_income"].int
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse income \(self)"))
-        return nil
+    guard let netMonthlyIncome = self["net_monthly_income"].int,
+          let grossAnnualIncome = self["gross_annual_income"].int else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse income \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
-    return Income(netMonthlyIncome: netMonthlyIncome, grossAnnualIncome:grossAnnualIncome, verified: verified)
+    return Income(netMonthlyIncome: netMonthlyIncome, grossAnnualIncome: grossAnnualIncome, verified: verified)
   }
 
   var creditScore: CreditScore? {
-    guard let
-      creditRange = self["credit_range"].int
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse credit score \(self)"))
-        return nil
+    guard let creditRange = self["credit_range"].int else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse credit score \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
     return CreditScore(creditRange: creditRange, verified: verified)
   }
 
   var paydayLoan: PaydayLoan? {
-    guard let
-      usedPaydayLoan = self["payday_loan"].bool
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse payday loan \(self)"))
-        return nil
+    guard let usedPaydayLoan = self["payday_loan"].bool else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse payday loan \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
     return PaydayLoan(usedPaydayLoan: usedPaydayLoan, verified: verified)
   }
 
   var memberOfArmedForces: MemberOfArmedForces? {
-    guard let
-      memberOfArmedForces = self["member_of_armed_forces"].bool
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse member of armed forces \(self)"))
-        return nil
+    guard let memberOfArmedForces = self["member_of_armed_forces"].bool else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse member of armed forces \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
     return MemberOfArmedForces(memberOfArmedForces: memberOfArmedForces, verified: verified)
   }
 
   var timeAtAddress: TimeAtAddress? {
-    guard let
-      timeAtAddress = self["time_at_address_id"].int
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse time at address \(self)"))
-        return nil
+    guard let timeAtAddress = self["time_at_address_id"].int else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse time at address \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
-    return TimeAtAddress(timeAtAddress: TimeAtAddressOption(timeAtAddressId:timeAtAddress), verified: verified)
+    return TimeAtAddress(timeAtAddress: TimeAtAddressOption(timeAtAddressId: timeAtAddress), verified: verified)
   }
 
   var requiredDatapoint: RequiredDataPoint? {
@@ -259,73 +252,61 @@ extension JSON {
                              configuration: dataPointConfiguration)
   }
 
-  var income_source: IncomeSource? {
-    guard let
-      salaryFrequencyId = self["salary_frequency_id"].int,
-      let incomeTypeId = self["income_type_id"].int
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse income source \(self)"))
-        return nil
+  var incomeSource: IncomeSource? {
+    guard let salaryFrequencyId = self["salary_frequency_id"].int, let incomeTypeId = self["income_type_id"].int else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse income source \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
     let salaryFrequency = SalaryFrequency(salaryFrequencyId: salaryFrequencyId)
     let incomeType = IncomeType(incomeTypeId: incomeTypeId)
-    return IncomeSource(salaryFrequency: salaryFrequency, incomeType:incomeType, verified: verified)
+    return IncomeSource(salaryFrequency: salaryFrequency, incomeType: incomeType, verified: verified)
   }
 
   var incomeType: IncomeType? {
-    guard let
-      description = self["description"].string,
-      let incomeTypeId = self["income_type_id"].int
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse income \(self)"))
-        return nil
+    guard let description = self["description"].string, let incomeTypeId = self["income_type_id"].int else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse income \(self)"))
+      return nil
     }
-    return IncomeType(incomeTypeId:incomeTypeId, description:description)
+    return IncomeType(incomeTypeId: incomeTypeId, description: description)
   }
 
   var salaryFrequency: SalaryFrequency? {
-    guard let
-      description = self["description"].string,
-      let salaryFrequencyId = self["salary_frequency_id"].int
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse salary frequency \(self)"))
-        return nil
+    guard let description = self["description"].string, let salaryFrequencyId = self["salary_frequency_id"].int else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse salary frequency \(self)"))
+      return nil
     }
-    return SalaryFrequency(salaryFrequencyId:salaryFrequencyId, description:description)
+    return SalaryFrequency(salaryFrequencyId: salaryFrequencyId, description: description)
   }
 
   var housingType: HousingType? {
-    guard let
-      description = self["description"].string,
-      let housingTypeId = self["housing_type_id"].int
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse housing Type \(self)"))
-        return nil
+    guard let description = self["description"].string, let housingTypeId = self["housing_type_id"].int else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse housing Type \(self)"))
+      return nil
     }
-    return HousingType(housingTypeId:housingTypeId, description:description)
+    return HousingType(housingTypeId: housingTypeId, description: description)
   }
 
   var timeAtAddressOption: TimeAtAddressOption? {
-    guard let
-      description = self["description"].string,
-      let timeAtAddressId = self["time_at_address_id"].int
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse time at address \(self)"))
-        return nil
+    guard let description = self["description"].string, let timeAtAddressId = self["time_at_address_id"].int else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse time at address \(self)"))
+      return nil
     }
-    return TimeAtAddressOption(timeAtAddressId:timeAtAddressId, description:description)
+    return TimeAtAddressOption(timeAtAddressId: timeAtAddressId, description: description)
   }
 
   var creditScoreOption: CreditScoreOption? {
-    guard let
-      description = self["description"].string,
-      let creditScoreId = self["credit_score_id"].int
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse credit score \(self)"))
-        return nil
+    guard let description = self["description"].string, let creditScoreId = self["credit_score_id"].int else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse credit score \(self)"))
+      return nil
     }
-    return CreditScoreOption(creditScoreId:creditScoreId, description:description)
+    return CreditScoreOption(creditScoreId: creditScoreId, description: description)
   }
 
   var content: Content? {
@@ -365,27 +346,24 @@ extension JSON {
   }
 
   var contextConfiguration: ContextConfiguration? {
-    guard let
-      projectConfiguration = self["project"].projectConfiguration,
-      let teamConfiguration = self["team"].teamConfiguration
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse context configuration \(self)"))
-        return nil
+    guard let projectConfiguration = self["project"].projectConfiguration,
+          let teamConfiguration = self["team"].teamConfiguration else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse context configuration \(self)"))
+      return nil
     }
-    return ContextConfiguration(teamConfiguration:teamConfiguration, projectConfiguration:projectConfiguration)
+    return ContextConfiguration(teamConfiguration: teamConfiguration, projectConfiguration: projectConfiguration)
   }
 
   var teamConfiguration: TeamConfiguration? {
-    guard let
-      name = self["name"].string
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse team configuration \(self)"))
-        return nil
+    guard let name = self["name"].string else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse team configuration \(self)"))
+      return nil
     }
 
     let logoUrl = self["logo_url"].string
-
-    return TeamConfiguration(logoUrl:logoUrl, name:name)
+    return TeamConfiguration(logoUrl: logoUrl, name: name)
   }
 
   var projectBranding: ProjectBranding? {
@@ -481,8 +459,8 @@ extension JSON {
     }
 
     let summary = self["summary"].string
-    let primaryAuthCredential = DataPointType.from(typeName:self["primary_auth_credential"].string) ?? .phoneNumber
-    let secondaryAuthCredential = DataPointType.from(typeName:self["secondary_auth_credential"].string) ?? .email
+    let primaryAuthCredential = DataPointType.from(typeName: self["primary_auth_credential"].string) ?? .phoneNumber
+    let secondaryAuthCredential = DataPointType.from(typeName: self["secondary_auth_credential"].string) ?? .email
 
     let parsedSalaryFrequencies = salaryFrequencies.compactMap { obj -> SalaryFrequency? in
       return obj as? SalaryFrequency
@@ -500,9 +478,9 @@ extension JSON {
       return obj as? CreditScoreOption
     }
 
-    var products:[Product] = []
-    if let _products = self["products"].linkObject as? [Any] {
-      let parsedProducts = _products.compactMap { obj -> Product? in
+    var products: [Product] = []
+    if let returnedProducts = self["products"].linkObject as? [Any] {
+      let parsedProducts = returnedProducts.compactMap { obj -> Product? in
         return obj as? Product
       }
       products = parsedProducts
@@ -534,7 +512,7 @@ extension JSON {
     let isTrackerActive = self["tracker_active"].bool
     let trackerAccessToken = self["tracker_access_token"].string
 
-    return ProjectConfiguration(name:name,
+    return ProjectConfiguration(name: name,
                                 summary: summary,
                                 allowUserLogin: allowUserLogin,
                                 primaryAuthCredential: primaryAuthCredential,
@@ -558,17 +536,13 @@ extension JSON {
   }
 
   var cardProduct: CardProduct? {
-    guard
-      let id = self["id"].string,
-      let teamId = self["team_id"].string,
-      let name = self["name"].string,
-      let rawStatus = self["status"].string, let status = CardProductStatus(rawValue: rawStatus),
-      let shared = self["shared"].bool,
-      let disclaimerAction = self["disclaimer_action"].workflowAction,
-      let cardIssuer = self["card_issuer"].string else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                              reason: "Can't parse card product \(self)"))
-        return nil
+    guard let id = self["id"].string, let teamId = self["team_id"].string, let name = self["name"].string,
+          let rawStatus = self["status"].string, let status = CardProductStatus(rawValue: rawStatus),
+          let shared = self["shared"].bool, let disclaimerAction = self["disclaimer_action"].workflowAction,
+          let cardIssuer = self["card_issuer"].string else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse card product \(self)"))
+      return nil
     }
 
     // Copies
@@ -606,33 +580,28 @@ extension JSON {
   }
 
   var cardApplication: CardApplication? {
-    guard
-      let id = self["id"].string,
-      let rawStatus = self["status"].string,
-      let status = CardApplicationStatus(rawValue: rawStatus),
-      let createTime = self["create_time"].double,
-      let applicationDate = Date.timeFromJSONAPIFormat(createTime),
-      let nextAction = self["next_action"].workflowAction,
-      let workflowObjectId = self["workflow_object_id"].string else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+    guard let id = self["id"].string, let rawStatus = self["status"].string,
+          let status = CardApplicationStatus(rawValue: rawStatus), let createTime = self["create_time"].double,
+          let applicationDate = Date.timeFromJSONAPIFormat(createTime),
+          let nextAction = self["next_action"].workflowAction,
+          let workflowObjectId = self["workflow_object_id"].string else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                               reason: "Can't parse card application \(self)"))
-        return nil
+      return nil
     }
 
     return CardApplication(id: id,
                            status: status,
-                           applicationDate:
-                           applicationDate,
+                           applicationDate: applicationDate,
                            workflowObjectId: workflowObjectId,
                            nextAction: nextAction)
   }
 
   var product: Product? {
-    guard let
-      key = self["key"].string
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse product \(self)"))
-        return nil
+    guard let key = self["key"].string else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse product \(self)"))
+      return nil
     }
     switch key {
     case "link": return .link
@@ -648,10 +617,10 @@ extension JSON {
   }
 
   var user: ShiftUser? {
-    guard let userId = self["user_id"].string
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse user \(self)"))
-        return nil
+    guard let userId = self["user_id"].string else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse user \(self)"))
+      return nil
     }
 
     let dataPoints: DataPointList = DataPointList()
@@ -696,24 +665,24 @@ extension JSON {
   }
 
   var verification: Verification? {
-    guard let
-      verificationId = self["verification_id"].string,
-      let status = self["status"].string,
-      let verificationType = self["verification_type"].string
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse verification \(self)"))
-        return nil
+    guard let verificationId = self["verification_id"].string, let status = self["status"].string,
+          let verificationType = self["verification_type"].string else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse verification \(self)"))
+      return nil
     }
     let secret = self["secret"].string
-    let retVal = Verification(verificationId:verificationId,
-                              verificationType: verificationType == "birthdate" ? .birthDate : verificationType == "phone" ? .phoneNumber : .email,
-                              status: status=="pending" ? .pending: status=="passed" ? .passed : .failed,
-                              secret:secret)
+    let type: DataPointType = verificationType == "birthdate" ? .birthDate
+                                                              : verificationType == "phone" ? .phoneNumber : .email
+    let retVal = Verification(verificationId: verificationId,
+                              verificationType: type,
+                              status: status == "pending" ? .pending: status == "passed" ? .passed : .failed,
+                              secret: secret)
     if let secondaryVerification = self["secondary_credential"].verification {
       retVal.secondaryCredential = secondaryVerification
     }
 
-    if (self["verification_result"].dictionary != nil) {
+    if self["verification_result"].dictionary != nil {
       retVal.documentVerificationResult = self["verification_result"].documentVerificationResult
     }
 
@@ -721,18 +690,20 @@ extension JSON {
   }
 
   var documentVerificationResult: DocumentVerificationResult? {
-    guard let
-      rawFaceComparisonResult = self["face_comparison_result"].string,
-      let faceComparisonResult = FaceComparisonResult.faceComparisonResultFrom(description: rawFaceComparisonResult),
-      let rawDocAuthenticity = self["doc_authenticity"].string,
-      let docAuthenticity = DocumentAuthenticity.documentAuthenticityFrom(description: rawDocAuthenticity),
-      let faceSimilarityRatio = self["face_similarity_ratio"].float,
-      let rawDocCompletionStatus = self["doc_completion_status"].string,
-      let docCompletionStatus = DocumentCompletionStatus.documentCompletionStatusFrom(description: rawDocCompletionStatus)
+    // swiftlint:disable line_length
+    guard let rawFaceComparisonResult = self["face_comparison_result"].string,
+          let faceComparisonResult = FaceComparisonResult.faceComparisonResultFrom(description: rawFaceComparisonResult),
+          let rawDocAuthenticity = self["doc_authenticity"].string,
+          let docAuthenticity = DocumentAuthenticity.documentAuthenticityFrom(description: rawDocAuthenticity),
+          let faceSimilarityRatio = self["face_similarity_ratio"].float,
+          let rawDocCompletionStatus = self["doc_completion_status"].string,
+          let docCompletionStatus = DocumentCompletionStatus.documentCompletionStatusFrom(description: rawDocCompletionStatus)
       else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse Document Verification Result \(self)"))
+        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                              reason: "Can't parse Document Verification Result \(self)"))
         return nil
     }
+    // swiftlint:enable line_length
 
     let dataPoints: DataPointList = DataPointList()
     if let userData = self["user_data"].linkObject as? [Any] {
@@ -788,15 +759,13 @@ extension JSON {
   }
 
   var name: PersonalName? {
-    guard let
-      firstName = self["first_name"].string,
-      let lastName = self["last_name"].string
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse personal name \(self)"))
-        return nil
+    guard let firstName = self["first_name"].string, let lastName = self["last_name"].string else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse personal name \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
-    return PersonalName(firstName: firstName, lastName: lastName, verified:verified)
+    return PersonalName(firstName: firstName, lastName: lastName, verified: verified)
   }
 
   var idDocument: IdDocument? {
@@ -818,11 +787,10 @@ extension JSON {
   }
 
   var birthDate: BirthDate? {
-    guard let
-      date = Date.dateFromJSONAPIFormat(self["date"].string)
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse birthdate \(self)"))
-        return nil
+    guard let date = Date.dateFromJSONAPIFormat(self["date"].string) else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse birthdate \(self)"))
+      return nil
     }
     let verified = self["verified"].bool
     let birthdate = BirthDate(date: date, verified: verified)
@@ -839,14 +807,8 @@ extension JSON {
     let latitude = self["location"]["latitude"].double
     let longitude = self["location"]["longitude"].double
 
-    return Store(
-      id: storeId,
-      storeKey: storeKey,
-      name: name,
-      latitude: latitude,
-      longitude: longitude,
-      address: address,
-      merchant:merchant)
+    return Store(id: storeId, storeKey: storeKey, name: name, latitude: latitude, longitude: longitude,
+                 address: address, merchant: merchant)
   }
 
   var merchant: Merchant? {
@@ -863,25 +825,18 @@ extension JSON {
   }
 
   var mcc: MCC? {
-    guard
-      let name = self["name"].string,
-      let rawIcon = self["icon"].string,
-      let icon = MCCIcon(rawValue: rawIcon)
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse mcc entity \(self)"))
-        return nil
+    guard let name = self["name"].string, let rawIcon = self["icon"].string,
+          let icon = MCCIcon(rawValue: rawIcon) else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse mcc entity \(self)"))
+      return nil
     }
-    return MCC(
-      code: nil,
-      name: name,
-      icon: icon)
+    return MCC(code: nil, name: name, icon: icon)
   }
 
   var card: Card? {
-    guard let id = self["account_id"].string,
-          let state = self["state"].string,
-          let lastFourDigits = self["last_four"].string
-      else {
+    guard let id = self["account_id"].string, let state = self["state"].string,
+          let lastFourDigits = self["last_four"].string else {
       ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                             reason: "Can't parse card \(self)"))
       return nil
@@ -945,13 +900,10 @@ extension JSON {
   }
 
   var transaction: Transaction? {
-
-    guard let
-      transactionId = self["id"].string,
-      let rawCreatedAt = self["created_at"].double
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse transaction \(self)"))
-        return nil
+    guard let transactionId = self["id"].string, let rawCreatedAt = self["created_at"].double else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse transaction \(self)"))
+      return nil
     }
 
     let createdAt: Date = Date(timeIntervalSince1970: rawCreatedAt)
@@ -1006,11 +958,10 @@ extension JSON {
   }
 
   var transactionSettlement: TransactionSettlement? {
-    guard
-      let rawCreatedAt = self["date"].double
-      else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError, reason: "Can't parse transactionSettlement \(self)"))
-        return nil
+    guard let rawCreatedAt = self["date"].double else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse transactionSettlement \(self)"))
+      return nil
     }
 
     let createdAt: Date = Date(timeIntervalSince1970: rawCreatedAt)
@@ -1021,6 +972,7 @@ extension JSON {
   var transactionAdjustment: TransactionAdjustment? {
     let id = self["id"].string
     let rawCreatedAt = self["created_at"].double
+    // swiftlint:disable:next force_unwrapping
     let createdAt: Date? = rawCreatedAt != nil ? Date(timeIntervalSince1970: rawCreatedAt!) : nil
     let externalId = self["external_id"].string
     let type = TransactionAdjustmentType.from(typeName: self["adjustment_type"].string)
@@ -1050,7 +1002,7 @@ extension JSON {
       return nil
     }
 
-    var fsType: FundingSourceType? = nil
+    var fsType: FundingSourceType?
     if rawFundingSourceType == "custodian_wallet" {
       fsType = .custodianWallet
     }
@@ -1060,17 +1012,17 @@ extension JSON {
       return nil
     }
 
-    var balance: Amount? = nil
+    var balance: Amount?
     if self["balance"].dictionary != nil {
       balance = self["balance"].linkObject as? Amount
     }
 
-    var amountSpendable: Amount? = nil
+    var amountSpendable: Amount?
     if self["amount_spendable"].dictionary != nil {
       amountSpendable = self["amount_spendable"].linkObject as? Amount
     }
 
-    var amountHeld: Amount? = nil
+    var amountHeld: Amount?
     if self["amount_held"].dictionary != nil {
       amountHeld = self["amount_held"].linkObject as? Amount
     }
@@ -1113,19 +1065,18 @@ extension JSON {
   }
 
   var oauthAttempt: OauthAttempt? {
-    guard let id = self["id"].string,
-          let rawStatus = self["status"].string,
+    guard let id = self["id"].string, let rawStatus = self["status"].string,
           let status = OauthAttempt.Status(rawValue: rawStatus) else {
       ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                             reason: "Can't parse oauth attempt \(self)"))
       return nil
     }
 
-    var url: URL? = nil
+    var url: URL?
     if let urlString = self["url"].string {
-      url = URL(string:urlString)
+      url = URL(string: urlString)
     }
-    var credentials: OauthCredential? = nil
+    var credentials: OauthCredential?
     if let accessTokenId = self["oauth_token_id"].string {
       let dataPointList = DataPointList()
       if let dataPointFields = self["user_data"]["data"].array {

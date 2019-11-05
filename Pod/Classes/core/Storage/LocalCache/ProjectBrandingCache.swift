@@ -12,11 +12,11 @@ protocol ProjectBrandingCacheProtocol {
 
 class ProjectBrandingCache: ProjectBrandingCacheProtocol {
   private let localCacheFileManager: LocalCacheFileManagerProtocol
-  
+
   init(localCacheFileManager: LocalCacheFileManagerProtocol) {
     self.localCacheFileManager = localCacheFileManager
   }
-  
+
   func cachedProjectBranding() -> ProjectBranding? {
     do {
       if let data = try localCacheFileManager.read(filename: .projectBrandingFilename) {
@@ -29,7 +29,7 @@ class ProjectBrandingCache: ProjectBrandingCacheProtocol {
     }
     return nil
   }
-  
+
   func saveProjectBranding(_ projectBranding: ProjectBranding) {
     DispatchQueue.global().async { [unowned self] in
       do {
@@ -42,4 +42,3 @@ class ProjectBrandingCache: ProjectBrandingCacheProtocol {
     }
   }
 }
-

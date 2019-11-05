@@ -370,10 +370,6 @@ public enum FundingSourceState: String, Codable {
     return ""
   }
 
-  public static func ==(lhs: FundingSource, rhs: FundingSource) -> Bool { // swiftlint:disable:this operator_whitespace
-    return lhs.fundingSourceId == rhs.fundingSourceId
-  }
-
   // MARK: - Codable
   public required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -400,6 +396,10 @@ public enum FundingSourceState: String, Codable {
     case amountHold
     case state
   }
+}
+
+public func ==(lhs: FundingSource, rhs: FundingSource) -> Bool { // swiftlint:disable:this operator_whitespace
+  return lhs.fundingSourceId == rhs.fundingSourceId
 }
 
 @objc open class CustodianWallet: FundingSource {

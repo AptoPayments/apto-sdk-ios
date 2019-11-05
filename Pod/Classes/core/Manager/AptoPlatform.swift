@@ -26,7 +26,7 @@ import TrustKit
   }
 }
 
-@objc public class AptoPlatform: NSObject, AptoPlatformProtocol {
+@objc public class AptoPlatform: NSObject, AptoPlatformProtocol { // swiftlint:disable:this type_body_length
 
   // MARK: Authentication attributes
 
@@ -164,9 +164,7 @@ import TrustKit
   }
 
   public func logout() {
-    NotificationCenter.default.post(Notification(name: .UserTokenSessionClosedNotification,
-                                                 object: nil,
-                                                 userInfo: nil))
+    serviceLocator.notificationHandler.postNotification(.UserTokenSessionClosedNotification)
     clearUserToken()
   }
 
@@ -457,7 +455,7 @@ import TrustKit
   }
 
   private func next(financialAccountsOfType: FinancialAccountType, page: Int, rows: Int,
-            callback: @escaping Result<[FinancialAccount], NSError>.Callback) {
+                    callback: @escaping Result<[FinancialAccount], NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
@@ -506,7 +504,7 @@ import TrustKit
 
   public func startOauthAuthentication(balanceType: AllowedBalanceType,
                                        callback: @escaping Result<OauthAttempt, NSError>.Callback) {
-    guard let apiKey = self.apiKey, let accessToken = currentToken() else  {
+    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
@@ -787,26 +785,18 @@ import TrustKit
   // MARK: Private Attributes
 
   private func setUpNotificationObservers() {
-    NotificationCenter.default.addObserver(self,
-                                           selector: #selector(self.sdkDeprecated),
-                                           name: .SDKDeprecatedNotification,
-                                           object: nil)
-    NotificationCenter.default.addObserver(self,
-                                           selector: #selector(self.didRestoreNetworkConnection),
-                                           name: .NetworkReachableNotification,
-                                           object: nil)
-    NotificationCenter.default.addObserver(self,
-                                           selector: #selector(self.didLoseNetworkConnection),
-                                           name: .NetworkNotReachableNotification,
-                                           object: nil)
-    NotificationCenter.default.addObserver(self,
-                                           selector: #selector(self.didLoseConnectionToServer),
-                                           name: .ServerMaintenanceNotification,
-                                           object: nil)
+    let notificator = serviceLocator.notificationHandler
+    notificator.addObserver(self, selector: #selector(self.sdkDeprecated), name: .SDKDeprecatedNotification)
+    notificator.addObserver(self, selector: #selector(self.didRestoreNetworkConnection),
+                            name: .NetworkReachableNotification)
+    notificator.addObserver(self, selector: #selector(self.didLoseNetworkConnection),
+                            name: .NetworkNotReachableNotification)
+    notificator.addObserver(self, selector: #selector(self.didLoseConnectionToServer),
+                            name: .ServerMaintenanceNotification)
   }
 
   private func removeNotificationObservers() {
-    NotificationCenter.default.removeObserver(self)
+    serviceLocator.notificationHandler.removeObserver(self)
   }
 
   @objc private func sdkDeprecated() {

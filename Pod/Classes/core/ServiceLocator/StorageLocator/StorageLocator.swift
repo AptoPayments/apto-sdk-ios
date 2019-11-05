@@ -6,9 +6,13 @@
 //
 //
 
-
 class StorageLocator: StorageLocatorProtocol {
+  private unowned let serviceLocator: ServiceLocatorProtocol
   private var authenticatedLocalCache: LocalCacheFileManagerProtocol?
+
+  init(serviceLocator: ServiceLocatorProtocol) {
+    self.serviceLocator = serviceLocator
+  }
 
   func userStorage(transport: JSONTransport) -> UserStorageProtocol {
     return UserStorage(transport: transport)
@@ -41,7 +45,7 @@ class StorageLocator: StorageLocatorProtocol {
   }
 
   func userTokenStorage() -> UserTokenStorageProtocol {
-    return UserTokenStorage()
+    return UserTokenStorage(notificationHandler: serviceLocator.notificationHandler)
   }
 
   func featuresStorage() -> FeaturesStorageProtocol {
@@ -53,10 +57,12 @@ class StorageLocator: StorageLocatorProtocol {
   }
 
   func authenticatedLocalFileManager() -> LocalCacheFileManagerProtocol {
-    if authenticatedLocalCache == nil {
-      authenticatedLocalCache = AuthenticatedLocalCacheFileManager(userTokenStorage: self.userTokenStorage())
+    guard let cache = self.authenticatedLocalCache else {
+      let localCache = AuthenticatedLocalCacheFileManager(userTokenStorage: self.userTokenStorage())
+      authenticatedLocalCache = localCache
+      return localCache
     }
-    return authenticatedLocalCache! // swiftlint:disable:this implicitly_unwrapped_optional
+    return cache
   }
 
   func localCacheFileManager() -> LocalCacheFileManagerProtocol {
@@ -64,6 +70,7 @@ class StorageLocator: StorageLocatorProtocol {
   }
 
   func userPreferencesStorage() -> UserPreferencesStorageProtocol {
-    return UserPreferencesStorage(userDefaultsStorage: UserDefaultsStorage())
+    return UserPreferencesStorage(userDefaultsStorage: UserDefaultsStorage(),
+                                  notificationHandler: serviceLocator.notificationHandler)
   }
 }

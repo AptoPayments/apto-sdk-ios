@@ -39,7 +39,7 @@ public protocol VoIPCallProtocol: class {
 
 extension JSON {
   var voIPToken: VoIPToken? {
-    guard let accessToken = self["access_token"].string, let requestToken = self["request_token"].string, 
+    guard let accessToken = self["access_token"].string, let requestToken = self["request_token"].string,
           let provider = self["provider"].string else {
       ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                             reason: "Can't parse VoIPToken \(self)"))

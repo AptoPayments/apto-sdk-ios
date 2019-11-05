@@ -31,8 +31,9 @@ public class PhoneHelper {
   private static var sharedInstance: PhoneHelper?
   public static func sharedHelper() -> PhoneHelper {
     guard let sharedInstance = PhoneHelper.sharedInstance else {
-      PhoneHelper.sharedInstance = PhoneHelper()
-      return PhoneHelper.sharedInstance!
+      let helper = PhoneHelper()
+      PhoneHelper.sharedInstance = helper
+      return helper
     }
     return sharedInstance
   }

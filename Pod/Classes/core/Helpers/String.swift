@@ -12,8 +12,9 @@ import CommonCrypto
 extension String {
 
   func urlsIn() -> [URL] {
+    // swiftlint:disable:next force_try
     let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-    let matches = detector.matches(in: self, options: [], range: NSMakeRange(0, self.count))
+    let matches = detector.matches(in: self, options: [], range: NSRange(location: 0, length: self.count))
     var retVal: [URL] = []
     for match in matches {
       let urlString = (self as NSString).substring(with: match.range)
@@ -24,8 +25,8 @@ extension String {
     return retVal
   }
 
-  func insert(_ string:String,ind:Int) -> String {
-    return  String(self.prefix(ind)) + string + String(self.suffix(self.count-ind))
+  func insert(_ string: String, ind: Int) -> String {
+    return String(self.prefix(ind)) + string + String(self.suffix(self.count - ind))
   }
 
   public func formattedHtmlString(font: UIFont,
@@ -36,9 +37,12 @@ extension String {
     guard let data = htmlData else {
       return nil
     }
-    let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html as Any]
+    let options = [
+      NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html as Any
+    ]
     do {
-      let attrString = try NSAttributedString(data: data, options: options, documentAttributes: nil).mutableCopy() as? NSMutableAttributedString
+      let attrString = try NSAttributedString(data: data, options: options,
+                                              documentAttributes: nil).mutableCopy() as? NSMutableAttributedString
       attrString?.replacePlainTextStyle(font: font, color: color, lineSpacing: lineSpacing)
       attrString?.replaceLinkStyle(font: font, color: linkColor, lineSpacing: lineSpacing)
       return attrString
@@ -48,9 +52,7 @@ extension String {
     }
   }
 
-  public func localized()
-    -> String
-  {
+  public func localized() -> String {
     return getBundleTranslation(Bundle.main)
   }
 
@@ -87,8 +89,8 @@ extension String {
 
   public func replace(_ occurrences: [String: String]) -> String {
     var retVal = self
-    for key in occurrences.keys {
-      retVal = retVal.replacingOccurrences(of: key, with: occurrences[key]!)
+    for (key, value) in occurrences {
+      retVal = retVal.replacingOccurrences(of: key, with: value)
     }
     return retVal
   }
@@ -104,7 +106,9 @@ extension String {
   func prefixUntil(_ string: String) -> String {
     if let range = self.range(of: string) {
       let intIndex: Int = self.distance(from: self.startIndex, to: range.lowerBound)
-      return self.prefixOf(intIndex)!
+      if let prefix = self.prefixOf(intIndex) {
+        return prefix
+      }
     }
     return self
   }
@@ -148,7 +152,5 @@ extension String {
 }
 
 public final class LocalLanguage {
-
   static var language = Locale.preferredLanguages[0]
-
 }

@@ -66,10 +66,10 @@ public enum TransactionType: String, Codable {
   case pending
   case reversal
   case purchase
-  case pin_purchase
+  case pinPurchase = "pin_purchase"
   case refund
   case decline
-  case balance_inquiry
+  case balanceInquiry = "balance_inquiry"
   case withdrawal
   case credit
   case other
@@ -97,10 +97,10 @@ public enum TransactionType: String, Codable {
     case .pending: return "transaction_details.details.transaction_type.pending".podLocalized()
     case .reversal: return "transaction_details.details.transaction_type.reversal".podLocalized()
     case .purchase: return "transaction_details.details.transaction_type.purchase".podLocalized()
-    case .pin_purchase: return "transaction_details.details.transaction_type.pin_purchase".podLocalized()
+    case .pinPurchase: return "transaction_details.details.transaction_type.pin_purchase".podLocalized()
     case .refund: return "transaction_details.details.transaction_type.refund".podLocalized()
     case .decline: return "transaction_details.details.transaction_type.decline".podLocalized()
-    case .balance_inquiry: return "transaction_details.details.transaction_type.balance_inquiry".podLocalized()
+    case .balanceInquiry: return "transaction_details.details.transaction_type.balance_inquiry".podLocalized()
     case .withdrawal: return "transaction_details.details.transaction_type.atm_withdrawal".podLocalized()
     case .credit: return "transaction_details.details.transaction_type.credit".podLocalized()
     case .other: return "transaction_details.details.transaction_type.other".podLocalized()
@@ -204,21 +204,19 @@ public enum TransactionDeclineCode: String, Codable, Equatable {
   public let fundingSourceName: String?
 
   public var transactionClass: TransactionClass {
-    get {
-      if transactionType == .withdrawal {
-        return .atm
-      }
-      if transactionType == .decline {
-        return .declined
-      }
-      if state == .pending {
-        return .preauthorised
-      }
-      if transactionType == .reversal {
-        return .reversed
-      }
-      return .authorised
+    if transactionType == .withdrawal {
+      return .atm
     }
+    if transactionType == .decline {
+      return .declined
+    }
+    if state == .pending {
+      return .preauthorised
+    }
+    if transactionType == .reversal {
+      return .reversed
+    }
+    return .authorised
   }
 
   public var deviceType: TransactionDeviceType {

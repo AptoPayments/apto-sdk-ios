@@ -9,9 +9,10 @@
 class ServiceLocator: ServiceLocatorProtocol {
   static let shared: ServiceLocatorProtocol = ServiceLocator()
 
-  lazy var networkLocator: NetworkLocatorProtocol = NetworkLocator()
-  lazy var storageLocator: StorageLocatorProtocol = StorageLocator()
+  lazy var networkLocator: NetworkLocatorProtocol = NetworkLocator(serviceLocator: self)
+  lazy var storageLocator: StorageLocatorProtocol = StorageLocator(serviceLocator: self)
 
-  private(set) lazy var platform: AptoPlatformProtocol = AptoPlatform.defaultManager()
+  lazy var platform: AptoPlatformProtocol = AptoPlatform.defaultManager()
   lazy var analyticsManager: AnalyticsServiceProtocol = AnalyticsManager.instance
+  lazy var notificationHandler: NotificationHandler = NotificationHandlerImpl()
 }

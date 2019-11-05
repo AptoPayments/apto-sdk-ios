@@ -16,6 +16,7 @@ protocol UserTokenStorageProtocol {
 }
 
 class UserTokenStorage: UserTokenStorageProtocol {
+  private let notificationHandler: NotificationHandler
   fileprivate var currentTokenCache: String?
   fileprivate var currentTokenPrimaryCredentialCache: DataPointType?
   fileprivate var currentTokenSecondaryCredentialCache: DataPointType?
@@ -24,26 +25,13 @@ class UserTokenStorage: UserTokenStorageProtocol {
     static let fileName = "token.txt"
   }
 
-  public init() {
-    // Register to the session expired event
-    NotificationCenter.default.addObserver(self,
-                                           selector: #selector(self.didReceiveSessionExpiredEvent(_:)),
-                                           name: .UserTokenSessionExpiredNotification,
-                                           object: nil)
-    // Register to the session invalid event
-    NotificationCenter.default.addObserver(self,
-                                           selector: #selector(self.didReceiveSessionInvalidEvent(_:)),
-                                           name: .UserTokenSessionInvalidNotification,
-                                           object: nil)
-    // Register to the session closed event
-    NotificationCenter.default.addObserver(self,
-                                           selector: #selector(self.didReceiveSessionClosedEvent(_:)),
-                                           name: .UserTokenSessionClosedNotification,
-                                           object: nil)
+  public init(notificationHandler: NotificationHandler) {
+    self.notificationHandler = notificationHandler
+    registerToInvalidSessionEvents()
   }
 
   deinit {
-    NotificationCenter.default.removeObserver(self)
+    notificationHandler.removeObserver(self)
   }
 
   func setCurrent(token: String, withPrimaryCredential: DataPointType, andSecondaryCredential: DataPointType) {
@@ -87,6 +75,15 @@ class UserTokenStorage: UserTokenStorageProtocol {
       try fileManager.removeItem(at: localFilePath)
     }
     catch {}
+  }
+
+  private func registerToInvalidSessionEvents() {
+    notificationHandler.addObserver(self, selector: #selector(self.didReceiveSessionExpiredEvent(_:)),
+                                    name: .UserTokenSessionExpiredNotification)
+    notificationHandler.addObserver(self, selector: #selector(self.didReceiveSessionInvalidEvent(_:)),
+                                    name: .UserTokenSessionInvalidNotification)
+    notificationHandler.addObserver(self, selector: #selector(self.didReceiveSessionClosedEvent(_:)),
+                                    name: .UserTokenSessionClosedNotification)
   }
 
   fileprivate func localFilePath() -> URL {

@@ -35,7 +35,7 @@ public enum Event: String {
   case selectBalanceStoreOauthConfirmEmailError = "select_balance_store.oauth_confirm.email_error"
   case selectBalanceStoreOauthConfirmUnknownError = "select_balance_store.oauth_confirm.unknown_error"
   case selectBalanceStoreOauthConfirmEmailSendsDisabled = "select_balance_store.oauth_confirm.email_sends_disabled"
-  case selectBalanceStoreOauthConfirmInsufficientApplicationLimit = "select_balance_store.oauth_confirm.insufficient_application_limit"
+  case selectBalanceStoreOauthConfirmInsufficientApplicationLimit = "select_balance_store.oauth_confirm.insufficient_application_limit" // swiftlint:disable:this line_length
   case selectBalanceStoreIdentityNotVerified = "select_balance_store.oauth_confirm.identity_not_verified"
   case waitlist = "waitlist.waitlist.start"
   case workflowWaitlist = "workflow.waitlist.start"

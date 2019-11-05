@@ -16,7 +16,7 @@ class FeaturesStorage: FeaturesStorageProtocol {
   private var features: [FeatureKey: Bool] = [:]
 
   func update(features: [FeatureKey: Bool]) {
-    self.features.merge(features, uniquingKeysWith: { $1 })
+    self.features.merge(features) { $1 }
   }
 
   func isFeatureEnabled(_ featureKey: FeatureKey) -> Bool {

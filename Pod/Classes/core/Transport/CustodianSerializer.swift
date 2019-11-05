@@ -13,7 +13,7 @@ extension Custodian {
       return oauthCredentials.asJson
     }
     var data: [String: AnyObject] = [
-      "type" : "custodian" as AnyObject,
+      "type": "custodian" as AnyObject,
       "custodian_type": custodianType as AnyObject
     ]
     if let credentials = self.externalCredentials {

@@ -69,7 +69,7 @@ extension JSON {
     }
 
     let name = self["name"].string
-    var countries: [Country]? = nil
+    var countries: [Country]?
     if let countryCodes = self["allowed_countries"].arrayObject as? [String] {
       countries = countryCodes.map { Country(isoCode: $0) }
     }

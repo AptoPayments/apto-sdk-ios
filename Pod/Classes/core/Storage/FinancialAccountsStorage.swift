@@ -124,9 +124,10 @@ protocol FinancialAccountsStorageProtocol {
                                         accountId: String,
                                         custodian: Custodian,
                                         callback: @escaping Result<FundingSource, NSError>.Callback)
+   // swiftlint:disable:next function_parameter_count
   func fetchMonthlySpending(_ apiKey: String, userToken: String, accountId: String, month: Int, year: Int,
                             callback: @escaping Result<MonthlySpending, NSError>.Callback)
-
+   // swiftlint:disable:next function_parameter_count
   func issueCard(_ apiKey: String, userToken: String, cardProduct: CardProduct, custodian: Custodian?,
                  additionalFields: [String: AnyObject]?, initialFundingSourceId: String?,
                  callback: @escaping Result<Card, NSError>.Callback)
@@ -190,7 +191,7 @@ extension FinancialAccountsStorageProtocol {
   }
 }
 
-class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
+class FinancialAccountsStorage: FinancialAccountsStorageProtocol { // swiftlint:disable:this type_body_length
   private let transport: JSONTransport
   private let cache: FinancialAccountCacheProtocol
 
@@ -242,9 +243,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
                            callback: @escaping Result<FinancialAccount, NSError>.Callback) {
     if forceRefresh == false, let card = cache.cachedCard(accountId: accountId), card.cardProductId != nil {
       if retrieveBalances == true, card.fundingSource == nil {
-        getFinancialAccountFundingSource(apiKey,
-                                         userToken: userToken,
-                                         accountId: accountId,
+        getFinancialAccountFundingSource(apiKey, userToken: userToken, accountId: accountId,
                                          forceRefresh: false) { result in
           switch result {
           case .failure(let error):
@@ -263,17 +262,11 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
       "show_details": "false",
       "refresh_balances": retrieveBalances ? "true" : "false"
     ]
-    let url = URLWrapper(baseUrl: transport.environment.baseUrl(),
-                         url: JSONRouter.financialAccounts,
-                         urlTrailing: accountId,
-                         urlParameters: urlParameters)
+    let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.financialAccounts,
+                         urlTrailing: accountId, urlParameters: urlParameters)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
-    self.transport.get(url,
-                       authorization: auth,
-                       parameters: nil,
-                       headers: nil,
-                       acceptRedirectTo: nil,
-                       filterInvalidTokenResult: true) { [weak self] result in
+    transport.get(url, authorization: auth, parameters: nil, headers: nil, acceptRedirectTo: nil,
+                  filterInvalidTokenResult: true) { [weak self] result in
       guard let self = self else { return }
       switch result {
       case .failure(let error):
@@ -285,9 +278,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
         }
         self.cache.saveCard(financialAccount)
         if retrieveBalances == true, let card = financialAccount as? Card, card.cardIssuer == .shift {
-          self.getFinancialAccountFundingSource(apiKey,
-                                                userToken: userToken,
-                                                accountId: accountId,
+          self.getFinancialAccountFundingSource(apiKey, userToken: userToken, accountId: accountId,
                                                 forceRefresh: forceRefresh) { [weak self] result in
             callback(result.flatMap { fundingSource -> Result<FinancialAccount, NSError> in
               card.fundingSource = fundingSource
@@ -583,6 +574,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
     "january", "february", "march", "april", "may", "june",
     "july", "august", "september", "october", "november", "december"
   ]
+   // swiftlint:disable:next function_parameter_count
   func fetchMonthlySpending(_ apiKey: String, userToken: String, accountId: String, month: Int, year: Int,
                             callback: @escaping Result<MonthlySpending, NSError>.Callback) {
     let urlParameters: [String: String] = [
@@ -609,6 +601,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
     }
   }
 
+   // swiftlint:disable:next function_parameter_count
   func issueCard(_ apiKey: String, userToken: String, cardProduct: CardProduct, custodian: Custodian?,
                  additionalFields: [String: AnyObject]?, initialFundingSourceId: String?,
                  callback: @escaping Result<Card, NSError>.Callback) {
@@ -617,7 +610,7 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol {
       "card_product_id": cardProduct.id as AnyObject
     ]
     if let custodian = custodian {
-      data.merge(custodian.asJson, uniquingKeysWith: { $1 })
+      data.merge(custodian.asJson) { $1 }
     }
     if let additionalFields = additionalFields {
       data["additional_fields"] = additionalFields as AnyObject

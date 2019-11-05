@@ -33,7 +33,7 @@ extension JSON {
       return nil
     }
     let downloadUrl = self["download_url"].string
-    var urlExpirationDate: Date? = nil
+    var urlExpirationDate: Date?
     if let urlExpiration = self["url_expiration"].string {
       urlExpirationDate = Date.dateFromISO8601(string: urlExpiration)
     }

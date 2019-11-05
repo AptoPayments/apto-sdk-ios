@@ -13,6 +13,7 @@ protocol UserPreferencesStorageProtocol {
 
 class UserPreferencesStorage: UserPreferencesStorageProtocol {
   private let userDefaultsStorage: UserDefaultsStorageProtocol
+  private let notificationHandler: NotificationHandler
 
   var shouldShowDetailedCardActivity: Bool {
     get {
@@ -23,23 +24,23 @@ class UserPreferencesStorage: UserPreferencesStorageProtocol {
     }
   }
 
-  init(userDefaultsStorage: UserDefaultsStorageProtocol) {
+  init(userDefaultsStorage: UserDefaultsStorageProtocol, notificationHandler: NotificationHandler) {
     self.userDefaultsStorage = userDefaultsStorage
+    self.notificationHandler = notificationHandler
     registerNotifications()
   }
 
   deinit {
-    NotificationCenter.default.removeObserver(self)
+    notificationHandler.removeObserver(self)
   }
 
   private func registerNotifications() {
-    let notificationCenter = NotificationCenter.default
-    notificationCenter.addObserver(self, selector: #selector(removePreferences),
-                                   name: .UserTokenSessionExpiredNotification, object: nil)
-    notificationCenter.addObserver(self, selector: #selector(removePreferences),
-                                   name: .UserTokenSessionInvalidNotification, object: nil)
-    notificationCenter.addObserver(self, selector: #selector(removePreferences),
-                                   name: .UserTokenSessionClosedNotification, object: nil)
+    notificationHandler.addObserver(self, selector: #selector(removePreferences),
+                                    name: .UserTokenSessionExpiredNotification)
+    notificationHandler.addObserver(self, selector: #selector(removePreferences),
+                                    name: .UserTokenSessionInvalidNotification)
+    notificationHandler.addObserver(self, selector: #selector(removePreferences),
+                                    name: .UserTokenSessionClosedNotification)
   }
 
   @objc private func removePreferences() {

@@ -6,7 +6,6 @@
 //
 //
 
-
 public struct OauthAttempt: Equatable {
   public enum Status: String {
     case pending

@@ -22,10 +22,8 @@ extension NSMutableAttributedString {
     let range = NSRange(location: 0, length: self.length)
     self.enumerateAttribute(NSAttributedString.Key.font,
                             in: range,
-                            options: .longestEffectiveRangeNotRequired) { (attribute, range, stop) in
-      guard attribute is UIFont else {
-        return
-      }
+                            options: .longestEffectiveRangeNotRequired) { attribute, range, _ in
+      guard attribute is UIFont else { return }
       self.removeAttribute(NSAttributedString.Key.font, range: range)
       self.addAttribute(NSAttributedString.Key.font, value: font, range: range)
       self.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
@@ -40,10 +38,8 @@ extension NSMutableAttributedString {
     let range = NSRange(location: 0, length: self.length)
     self.enumerateAttribute(NSAttributedString.Key.link,
                             in: range,
-                            options: .longestEffectiveRangeNotRequired) { (attribute, range, stop) in
-      guard let _ = attribute as? URL else {
-        return
-      }
+                            options: .longestEffectiveRangeNotRequired) { attribute, range, _ in
+      guard attribute is URL else { return }
       self.removeAttribute(NSAttributedString.Key.font, range: range)
       self.removeAttribute(NSAttributedString.Key.foregroundColor, range: range)
       self.addAttribute(NSAttributedString.Key.font, value: font, range: range)

@@ -12,4 +12,5 @@ protocol ServiceLocatorProtocol: class {
 
   var platform: AptoPlatformProtocol { get }
   var analyticsManager: AnalyticsServiceProtocol { get }
+  var notificationHandler: NotificationHandler { get }
 }

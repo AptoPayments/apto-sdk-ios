@@ -70,7 +70,7 @@ public enum JSONRouter {
     case .financialAccountsDetails: return "/user/accounts/:accountId/details"
     case .financialAccountTransactions: return "/user/accounts/:accountId/transactions"
     case .financialAccountFundingSource: return "/user/accounts/:accountId/balance"
-    case .financialAccountMonthlySpending: return "/user/accounts/:accountId/stats/monthly_spending?month=:month&year=:year"
+    case .financialAccountMonthlySpending: return "/user/accounts/:accountId/stats/monthly_spending?month=:month&year=:year" // swiftlint:disable:this line_length
     case .monthlyStatementsPeriod: return "/user/statements/period"
     case .monthlyStatements: return "/user/statements"
     case .addBankAccounts: return "/user/accounts"

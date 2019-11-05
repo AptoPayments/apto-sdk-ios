@@ -126,7 +126,7 @@ public struct SelectBalanceStoreResult {
     case balanceStoreValidationsAddressMissing:
       return errorMessageKeys?.first(where: { $0.endsWith("login.error_missing_address.message") })
     case balanceStoreValidationsEmailMissing:
-      return errorMessageKeys?.first(where: { $0.endsWith("login.error_missing_email.message") }) 
+      return errorMessageKeys?.first(where: { $0.endsWith("login.error_missing_email.message") })
     case balanceStoreValidationsEmailError:
       return errorMessageKeys?.first(where: { $0.endsWith("login.error_wrong_email.message") })
     case balanceValidationsEmailSendsDisabled:
@@ -161,7 +161,7 @@ extension SelectBalanceStoreResult {
     guard isError, let errorCode = self.errorCode else {
       return .selectBalanceStoreOauthConfirmUnknownError
     }
-    switch(errorCode) {
+    switch errorCode {
     case balanceStoreCountryUnsupported:
       return .selectBalanceStoreOauthConfirmCountryUnsupported
     case balanceStoreRegionUnsupported:

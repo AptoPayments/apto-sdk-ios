@@ -31,6 +31,7 @@ public protocol NetworkManagerProtocol {
 final class NetworkManager: NetworkManagerProtocol {
   private let manager: SessionManager
   private let reachabilityManager: NetworkReachabilityManager?
+  private let notificationHandler: NotificationHandler
   private var configuration: URLSessionConfiguration = {
     let configuration = URLSessionConfiguration.default
     configuration.timeoutIntervalForRequest = 180 // seconds
@@ -51,12 +52,12 @@ final class NetworkManager: NetworkManagerProtocol {
     return manager.delegate
   }
 
-  init(baseURL: URL? = nil,
-       certPinningConfig: [String: [String: AnyObject]]? = nil,
-       allowSelfSignedCertificate: Bool = false) {
-    if let baseURL = baseURL, allowSelfSignedCertificate {
+  init(baseURL: URL? = nil, certPinningConfig: [String: [String: AnyObject]]? = nil,
+       allowSelfSignedCertificate: Bool = false, notificationHandler: NotificationHandler) {
+    self.notificationHandler = notificationHandler
+    if let baseURL = baseURL, let host = baseURL.host, allowSelfSignedCertificate {
       let serverTrustPolicies: [String: ServerTrustPolicy] = [
-        "\(baseURL.host!)": .disableEvaluation
+        "\(host)": .disableEvaluation
       ]
       let serverTrustPolicyManager = ServerTrustPolicyManager(policies: serverTrustPolicies)
       self.manager = SessionManager(
@@ -88,9 +89,9 @@ final class NetworkManager: NetworkManagerProtocol {
       .responseJSON { [unowned self] response in
         let processedResponse = self.processResponse(response).map { json -> JSON in JSON(json) }
         switch processedResponse {
-        case .failure(_):
+        case .failure:
           self.processErrorResponse(processedResponse, request: request)
-        case .success(_):
+        case .success:
           request.callback(processedResponse)
         }
     }
@@ -99,8 +100,8 @@ final class NetworkManager: NetworkManagerProtocol {
   func runPendingRequests() {
     let requests = pendingRequests
     pendingRequests.removeAll()
-    for r in requests {
-      request(r)
+    for req in requests {
+      request(req)
     }
   }
 
@@ -156,14 +157,10 @@ final class NetworkManager: NetworkManagerProtocol {
     let json = JSON(response.value ?? "")
     let error = json.backendError ?? BackendError(code: .invalidSession)
     if error.invalidSessionError() || error.unknownSessionError() {
-      NotificationCenter.default.post(Notification(name: .UserTokenSessionInvalidNotification,
-                                                   object: nil,
-                                                   userInfo: ["error": error]))
+      notificationHandler.postNotification(.UserTokenSessionInvalidNotification, userInfo: ["error": error])
     }
     else if error.sessionExpiredError() {
-      NotificationCenter.default.post(Notification(name: .UserTokenSessionExpiredNotification,
-                                                   object: nil,
-                                                   userInfo: ["error": error]))
+      notificationHandler.postNotification(.UserTokenSessionExpiredNotification, userInfo: ["error": error])
     }
     ErrorLogger.defaultInstance().log(error: error)
     return .failure(error)
@@ -189,9 +186,8 @@ final class NetworkManager: NetworkManagerProtocol {
   private func process500(response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
     switch response.result {
     case .success(let data):
-      if let dict = data as? Dictionary<String, Any>,
-         let rawCode = dict["code"] as? Int,
-         let code = BackendError.ErrorCodes(rawValue: rawCode) {
+      if let dict = data as? [String: Any], let rawCode = dict["code"] as? Int,
+          let code = BackendError.ErrorCodes(rawValue: rawCode) {
         let error = BackendError(code: code, reason: response.error?.localizedDescription)
         return .failure(error)
       }
@@ -199,7 +195,7 @@ final class NetworkManager: NetworkManagerProtocol {
         let error = BackendError(code: .serviceUnavailable, reason: response.error?.localizedDescription)
         return .failure(error)
       }
-    case .failure(_):
+    case .failure:
       let error = BackendError(code: .serviceUnavailable, reason: response.error?.localizedDescription)
       return .failure(error)
     }
@@ -208,11 +204,11 @@ final class NetworkManager: NetworkManagerProtocol {
   private func processErrorResponse(_ response: Swift.Result<JSON, NSError>, request: NetworkRequest) {
     if response.isNetworkNotReachableError() {
       self.pendingRequests.append(request)
-      NotificationCenter.default.post(Notification(name: .NetworkNotReachableNotification))
+      notificationHandler.postNotification(.NetworkNotReachableNotification)
     }
     else if response.isServerMaintenanceError() {
       self.pendingRequests.append(request)
-      NotificationCenter.default.post(Notification(name: .ServerMaintenanceNotification))
+      notificationHandler.postNotification(.ServerMaintenanceNotification)
     }
     else if response.isSessionExpiredError() {
       if !request.filterInvalidTokenResult {
@@ -220,11 +216,11 @@ final class NetworkManager: NetworkManagerProtocol {
       }
     }
     else if response.isSDKDeprecatedError() {
-      NotificationCenter.default.post(Notification(name: .SDKDeprecatedNotification))
+      notificationHandler.postNotification(.SDKDeprecatedNotification)
     }
     else if response.isKYCNotPassedError {
       pendingRequests.append(request)
-      NotificationCenter.default.post(Notification(name: .KYCNotPassedNotification))
+      notificationHandler.postNotification(.KYCNotPassedNotification)
     }
     else {
       request.callback(response)
@@ -236,8 +232,8 @@ final class NetworkManager: NetworkManagerProtocol {
 extension NetworkManager {
   private func networkStatusChanged(_ status: NetworkReachabilityManager.NetworkReachabilityStatus) {
     switch status {
-    case .reachable(_):
-      NotificationCenter.default.post(Notification(name: .NetworkReachableNotification))
+    case .reachable:
+      notificationHandler.postNotification(.NetworkReachableNotification)
       runPendingRequests()
     default:
       break

@@ -10,8 +10,8 @@ import Foundation
 import Bond
 
 // MARK: - Basic Data Types
-fileprivate var customCurrencySymbols = ["MXN": "MXN"]
-fileprivate var currencySymbols: [String: String] = [:]
+private var customCurrencySymbols = ["MXN": "MXN"]
+private var currencySymbols: [String: String] = [:]
 
 @objc open class Amount: NSObject, Codable {
   open var amount: Observable<Double?> = Observable(0)
@@ -25,7 +25,9 @@ fileprivate var currencySymbols: [String: String] = [:]
         currencySymbols[currency] = addSymbolSpaces(symbol: symbol)
       }
       else {
-        if let identifier = Locale.availableIdentifiers.first(where: { Locale(identifier: $0).currencyCode == currency }) {
+        if let identifier = Locale.availableIdentifiers.first(where: {
+          Locale(identifier: $0).currencyCode == currency
+        }) {
           currencySymbols[currency] = Locale(identifier: identifier).currencySymbol
         }
         else {
@@ -99,10 +101,7 @@ fileprivate var currencySymbols: [String: String] = [:]
   }
 
   open func complete() -> Bool {
-    guard let _ = self.amount.value, let _ = self.currency.value else {
-      return false
-    }
-    return true
+    return self.amount.value != nil && self.currency.value != nil
   }
 
   open func sameCurrencyThan(amount: Amount?) -> Bool {
@@ -145,7 +144,8 @@ fileprivate var currencySymbols: [String: String] = [:]
 open class HousingType {
   open var housingTypeId: Int
   open var description: String?
-  public init(housingTypeId:Int, description:String? = nil) {
+
+  public init(housingTypeId: Int, description: String? = nil) {
     self.housingTypeId = housingTypeId
     self.description = description
   }
@@ -153,14 +153,15 @@ open class HousingType {
 
 extension HousingType: Equatable { }
 
-public func ==(lhs: HousingType, rhs: HousingType) -> Bool {
+public func ==(lhs: HousingType, rhs: HousingType) -> Bool { // swiftlint:disable:this operator_whitespace
   return lhs.housingTypeId == rhs.housingTypeId
 }
 
 open class IncomeType {
   open var incomeTypeId: Int
   open var description: String?
-  public init(incomeTypeId:Int, description:String? = nil) {
+
+  public init(incomeTypeId: Int, description: String? = nil) {
     self.incomeTypeId = incomeTypeId
     self.description = description
   }
@@ -168,14 +169,15 @@ open class IncomeType {
 
 extension IncomeType: Equatable { }
 
-public func ==(lhs: IncomeType, rhs: IncomeType) -> Bool {
+public func ==(lhs: IncomeType, rhs: IncomeType) -> Bool { // swiftlint:disable:this operator_whitespace
   return lhs.incomeTypeId == rhs.incomeTypeId
 }
 
 open class SalaryFrequency {
   open var salaryFrequencyId: Int
   open var description: String?
-  public init(salaryFrequencyId:Int, description:String? = nil) {
+
+  public init(salaryFrequencyId: Int, description: String? = nil) {
     self.salaryFrequencyId = salaryFrequencyId
     self.description = description
   }
@@ -183,14 +185,15 @@ open class SalaryFrequency {
 
 extension SalaryFrequency: Equatable { }
 
-public func ==(lhs: SalaryFrequency, rhs: SalaryFrequency) -> Bool {
+public func ==(lhs: SalaryFrequency, rhs: SalaryFrequency) -> Bool { // swiftlint:disable:this operator_whitespace
   return lhs.salaryFrequencyId == rhs.salaryFrequencyId
 }
 
 open class TimeAtAddressOption {
   open var timeAtAddressId: Int
   open var description: String?
-  public init(timeAtAddressId:Int, description:String? = nil) {
+
+  public init(timeAtAddressId: Int, description: String? = nil) {
     self.timeAtAddressId = timeAtAddressId
     self.description = description
   }
@@ -198,6 +201,7 @@ open class TimeAtAddressOption {
 
 extension TimeAtAddressOption: Equatable { }
 
+ // swiftlint:disable:next operator_whitespace
 public func ==(lhs: TimeAtAddressOption, rhs: TimeAtAddressOption) -> Bool {
   return lhs.timeAtAddressId == rhs.timeAtAddressId
 }
@@ -205,7 +209,8 @@ public func ==(lhs: TimeAtAddressOption, rhs: TimeAtAddressOption) -> Bool {
 open class CreditScoreOption {
   open var creditScoreId: Int
   open var description: String?
-  public init(creditScoreId:Int, description:String? = nil) {
+
+  public init(creditScoreId: Int, description: String? = nil) {
     self.creditScoreId = creditScoreId
     self.description = description
   }
@@ -213,11 +218,11 @@ open class CreditScoreOption {
 
 extension CreditScoreOption: Equatable { }
 
-public func ==(lhs: CreditScoreOption, rhs: CreditScoreOption) -> Bool {
+public func ==(lhs: CreditScoreOption, rhs: CreditScoreOption) -> Bool { // swiftlint:disable:this operator_whitespace
   return lhs.creditScoreId == rhs.creditScoreId
 }
 
-public struct Country : Hashable, Codable {
+public struct Country: Hashable, Codable {
   public var isoCode: String
   public var name: String
 
@@ -225,8 +230,8 @@ public struct Country : Hashable, Codable {
     let lowercasedCode = isoCode.lowercased()
     guard lowercasedCode.count == 2 else { return "" }
 
-    let indicatorSymbols = lowercasedCode.unicodeScalars.map{ regionalIndicatorSymbol(for: $0) }
-    return String(indicatorSymbols.map{ Character($0) })
+    let indicatorSymbols = lowercasedCode.unicodeScalars.map { regionalIndicatorSymbol(for: $0) }
+    return String(indicatorSymbols.map { Character($0) })
   }
 
   public static var defaultCountry = Country(isoCode: "US")
@@ -238,7 +243,7 @@ public struct Country : Hashable, Codable {
   }
 }
 
-public func ==(lhs: Country, rhs: Country) -> Bool {
+public func ==(lhs: Country, rhs: Country) -> Bool { // swiftlint:disable:this operator_whitespace
   return lhs.isoCode == rhs.isoCode
 }
 
@@ -258,6 +263,6 @@ public struct State {
 }
 
 @objc public enum LoanCategory: NSInteger {
-  case consumer     = 1
-  case consumerPos  = 2
+  case consumer = 1
+  case consumerPos = 2
 }

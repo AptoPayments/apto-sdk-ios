@@ -15,7 +15,7 @@ public final class ShiftSDK {
       return loadedVersion
     }
     let bundle = Bundle(for: ShiftSDK.self)
-    if let bundleVersion = bundle.infoDictionary?["CFBundleVersion"] as? String {
+    if let bundleVersion = bundle.infoDictionary?["CFBundleShortVersionString"] as? String {
       _version = bundleVersion
       return bundleVersion
     }

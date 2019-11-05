@@ -17,7 +17,7 @@ public enum DocumentAuthenticity {
   case notrelevant
   case notrequested
 
-  static func documentAuthenticityFrom(description:String?) -> DocumentAuthenticity? {
+  static func documentAuthenticityFrom(description: String?) -> DocumentAuthenticity? {
     guard let description = description else {
       return nil
     }
@@ -51,7 +51,7 @@ public enum DocumentAuthenticity {
   }
 
   public func description() -> String {
-    switch (self) {
+    switch self {
     case .unknown: return "Unknown"
     case .notapplicable: return "Not applicable"
     case .authentic: return "Authentic"
@@ -68,10 +68,10 @@ public enum DocumentCompletionStatus {
   case unknown
   case unrecognizabledocument
   case imagelowquality
-  case ok
+  case ok // swiftlint:disable:this identifier_name
   case pagestreatedasseparatedocuments
   case requestrejected
-  static func documentCompletionStatusFrom(description:String?) -> DocumentCompletionStatus? {
+  static func documentCompletionStatusFrom(description: String?) -> DocumentCompletionStatus? {
     guard let description = description else {
       return nil
     }
@@ -98,7 +98,7 @@ public enum DocumentCompletionStatus {
     }
   }
   func description() -> String {
-    switch (self) {
+    switch self {
     case .unknown: return "Unknown"
     case .unrecognizabledocument: return "Unrecognizable document"
     case .imagelowquality: return "Low quality image"
@@ -121,7 +121,8 @@ public enum FaceComparisonResult {
   case internalError
   case noLicense
 
-  static func faceComparisonResultFrom(description:String?) -> FaceComparisonResult? {
+  // swiftlint:disable:next cyclomatic_complexity
+  static func faceComparisonResultFrom(description: String?) -> FaceComparisonResult? {
     guard let description = description else {
       return nil
     }
@@ -161,7 +162,7 @@ public enum FaceComparisonResult {
   }
 
   public func description() -> String {
-    switch (self) {
+    switch self {
     case .unknown: return "Unknown"
     case .faceMatch: return "Face Match"
     case .faceNotMatch: return "Face doesn't match"
@@ -178,10 +179,11 @@ public enum FaceComparisonResult {
 
 open class DocumentVerification: Verification {
   open var verificationResult: DocumentVerificationResult?
-  public init(verificationId:String,
+
+  public init(verificationId: String,
               verificationType: DataPointType,
-              status:VerificationStatus,
-              secret:String? = nil,
+              status: VerificationStatus,
+              secret: String? = nil,
               secondaryCredential: Verification? = nil,
               verificationResult: DocumentVerificationResult? = nil) {
     self.verificationResult = verificationResult
@@ -191,8 +193,10 @@ open class DocumentVerification: Verification {
                secret: secret,
                secondaryCredential: secondaryCredential)
   }
+
   @objc override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    return DocumentVerification(verificationId: verificationId, verificationType: verificationType, status: status, secret: secret, secondaryCredential: secondaryCredential)
+    return DocumentVerification(verificationId: verificationId, verificationType: verificationType, status: status,
+                                secret: secret, secondaryCredential: secondaryCredential)
   }
 }
 
@@ -202,10 +206,11 @@ open class DocumentVerificationResult: NSObject {
   open var docCompletionStatus: DocumentCompletionStatus
   open var faceSimilarityRatio: Float
   open var userData: DataPointList?
-  public init(faceComparisonResult:FaceComparisonResult,
+
+  public init(faceComparisonResult: FaceComparisonResult,
               docAuthenticity: DocumentAuthenticity,
-              docCompletionStatus:DocumentCompletionStatus,
-              faceSimilarityRatio:Float,
+              docCompletionStatus: DocumentCompletionStatus,
+              faceSimilarityRatio: Float,
               userData: DataPointList?) {
     self.faceComparisonResult = faceComparisonResult
     self.docAuthenticity = docAuthenticity
@@ -213,6 +218,7 @@ open class DocumentVerificationResult: NSObject {
     self.faceSimilarityRatio = faceSimilarityRatio
     self.userData = userData
   }
+
   @objc func copyWithZone(_ zone: NSZone?) -> AnyObject {
     return DocumentVerificationResult(faceComparisonResult: faceComparisonResult,
                                       docAuthenticity: docAuthenticity,
@@ -220,5 +226,4 @@ open class DocumentVerificationResult: NSObject {
                                       faceSimilarityRatio: faceSimilarityRatio,
                                       userData: userData?.copyWithZone(zone) as? DataPointList)
   }
-  
 }

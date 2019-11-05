@@ -9,7 +9,5 @@
 import Foundation
 
 public class AutomationStorage {
-  
   public static var verificationSecret: String?
-  
 }

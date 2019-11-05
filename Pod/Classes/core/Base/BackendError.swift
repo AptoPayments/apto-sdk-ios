@@ -126,7 +126,7 @@ open class BackendError: NSError {
       case .cardAlreadyIssued: return "issue_card.issue_card.error.card_already_issued"
       case .oauthTokenRevoked: return "issue_card.issue_card.error.token_revoked"
       case .balanceValidationsEmailSendsDisabled: return "select_balance_store.login.error_email_sends_disabled.message"
-      case .balanceValidationsInsufficientApplicationLimit: return "select_balance_store.login.error_insufficient_application_limit.message"
+      case .balanceValidationsInsufficientApplicationLimit: return "select_balance_store.login.error_insufficient_application_limit.message" // swiftlint:disable:this line_length
       case .canNotSendSms: return "auth.input_phone.error.can_not_send_sms"
       case .invalidPhoneNumber: return "auth.input_phone.error.invalid_phone_number"
       case .unreachablePhonenumber: return "auth.input_phone.error.unreachable_phone_number"
@@ -136,12 +136,10 @@ open class BackendError: NSError {
     }
   }
 
-  public init(code: ErrorCodes,
-              rawCode: Int? = nil,
-              reason: String? = nil) {
-    let errorCode = rawCode != nil ? " (\(rawCode!))" : ""
+  public init(code: ErrorCodes, rawCode: Int? = nil, reason: String? = nil) {
+    let errorCode = rawCode != nil ? " (\(rawCode!))" : "" // swiftlint:disable:this force_unwrapping
     var userInfo = [NSLocalizedDescriptionKey: code.descriptionKey.podLocalized()
-      .replace(["<<ERROR_CODE>>" : errorCode])]
+      .replace(["<<ERROR_CODE>>": errorCode])]
     if let reason = reason {
       userInfo[NSLocalizedFailureReasonErrorKey] = reason
     }
@@ -184,23 +182,23 @@ open class BackendError: NSError {
   public var isOauthTokenRevokedError: Bool {
     return code == ErrorCodes.oauthTokenRevoked.rawValue
   }
-  
+
   public var isBalanceInsufficientFundsError: Bool {
     return code == ErrorCodes.balanceInsufficientFunds.rawValue
   }
-  
+
   public var isBalanceValidationsInsufficientApplicationLimit: Bool {
     return code == ErrorCodes.balanceValidationsInsufficientApplicationLimit.rawValue
   }
-  
+
   public var isBalanceValidationsEmailSendsDisabled: Bool {
     return code == ErrorCodes.balanceValidationsEmailSendsDisabled.rawValue
   }
-  
+
   public var isCardEnableError: Bool {
     return code == ErrorCodes.shiftCardEnableError.rawValue
   }
-  
+
   public var isCardDisableError: Bool {
     return code == ErrorCodes.shiftCardDisableError.rawValue
   }

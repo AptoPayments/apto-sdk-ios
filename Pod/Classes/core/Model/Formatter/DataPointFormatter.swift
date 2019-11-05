@@ -69,7 +69,7 @@ public class PersonalNameFormatter: DataPointFormatter {
     }
     return [
       TitleValue(title: "select_balance_store.oauth_confirm.first_name".podLocalized(), value: firstName),
-      TitleValue(title: "select_balance_store.oauth_confirm.last_name".podLocalized(), value: lastName),
+      TitleValue(title: "select_balance_store.oauth_confirm.last_name".podLocalized(), value: lastName)
     ]
   }
 }
@@ -144,7 +144,8 @@ class SSNFormatter: DataPointFormatter {
     }
     let firstDivision = value.index(value.startIndex, offsetBy: 3)
     let secondDivision = value.index(firstDivision, offsetBy: 2)
-    return String(value[..<firstDivision]) + "-" + String(value[firstDivision..<secondDivision]) + "-" + String(value[secondDivision...])
+    return String(value[..<firstDivision]) + "-" + String(value[firstDivision..<secondDivision]) + "-"
+            + String(value[secondDivision...])
   }
 }
 
@@ -166,7 +167,7 @@ class IdDocumentFormatter: DataPointFormatter {
 }
 
 public class DataPointFormatterFactory {
-  public init(){
+  public init() {
   }
 
   public func formatter(for dataPoint: DataPoint) -> DataPointFormatter {

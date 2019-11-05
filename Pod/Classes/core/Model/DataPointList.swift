@@ -120,7 +120,7 @@ public extension DataPointList {
   var birthDateDataPoint: BirthDate {
     return getForcingDataPointOf(type: .birthDate, defaultValue: BirthDate()) as! BirthDate
   }
-  var IdDocumentDataPoint: IdDocument {
+  var idDocumentDataPoint: IdDocument {
     return getForcingDataPointOf(type: .idDocument, defaultValue: IdDocument()) as! IdDocument
   }
   var paydayLoanDataPoint: PaydayLoan {

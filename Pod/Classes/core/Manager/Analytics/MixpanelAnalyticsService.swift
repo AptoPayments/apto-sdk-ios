@@ -8,7 +8,6 @@ import Foundation
 import Mixpanel
 
 final class MixpanelAnalyticsService: AnalyticsServiceProtocol {
-  
   private var initialized = false
   private var tempCreateUserId: String?
   private var tempLoginUserId: String?
@@ -25,13 +24,13 @@ final class MixpanelAnalyticsService: AnalyticsServiceProtocol {
       tempLoginUserId = nil
     }
   }
-  
+
   func track(event: Event, properties: [String: Any]? = [:]) {
     guard initialized else { return }
     let properties = properties as? Properties ?? nil
     Mixpanel.mainInstance().track(event: event.rawValue, properties: properties)
   }
-  
+
   func createUser(userId: String) {
     guard initialized else {
       tempCreateUserId = userId
@@ -44,7 +43,7 @@ final class MixpanelAnalyticsService: AnalyticsServiceProtocol {
     mixpanel.registerSuperProperties(["userId": userId])
     track(event: Event.createUser)
   }
-  
+
   func loginUser(userId: String) {
     guard initialized else {
       tempLoginUserId = userId
@@ -55,7 +54,7 @@ final class MixpanelAnalyticsService: AnalyticsServiceProtocol {
     mixpanel.registerSuperProperties(["userId": userId])
     track(event: Event.loginUser)
   }
-  
+
   func logoutUser() {
     guard initialized else { return }
     let mixpanel = Mixpanel.mainInstance()

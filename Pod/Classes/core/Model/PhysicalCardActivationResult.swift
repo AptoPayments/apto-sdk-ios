@@ -20,7 +20,8 @@ public struct PhysicalCardActivationResult {
 
 extension JSON {
   var physicalCardActivationResult: PhysicalCardActivationResult? {
-    guard let rawType = self["result"].string, let resultType = PhysicalCardActivationResultType(rawValue: rawType) else {
+    guard let rawType = self["result"].string,
+          let resultType = PhysicalCardActivationResultType(rawValue: rawType) else {
       ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                             reason: "Can't parse PhysicalCardActivationResult \(self)"))
       return nil

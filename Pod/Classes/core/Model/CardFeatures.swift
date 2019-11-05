@@ -90,7 +90,7 @@ extension JSON {
     let activation = self["activation"].featureAction
     let ivrSupport = self["support"].ivr
 
-    return CardFeatures(setPin: setPin, getPin: getPin,  allowedBalanceTypes: allowedBalanceTypes,
+    return CardFeatures(setPin: setPin, getPin: getPin, allowedBalanceTypes: allowedBalanceTypes,
                         activation: activation, ivrSupport: ivrSupport)
   }
 

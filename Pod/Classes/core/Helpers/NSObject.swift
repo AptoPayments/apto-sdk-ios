@@ -8,15 +8,13 @@
 
 import Foundation
 
-func ==(lhs: [NSObject], rhs: [NSObject]) -> Bool
-{
+func ==(lhs: [NSObject], rhs: [NSObject]) -> Bool { // swiftlint:disable:this operator_whitespace
   guard lhs.count == rhs.count else { return false }
-  var i1 = lhs.makeIterator()
-  var i2 = rhs.makeIterator()
+  var lhsIterator = lhs.makeIterator()
+  var rhsIterator = rhs.makeIterator()
   var isEqual = true
-  while let e1 = i1.next(), let e2 = i2.next(), isEqual
-  {
-    isEqual = e1 == e2
+  while let lhsItem = lhsIterator.next(), let rhsItem = rhsIterator.next(), isEqual {
+    isEqual = lhsItem == rhsItem
   }
   return isEqual
 }
