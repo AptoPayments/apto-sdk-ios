@@ -204,6 +204,29 @@ open class BackendError: NSError {
   }
 }
 
+extension NSError {
+  @objc public var eventInfo: [String: Any] {
+    var retVal: [String: Any] = [
+      "code": self.code as Any,
+      "message": self.localizedDescription as Any,
+    ]
+    if let failure = self.localizedFailureReason {
+      retVal["reason"] = failure as Any
+    }
+    return retVal
+  }
+}
+
+extension BackendError {
+  public override var eventInfo: [String: Any] {
+    var retVal: [String: Any] = super.eventInfo
+    if let rawCode = self.rawCode {
+      retVal["raw_code"] = rawCode as Any
+    }
+    return retVal
+  }
+}
+
 extension JSON {
   public var backendError: BackendError? {
     if let errorCode = self["code"].int,

@@ -105,33 +105,11 @@ public extension DataPointList {
   var addressDataPoint: Address {
     return getForcingDataPointOf(type: .address, defaultValue: Address()) as! Address
   }
-  var housingDataPoint: Housing {
-    return getForcingDataPointOf(type: .housing, defaultValue: Housing()) as! Housing
-  }
-  var incomeDataPoint: Income {
-    return getForcingDataPointOf(type: .income, defaultValue: Income()) as! Income
-  }
-  var incomeSourceDataPoint: IncomeSource {
-    return getForcingDataPointOf(type: .incomeSource, defaultValue: IncomeSource()) as! IncomeSource
-  }
-  var creditScoreDataPoint: CreditScore {
-    return getForcingDataPointOf(type: .creditScore, defaultValue: CreditScore()) as! CreditScore
-  }
   var birthDateDataPoint: BirthDate {
     return getForcingDataPointOf(type: .birthDate, defaultValue: BirthDate()) as! BirthDate
   }
   var idDocumentDataPoint: IdDocument {
     return getForcingDataPointOf(type: .idDocument, defaultValue: IdDocument()) as! IdDocument
-  }
-  var paydayLoanDataPoint: PaydayLoan {
-    return getForcingDataPointOf(type: .paydayLoan, defaultValue: PaydayLoan()) as! PaydayLoan
-  }
-  var memberOfArmedForcesDataPoint: MemberOfArmedForces {
-    return getForcingDataPointOf(type: .memberOfArmedForces,
-                                 defaultValue: MemberOfArmedForces()) as! MemberOfArmedForces
-  }
-  var timeAtAddressDataPoint: TimeAtAddress {
-    return getForcingDataPointOf(type: .timeAtAddress, defaultValue: TimeAtAddress()) as! TimeAtAddress
   }
   // swiftlint:enable force_cast
 }

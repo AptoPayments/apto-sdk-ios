@@ -68,12 +68,6 @@ open class ProjectConfiguration {
   public let allowUserLogin: Bool
   public let skipSteps: Bool
   public let strictAddressValidation: Bool
-  public let incomeTypes: [IncomeType]
-  public let housingTypes: [HousingType]
-  public let salaryFrequencies: [SalaryFrequency]
-  public let timeAtAddressOptions: [TimeAtAddressOption]
-  public let creditScoreOptions: [CreditScoreOption]
-  public let grossIncomeRange: AmountRangeConfiguration
   public let primaryAuthCredential: DataPointType
   public let secondaryAuthCredential: DataPointType
   public let supportEmailAddress: String?
@@ -94,12 +88,6 @@ open class ProjectConfiguration {
        strictAddressValidation: Bool,
        defaultCountryCode: Int,
        products: [Product],
-       incomeTypes: [IncomeType],
-       housingTypes: [HousingType],
-       salaryFrequencies: [SalaryFrequency],
-       timeAtAddressOptions: [TimeAtAddressOption],
-       creditScoreOptions: [CreditScoreOption],
-       grossIncomeRange: AmountRangeConfiguration,
        welcomeScreenAction: WorkflowAction,
        supportEmailAddress: String?,
        branding: ProjectBranding,
@@ -115,12 +103,6 @@ open class ProjectConfiguration {
     self.strictAddressValidation = strictAddressValidation
     self.defaultCountryCode = defaultCountryCode
     self.products = products
-    self.incomeTypes = incomeTypes
-    self.housingTypes = housingTypes
-    self.salaryFrequencies = salaryFrequencies
-    self.timeAtAddressOptions = timeAtAddressOptions
-    self.creditScoreOptions = creditScoreOptions
-    self.grossIncomeRange = grossIncomeRange
     self.welcomeScreenAction = welcomeScreenAction
     self.supportEmailAddress = supportEmailAddress
     self.branding = branding
@@ -133,11 +115,4 @@ open class ProjectConfiguration {
       self.allowedCountries = [Country.defaultCountry]
     }
   }
-}
-
-public struct AmountRangeConfiguration {
-  public let min: Double
-  public let max: Double
-  public let def: Double
-  public let inc: Double
 }

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "AptoSDK"
-  s.version          = "2.5.2"
+  s.version          = "2.5.3"
   s.summary          = "The Apto core platform iOS SDK."
   s.description      = <<-DESC
                         Apto iOS Core SDK
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.homepage         = "https://github.com/ShiftFinancial/apto-sdk-ios.git"
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.authors          = { "Ivan Oliver" => "ivan@aptopayments.com", "Takeichi Kanzaki" => "takeichi@aptopayments.com" }
-  s.source           = { :git => "https://github.com/ShiftFinancial/apto-sdk-ios.git", :tag => "2.5.2" }
+  s.source           = { :git => "https://github.com/ShiftFinancial/apto-sdk-ios.git", :tag => "2.5.3" }
 
   s.platform = :ios
   s.ios.deployment_target = '10.0'
@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
 
   s.frameworks = 'Foundation', 'UIKit'
   s.dependency 'Alamofire', '~> 4.8'
-  s.dependency 'Bond', '~> 6.10'
+  s.dependency 'Bond', '~> 7.6'
   s.dependency 'SwiftyJSON', '~> 5.0'
   s.dependency 'GoogleKit', '~> 0.3'
   s.dependency 'PhoneNumberKit', '~> 2.6'

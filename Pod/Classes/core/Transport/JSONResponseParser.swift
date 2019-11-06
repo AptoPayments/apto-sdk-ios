@@ -31,16 +31,6 @@ extension JSON {
       }
     case "access_token":
       return self.accessToken
-    case "income_type":
-      return self.incomeType
-    case "salary_frequency":
-      return self.salaryFrequency
-    case "housing_type":
-      return self.housingType
-    case "time_at_address_option":
-      return self.timeAtAddressOption
-    case "credit_score_option":
-      return self.creditScoreOption
     case "content":
       return self.content
     case "context_configuration":
@@ -85,20 +75,6 @@ extension JSON {
       return self.birthDate
     case "id_document":
       return self.idDocument
-    case "income_source":
-      return self.incomeSource
-    case "housing":
-      return self.housing
-    case "payday_loan":
-      return self.paydayLoan
-    case "member_of_armed_forces":
-      return self.memberOfArmedForces
-    case "time_at_address":
-      return self.timeAtAddress
-    case "income":
-      return self.income
-    case "credit_score":
-      return self.creditScore
     case "required_datapoint":
       return self.requiredDatapoint
     case "product":
@@ -176,67 +152,6 @@ extension JSON {
     return AccessToken(token: token, primaryCredential: nil, secondaryCredential: nil)
   }
 
-  var housing: Housing? {
-    guard let housingTypeId = self["housing_type_id"].int else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse housing \(self)"))
-      return nil
-    }
-    let verified = self["verified"].bool
-    return Housing(housingType: HousingType(housingTypeId: housingTypeId), verified: verified)
-  }
-
-  var income: Income? {
-    guard let netMonthlyIncome = self["net_monthly_income"].int,
-          let grossAnnualIncome = self["gross_annual_income"].int else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse income \(self)"))
-      return nil
-    }
-    let verified = self["verified"].bool
-    return Income(netMonthlyIncome: netMonthlyIncome, grossAnnualIncome: grossAnnualIncome, verified: verified)
-  }
-
-  var creditScore: CreditScore? {
-    guard let creditRange = self["credit_range"].int else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse credit score \(self)"))
-      return nil
-    }
-    let verified = self["verified"].bool
-    return CreditScore(creditRange: creditRange, verified: verified)
-  }
-
-  var paydayLoan: PaydayLoan? {
-    guard let usedPaydayLoan = self["payday_loan"].bool else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse payday loan \(self)"))
-      return nil
-    }
-    let verified = self["verified"].bool
-    return PaydayLoan(usedPaydayLoan: usedPaydayLoan, verified: verified)
-  }
-
-  var memberOfArmedForces: MemberOfArmedForces? {
-    guard let memberOfArmedForces = self["member_of_armed_forces"].bool else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse member of armed forces \(self)"))
-      return nil
-    }
-    let verified = self["verified"].bool
-    return MemberOfArmedForces(memberOfArmedForces: memberOfArmedForces, verified: verified)
-  }
-
-  var timeAtAddress: TimeAtAddress? {
-    guard let timeAtAddress = self["time_at_address_id"].int else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse time at address \(self)"))
-      return nil
-    }
-    let verified = self["verified"].bool
-    return TimeAtAddress(timeAtAddress: TimeAtAddressOption(timeAtAddressId: timeAtAddress), verified: verified)
-  }
-
   var requiredDatapoint: RequiredDataPoint? {
     guard let dataPointType = DataPointType.from(typeName: self["datapoint_type"].string),
           let verificationRequired = self["verification_required"].bool,
@@ -250,63 +165,6 @@ extension JSON {
                              verificationRequired: verificationRequired,
                              optional: optional,
                              configuration: dataPointConfiguration)
-  }
-
-  var incomeSource: IncomeSource? {
-    guard let salaryFrequencyId = self["salary_frequency_id"].int, let incomeTypeId = self["income_type_id"].int else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse income source \(self)"))
-      return nil
-    }
-    let verified = self["verified"].bool
-    let salaryFrequency = SalaryFrequency(salaryFrequencyId: salaryFrequencyId)
-    let incomeType = IncomeType(incomeTypeId: incomeTypeId)
-    return IncomeSource(salaryFrequency: salaryFrequency, incomeType: incomeType, verified: verified)
-  }
-
-  var incomeType: IncomeType? {
-    guard let description = self["description"].string, let incomeTypeId = self["income_type_id"].int else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse income \(self)"))
-      return nil
-    }
-    return IncomeType(incomeTypeId: incomeTypeId, description: description)
-  }
-
-  var salaryFrequency: SalaryFrequency? {
-    guard let description = self["description"].string, let salaryFrequencyId = self["salary_frequency_id"].int else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse salary frequency \(self)"))
-      return nil
-    }
-    return SalaryFrequency(salaryFrequencyId: salaryFrequencyId, description: description)
-  }
-
-  var housingType: HousingType? {
-    guard let description = self["description"].string, let housingTypeId = self["housing_type_id"].int else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse housing Type \(self)"))
-      return nil
-    }
-    return HousingType(housingTypeId: housingTypeId, description: description)
-  }
-
-  var timeAtAddressOption: TimeAtAddressOption? {
-    guard let description = self["description"].string, let timeAtAddressId = self["time_at_address_id"].int else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse time at address \(self)"))
-      return nil
-    }
-    return TimeAtAddressOption(timeAtAddressId: timeAtAddressId, description: description)
-  }
-
-  var creditScoreOption: CreditScoreOption? {
-    guard let description = self["description"].string, let creditScoreId = self["credit_score_id"].int else {
-      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                            reason: "Can't parse credit score \(self)"))
-      return nil
-    }
-    return CreditScoreOption(creditScoreId: creditScoreId, description: description)
   }
 
   var content: Content? {
@@ -441,15 +299,6 @@ extension JSON {
 
   var projectConfiguration: ProjectConfiguration? {
     guard let name = self["name"].string,
-          let salaryFrequencies = self["salary_frequencies"].linkObject as? [Any],
-          let incomeTypes = self["income_types"].linkObject as? [Any],
-          let housingTypes = self["housing_types"].linkObject as? [Any],
-          let timeAtAddressOptions = self["time_at_address_values"].linkObject as? [Any],
-          let creditScoreOptions = self["credit_score_values"].linkObject as? [Any],
-          let grossIncomeMax = self["gross_income_max"].double,
-          let grossIncomeMin = self["gross_income_min"].double,
-          let grossIncomeIncrements = self["gross_income_increments"].double,
-          let grossIncomeDefault = self["gross_income_default"].double,
           let language = self["language"].string,
           let welcomeScreenAction = self["welcome_screen_action"].linkObject as? WorkflowAction,
           let branding = self["project_branding"].projectBranding else {
@@ -461,22 +310,6 @@ extension JSON {
     let summary = self["summary"].string
     let primaryAuthCredential = DataPointType.from(typeName: self["primary_auth_credential"].string) ?? .phoneNumber
     let secondaryAuthCredential = DataPointType.from(typeName: self["secondary_auth_credential"].string) ?? .email
-
-    let parsedSalaryFrequencies = salaryFrequencies.compactMap { obj -> SalaryFrequency? in
-      return obj as? SalaryFrequency
-    }
-    let parsedIncomeTypes = incomeTypes.compactMap { obj -> IncomeType? in
-      return obj as? IncomeType
-    }
-    let parsedHousingTypes = housingTypes.compactMap { obj -> HousingType? in
-      return obj as? HousingType
-    }
-    let parsedTimeAtAddressOptions = timeAtAddressOptions.compactMap { obj -> TimeAtAddressOption? in
-      return obj as? TimeAtAddressOption
-    }
-    let parsedCreditScoreOptions = creditScoreOptions.compactMap { obj -> CreditScoreOption? in
-      return obj as? CreditScoreOption
-    }
 
     var products: [Product] = []
     if let returnedProducts = self["products"].linkObject as? [Any] {
@@ -492,10 +325,6 @@ extension JSON {
     let skipSteps = false
     let strictAddressValidation = true
     let defaultCountryCode = 1
-    let grossIncomeRange = AmountRangeConfiguration(min: grossIncomeMin,
-                                                    max: grossIncomeMax,
-                                                    def: grossIncomeDefault,
-                                                    inc: grossIncomeIncrements)
 
     // Support Email Address
     let supportEmailAddress = self["support_source_address"].string
@@ -521,12 +350,6 @@ extension JSON {
                                 strictAddressValidation: strictAddressValidation,
                                 defaultCountryCode: defaultCountryCode,
                                 products: products,
-                                incomeTypes: parsedIncomeTypes,
-                                housingTypes: parsedHousingTypes,
-                                salaryFrequencies: parsedSalaryFrequencies,
-                                timeAtAddressOptions: parsedTimeAtAddressOptions,
-                                creditScoreOptions: parsedCreditScoreOptions,
-                                grossIncomeRange: grossIncomeRange,
                                 welcomeScreenAction: welcomeScreenAction,
                                 supportEmailAddress: supportEmailAddress,
                                 branding: branding,

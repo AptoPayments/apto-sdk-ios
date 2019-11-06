@@ -3,7 +3,6 @@
 //  AptoSDK
 //
 //  Created by Ivan Oliver Martínez on 18/01/16.
-//  Copyright © 2018 Shift. All rights reserved.
 //
 
 import Foundation
@@ -19,16 +18,8 @@ import ReactiveKit
   case birthDate
   case idDocument
   case address
-  case housing
-  case incomeSource
-  case income
-  case creditScore
-  case paydayLoan
-  case memberOfArmedForces
-  case timeAtAddress
   case financialAccount
 
-  // swiftlint:disable cyclomatic_complexity
   static func from(typeName: String?) -> DataPointType? {
     switch typeName {
     case "email": return .email
@@ -37,17 +28,9 @@ import ReactiveKit
     case "address": return .address
     case "birthdate": return .birthDate
     case "id_document": return .idDocument
-    case "income_source": return .incomeSource
-    case "housing": return .housing
-    case "income": return .income
-    case "credit_score": return .creditScore
-    case "payday_loan": return .paydayLoan
-    case "member_of_armed_forces": return .memberOfArmedForces
-    case "time_at_address": return .timeAtAddress
     default: return nil
     }
   }
-  // swiftlint:enable cyclomatic_complexity
 
   var description: String {
     switch self {
@@ -57,13 +40,6 @@ import ReactiveKit
     case .address: return "address"
     case .birthDate: return "birthdate"
     case .idDocument: return "id_document"
-    case .incomeSource: return "income_source"
-    case .housing: return "housing"
-    case .income: return "income"
-    case .creditScore: return "credit_score"
-    case .paydayLoan: return "payday_loan"
-    case .memberOfArmedForces: return "member_of_armed_forces"
-    case .timeAtAddress: return "time_at_address"
     case .financialAccount: return "financial_account"
     }
   }
@@ -143,9 +119,7 @@ public protocol CountryRestrictedDataPoint {
   }
 
   override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = PersonalName(firstName: self.firstName.value,
-                              lastName: self.lastName.value,
-                              verified: self.verified)
+    let retVal = PersonalName(firstName: self.firstName.value, lastName: self.lastName.value, verified: self.verified)
     if let verification = self.verification {
       retVal.verification = verification.copy() as? Verification
     }
@@ -180,8 +154,7 @@ public protocol CountryRestrictedDataPoint {
   }
 
   override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = PhoneNumber(countryCode: self.countryCode.value,
-                             phoneNumber: self.phoneNumber.value,
+    let retVal = PhoneNumber(countryCode: self.countryCode.value, phoneNumber: self.phoneNumber.value,
                              verified: self.verified)
     if let verification = self.verification {
       retVal.verification = verification.copy() as? Verification
@@ -256,9 +229,7 @@ public protocol CountryRestrictedDataPoint {
   }
 
   override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = Email(email: self.email.value,
-                       verified: self.verified,
-                       notSpecified: self.notSpecified)
+    let retVal = Email(email: self.email.value, verified: self.verified, notSpecified: self.notSpecified)
     if let verification = self.verification {
       retVal.verification = verification.copy() as? Verification
     }
@@ -307,14 +278,10 @@ public protocol CountryRestrictedDataPoint {
 
   public var description: String {
     switch self {
-    case .ssn:
-      return "ssn"
-    case .identityCard:
-      return "identity_card"
-    case .passport:
-      return "passport"
-    case .driversLicense:
-      return "drivers_license"
+    case .ssn: return "ssn"
+    case .identityCard: return "identity_card"
+    case .passport: return "passport"
+    case .driversLicense: return "drivers_license"
     }
   }
 
@@ -330,14 +297,10 @@ public protocol CountryRestrictedDataPoint {
 
   public var localizedDescription: String {
     switch self {
-    case .ssn:
-      return "birthday-collector.id-document.type.ssn".podLocalized()
-    case .identityCard:
-      return "birthday-collector.id-document.type.identity-card".podLocalized()
-    case .passport:
-      return "birthday-collector.id-document.type.passport".podLocalized()
-    case .driversLicense:
-      return "birthday-collector.id-document.type.drivers-license".podLocalized()
+    case .ssn: return "birthday-collector.id-document.type.ssn".podLocalized()
+    case .identityCard: return "birthday-collector.id-document.type.identity-card".podLocalized()
+    case .passport: return "birthday-collector.id-document.type.passport".podLocalized()
+    case .driversLicense: return "birthday-collector.id-document.type.drivers-license".podLocalized()
     }
   }
 }
@@ -348,10 +311,7 @@ public protocol CountryRestrictedDataPoint {
   open var value: Observable<String?> = Observable(nil)
   open var country: Observable<Country?> = Observable(nil)
 
-  convenience public init(documentType: IdDocumentType?,
-                          value: String?,
-                          country: Country?,
-                          verified: Bool? = false,
+  convenience public init(documentType: IdDocumentType?, value: String?, country: Country?, verified: Bool? = false,
                           notSpecified: Bool? = false) {
     self.init(type: .idDocument, verified: verified, notSpecified: notSpecified)
     self.documentType.send(documentType)
@@ -362,10 +322,7 @@ public protocol CountryRestrictedDataPoint {
     self.country.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 
-  @objc convenience public init(documentType: IdDocumentType,
-                                value: String?,
-                                verified: Bool,
-                                notSpecified: Bool) {
+  @objc convenience public init(documentType: IdDocumentType, value: String?, verified: Bool, notSpecified: Bool) {
     self.init(documentType: documentType as IdDocumentType?,
               value: value,
               country: nil,
@@ -385,11 +342,8 @@ public protocol CountryRestrictedDataPoint {
   }
 
   override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = IdDocument(documentType: self.documentType.value,
-                            value: self.value.value,
-                            country: self.country.value,
-                            verified: self.verified,
-                            notSpecified: self.notSpecified)
+    let retVal = IdDocument(documentType: self.documentType.value, value: self.value.value, country: self.country.value,
+                            verified: self.verified, notSpecified: self.notSpecified)
     if let verification = self.verification {
       retVal.verification = verification.copy() as? Verification
     }
@@ -407,12 +361,7 @@ public protocol CountryRestrictedDataPoint {
   open var zip: Observable<String?> = Observable(nil)
   open var formattedAddress: String?
 
-  public init(address: String?,
-              apUnit: String?,
-              country: Country?,
-              city: String?,
-              region: String?,
-              zip: String?,
+  public init(address: String?, apUnit: String?, country: Country?, city: String?, region: String?, zip: String?,
               verified: Bool? = false) {
     super.init(type: .address, verified: verified)
     self.address.send(address)
@@ -428,14 +377,8 @@ public protocol CountryRestrictedDataPoint {
     self.zip.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
   }
 
-  @objc public convenience init(address: String?,
-                                apUnit: String?,
-                                countryCode: String?,
-                                countryName: String?,
-                                city: String?,
-                                region: String?,
-                                zip: String?,
-                                verified: Bool) {
+  @objc public convenience init(address: String?, apUnit: String?, countryCode: String?, countryName: String?,
+                                city: String?, region: String?, zip: String?, verified: Bool) {
     let country: Country?
     if let countryCode = countryCode, let countryName = countryName {
       country = Country(isoCode: countryCode, name: countryName)
@@ -443,12 +386,7 @@ public protocol CountryRestrictedDataPoint {
     else {
       country = nil
     }
-    self.init(address: address,
-              apUnit: apUnit,
-              country: country,
-              city: city,
-              region: region,
-              zip: zip,
+    self.init(address: address, apUnit: apUnit, country: country, city: city, region: region, zip: zip,
               verified: verified)
   }
 
@@ -481,13 +419,8 @@ public protocol CountryRestrictedDataPoint {
   }
 
   override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = Address(address: self.address.value,
-                         apUnit: self.apUnit.value,
-                         country: self.country.value,
-                         city: self.city.value,
-                         region: self.region.value,
-                         zip: self.zip.value,
-                         verified: self.verified)
+    let retVal = Address(address: self.address.value, apUnit: self.apUnit.value, country: self.country.value,
+                         city: self.city.value, region: self.region.value, zip: self.zip.value, verified: self.verified)
     if let verification = self.verification {
       retVal.verification = verification.copy() as? Verification
     }
@@ -529,229 +462,11 @@ public protocol CountryRestrictedDataPoint {
   }
 }
 
-@objc open class Housing: DataPoint {
-  private let disposeBag = DisposeBag()
-  open var housingType: Observable<HousingType?> = Observable(nil)
-
-  convenience public init(housingType: HousingType?, verified: Bool? = false) {
-    self.init(type: .housing, verified: verified)
-    self.housingType.send(housingType)
-    self.housingType.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
-  }
-
-  convenience public init() {
-    self.init(housingType: nil, verified: false)
-  }
-
-  override open func complete() -> Bool {
-    return housingType.value != nil
-  }
-
-  override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = Housing(housingType: self.housingType.value,
-                         verified: self.verified)
-    if let verification = self.verification {
-      retVal.verification = verification.copy() as? Verification
-    }
-    return retVal
-  }
-}
-
-@objc open class IncomeSource: DataPoint {
-  private let disposeBag = DisposeBag()
-  open var salaryFrequency: Observable<SalaryFrequency?> = Observable(nil)
-  open var incomeType: Observable<IncomeType?> = Observable(nil)
-
-  convenience public init(salaryFrequency: SalaryFrequency?, incomeType: IncomeType?, verified: Bool? = false) {
-    self.init(type: .incomeSource, verified: verified)
-    self.salaryFrequency.send(salaryFrequency)
-    self.incomeType.send(incomeType)
-    self.salaryFrequency.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
-    self.incomeType.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
-  }
-
-  convenience public init() {
-    self.init(salaryFrequency: nil, incomeType: nil, verified: false)
-  }
-
-  override open func complete() -> Bool {
-    return salaryFrequency.value != nil && incomeType.value != nil
-  }
-
-  override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = IncomeSource(salaryFrequency: self.salaryFrequency.value,
-                              incomeType: self.incomeType.value,
-                              verified: self.verified)
-    if let verification = self.verification {
-      retVal.verification = verification.copy() as? Verification
-    }
-    return retVal
-  }
-}
-
-@objc open class Income: DataPoint {
-  private let disposeBag = DisposeBag()
-  open var netMonthlyIncome: Observable<Int?> = Observable(nil)
-  open var grossAnnualIncome: Observable<Int?> = Observable(nil)
-
-  convenience public init(netMonthlyIncome: Int?, grossAnnualIncome: Int?, verified: Bool?) {
-    self.init(type: .income, verified: verified)
-    self.netMonthlyIncome.send(netMonthlyIncome)
-    self.grossAnnualIncome.send(grossAnnualIncome)
-    self.netMonthlyIncome.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
-    self.grossAnnualIncome.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
-  }
-
-  convenience public init() {
-    self.init(netMonthlyIncome: nil, grossAnnualIncome: nil, verified: false)
-  }
-
-  override open func complete() -> Bool {
-    return netMonthlyIncome.value != nil && grossAnnualIncome.value != nil
-  }
-
-  override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = Income(netMonthlyIncome: self.netMonthlyIncome.value,
-                        grossAnnualIncome: self.grossAnnualIncome.value,
-                        verified: self.verified)
-    if let verification = self.verification {
-      retVal.verification = verification.copy() as? Verification
-    }
-    return retVal
-  }
-}
-
-@objc open class CreditScore: DataPoint {
-  private let disposeBag = DisposeBag()
-  open var creditRange: Observable<Int?> = Observable(nil)
-
-  convenience public init(creditRange: Int?, verified: Bool? = false) {
-    self.init(type: .creditScore, verified: verified)
-    self.creditRange.send(creditRange)
-    self.creditRange.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
-  }
-
-  convenience public init() {
-    self.init(creditRange: nil, verified: false)
-  }
-
-  override open func complete() -> Bool {
-    return creditRange.value != nil
-  }
-
-  static let creditScoreRangeScoreDescriptions = ["credit-score.excellent".podLocalized(),
-                                                  "credit-score.good".podLocalized(),
-                                                  "credit-score.fair".podLocalized(),
-                                                  "credit-score.poor".podLocalized()]
-
-  open func creditScoreRangeDescription() -> String? {
-    guard let index = creditRange.value,
-          index >= 0 && index < CreditScore.creditScoreRangeScoreDescriptions.count else {
-      return ""
-    }
-    return CreditScore.creditScoreRangeScoreDescriptions[index]
-  }
-
-  override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = CreditScore(creditRange: self.creditRange.value,
-                             verified: self.verified)
-    if let verification = self.verification {
-      retVal.verification = verification.copy() as? Verification
-    }
-    return retVal
-  }
-}
-
-@objc open class PaydayLoan: DataPoint {
-  private let disposeBag = DisposeBag()
-  open var usedPaydayLoan: Observable<Bool?> = Observable(nil)
-
-  convenience public init(usedPaydayLoan: Bool?, verified: Bool? = false) {
-    self.init(type: .paydayLoan, verified: verified)
-    self.usedPaydayLoan.send(usedPaydayLoan)
-    self.usedPaydayLoan.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
-  }
-
-  convenience public init() {
-    self.init(usedPaydayLoan: nil, verified: false)
-  }
-
-  override open func complete() -> Bool {
-    return usedPaydayLoan.value != nil
-  }
-
-  override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = PaydayLoan(usedPaydayLoan: self.usedPaydayLoan.value,
-                            verified: self.verified)
-    if let verification = self.verification {
-      retVal.verification = verification.copy() as? Verification
-    }
-    return retVal
-  }
-}
-
-@objc open class MemberOfArmedForces: DataPoint {
-  private let disposeBag = DisposeBag()
-  open var memberOfArmedForces: Observable<Bool?> = Observable(nil)
-
-  convenience public init(memberOfArmedForces: Bool?, verified: Bool? = false) {
-    self.init(type: .memberOfArmedForces, verified: verified)
-    self.memberOfArmedForces.send(memberOfArmedForces)
-    self.memberOfArmedForces.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
-  }
-
-  convenience public init() {
-    self.init(memberOfArmedForces: nil, verified: false)
-  }
-
-  override open func complete() -> Bool {
-    return memberOfArmedForces.value != nil
-  }
-
-  override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = MemberOfArmedForces(memberOfArmedForces: self.memberOfArmedForces.value,
-                                     verified: self.verified)
-    if let verification = self.verification {
-      retVal.verification = verification.copy() as? Verification
-    }
-    return retVal
-  }
-}
-
-@objc open class TimeAtAddress: DataPoint {
-  private let disposeBag = DisposeBag()
-  open var timeAtAddress: Observable<TimeAtAddressOption?> = Observable(nil)
-
-  convenience public init(timeAtAddress: TimeAtAddressOption?, verified: Bool? = false) {
-    self.init(type: .timeAtAddress, verified: verified)
-    self.timeAtAddress.send(timeAtAddress)
-    self.timeAtAddress.observeNext { [weak self] _ in self?.invalidateVerification() }.dispose(in: disposeBag)
-  }
-
-  convenience public init() {
-    self.init(timeAtAddress: nil, verified: false)
-  }
-
-  override open func complete() -> Bool {
-    return timeAtAddress.value != nil
-  }
-
-  override func copyWithZone(_ zone: NSZone?) -> AnyObject {
-    let retVal = TimeAtAddress(timeAtAddress: self.timeAtAddress.value,
-                               verified: self.verified)
-    if let verification = self.verification {
-      retVal.verification = verification.copy() as? Verification
-    }
-    return retVal
-  }
-}
-
 // MARK: - Datapoint equatable protocol
 
 // swiftlint:disable operator_whitespace
 func ==(lhs: Email, rhs: Email) -> Bool {
-  return lhs as DataPoint == rhs as DataPoint
-    && lhs.email.value == rhs.email.value
+  return lhs as DataPoint == rhs as DataPoint && lhs.email.value == rhs.email.value
 }
 
 func ==(lhs: PhoneNumber, rhs: PhoneNumber) -> Bool {
@@ -795,42 +510,5 @@ func ==(lhs: IdDocument, rhs: IdDocument) -> Bool {
     && lhs.documentType.value == rhs.documentType.value
     && lhs.value.value == rhs.value.value
     && lhs.country.value == rhs.country.value
-}
-
-func ==(lhs: Housing, rhs: Housing) -> Bool {
-  return lhs as DataPoint == rhs as DataPoint
-    && lhs.housingType.value == rhs.housingType.value
-}
-
-func ==(lhs: IncomeSource, rhs: IncomeSource) -> Bool {
-  return lhs as DataPoint == rhs as DataPoint
-    && lhs.salaryFrequency.value == rhs.salaryFrequency.value
-    && lhs.incomeType.value == rhs.incomeType.value
-}
-
-func ==(lhs: Income, rhs: Income) -> Bool {
-  return lhs as DataPoint == rhs as DataPoint
-    && lhs.netMonthlyIncome.value == rhs.netMonthlyIncome.value
-    && lhs.grossAnnualIncome.value == rhs.grossAnnualIncome.value
-}
-
-func ==(lhs: CreditScore, rhs: CreditScore) -> Bool {
-  return lhs as DataPoint == rhs as DataPoint
-    && lhs.creditRange.value == rhs.creditRange.value
-}
-
-func ==(lhs: PaydayLoan, rhs: PaydayLoan) -> Bool {
-  return lhs as DataPoint == rhs as DataPoint
-    && lhs.usedPaydayLoan.value == rhs.usedPaydayLoan.value
-}
-
-func ==(lhs: MemberOfArmedForces, rhs: MemberOfArmedForces) -> Bool {
-  return lhs as DataPoint == rhs as DataPoint
-    && lhs.memberOfArmedForces.value == rhs.memberOfArmedForces.value
-}
-
-func ==(lhs: TimeAtAddress, rhs: TimeAtAddress) -> Bool {
-  return lhs as DataPoint == rhs as DataPoint
-    && lhs.timeAtAddress.value == rhs.timeAtAddress.value
 }
 // swiftlint:enable operator_whitespace

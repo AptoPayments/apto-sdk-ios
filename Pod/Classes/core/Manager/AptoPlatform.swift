@@ -306,35 +306,22 @@ import TrustKit
       callback(.success(user))
       return
     }
-    fetchContextConfiguration { [weak self] result in
+    userStorage.getUserData(apiKey, userToken: accessToken.token,
+                            filterInvalidTokenResult: filterInvalidTokenResult) { [weak self] result in
       guard let self = self else { return }
       switch result {
       case .failure(let error):
-        callback(.failure(error))
-      case .success(let contextConfiguration):
-        let projectConfiguration = contextConfiguration.projectConfiguration
-        self.userStorage.getUserData(apiKey,
-                                     userToken: accessToken.token,
-                                     availableHousingTypes: projectConfiguration.housingTypes,
-                                     availableIncomeTypes: projectConfiguration.incomeTypes,
-                                     availableSalaryFrequencies: projectConfiguration.salaryFrequencies,
-                                     filterInvalidTokenResult: filterInvalidTokenResult) { [weak self] result in
-          guard let self = self else { return }
-          switch result {
-          case .failure(let error):
-            if let backendError = error as? BackendError {
-              if backendError.invalidSessionError() || backendError.sessionExpiredError() {
-                self.clearUserToken()
-                callback(.failure(error))
-                return
-              }
-            }
+        if let backendError = error as? BackendError {
+          if backendError.invalidSessionError() || backendError.sessionExpiredError() {
+            self.clearUserToken()
             callback(.failure(error))
-          case .success(let user):
-            self.notifyPushTokenIfNeeded()
-            callback(.success(user))
+            return
           }
         }
+        callback(.failure(error))
+      case .success(let user):
+        self.notifyPushTokenIfNeeded()
+        callback(.success(user))
       }
     }
   }

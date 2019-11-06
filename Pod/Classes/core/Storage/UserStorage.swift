@@ -15,12 +15,7 @@ protocol UserStorageProtocol {
   func loginWith(_ apiKey: String,
                  verifications: [Verification],
                  callback: @escaping Result<ShiftUser, NSError>.Callback)
-  func getUserData(_ apiKey: String,
-                   userToken: String,
-                   availableHousingTypes: [HousingType],
-                   availableIncomeTypes: [IncomeType],
-                   availableSalaryFrequencies: [SalaryFrequency],
-                   filterInvalidTokenResult: Bool,
+  func getUserData(_ apiKey: String, userToken: String, filterInvalidTokenResult: Bool,
                    callback: @escaping Result<ShiftUser, NSError>.Callback)
   func updateUserData(_ apiKey: String,
                       userToken: String,
@@ -121,12 +116,7 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
     }
   }
 
-  func getUserData(_ apiKey: String,
-                   userToken: String,
-                   availableHousingTypes: [HousingType],
-                   availableIncomeTypes: [IncomeType],
-                   availableSalaryFrequencies: [SalaryFrequency],
-                   filterInvalidTokenResult: Bool,
+  func getUserData(_ apiKey: String, userToken: String, filterInvalidTokenResult: Bool,
                    callback: @escaping Result<ShiftUser, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.userInfo)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
@@ -140,33 +130,6 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
       callback(result.flatMap { json -> Result<ShiftUser, NSError> in
         guard let user = json.user else {
           return .failure(ServiceError(code: .jsonError))
-        }
-        if let housingList = user.userData.getDataPointsOf(type: .housing) as? [Housing] {
-          for housing in housingList {
-            let originalHousing = availableHousingTypes.filter {
-              $0.housingTypeId == housing.housingType.value!.housingTypeId // swiftlint:disable:this force_unwrapping
-            }
-            if let first = originalHousing.first {
-              housing.housingType.send(first)
-            }
-          }
-        }
-        if let incomeSourceList = user.userData.getDataPointsOf(type: .incomeSource) as? [IncomeSource] {
-          for incomeSource in incomeSourceList {
-            let originalIncomeType = availableIncomeTypes.filter {
-              $0.incomeTypeId == incomeSource.incomeType.value!.incomeTypeId // swiftlint:disable:this force_unwrapping
-            }
-            if let first = originalIncomeType.first {
-              incomeSource.incomeType.send(first)
-            }
-            let originalSalaryFrequency = availableSalaryFrequencies.filter {
-              // swiftlint:disable:next force_unwrapping
-              $0.salaryFrequencyId == incomeSource.salaryFrequency.value!.salaryFrequencyId
-            }
-            if let first = originalSalaryFrequency.first {
-              incomeSource.salaryFrequency.send(first)
-            }
-          }
         }
         return .success(user)
       })
