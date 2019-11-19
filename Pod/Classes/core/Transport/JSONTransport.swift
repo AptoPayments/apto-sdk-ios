@@ -18,7 +18,6 @@ public enum JSONTransportAuthorization {
 
 public enum JSONTransportEnvironment {
   case local
-  case development
   case staging
   case sandbox
   case live

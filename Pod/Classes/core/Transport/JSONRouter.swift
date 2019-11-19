@@ -11,7 +11,6 @@ import Alamofire
 public enum JSONRouter {
 
   case contextConfig
-  case linkConfig
   case createUser
   case login
   case userInfo
@@ -20,7 +19,6 @@ public enum JSONRouter {
   case verificationFinish
   case verificationStatus
   case verificationRestart
-  case storeInfo
   case financialAccounts
   case financialAccountsDetails
   case financialAccountTransactions
@@ -56,7 +54,6 @@ public enum JSONRouter {
   var URLString: String {
     switch self {
     case .contextConfig:return "/config"
-    case .linkConfig:return "/config/link"
     case .createUser: return "/user"
     case .login: return "/user/login"
     case .userInfo: return "/user"
@@ -65,7 +62,6 @@ public enum JSONRouter {
     case .verificationFinish: return "/verifications/:verificationId/finish"
     case .verificationStatus: return "/verifications/:verificationId/status"
     case .verificationRestart: return "/verifications/:verificationId/restart"
-    case .storeInfo: return "/stores"
     case .financialAccounts: return "/user/accounts"
     case .financialAccountsDetails: return "/user/accounts/:accountId/details"
     case .financialAccountTransactions: return "/user/accounts/:accountId/transactions"
@@ -151,8 +147,6 @@ extension JSONTransportEnvironment: BaseURLProvider {
     switch environment {
     case .local:
       return "http://local.ledge.me:5001/v1"
-    case .development:
-      return "https://api.ux.dev2.aptopayments.com/v1"
     case .staging:
       return "https://api.ux.stg.aptopayments.com/v1"
     case .sandbox:
@@ -176,8 +170,6 @@ extension JSONTransportEnvironment: PCIVaultURLProvider {
     switch environment {
     case .local:
       return self.baseUrl()
-    case .development:
-      return "https://vault.ux.dev2.aptopayments.com/v1"
     case .staging:
       return "https://vault.ux.stg.aptopayments.com/v1"
     case .sandbox:

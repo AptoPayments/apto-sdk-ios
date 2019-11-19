@@ -11,14 +11,12 @@ import TrustKit
 
 @objc public enum AptoPlatformEnvironment: Int {
   case local
-  case development
   case staging
   case sandbox
   case production
   public var description: String {
     switch self {
     case .local: return "local"
-    case .development: return "development"
     case .staging: return "staging"
     case .sandbox: return "local"
     case .production: return "production"
@@ -89,9 +87,6 @@ import TrustKit
     switch environment {
     case .local:
       self.transportEnvironment = .local
-      allowSelfSignedCertificate = true
-    case .development:
-      self.transportEnvironment = .development
       allowSelfSignedCertificate = true
     case .staging:
       self.transportEnvironment = .staging

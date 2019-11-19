@@ -122,7 +122,10 @@ class FinancialAccountCache: FinancialAccountCacheProtocol {
     guard !transactions.isEmpty else { return }
     var allTransaction = currentTransactions
     transactions.forEach { transaction in
-      if !allTransaction.contains { return transaction.transactionId == $0.transactionId } {
+      if let index = allTransaction.firstIndex(where: {transaction.transactionId == $0.transactionId}) {
+        allTransaction[index] = transaction
+      }
+      else {
         allTransaction.append(transaction)
       }
     }
