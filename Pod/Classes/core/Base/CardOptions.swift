@@ -4,6 +4,7 @@
 //
 //  Created by Ivan Oliver Martínez on 30/07/2018.
 //
+
 @objc public enum FeatureKey: Int {
   case showActivateCardButton
   case showStatsButton
@@ -12,6 +13,8 @@
   case hideFundingSourcesReconnectButton
   case showAccountSettingsButton
   case showMonthlyStatementsOption
+  case authenticateOnStartUp
+  case authenticateWithPINOnPCI
 }
 
 @objc public class CardOptions: NSObject {
@@ -26,7 +29,9 @@
       .showDetailedCardActivityOption: false,
       .hideFundingSourcesReconnectButton: false,
       .showAccountSettingsButton: true,
-      .showMonthlyStatementsOption: true
+      .showMonthlyStatementsOption: true,
+      .authenticateOnStartUp: false,
+      .authenticateWithPINOnPCI: false
     ]
     self.fontCustomizationOptions = nil
     super.init()

@@ -1484,6 +1484,12 @@
 
 /* * Account Settings */
 
+"account_settings.security.title" = "Security";
+
+"account_settings.security.change_pin.title" = "Change passcode";
+
+"account_settings.security.change_pin.description" = "Change the passcode used to unlock the app";
+
 "account_settings.settings.title" = "Account settings";
 
 "account_settings.app_settings.title" = "App settings";
@@ -1647,3 +1653,33 @@
 "monthly_statements.report.title" = "Statement <<MONTH>> <<YEAR>>";
 
 "monthly_statements.report.error_url_expired.message" = "For security reasons this file has expired, please request it again";
+
+/* * Create PIN */
+
+"biometric.create_pin.title" = "Create a new passcode";
+
+"biometric.create_pin.confirmation_title" = "Confirm passcode";
+
+"biometric.create_pin.agreement" = "<a href='https://aptopayments.com'>By creating a passcode you agree to Terms of Service and Privacy Policy</a>";
+
+"biometric.create_pin.error.title" = "Error";
+
+"biometric.create_pin.error.pin_not_match" = "Passcodes do not match";
+
+"biometric.auth_manager.error.save_pin" = "There was an error while saving the code to your device";
+
+"biometric.verify_pin.forgot.cta" = "Forgot?";
+
+"biometric.verify_pin.forgot.alert_title" = "Warning";
+
+"biometric.verify_pin.forgot.alert_message" = "This action will log you out of the app, so you can identify yourself and set a new PIN";
+
+"biometric.verify_pin.forgot.alert_confirm" = "Confirm";
+
+"biometric.verify_pin.forgot.alert_cancel" = "Cancel";
+
+"biometric.verify_pin.error.wrong_pin" = "Invalid PIN";
+
+"biometric.change_pin.success.title" = "Congratulations";
+
+"biometric.change_pin.success.message" = "Your passcode has been changed successfully!";

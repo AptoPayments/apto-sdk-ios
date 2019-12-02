@@ -67,6 +67,8 @@ public enum FontCustomizationOptions {
   var cardLabelFont: UIFont { get }
   var cardSmallValueFont: UIFont { get }
   var cardLargeValueFont: UIFont { get }
+
+  var keyboardFont: UIFont { get }
 }
 
 public class UITheme1FontProvider: UIFontProviderProtocol {
@@ -108,6 +110,8 @@ public class UITheme1FontProvider: UIFontProviderProtocol {
   public lazy var cardSmallValueFont = UIFont(name: "OCR A Extended", size: 17)!
   public lazy var cardLargeValueFont = UIFont(name: "OCR A Extended", size: 24)!
   // swiftlint:enable force_unwrapping
+
+  public lazy var keyboardFont = UIFont.systemFont(ofSize: 32, weight: .regular)
 }
 
 public class UITheme2FontProvider: UIFontProviderProtocol {
@@ -203,6 +207,10 @@ public class UITheme2FontProvider: UIFontProviderProtocol {
   public lazy var cardSmallValueFont = UIFont(name: "OCR A Extended", size: 17)!
   public lazy var cardLargeValueFont = UIFont(name: "OCR A Extended", size: 24)!
   // swiftlint:enable force_unwrapping
+
+  public lazy var keyboardFont = {
+    return UIFont(descriptor: fontDescriptors.regular, size: 32)
+  }()
 
   public init(fontDescriptors: ThemeFontDescriptors?) {
     let descriptors: ThemeFontDescriptors

@@ -77,4 +77,6 @@ public enum Event: String {
   case voIPCallFails = "manage_card.get_pin_voip.call_error"
   case monthlyStatementsListStart = "statements.list.start"
   case monthlyStatementsReportStart = "statements.report.start"
+  case createPINStart = "biometric.create_pin.start"
+  case verifyPINStart = "biometric.verify_pin.start"
 }
