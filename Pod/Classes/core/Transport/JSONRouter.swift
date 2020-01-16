@@ -148,7 +148,7 @@ extension JSONTransportEnvironment: BaseURLProvider {
     case .local:
       return "http://local.ledge.me:5001/v1"
     case .staging:
-      return "https://api.ux.stg.aptopayments.com/v1"
+      return "https://api.stg.aptopayments.com/v1"
     case .sandbox:
       return "https://api.ux.sbx.aptopayments.com/v1"
     case .live:
@@ -171,7 +171,7 @@ extension JSONTransportEnvironment: PCIVaultURLProvider {
     case .local:
       return self.baseUrl()
     case .staging:
-      return "https://vault.ux.stg.aptopayments.com/v1"
+      return "https://vault.stg.aptopayments.com/v1"
     case .sandbox:
       return "https://vault.ux.sbx.aptopayments.com/v1"
     case .live:
