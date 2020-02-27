@@ -21,4 +21,21 @@ public final class ShiftSDK {
     }
     return internalVersion
   }
+
+  private static var _appVersion: String?
+  public static var appVersion: String {
+    if let loadedVersion = _appVersion {
+      return loadedVersion
+    }
+    let bundle = Bundle.main
+    if let bundleVersion = bundle.infoDictionary?["CFBundleShortVersionString"] as? String {
+      _appVersion = bundleVersion
+      return bundleVersion
+    }
+    return internalVersion
+  }
+
+  public static var fullVersion: String {
+    "\(appVersion) - (\(version))"
+  }
 }

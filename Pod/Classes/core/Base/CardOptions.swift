@@ -15,6 +15,7 @@
   case showMonthlyStatementsOption
   case authenticateOnStartUp
   case authenticateWithPINOnPCI
+  case supportDarkMode
 }
 
 @objc public class CardOptions: NSObject {
@@ -31,7 +32,8 @@
       .showAccountSettingsButton: true,
       .showMonthlyStatementsOption: true,
       .authenticateOnStartUp: false,
-      .authenticateWithPINOnPCI: false
+      .authenticateWithPINOnPCI: false,
+      .supportDarkMode: false
     ]
     self.fontCustomizationOptions = nil
     super.init()

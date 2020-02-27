@@ -10,6 +10,17 @@ public struct NativeContent: Equatable {
   public let asset: String?
   public let backgroundImage: String?
   public let backgroundColor: String?
+  public let darkBackgroundColor: String?
+}
+
+public extension NativeContent {
+  var dynamicBackgroundColor: UIColor? {
+    guard let color = UIColor.colorFromHexString(backgroundColor),
+      let darkColor = UIColor.colorFromHexString(darkBackgroundColor) else {
+        return nil
+    }
+    return UIColor.dynamicColor(light: color, dark: darkColor)
+  }
 }
 
 public enum Content: Equatable {

@@ -34,6 +34,7 @@ public struct CardProduct {
   public let cardIssuer: String
   public let waitListBackgroundImage: String?
   public let waitListBackgroundColor: String?
+  public let waitListDarkBackgroundColor: String?
   public let waitListAsset: String?
 }
 
@@ -56,6 +57,7 @@ public extension CardProduct {
     self.cardIssuer = "Shift"
     self.waitListBackgroundImage = nil
     self.waitListBackgroundColor = nil
+    self.waitListDarkBackgroundColor = nil
     self.waitListAsset = nil
   }
 }

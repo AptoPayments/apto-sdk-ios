@@ -131,6 +131,8 @@ extension JSON {
     let asset = self["asset"].string
     let backgroundImage = self["background_image"].string
     let backgroundColor = self["background_color"].string
-    return WaitListActionConfiguration(asset: asset, backgroundImage: backgroundImage, backgroundColor: backgroundColor)
+    let darkBackgroundColor = self["dark_background_color"].string
+    return WaitListActionConfiguration(asset: asset, backgroundImage: backgroundImage, backgroundColor: backgroundColor,
+                                       darkBackgroundColor: darkBackgroundColor)
   }
 }

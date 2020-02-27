@@ -28,6 +28,21 @@ extension UIColor {
     return UIColor(red: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: CGFloat(alpha))
   }
 
+  static public func colorFromHexString(_ hex: String?, alpha: Double = 1.0) -> UIColor? {
+    guard let hex = hex else { return nil }
+    return colorFromHexString(hex, alpha: alpha)
+  }
+
+  static public func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
+    guard ServiceLocator.shared.platform.isFeatureEnabled(.supportDarkMode) else { return light }
+    if #available(iOS 13, *) {
+      return UIColor.init { trait in
+        trait.userInterfaceStyle == .dark ? dark : light
+      }
+    }
+    return light
+  }
+
   // Calculated using the algorithm described in here:
   // http://particletree.com/notebook/calculating-color-contrast-for-legible-text/
   public var isLight: Bool {

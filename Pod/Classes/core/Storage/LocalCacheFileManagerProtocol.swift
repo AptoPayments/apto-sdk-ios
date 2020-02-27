@@ -18,7 +18,7 @@ extension String {
   static let fundingSourceListFilename = "fundingSourceList.plist"
   static let cardsFilename = "cards.plist"
   static let transactionsFilename = "transactions.plist"
-  static let projectBrandingFilename = "projectBranding.plist"
+  static let brandingFilename = "branding.plist"
 }
 
 extension LocalCacheFileManagerProtocol {

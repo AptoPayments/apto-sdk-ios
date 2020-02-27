@@ -1490,6 +1490,14 @@
 
 "account_settings.security.change_pin.description" = "Change the passcode used to unlock the app";
 
+"account_settings.security.face_id.title" = "Enable FaceID";
+
+"account_settings.security.face_id.description" = "Use FaceID to unlock the app";
+
+"account_settings.security.touch_id.title" = "Enable TouchID";
+
+"account_settings.security.touch_id.description" = "Use TouchID to unlock the app";
+
 "account_settings.settings.title" = "Account settings";
 
 "account_settings.app_settings.title" = "App settings";
@@ -1513,6 +1521,8 @@
 "account_settings.logout.confirm_logout.ok_button" = "Logout";
 
 "account_settings.logout.confirm_logout.cancel_button" = "Cancel";
+
+"account_settings.app.version.title" = "App Version";
 
 /* * Help & Support */
 
@@ -1656,11 +1666,15 @@
 
 /* * Create PIN */
 
-"biometric.create_pin.title" = "Create a new passcode";
+"biometric.create_pin.title" = "Set your Passcode";
 
-"biometric.create_pin.confirmation_title" = "Confirm passcode";
+"biometric.create_pin.description" = "Choose a unique, four digit Passcode for your App";
 
-"biometric.create_pin.agreement" = "<a href='https://aptopayments.com'>By creating a passcode you agree to Terms of Service and Privacy Policy</a>";
+"biometric.create_pin.description_long" = "Note - this Passcode is only used to manage your Card Settings within the app. If you sign out of this app completely, you will be required to log back in with your Phone Number and Date of Birth";
+
+"biometric.create_pin.confirmation_title" = "Confirm Passcode";
+
+"biometric.create_pin.confirmation_title.description" = "Please confirm your Passcode";
 
 "biometric.create_pin.error.title" = "Error";
 
@@ -1668,18 +1682,50 @@
 
 "biometric.auth_manager.error.save_pin" = "There was an error while saving the code to your device";
 
-"biometric.verify_pin.forgot.cta" = "Forgot?";
+"biometric.verify_pin.forgot.cta" = "Forgot Passcode";
 
 "biometric.verify_pin.forgot.alert_title" = "Warning";
 
-"biometric.verify_pin.forgot.alert_message" = "This action will log you out of the app, so you can identify yourself and set a new PIN";
+"biometric.verify_pin.forgot.alert_message" = "This action will log you out of the app, so you can identify yourself and set a new Passcode";
 
 "biometric.verify_pin.forgot.alert_confirm" = "Confirm";
 
 "biometric.verify_pin.forgot.alert_cancel" = "Cancel";
 
-"biometric.verify_pin.error.wrong_pin" = "Invalid PIN";
+"biometric.verify_pin.error.wrong_pin" = "Invalid Passcode";
 
 "biometric.change_pin.success.title" = "Congratulations";
 
 "biometric.change_pin.success.message" = "Your passcode has been changed successfully!";
+
+/* * Change passcode */
+
+"biometric.verify_pin.title" = "Enter your Current Passcode";
+
+"biometric.verify_pin.explanation" = "Please enter the four digit Passcode you use to log into your App";
+
+"biometric.change_pin.enter_passcode.title" = "Set your new Passcode";
+
+"biometric.change_pin.enter_passcode.explanation" = "Choose a unique, four digit Passcode for your App";
+
+"biometric.change_pin.confirm_passcode.title" = "Confirm your new Passcode";
+
+"biometric.change_pin.confirm_passcode.explanation" = "Please re-enter your Passcode to confirm it";
+
+/* * Biometric permission */
+
+"biometric.permission.face_id.title" = "Enable FaceID";
+
+"biometric.permission.face_id.explanation" = "Enable FaceID to use in place of your Passcode";
+
+"biometric.permission.face_id.cta" = "Enable FaceID";
+
+"biometric.permission.face_id.disclosure" = "The FaceID assigned to this device can manage Card Settings";
+
+"biometric.permission.touch_id.title" = "Enable TouchID";
+
+"biometric.permission.touch_id.explanation" = "Enable FaceID to use in place of your Passcode";
+
+"biometric.permission.touch_id.cta" = "Enable TouchID";
+
+"biometric.permission.touch_id.disclosure" = "The TouchID assigned to this device can manage Card Settings";

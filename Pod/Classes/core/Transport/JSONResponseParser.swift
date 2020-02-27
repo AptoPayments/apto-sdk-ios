@@ -200,7 +200,9 @@ extension JSON {
     let asset = self["asset"].string
     let backgroundImage = self["background_image"].string
     let backgroundColor = self["background_color"].string
-    return NativeContent(asset: asset, backgroundImage: backgroundImage, backgroundColor: backgroundColor)
+    let darkBackgroundColor = self["dark_background_color"].string
+    return NativeContent(asset: asset, backgroundImage: backgroundImage, backgroundColor: backgroundColor,
+                         darkBackgroundColor: darkBackgroundColor)
   }
 
   var contextConfiguration: ContextConfiguration? {
@@ -297,11 +299,20 @@ extension JSON {
     }
   }
 
+  var branding: Branding? {
+    guard let light = self["light"].projectBranding, let dark = self["dark"].projectBranding else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse branding \(self)"))
+      return nil
+    }
+    return Branding(light: light, dark: dark)
+  }
+
   var projectConfiguration: ProjectConfiguration? {
     guard let name = self["name"].string,
           let language = self["language"].string,
           let welcomeScreenAction = self["welcome_screen_action"].linkObject as? WorkflowAction,
-          let branding = self["project_branding"].projectBranding else {
+          let branding = self["branding"].branding else {
       ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                             reason: "Can't parse project configuration \(self)"))
       return nil
@@ -382,6 +393,7 @@ extension JSON {
     let faq = self["faq"].content
     let waitListBackgroundImage = self["wait_list_background_image"].string
     let waitListBackgroundColor = self["wait_list_background_color"].string
+    let waitListDarkBackgroundColor = self["wait_list_dark_background_color"].string
     let waitListAsset = self["wait_list_asset"].string
 
     return CardProduct(id: id,
@@ -399,6 +411,7 @@ extension JSON {
                        cardIssuer: cardIssuer,
                        waitListBackgroundImage: waitListBackgroundImage,
                        waitListBackgroundColor: waitListBackgroundColor,
+                       waitListDarkBackgroundColor: waitListDarkBackgroundColor,
                        waitListAsset: waitListAsset)
   }
 

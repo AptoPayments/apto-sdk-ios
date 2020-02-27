@@ -143,9 +143,9 @@ class ConfigurationStorage: ConfigurationStorageProtocol {
   }
 
   func uiConfig() -> UIConfig? {
-    guard let projectBranding = cache.cachedProjectBranding() else {
+    guard let branding = cache.cachedProjectBranding() else {
       return nil
     }
-    return UIConfig(projectBranding: projectBranding, fontCustomizationOptions: cardOptions?.fontCustomizationOptions)
+    return UIConfig(branding: branding, fontCustomizationOptions: cardOptions?.fontCustomizationOptions)
   }
 }

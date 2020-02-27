@@ -9,6 +9,7 @@ import Foundation
 
 protocol UserPreferencesStorageProtocol {
   var shouldShowDetailedCardActivity: Bool { get set }
+  var shouldUseBiometric: Bool { get set }
 }
 
 class UserPreferencesStorage: UserPreferencesStorageProtocol {
@@ -21,6 +22,15 @@ class UserPreferencesStorage: UserPreferencesStorageProtocol {
     }
     set {
       userDefaultsStorage.set(newValue, forKey: .showDetailedCardActivityKey)
+    }
+  }
+
+  var shouldUseBiometric: Bool {
+    get {
+      return userDefaultsStorage.object(forKey: .shouldUseBiometricKey) as? Bool ?? false
+    }
+    set {
+      userDefaultsStorage.set(newValue, forKey: .shouldUseBiometricKey)
     }
   }
 
@@ -45,9 +55,11 @@ class UserPreferencesStorage: UserPreferencesStorageProtocol {
 
   @objc private func removePreferences() {
     userDefaultsStorage.removeObject(forKey: .showDetailedCardActivityKey)
+    userDefaultsStorage.removeObject(forKey: .shouldUseBiometricKey)
   }
 }
 
 private extension String {
   static let showDetailedCardActivityKey = "apto.sdk.showDetailedCardActivity"
+  static let shouldUseBiometricKey = "apto.sdk.shouldUseBiometric"
 }

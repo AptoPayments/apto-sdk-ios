@@ -20,101 +20,116 @@ public enum StatusBarStyle: String, Equatable {
 }
 
 @objc open class UIConfig: NSObject {
+  // Branding
+  private let lightBranding: ParsedProjectBranding
+  private let darkBranding: ParsedProjectBranding
 
   // General
 
-  open lazy var uiBackgroundPrimaryColor = UIColor.white
-  open lazy var uiBackgroundSecondaryColor = UIColor.white
-  open lazy var tintColor = UIColor.white
-  open lazy var noteTextColor = UIColor.colorFromHex(0xA0A0A0)
-  open lazy var noteBackgroundColor = UIColor.clear
-  open lazy var defaultTextColor = UIColor.colorFromHex(0x000000)
+  public lazy var uiBackgroundPrimaryColor = UIColor.dynamicColor(light: lightBranding.uiBackgroundPrimaryColor,
+                                                                  dark: darkBranding.uiBackgroundPrimaryColor)
+  public lazy var uiBackgroundSecondaryColor = UIColor.dynamicColor(light: lightBranding.uiBackgroundSecondaryColor,
+                                                                    dark: darkBranding.uiBackgroundSecondaryColor)
 
   // UI colors
 
   private let uiColorDisabledAlpha: CGFloat = 0.2
-  open lazy var uiPrimaryColor = UIColor.colorFromHex(0x419743)
-  open lazy var uiPrimaryColorDisabled = uiPrimaryColor.withAlphaComponent(uiColorDisabledAlpha)
-  open lazy var uiSecondaryColor = UIColor.colorFromHex(0x2b2d35)
-  open lazy var uiSecondaryColorDisabled = uiSecondaryColor.withAlphaComponent(uiColorDisabledAlpha)
-  open lazy var uiTertiaryColor = UIColor.colorFromHex(0xd5d5d7)
-  open lazy var uiSuccessColor = UIColor.colorFromHex(0x161d24)
-  open lazy var uiErrorColor = UIColor.colorFromHex(0xdb1d0e)
-  open lazy var uiToastMessagesColor = uiPrimaryColor.withAlphaComponent(0.15)
+
+  public lazy var uiPrimaryColor = UIColor.dynamicColor(light: lightBranding.uiPrimaryColor,
+                                                        dark: darkBranding.uiPrimaryColor)
+  public var uiPrimaryColorDisabled: UIColor { uiPrimaryColor.withAlphaComponent(uiColorDisabledAlpha) }
+  public lazy var uiSecondaryColor = UIColor.dynamicColor(light: lightBranding.uiSecondaryColor,
+                                                          dark: darkBranding.uiSecondaryColor)
+  public var uiSecondaryColorDisabled: UIColor { uiSecondaryColor.withAlphaComponent(uiColorDisabledAlpha) }
+  public lazy var uiTertiaryColor = UIColor.dynamicColor(light: lightBranding.uiTertiaryColor,
+                                                         dark: darkBranding.uiTertiaryColor)
+  public lazy var uiSuccessColor = UIColor.dynamicColor(light: lightBranding.uiSuccessColor,
+                                                        dark: darkBranding.uiSuccessColor)
+  public lazy var uiErrorColor = UIColor.dynamicColor(light: lightBranding.uiErrorColor,
+                                                      dark: darkBranding.uiErrorColor)
+  public var uiToastMessagesColor: UIColor { uiPrimaryColor.withAlphaComponent(0.15) }
 
   // Navigation bar
 
   private let navBarDisabledAlpha: CGFloat = 0.4
-  open lazy var uiNavigationPrimaryColor = uiPrimaryColor
-  open lazy var uiNavigationSecondaryColor = uiPrimaryColor
-  open lazy var textTopBarPrimaryColor = UIColor.white
-  open lazy var disabledTextTopPrimaryBarColor = textTopBarPrimaryColor.withAlphaComponent(navBarDisabledAlpha)
-  open lazy var textTopBarSecondaryColor = UIColor.white
-  open lazy var disabledTextTopBarSecondaryColor = textTopBarSecondaryColor.withAlphaComponent(navBarDisabledAlpha)
+  public lazy var uiNavigationPrimaryColor = UIColor.dynamicColor(light: lightBranding.uiNavigationPrimaryColor,
+                                                                  dark: darkBranding.uiNavigationPrimaryColor)
+  public lazy var uiNavigationSecondaryColor = UIColor.dynamicColor(light: lightBranding.uiNavigationSecondaryColor,
+                                                                    dark: darkBranding.uiNavigationSecondaryColor)
+  public lazy var textTopBarPrimaryColor = UIColor.dynamicColor(light: lightBranding.textTopBarPrimaryColor,
+                                                                dark: darkBranding.textTopBarPrimaryColor)
+  public var disabledTextTopPrimaryBarColor: UIColor { textTopBarPrimaryColor.withAlphaComponent(navBarDisabledAlpha) }
+  public lazy var textTopBarSecondaryColor = UIColor.dynamicColor(light: lightBranding.textTopBarSecondaryColor,
+                                                                  dark: darkBranding.textTopBarSecondaryColor)
+  public var disabledTextTopBarSecondaryColor: UIColor {
+    textTopBarSecondaryColor.withAlphaComponent(navBarDisabledAlpha)
+  }
 
   // Icon colors
 
-  open lazy var iconPrimaryColor = UIColor.colorFromHex(0x419743)
-  open lazy var iconSecondaryColor = UIColor.colorFromHex(0xa9aaaf)
-  open lazy var iconTertiaryColor = UIColor.white
+  public lazy var iconPrimaryColor = UIColor.dynamicColor(light: lightBranding.iconPrimaryColor,
+                                                          dark: darkBranding.iconPrimaryColor)
+  public lazy var iconSecondaryColor = UIColor.dynamicColor(light: lightBranding.iconSecondaryColor,
+                                                            dark: darkBranding.iconSecondaryColor)
+  public lazy var iconTertiaryColor = UIColor.dynamicColor(light: lightBranding.iconTertiaryColor,
+                                                           dark: darkBranding.iconTertiaryColor)
 
   // Text colors
 
   private let textDisabledAlpha: CGFloat = 0.3
-  open lazy var textLinkColor = UIColor.colorFromHex(0x419743)
-  open lazy var textPrimaryColor = UIColor.colorFromHex(0x2b2d35)
-  open lazy var textPrimaryColorDisabled = textPrimaryColor.withAlphaComponent(textDisabledAlpha)
-  open lazy var textSecondaryColor = UIColor.colorFromHex(0x54565f)
-  open lazy var textSecondaryColorDisabled = textSecondaryColor.withAlphaComponent(textDisabledAlpha)
-  open lazy var textTertiaryColor = UIColor.colorFromHex(0xbbbdbd)
-  @available(*, deprecated, renamed: "textTopBarPrimaryColor")
-  open lazy var textTopBarColor = UIColor.white
-  @available(*, deprecated, renamed: "disabledTextTopPrimaryBarColor")
-  open lazy var disabledTextTopBarColor = textTopBarColor.withAlphaComponent(navBarDisabledAlpha)
-  open lazy var textMessageColor = UIColor.white
-  open lazy var textButtonColor = UIColor.white
-  open lazy var underlineLinks = true
+  public lazy var textLinkColor = UIColor.dynamicColor(light: lightBranding.textLinkColor,
+                                                       dark: darkBranding.textLinkColor)
+  public lazy var textPrimaryColor = UIColor.dynamicColor(light: lightBranding.textPrimaryColor,
+                                                          dark: darkBranding.textPrimaryColor)
+  public var textPrimaryColorDisabled: UIColor { textPrimaryColor.withAlphaComponent(textDisabledAlpha) }
+  public lazy var textSecondaryColor = UIColor.dynamicColor(light: lightBranding.textSecondaryColor,
+                                                            dark: darkBranding.textSecondaryColor)
+  public var textSecondaryColorDisabled: UIColor { textSecondaryColor.withAlphaComponent(textDisabledAlpha) }
+  public lazy var textTertiaryColor = UIColor.dynamicColor(light: lightBranding.textTertiaryColor,
+                                                           dark: darkBranding.textTertiaryColor)
+  public lazy var textMessageColor = UIColor.dynamicColor(light: lightBranding.textMessageColor,
+                                                          dark: darkBranding.textMessageColor)
+  public lazy var textButtonColor = UIColor.dynamicColor(light: lightBranding.textButtonColor,
+                                                         dark: darkBranding.textButtonColor)
+  public lazy var underlineLinks: Bool = lightBranding.underlineLinks
 
   // Stats
 
-  open lazy var statsDifferenceIncreaseBackgroundColor = UIColor.colorFromHex(0x61CA00)
-  open lazy var statsDifferenceDecreaseBackgroundColor = UIColor.colorFromHex(0x326700)
+  public lazy var statsDifferenceIncreaseBackgroundColor = UIColor.dynamicColor(
+    light: lightBranding.statsDifferenceIncreaseBackgroundColor,
+    dark: darkBranding.statsDifferenceIncreaseBackgroundColor
+  )
+  public lazy var statsDifferenceDecreaseBackgroundColor = UIColor.dynamicColor(
+     light: lightBranding.statsDifferenceDecreaseBackgroundColor,
+     dark: darkBranding.statsDifferenceDecreaseBackgroundColor
+   )
 
   // Toast
 
-  open lazy var showToastTitle = true
+  public lazy var showToastTitle = lightBranding.showToastTitle
 
   // Transaction details
 
-  open lazy var transactionDetailsShowDetailsSectionTitle = true
+  public lazy var transactionDetailsShowDetailsSectionTitle = lightBranding.transactionDetailsShowDetailsSectionTitle
+
 
   // Disclaimer
 
-  open lazy var disclaimerBackgroundColor = UIColor.colorFromHex(0xf2f3f4)
+  public lazy var disclaimerBackgroundColor = UIColor.dynamicColor(light: lightBranding.disclaimerBackgroundColor,
+                                                                   dark: darkBranding.disclaimerBackgroundColor)
 
   // Fonts
 
   open var fontProvider: UIFontProviderProtocol = UITheme1FontProvider()
 
-  open lazy var shiftNoteFont = UIFont.systemFont(ofSize: 13)
-  open lazy var shiftTitleFont = UIFont.systemFont(ofSize: 26)
-  open lazy var shiftFont = UIFont.systemFont(ofSize: 18)
-
-  private let overlayBackgroundAlpha: Double = 0.65
-  open lazy var overlayBackgroundColor = UIColor.colorFromHex(0x3C4A5B, alpha: overlayBackgroundAlpha)
+  public lazy var overlayBackgroundColor = UIColor.dynamicColor(light: lightBranding.overlayBackgroundColor,
+                                                                dark: darkBranding.overlayBackgroundColor)
 
   // Form customization
 
   open lazy var fieldCornerRadius: CGFloat = 12
 
-  open lazy var buttonCornerRadius: CGFloat = {
-    switch uiTheme {
-    case .theme1:
-      return 25
-    case .theme2:
-      return 12
-    }
-  }()
+  public lazy var buttonCornerRadius: CGFloat = lightBranding.buttonCornerRadius
 
   open lazy var smallButtonCornerRadius: CGFloat = {
     switch uiTheme {
@@ -176,29 +191,103 @@ public enum StatusBarStyle: String, Equatable {
 
   // Status bar
 
-  open lazy var uiStatusBarStyle: StatusBarStyle = .dark
+  public lazy var uiStatusBarStyle: StatusBarStyle = lightBranding.uiStatusBarStyle
 
   // View theme
 
-  open lazy var uiTheme: UITheme = .theme1
+  public lazy var uiTheme = lightBranding.uiTheme
 
+  // Deprecated properties
+  @available(*, deprecated, message: "use the appropriate branding color")
+  open lazy var tintColor = UIColor.white
+  @available(*, deprecated, message: "use the appropriate branding color")
+  open lazy var noteTextColor = UIColor.colorFromHex(0xA0A0A0)
+  @available(*, deprecated, message: "use the appropriate branding color")
+  open lazy var noteBackgroundColor = UIColor.clear
+  @available(*, deprecated, message: "use the appropriate branding color")
+  open lazy var defaultTextColor = UIColor.colorFromHex(0x000000)
+  @available(*, deprecated, renamed: "textTopBarPrimaryColor")
+  public lazy var textTopBarColor: UIColor = lightBranding.textTopBarColor
+  @available(*, deprecated, renamed: "disabledTextTopPrimaryBarColor")
+  public lazy var disabledTextTopBarColor: UIColor = textTopBarColor.withAlphaComponent(navBarDisabledAlpha)
+  @available(*, deprecated, message: "use the appropriate branding font")
+  open lazy var shiftNoteFont = UIFont.systemFont(ofSize: 13)
+  @available(*, deprecated, message: "use the appropriate branding font")
+  open lazy var shiftTitleFont = UIFont.systemFont(ofSize: 26)
+  @available(*, deprecated, message: "use the appropriate branding font")
+  open lazy var shiftFont = UIFont.systemFont(ofSize: 18)
+  @available(*, deprecated, message: "use the appropriate branding color")
   open lazy var formSliderTrackColor = UIColor.colorFromHex(0xEBEBEB)
 
-  public init(projectConfiguration: ProjectConfiguration, fontCustomizationOptions: FontCustomizationOptions? = nil) {
-    super.init()
-    updateBranding(projectConfiguration.branding)
-    setFonts(fontCustomizationOptions: fontCustomizationOptions)
+  public convenience init(projectConfiguration: ProjectConfiguration,
+                          fontCustomizationOptions: FontCustomizationOptions? = nil) {
+    self.init(branding: projectConfiguration.branding, fontCustomizationOptions: fontCustomizationOptions)
   }
 
-  public init(projectBranding: ProjectBranding, fontCustomizationOptions: FontCustomizationOptions? = nil) {
+  public init(branding: Branding, fontCustomizationOptions: FontCustomizationOptions? = nil) {
+    self.lightBranding = ParsedProjectBranding(branding: branding.light)
+    self.darkBranding = ParsedProjectBranding(branding: branding.dark)
     super.init()
-    updateBranding(projectBranding)
     setFonts(fontCustomizationOptions: fontCustomizationOptions)
   }
 }
 
 private extension UIConfig {
-  func updateBranding(_ branding: ProjectBranding) {
+  func setFonts(fontCustomizationOptions: FontCustomizationOptions?) {
+    switch self.uiTheme {
+    case .theme1:
+      self.fontProvider = UITheme1FontProvider()
+    case .theme2:
+      if let fontCustomizationOptions = fontCustomizationOptions {
+        switch fontCustomizationOptions {
+        case .fontDescriptors(let descriptors):
+          self.fontProvider = UITheme2FontProvider(fontDescriptors: descriptors)
+        case .fontProvider(let provider):
+          self.fontProvider = provider
+        }
+      }
+      else {
+        self.fontProvider = UITheme2FontProvider(fontDescriptors: nil)
+      }
+    }
+  }
+}
+
+private struct ParsedProjectBranding {
+  let uiBackgroundPrimaryColor: UIColor
+  let uiBackgroundSecondaryColor: UIColor
+  let iconPrimaryColor: UIColor
+  let iconSecondaryColor: UIColor
+  let iconTertiaryColor: UIColor
+  let textPrimaryColor: UIColor
+  let textSecondaryColor: UIColor
+  let textTertiaryColor: UIColor
+  let textTopBarColor: UIColor
+  let textTopBarPrimaryColor: UIColor
+  let textTopBarSecondaryColor: UIColor
+  let textLinkColor: UIColor
+  let underlineLinks: Bool
+  let textButtonColor: UIColor
+  let buttonCornerRadius: CGFloat
+  let uiPrimaryColor: UIColor
+  let uiSecondaryColor: UIColor
+  let uiTertiaryColor: UIColor
+  let uiErrorColor: UIColor
+  let uiSuccessColor: UIColor
+  let uiNavigationPrimaryColor: UIColor
+  let uiNavigationSecondaryColor: UIColor
+  let overlayBackgroundColor: UIColor
+  let textMessageColor: UIColor
+  let statsDifferenceIncreaseBackgroundColor: UIColor
+  let statsDifferenceDecreaseBackgroundColor: UIColor
+  let showToastTitle: Bool
+  let transactionDetailsShowDetailsSectionTitle: Bool
+  let disclaimerBackgroundColor: UIColor
+  let uiStatusBarStyle: StatusBarStyle
+  let uiTheme: UITheme
+
+  init(branding: ProjectBranding) {
+    let overlayBackgroundAlpha: Double = 0.65
     // swiftlint:disable force_unwrapping
     uiBackgroundPrimaryColor = UIColor.colorFromHexString(branding.uiBackgroundPrimaryColor)!
     uiBackgroundSecondaryColor = UIColor.colorFromHexString(branding.uiBackgroundSecondaryColor)!
@@ -233,24 +322,5 @@ private extension UIConfig {
     uiStatusBarStyle = StatusBarStyle(rawValue: branding.uiStatusBarStyle)!
     uiTheme = UITheme(rawValue: branding.uiTheme)!
     // swiftlint:enable force_unwrapping
-  }
-
-  func setFonts(fontCustomizationOptions: FontCustomizationOptions?) {
-    switch self.uiTheme {
-    case .theme1:
-      self.fontProvider = UITheme1FontProvider()
-    case .theme2:
-      if let fontCustomizationOptions = fontCustomizationOptions {
-        switch fontCustomizationOptions {
-        case .fontDescriptors(let descriptors):
-          self.fontProvider = UITheme2FontProvider(fontDescriptors: descriptors)
-        case .fontProvider(let provider):
-          self.fontProvider = provider
-        }
-      }
-      else {
-        self.fontProvider = UITheme2FontProvider(fontDescriptors: nil)
-      }
-    }
   }
 }

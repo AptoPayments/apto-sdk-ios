@@ -284,6 +284,14 @@ import TrustKit
     userPreferencesStorage.shouldShowDetailedCardActivity = isEnabled
   }
 
+  public func isBiometricEnabled() -> Bool {
+    return userPreferencesStorage.shouldUseBiometric
+  }
+
+  public func setIsBiometricEnabled(_ isEnabled: Bool) {
+    userPreferencesStorage.shouldUseBiometric = isEnabled
+  }
+
   public func fetchCardProducts(callback: @escaping Result<[CardProductSummary], NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       return callback(.failure(BackendError(code: .invalidSession)))

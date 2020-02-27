@@ -6,8 +6,8 @@
 //
 
 protocol ProjectBrandingCacheProtocol {
-  func cachedProjectBranding() -> ProjectBranding?
-  func saveProjectBranding(_ projectBranding: ProjectBranding)
+  func cachedProjectBranding() -> Branding?
+  func saveProjectBranding(_ branding: Branding)
 }
 
 class ProjectBrandingCache: ProjectBrandingCacheProtocol {
@@ -17,11 +17,11 @@ class ProjectBrandingCache: ProjectBrandingCacheProtocol {
     self.localCacheFileManager = localCacheFileManager
   }
 
-  func cachedProjectBranding() -> ProjectBranding? {
+  func cachedProjectBranding() -> Branding? {
     do {
-      if let data = try localCacheFileManager.read(filename: .projectBrandingFilename) {
-        let projectBranding = try PropertyListDecoder().decode(ProjectBranding.self, from: data)
-        return projectBranding
+      if let data = try localCacheFileManager.read(filename: .brandingFilename) {
+        let branding = try PropertyListDecoder().decode(Branding.self, from: data)
+        return branding
       }
     }
     catch {
@@ -30,11 +30,11 @@ class ProjectBrandingCache: ProjectBrandingCacheProtocol {
     return nil
   }
 
-  func saveProjectBranding(_ projectBranding: ProjectBranding) {
+  func saveProjectBranding(_ branding: Branding) {
     DispatchQueue.global().async { [unowned self] in
       do {
-        let data = try PropertyListEncoder().encode(projectBranding)
-        try self.localCacheFileManager.write(data: data, filename: .projectBrandingFilename)
+        let data = try PropertyListEncoder().encode(branding)
+        try self.localCacheFileManager.write(data: data, filename: .brandingFilename)
       }
       catch {
         ErrorLogger.defaultInstance().log(error: error)

@@ -62,6 +62,11 @@ public struct ProjectBranding: Codable {
   public let uiTheme: String
 }
 
+public struct Branding: Codable {
+  public let light: ProjectBranding
+  public let dark: ProjectBranding
+}
+
 open class ProjectConfiguration {
   public let name: String
   public let summary: String?
@@ -71,7 +76,7 @@ open class ProjectConfiguration {
   public let primaryAuthCredential: DataPointType
   public let secondaryAuthCredential: DataPointType
   public let supportEmailAddress: String?
-  public let branding: ProjectBranding
+  public let branding: Branding
   public let allowedCountries: [Country]
   public let welcomeScreenAction: WorkflowAction
   let defaultCountryCode: Int
@@ -90,7 +95,7 @@ open class ProjectConfiguration {
        products: [Product],
        welcomeScreenAction: WorkflowAction,
        supportEmailAddress: String?,
-       branding: ProjectBranding,
+       branding: Branding,
        allowedCountries: [Country]?,
        isTrackerActive: Bool?,
        trackerAccessToken: String?) {

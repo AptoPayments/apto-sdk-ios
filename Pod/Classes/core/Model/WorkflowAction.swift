@@ -140,10 +140,13 @@ public struct WaitListActionConfiguration: WorkflowActionConfiguration {
   public let asset: String?
   public let backgroundImage: String?
   public let backgroundColor: String?
+  public let darkBackgroundColor: String?
 
-  public init(asset: String?, backgroundImage: String?, backgroundColor: String?) {
+  public init(asset: String?, backgroundImage: String?, backgroundColor: String?,
+              darkBackgroundColor: String?) {
     self.asset = asset
     self.backgroundImage = backgroundImage
     self.backgroundColor = backgroundColor
+    self.darkBackgroundColor = darkBackgroundColor
   }
 }

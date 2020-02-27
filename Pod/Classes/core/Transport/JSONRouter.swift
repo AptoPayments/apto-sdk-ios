@@ -150,9 +150,9 @@ extension JSONTransportEnvironment: BaseURLProvider {
     case .staging:
       return "https://api.stg.aptopayments.com/v1"
     case .sandbox:
-      return "https://api.ux.sbx.aptopayments.com/v1"
+      return "https://api.sbx.aptopayments.com/v1"
     case .live:
-      return "https://api.ux.aptopayments.com/v1"
+      return "https://api.aptopayments.com/v1"
     }
   }
 }
@@ -173,9 +173,9 @@ extension JSONTransportEnvironment: PCIVaultURLProvider {
     case .staging:
       return "https://vault.stg.aptopayments.com/v1"
     case .sandbox:
-      return "https://vault.ux.sbx.aptopayments.com/v1"
+      return "https://vault.sbx.aptopayments.com/v1"
     case .live:
-      return "https://vault.ux.aptopayments.com/v1"
+      return "https://vault.aptopayments.com/v1"
     }
   }
 }

@@ -72,6 +72,8 @@ public protocol AptoPlatformProtocol {
   func isFeatureEnabled(_ featureKey: FeatureKey) -> Bool
   func isShowDetailedCardActivityEnabled() -> Bool
   func setShowDetailedCardActivityEnabled(_ isEnabled: Bool)
+  func isBiometricEnabled() -> Bool
+  func setIsBiometricEnabled(_ isEnabled: Bool)
 
   // User tokens handling
   func currentToken() -> AccessToken?
