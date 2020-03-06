@@ -1729,3 +1729,5 @@
 "biometric.permission.touch_id.cta" = "Enable TouchID";
 
 "biometric.permission.touch_id.disclosure" = "The TouchID assigned to this device can manage Card Settings";
+
+"biometric.permission.skip.title" = "Skip";
