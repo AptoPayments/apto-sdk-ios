@@ -45,7 +45,7 @@ class StorageLocator: StorageLocatorProtocol {
   }
 
   func userTokenStorage() -> UserTokenStorageProtocol {
-    return UserTokenStorage(notificationHandler: serviceLocator.notificationHandler)
+    return UserTokenStorage(notificationHandler: serviceLocator.notificationHandler, keychain: KeychainOS())
   }
 
   func featuresStorage() -> FeaturesStorageProtocol {

@@ -185,12 +185,6 @@ public enum CardNetwork: String, Codable {
   }
 }
 
-public struct CardDetails {
-  public let expiration: String
-  public let pan: String
-  public let cvv: String
-}
-
 public enum OrderedStatus: String, Codable {
   case notApplicable = "not_applicable"
   case available

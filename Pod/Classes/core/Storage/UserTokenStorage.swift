@@ -17,6 +17,7 @@ protocol UserTokenStorageProtocol {
 
 class UserTokenStorage: UserTokenStorageProtocol {
   private let notificationHandler: NotificationHandler
+  private let keychain: KeychainProtocol
   fileprivate var currentTokenCache: String?
   fileprivate var currentTokenPrimaryCredentialCache: DataPointType?
   fileprivate var currentTokenSecondaryCredentialCache: DataPointType?
@@ -25,8 +26,9 @@ class UserTokenStorage: UserTokenStorageProtocol {
     static let fileName = "token.txt"
   }
 
-  public init(notificationHandler: NotificationHandler) {
+  public init(notificationHandler: NotificationHandler, keychain: KeychainProtocol) {
     self.notificationHandler = notificationHandler
+    self.keychain = keychain
     registerToInvalidSessionEvents()
   }
 
@@ -38,14 +40,14 @@ class UserTokenStorage: UserTokenStorageProtocol {
     currentTokenCache = token
     currentTokenPrimaryCredentialCache = withPrimaryCredential
     currentTokenSecondaryCredentialCache = andSecondaryCredential
-    self.writeLocalFile()
+    persistCurrentToken()
   }
 
   func currentToken() -> String? {
     if let currentTokenCache = currentTokenCache {
       return currentTokenCache
     }
-    readLocalFile()
+    loadCurrentToken()
     return currentTokenCache
   }
 
@@ -53,7 +55,7 @@ class UserTokenStorage: UserTokenStorageProtocol {
     if let currentTokenPrimaryCredentialCache = currentTokenPrimaryCredentialCache {
       return currentTokenPrimaryCredentialCache
     }
-    readLocalFile()
+    loadCurrentToken()
     return currentTokenPrimaryCredentialCache
   }
 
@@ -61,7 +63,7 @@ class UserTokenStorage: UserTokenStorageProtocol {
     if let currentTokenSecondaryCredentialCache = currentTokenSecondaryCredentialCache {
       return currentTokenSecondaryCredentialCache
     }
-    readLocalFile()
+    loadCurrentToken()
     return currentTokenSecondaryCredentialCache
   }
 
@@ -71,6 +73,7 @@ class UserTokenStorage: UserTokenStorageProtocol {
       currentTokenCache = nil
       currentTokenPrimaryCredentialCache = nil
       currentTokenSecondaryCredentialCache = nil
+      keychain.removeValue(for: .tokenKey)
       let fileManager = FileManager.default
       try fileManager.removeItem(at: localFilePath)
     }
@@ -78,11 +81,11 @@ class UserTokenStorage: UserTokenStorageProtocol {
   }
 
   private func registerToInvalidSessionEvents() {
-    notificationHandler.addObserver(self, selector: #selector(self.didReceiveSessionExpiredEvent(_:)),
+    notificationHandler.addObserver(self, selector: #selector(self.didReceiveSessionExpiredEvent),
                                     name: .UserTokenSessionExpiredNotification)
-    notificationHandler.addObserver(self, selector: #selector(self.didReceiveSessionInvalidEvent(_:)),
+    notificationHandler.addObserver(self, selector: #selector(self.didReceiveSessionInvalidEvent),
                                     name: .UserTokenSessionInvalidNotification)
-    notificationHandler.addObserver(self, selector: #selector(self.didReceiveSessionClosedEvent(_:)),
+    notificationHandler.addObserver(self, selector: #selector(self.didReceiveSessionClosedEvent),
                                     name: .UserTokenSessionClosedNotification)
   }
 
@@ -108,7 +111,7 @@ class UserTokenStorage: UserTokenStorageProtocol {
         currentTokenCache = token
         currentTokenPrimaryCredentialCache = .phoneNumber
         currentTokenSecondaryCredentialCache = .email
-        writeLocalFile()
+        persistCurrentToken()
       }
       catch {
         currentTokenCache = nil
@@ -118,32 +121,66 @@ class UserTokenStorage: UserTokenStorageProtocol {
     }
   }
 
-  fileprivate func writeLocalFile() {
-    let localFilePath = self.localFilePath()
-    let data = [
-      "user_token": currentTokenCache,
-      "primary_credential": currentTokenPrimaryCredentialCache?.description,
-      "secondary_credential": currentTokenSecondaryCredentialCache?.description
-    ]
-    NSKeyedArchiver.archiveRootObject(data, toFile: localFilePath.path)
+  private func loadCurrentToken() {
+    loadPersistedToken()
+    // If no token persisted in the try to load the token from the old system and migrate it
+    if currentTokenCache == nil {
+      readLocalFile()
+      if currentTokenCache != nil {
+        persistCurrentToken()
+        removeLegacyTokenFile()
+      }
+    }
   }
 
-  @objc private func didReceiveSessionExpiredEvent(_ notification: Notification) {
+  private func persistCurrentToken() {
+    let token = UserTokenWithCredentials(token: currentTokenCache,
+                                         primaryCredential: currentTokenPrimaryCredentialCache?.description,
+                                         secondaryCredential: currentTokenSecondaryCredentialCache?.description)
+    let data = try? JSONEncoder().encode(token)
+    keychain.save(value: data, for: .tokenKey)
+  }
+
+  private func loadPersistedToken() {
+    guard let data = keychain.value(for: .tokenKey),
+      let token = try? JSONDecoder().decode(UserTokenWithCredentials.self, from: data) else {
+        return
+    }
+    currentTokenCache = token.token
+    currentTokenPrimaryCredentialCache = DataPointType.from(typeName: token.primaryCredential)
+    currentTokenSecondaryCredentialCache = DataPointType.from(typeName: token.secondaryCredential)
+  }
+
+  private func removeLegacyTokenFile() {
+    try? FileManager.default.removeItem(at: localFilePath())
+  }
+
+  @objc private func didReceiveSessionExpiredEvent() {
     self.clearCurrentToken()
   }
 
-  @objc private func didReceiveSessionInvalidEvent(_ notification: Notification) {
+  @objc private func didReceiveSessionInvalidEvent() {
     self.clearCurrentToken()
   }
 
-  @objc private func didReceiveSessionClosedEvent(_ notification: Notification) {
+  @objc private func didReceiveSessionClosedEvent() {
     self.clearCurrentToken()
   }
 
+}
+
+private extension String {
+  static let tokenKey = "com.aptopayments.user.token"
 }
 
 public extension Notification.Name {
   static let UserTokenSessionInvalidNotification = Notification.Name("UserTokenSessionInvalidNotification")
   static let UserTokenSessionExpiredNotification = Notification.Name("UserTokenSessionExpiredNotification")
   static let UserTokenSessionClosedNotification = Notification.Name("UserTokenSessionClosedNotification")
+}
+
+private struct UserTokenWithCredentials: Codable {
+  let token: String?
+  let primaryCredential: String?
+  let secondaryCredential: String?
 }

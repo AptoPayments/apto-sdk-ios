@@ -1684,9 +1684,9 @@
 
 "biometric.verify_pin.forgot.cta" = "Forgot Passcode";
 
-"biometric.verify_pin.forgot.alert_title" = "Warning";
+"biometric.verify_pin.forgot.alert_title" = "Reset Passcode";
 
-"biometric.verify_pin.forgot.alert_message" = "This action will log you out of the app, so you can identify yourself and set a new Passcode";
+"biometric.verify_pin.forgot.alert_message" = "We will log you out of the app. To reset your passcode, please sign back in using your credentials";
 
 "biometric.verify_pin.forgot.alert_confirm" = "Confirm";
 
