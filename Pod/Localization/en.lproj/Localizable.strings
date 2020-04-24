@@ -1044,6 +1044,16 @@
 
 "issue_card.issue_card.generic_error.secondary_cta" = "";
 
+"issue_card.issue_card.error_email_sends_disabled.title" = "Card issuance fee";
+"issue_card.issue_card.error_email_sends_disabled.description" = "Sending funds is disabled in your account. Please contact customer support";
+"issue_card.issue_card.error_email_sends_disabled.primary_cta" = "Try again";
+"issue_card.issue_card.error_email_sends_disabled.secondary_cta" = "";
+ 
+"issue_card.issue_card.error_insufficient_application_limit.title" = "Card issuance fee";
+"issue_card.issue_card.error_insufficient_application_limit.description" = "We can't charge the card issuance fee. Please contact customer support";
+"issue_card.issue_card.error_insufficient_application_limit.primary_cta" = "Try again";
+"issue_card.issue_card.error_insufficient_application_limit.secondary_cta" = "";
+
 /* * ./Pod/Classes/ledgeaccountskit/SelectBalanceStoreModule/SelectBalanceStoreModule.swift */
 
 "select-balance-store.title" = "Link your account";
