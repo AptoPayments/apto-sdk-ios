@@ -60,7 +60,8 @@ import TrustKit
   private lazy var userTokenStorage = serviceLocator.storageLocator.userTokenStorage()
   private let pushNotificationsManager = PushNotificationsManager()
   private lazy var serviceLocator: ServiceLocatorProtocol = ServiceLocator.shared
-
+  private lazy var featureFlag: LaunchDarkly = .shared
+  
   init(serviceLocator: ServiceLocatorProtocol = ServiceLocator.shared) {
     super.init()
     self.serviceLocator = serviceLocator
@@ -109,6 +110,8 @@ import TrustKit
     self.notificationPreferencesStorage = storageLocator.notificationPreferencesStorage(transport: transport)
     self.voIPStorage = storageLocator.voIPStorage(transport: transport)
 
+    self.featureFlag.initialize()
+    
     // Notify the delegate that the manager has already been initialized
     self.initialized = true
     self.delegate?.sdkInitialized(apiKey: apiKey)
@@ -717,12 +720,16 @@ import TrustKit
   }
 
   public func issueCard(applicationId: String, callback: @escaping Result<Card, NSError>.Callback) {
+    self.issueCard(applicationId: applicationId, additionalFields: nil, callback: callback)
+  }
+  
+  public func issueCard(applicationId: String, additionalFields: [String: AnyObject]?, callback: @escaping Result<Card, NSError>.Callback) {
     guard let projectKey = self.apiKey, let accessToken = currentToken() else {
-      callback(.failure(BackendError(code: .invalidSession)))
-      return
-    }
-    cardApplicationsStorage.issueCard(projectKey, userToken: accessToken.token, applicationId: applicationId,
-                                      callback: callback)
+        callback(.failure(BackendError(code: .invalidSession)))
+        return
+      }
+      cardApplicationsStorage.issueCard(projectKey, userToken: accessToken.token, applicationId: applicationId,
+                                        additionalFields: additionalFields, callback: callback)
   }
 
   public func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,

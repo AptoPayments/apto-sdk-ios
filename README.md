@@ -4,7 +4,7 @@ Welcome to the Apto iOS SDK. This SDK gives access to the Apto's mobile API, des
 
 With this SDK, you'll be able to onboard new users, issue cards, obtain card activity information and manage the card (set pin, freeze / unfreeze, etc.)
 
-For more information, see the [Apto developer portal](https://aptopayments.com/developer).
+For more information, see the [Apto developer portal](https://aptopayments.com/#/developers).
 
 ## Requirements
 

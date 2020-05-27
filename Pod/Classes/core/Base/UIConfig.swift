@@ -8,11 +8,6 @@
 
 import Foundation
 
-public enum UITheme: String, Equatable {
-  case theme1 = "theme_1"
-  case theme2 = "theme_2"
-}
-
 public enum StatusBarStyle: String, Equatable {
   case light
   case dark
@@ -120,7 +115,7 @@ public enum StatusBarStyle: String, Equatable {
 
   // Fonts
 
-  open var fontProvider: UIFontProviderProtocol = UITheme1FontProvider()
+  open var fontProvider: UIFontProviderProtocol = UITheme2FontProvider(fontDescriptors: nil)
 
   public lazy var overlayBackgroundColor = UIColor.dynamicColor(light: lightBranding.overlayBackgroundColor,
                                                                 dark: darkBranding.overlayBackgroundColor)
@@ -131,58 +126,16 @@ public enum StatusBarStyle: String, Equatable {
 
   public lazy var buttonCornerRadius: CGFloat = lightBranding.buttonCornerRadius
 
-  open lazy var smallButtonCornerRadius: CGFloat = {
-    switch uiTheme {
-    case .theme1:
-      return 18
-    case .theme2:
-      return 12
-    }
-  }()
-
-  open lazy var buttonHeight: CGFloat = {
-    switch uiTheme {
-    case .theme1:
-      return 50
-    case .theme2:
-      return 56
-    }
-  }()
-
-  open lazy var smallButtonHeight: CGFloat = {
-    switch uiTheme {
-    case .theme1:
-      return 32
-    case .theme2:
-      return 48
-    }
-  }()
-
-  open lazy var formRowHeight: CGFloat = {
-    switch uiTheme {
-    case .theme1:
-      return 40
-    case .theme2:
-      return 56
-    }
-  }()
-
+  open lazy var smallButtonCornerRadius: CGFloat = 12
+  open lazy var buttonHeight: CGFloat = 56
+  open lazy var smallButtonHeight: CGFloat = 48
+  open lazy var formRowHeight: CGFloat = 56
   open lazy var formFieldInternalPadding: CGRect = {
-    switch uiTheme {
-    case .theme2:
-      return CGRect(x: 0, y: 0, width: 15, height: self.formRowHeight)
-    case .theme1:
-      return CGRect(x: 0, y: 0, width: 0, height: self.formRowHeight)
-    }
+    return CGRect(x: 0, y: 0, width: 15, height: self.formRowHeight)
   }()
 
   open lazy var formRowPadding: UIEdgeInsets = {
-    switch uiTheme {
-    case .theme1:
-      return UIEdgeInsets(top: 5, left: 16, bottom: 5, right: 16)
-    case .theme2:
-      return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-    }
+    return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
   }()
 
   public lazy var lineSpacing: CGFloat = 1.38
@@ -192,10 +145,6 @@ public enum StatusBarStyle: String, Equatable {
   // Status bar
 
   public lazy var uiStatusBarStyle: StatusBarStyle = lightBranding.uiStatusBarStyle
-
-  // View theme
-
-  public lazy var uiTheme = lightBranding.uiTheme
 
   // Deprecated properties
   @available(*, deprecated, message: "use the appropriate branding color")
@@ -234,21 +183,16 @@ public enum StatusBarStyle: String, Equatable {
 
 private extension UIConfig {
   func setFonts(fontCustomizationOptions: FontCustomizationOptions?) {
-    switch self.uiTheme {
-    case .theme1:
-      self.fontProvider = UITheme1FontProvider()
-    case .theme2:
-      if let fontCustomizationOptions = fontCustomizationOptions {
-        switch fontCustomizationOptions {
-        case .fontDescriptors(let descriptors):
-          self.fontProvider = UITheme2FontProvider(fontDescriptors: descriptors)
-        case .fontProvider(let provider):
-          self.fontProvider = provider
-        }
+    if let fontCustomizationOptions = fontCustomizationOptions {
+      switch fontCustomizationOptions {
+      case .fontDescriptors(let descriptors):
+        self.fontProvider = UITheme2FontProvider(fontDescriptors: descriptors)
+      case .fontProvider(let provider):
+        self.fontProvider = provider
       }
-      else {
-        self.fontProvider = UITheme2FontProvider(fontDescriptors: nil)
-      }
+    }
+    else {
+      self.fontProvider = UITheme2FontProvider(fontDescriptors: nil)
     }
   }
 }
@@ -284,7 +228,6 @@ private struct ParsedProjectBranding {
   let transactionDetailsShowDetailsSectionTitle: Bool
   let disclaimerBackgroundColor: UIColor
   let uiStatusBarStyle: StatusBarStyle
-  let uiTheme: UITheme
 
   init(branding: ProjectBranding) {
     let overlayBackgroundAlpha: Double = 0.65
@@ -320,7 +263,6 @@ private struct ParsedProjectBranding {
     transactionDetailsShowDetailsSectionTitle = branding.transactionDetailsCollapsable
     disclaimerBackgroundColor = UIColor.colorFromHexString(branding.disclaimerBackgroundColor)!
     uiStatusBarStyle = StatusBarStyle(rawValue: branding.uiStatusBarStyle)!
-    uiTheme = UITheme(rawValue: branding.uiTheme)!
     // swiftlint:enable force_unwrapping
   }
 }
