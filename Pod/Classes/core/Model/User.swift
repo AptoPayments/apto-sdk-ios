@@ -12,10 +12,12 @@ import Bond
 @objc open class ShiftUser: NSObject {
   public let userId: String
   open var userData = DataPointList()
+  open var metadata: String?
   open var accessToken: AccessToken?
 
-  public init(userId: String, accessToken: AccessToken?) {
+  public init(userId: String, metadata: String?, accessToken: AccessToken?) {
     self.userId = userId
+    self.metadata = metadata
     self.accessToken = accessToken
   }
 

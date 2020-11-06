@@ -470,8 +470,10 @@ extension JSON {
     }
 
     let accessToken = self.accessToken
+    let metadata = self["metadata"].string
 
     let retVal = ShiftUser(userId: userId,
+                           metadata: metadata,
                            accessToken: accessToken)
     retVal.userData = dataPoints
     return retVal

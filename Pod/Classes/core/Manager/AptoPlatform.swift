@@ -1,18 +1,14 @@
-//
-//  AptoPlatform.swift
-//  AptoSDK
-//
-//  Created by Ivan Oliver Martínez on 18/01/16.
-//  Copyright © 2019 Apto Payments. All rights reserved.
-//
-
 import Foundation
-import TrustKit
 
+/// By default, AptoPlatform are provisioned with different environments. An environment provides a runtime execution context for our API, depending on the development process you may use any of the different stages below
 @objc public enum AptoPlatformEnvironment: Int {
+  /// Local environment
   case local
+  /// Staging environment
   case staging
+  /// Sandbox environment
   case sandbox
+  /// Production environment (Required for release)
   case production
   public var description: String {
     switch self {
@@ -24,13 +20,17 @@ import TrustKit
   }
 }
 
+/// AptoPlatform is the main entry point into our SDK
 @objc public class AptoPlatform: NSObject, AptoPlatformProtocol { // swiftlint:disable:this type_body_length
 
   // MARK: Authentication attributes
 
   // swiftlint:disable implicitly_unwrapped_optional
+  /// Developer api key that you can get from our [developer portal](https://www.aptopayments.com/developers)
   public private(set) var apiKey: String!
+  /// Desired environment to use during development
   public private(set) var environment: AptoPlatformEnvironment!
+  /// Check if the SDK has been initialised, by default this value is `false`
   public private(set) var initialized = false
   // swiftlint:enable implicitly_unwrapped_optional
   private var internalCurrentUser: ShiftUser?
@@ -54,6 +54,7 @@ import TrustKit
   private var oauthStorage: OauthStorageProtocol!
   private var notificationPreferencesStorage: NotificationPreferencesStorageProtocol!
   private var voIPStorage: VoIPStorageProtocol!
+  private var paymentSourcesStorage: PaymentSourcesStorageProtocol!
   // swiftlint:enable implicitly_unwrapped_optional
   private lazy var featuresStorage = serviceLocator.storageLocator.featuresStorage()
   private lazy var userPreferencesStorage = serviceLocator.storageLocator.userPreferencesStorage()
@@ -74,10 +75,18 @@ import TrustKit
   // MARK: Setup Manager
 
   private static var sharedManager = AptoPlatform()
+  
+  /// Default `AptoPlatform`
+  /// - Returns: Single instance of `AptoPlatform` class
   @objc public static func defaultManager() -> AptoPlatform {
     return sharedManager
   }
 
+  /// Initialise the SDK in order to authenticate with our system and start making API calls
+  /// - Parameters:
+  ///   - apiKey: Developer api key that you can get from our [developer portal](https://www.aptopayments.com/#/developers)
+  ///   - environment: Desired environment to use during development
+  ///   - setupCertPinning: Configure SSL Pinning to avoid network MITM attacks
   @objc public func initializeWithApiKey(_ apiKey: String,
                                          environment: AptoPlatformEnvironment,
                                          setupCertPinning: Bool) {
@@ -109,6 +118,7 @@ import TrustKit
     self.oauthStorage = storageLocator.oauthStorage(transport: transport)
     self.notificationPreferencesStorage = storageLocator.notificationPreferencesStorage(transport: transport)
     self.voIPStorage = storageLocator.voIPStorage(transport: transport)
+    self.paymentSourcesStorage = storageLocator.paymentSourcesStorage(transport: transport)
 
     self.featureFlag.initialize()
     
@@ -120,21 +130,32 @@ import TrustKit
     self.setUpNotificationObservers()
   }
 
+  /// Initialise the SDK in order to authenticate with our system and start making API calls
+  /// - Parameters:
+  ///   - apiKey: Developer api key that you can get from our [developer portal](https://www.aptopayments.com/#/developers)
+  ///   - environment: Desired environment to use during development
   @objc public func initializeWithApiKey(_ apiKey: String, environment: AptoPlatformEnvironment) {
     self.initializeWithApiKey(apiKey, environment: environment, setupCertPinning: false)
   }
 
+  /// Initialise the SDK in order to authenticate with our system and start making API calls
+  /// - Parameters:
+  ///   - apiKey: Developer api key that you can get from our [developer portal](https://www.aptopayments.com/#/developers)
   @objc public func initializeWithApiKey(_ apiKey: String) {
     self.initializeWithApiKey(apiKey, environment: .production)
   }
-
+  
+  /// Manually sets user token to use when making api calls
+  /// - Parameter userToken: valid user token
   public func setUserToken(_ userToken: String) {
     let primaryCredential: DataPointType = userTokenStorage.currentTokenPrimaryCredential() ?? .phoneNumber
     let secondaryCredential: DataPointType = userTokenStorage.currentTokenSecondaryCredential() ?? .email
     userTokenStorage.setCurrent(token: userToken, withPrimaryCredential: primaryCredential,
                                 andSecondaryCredential: secondaryCredential)
   }
-
+  
+  /// Current user token
+  /// - Returns: optional instance of the current token being used by the SDK
   public func currentToken() -> AccessToken? {
     guard let token = self.userTokenStorage.currentToken() else {
       return nil
@@ -150,22 +171,28 @@ import TrustKit
     return AccessToken(token: token, primaryCredential: primaryCredential, secondaryCredential: secondaryCredential)
   }
 
+  /// Manually set `CardOptions` after initialising the SDK
+  /// - Parameter cardOptions: `CardOptions` entity
   public func setCardOptions(_ cardOptions: CardOptions? = nil) {
     configurationStorage.cardOptions = cardOptions
     if let features = cardOptions?.features {
       featuresStorage.update(features: features)
     }
   }
-
+  
+  /// Current push notification token
+  /// - Returns: optional instance of the current push notification token used by the SDK
   public func currentPushToken() -> String? {
     return self.pushTokenStorage.currentPushToken()
   }
 
+  /// Close session with our SDK and clean up all user session data
   public func logout() {
     serviceLocator.notificationHandler.postNotification(.UserTokenSessionClosedNotification)
     clearUserToken()
   }
 
+  /// Clean up user token session
   @objc public func clearUserToken() {
     internalCurrentUser = nil
     try? serviceLocator.storageLocator.authenticatedLocalFileManager().invalidate()
@@ -175,7 +202,14 @@ import TrustKit
     serviceLocator.analyticsManager.logoutUser()
   }
 
-  public func createUser(userData: DataPointList, custodianUid: String? = nil,
+  
+  /// Once the primary credential has been verified, you can use the following SDK method to create a new user:
+  /// - Parameters:
+  ///   - userData: DataPointList with user data
+  ///   - metadata: Medatata to be stored with the user. It can hold up to 256 characters. Optional parameter
+  ///   - custodianUid: custodian uid. Optional parameter
+  ///   - callback: callback with created user or optional error
+  public func createUser(userData: DataPointList, custodianUid: String? = nil, metadata: String? = nil,
                          callback: @escaping Result<ShiftUser, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
@@ -183,7 +217,7 @@ import TrustKit
       return
     }
 
-    userStorage.createUser(apiKey, userData: userData, custodianUid: custodianUid) { [weak self] result in
+    userStorage.createUser(apiKey, userData: userData, custodianUid: custodianUid, metadata: metadata) { [weak self] result in
       guard let self = self else { return }
       switch result {
       case .failure(let error): callback(.failure(error))
@@ -208,7 +242,11 @@ import TrustKit
       }
     }
   }
-
+  
+  /// Once the primary and secondary credentials have been verified, you can use the following SDK method to obtain a user token for an existing user
+  /// - Parameters:
+  ///   - verifications: verification methods to authenticate user
+  ///   - callback: callback with the `ShiftUser` entity or optional error
   public func loginUserWith(verifications: [Verification], callback: @escaping Result<ShiftUser, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
@@ -242,7 +280,11 @@ import TrustKit
       }
     }
   }
-
+  
+  /// Fetch remote server project configuration to configure your UI with the remote parameters
+  /// - Parameters:
+  ///   - forceRefresh: avoid using cached data
+  ///   - callback: callback with the `ContextConfiguration` entity or optional error
   public func fetchContextConfiguration(_ forceRefresh: Bool = false,
                                         callback: @escaping Result<ContextConfiguration, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
@@ -270,7 +312,9 @@ import TrustKit
       }
     }
   }
-
+  
+  /// Retrieve `UIConfig` entity from cache
+  /// - Returns: returns nil if the configuration is not available yet
   public func fetchUIConfig() -> UIConfig? {
     return configurationStorage.uiConfig()
   }
@@ -286,15 +330,21 @@ import TrustKit
   public func setShowDetailedCardActivityEnabled(_ isEnabled: Bool) {
     userPreferencesStorage.shouldShowDetailedCardActivity = isEnabled
   }
-
+  
+  /// Check if biometrics are enabled
+  /// - Returns: biometrics status
   public func isBiometricEnabled() -> Bool {
     return userPreferencesStorage.shouldUseBiometric
   }
-
+  
+  /// Enable biometric authentication
+  /// - Parameter isEnabled: status
   public func setIsBiometricEnabled(_ isEnabled: Bool) {
     userPreferencesStorage.shouldUseBiometric = isEnabled
   }
-
+  
+  /// Retrieve a list of all the available card programs that can be used to issue cards
+  /// - Parameter callback: callback with a list of `CardProductSummary` or optional error
   public func fetchCardProducts(callback: @escaping Result<[CardProductSummary], NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       return callback(.failure(BackendError(code: .invalidSession)))
@@ -302,6 +352,10 @@ import TrustKit
     configurationStorage.cardProducts(apiKey, userToken: accessToken.token, callback: callback)
   }
 
+  /// Retrieve current `ShiftUser`
+  /// - Parameters:
+  ///   - forceRefresh: avoid cache results
+  ///   - callback: callback with `ShiftUser` entity or optional error
   public func fetchCurrentUserInfo(forceRefresh: Bool, filterInvalidTokenResult: Bool,
                                    callback: @escaping Result<ShiftUser, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
@@ -331,7 +385,11 @@ import TrustKit
       }
     }
   }
-
+  
+  /// Update user information with new user data
+  /// - Parameters:
+  ///   - userData: `DataPointList` entity
+  ///   - callback: callback with the updated `ShiftUser` entity or optional error
   public func updateUserInfo(_ userData: DataPointList, callback: @escaping Result<ShiftUser, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       let error = BackendError(code: .invalidSession, reason: nil)
@@ -352,7 +410,11 @@ import TrustKit
       }
     }
   }
-
+  
+  /// Starts a new phone user verification
+  /// - Parameters:
+  ///   - phone: `PhoneNumber` entity with desired phone number
+  ///   - callback: callback with `Verification` entity or optional error
   public func startPhoneVerification(_ phone: PhoneNumber, callback: @escaping Result<Verification, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
@@ -361,7 +423,11 @@ import TrustKit
     }
     userStorage.startPhoneVerification(apiKey, phone: phone, callback: callback)
   }
-
+  
+  /// Starts a new email verification
+  /// - Parameters:
+  ///   - email: `Email` entity with desired email
+  ///   - callback: callback with `Verification` entity or optional error
   public func startEmailVerification(_ email: Email, callback: @escaping Result<Verification, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
@@ -370,7 +436,11 @@ import TrustKit
     }
     userStorage.startEmailVerification(apiKey, email: email, callback: callback)
   }
-
+  
+  /// Starts a new birth date verification
+  /// - Parameters:
+  ///   - birthDate: `BirthDate` entity with birth date
+  ///   - callback: callback with `Verification` entity or optional error
   public func startBirthDateVerification(_ birthDate: BirthDate,
                                          callback: @escaping Result<Verification, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
@@ -380,7 +450,12 @@ import TrustKit
     }
     userStorage.startBirthDateVerification(apiKey, birthDate: birthDate, callback: callback)
   }
-
+  
+  /// Starts document id verification
+  /// - Parameters:
+  ///   - documentImages: array of `UIImage` with document id
+  ///   - selfie: `UIImage` with a selfie of the user to verify
+  ///   - callback: callback with `Verification` entity or optional error
   public func startDocumentVerification(documentImages: [UIImage], selfie: UIImage?, livenessData: [String: AnyObject]?,
                                         associatedTo workflowObject: WorkflowObject?,
                                         callback: @escaping Result<Verification, NSError>.Callback) {
@@ -394,6 +469,10 @@ import TrustKit
                                           callback: callback)
   }
 
+  /// Fetch document verification status
+  /// - Parameters:
+  ///   - verification: `Verification` entity to check status
+  ///   - callback: callback with `Verification` entity or optional error
   public func fetchDocumentVerificationStatus(_ verification: Verification,
                                               callback: @escaping Result<Verification, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
@@ -435,6 +514,12 @@ import TrustKit
     userStorage.verificationStatus(apiKey, verificationId: verification.verificationId, callback: callback)
   }
 
+  
+  /// Retrieve a list of issued cards for current user
+  /// - Parameters:
+  ///   - page: index page
+  ///   - rows: number of cards per page
+  ///   - callback: callback block with an array of ``Card`` or an optional ``Error``
   public func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback) {
     next(financialAccountsOfType: .card, page: page, rows: rows) { result in
       switch result {
@@ -457,15 +542,39 @@ import TrustKit
                                  userToken: accessToken.token, callback: callback)
   }
 
-  public func fetchFinancialAccount(_ accountId: String, forceRefresh: Bool = true, retrieveBalances: Bool = false,
-                                    callback: @escaping Result<FinancialAccount, NSError>.Callback) {
+  public func fetchCard(_ cardId: String, forceRefresh: Bool = true, retrieveBalances: Bool = false,
+                        callback: @escaping Result<Card, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
     }
-    financialAccountsStorage.getFinancialAccount(apiKey, userToken: accessToken.token, accountId: accountId,
-                                                 forceRefresh: forceRefresh, retrieveBalances: retrieveBalances,
-                                                 callback: callback)
+    financialAccountsStorage.getFinancialAccount(
+      apiKey, userToken: accessToken.token, accountId: cardId,
+      forceRefresh: forceRefresh, retrieveBalances: retrieveBalances) { result in
+      switch result {
+      case .failure(let error):
+        callback(.failure(error))
+      case .success(let financialAccount):
+        guard let card = financialAccount as? Card else {
+          callback(.failure(BackendError(code: .cardNotFound)))
+          return
+        }
+        callback(.success(card))
+      }
+    }
+  }
+
+  @available(*, deprecated, message: "Please use fetchCard instead.")
+  public func fetchFinancialAccount(_ accountId: String, forceRefresh: Bool = true, retrieveBalances: Bool = false,
+                                      callback: @escaping Result<FinancialAccount, NSError>.Callback) {
+    fetchCard(accountId, forceRefresh: forceRefresh, retrieveBalances: retrieveBalances) { result in
+      switch result {
+      case .failure(let error):
+        callback(.failure(error))
+      case .success(let card):
+        callback(.success(card))
+      }
+    }
   }
 
   public func fetchCardDetails(_ cardId: String, callback: @escaping Result<CardDetails, NSError>.Callback) {
@@ -595,7 +704,13 @@ import TrustKit
       })
     }
   }
-
+  
+  /// Retrieve a  list of transactions of a given card
+  /// - Parameters:
+  ///   - cardId: <#cardId description#>
+  ///   - filters: <#filters description#>
+  ///   - forceRefresh: <#forceRefresh description#>
+  ///   - callback: <#callback description#>
   public func fetchCardTransactions(_ cardId: String, filters: TransactionListFilters, forceRefresh: Bool = true,
                                     callback: @escaping Result<[Transaction], NSError>.Callback) {
     guard let projectKey = self.apiKey, let accessToken = currentToken() else {
@@ -719,17 +834,14 @@ import TrustKit
                                                   callback: callback)
   }
 
-  public func issueCard(applicationId: String, callback: @escaping Result<Card, NSError>.Callback) {
-    self.issueCard(applicationId: applicationId, additionalFields: nil, callback: callback)
-  }
-  
-  public func issueCard(applicationId: String, additionalFields: [String: AnyObject]?, callback: @escaping Result<Card, NSError>.Callback) {
+  public func issueCard(applicationId: String, additionalFields: [String: AnyObject]? = nil, metadata: String? = nil,
+                        callback: @escaping Result<Card, NSError>.Callback) {
     guard let projectKey = self.apiKey, let accessToken = currentToken() else {
         callback(.failure(BackendError(code: .invalidSession)))
         return
       }
       cardApplicationsStorage.issueCard(projectKey, userToken: accessToken.token, applicationId: applicationId,
-                                        additionalFields: additionalFields, callback: callback)
+                                        additionalFields: additionalFields, metadata: metadata, callback: callback)
   }
 
   public func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,
@@ -779,6 +891,38 @@ import TrustKit
     serviceLocator.networkLocator.networkManager().runPendingRequests()
   }
 
+  public func addPaymentSource(with request: PaymentSourceRequest, callback: @escaping Result<PaymentSource, NSError>.Callback) {
+    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+    paymentSourcesStorage.addPaymentSource(apiKey, userToken: accessToken.token, request, callback: callback)
+  }
+  
+  public func getPaymentSources(_ request: PaginationQuery?, callback: @escaping Result<[PaymentSource], NSError>.Callback) {
+    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+    paymentSourcesStorage.getPaymentSources(apiKey, userToken: accessToken.token, request: request ?? .default, callback: callback)
+  }
+  
+  public func deletePaymentSource(paymentSourceId: String, callback: @escaping Result<Void, NSError>.Callback) {
+    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+    paymentSourcesStorage.deletePaymentSource(apiKey, userToken: accessToken.token, paymentSourceId: paymentSourceId, callback: callback)
+  }
+  
+  public func pushFunds(with request: PushFundsRequest, callback: @escaping Result<PaymentResult, NSError>.Callback) {
+    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+    paymentSourcesStorage.pushFunds(apiKey, userToken: accessToken.token, request: request, callback: callback)
+  }
+  
   // MARK: Private Attributes
 
   private func setUpNotificationObservers() {

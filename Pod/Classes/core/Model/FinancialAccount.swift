@@ -157,6 +157,7 @@ public enum CardNetwork: String, Codable {
   case visa
   case mastercard
   case amex
+  case discover
   case other
 
   static func cardNetworkFrom(description: String?) -> CardNetwork? {
@@ -170,16 +171,19 @@ public enum CardNetwork: String, Codable {
       return .mastercard
     case "AMEX":
       return .amex
+    case "DISCOVER":
+      return .discover
     default:
       return .other
     }
   }
 
-  func description() -> String {
+  public func description() -> String {
     switch self {
     case .visa: return "Visa"
     case .mastercard: return "MasterCard"
     case .amex: return "Amex"
+    case .discover: return "Discover"
     case .other: return "Other"
     }
   }

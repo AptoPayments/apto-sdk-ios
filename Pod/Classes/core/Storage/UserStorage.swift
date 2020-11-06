@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 protocol UserStorageProtocol {
-  func createUser(_ apiKey: String, userData: DataPointList, custodianUid: String?,
+  func createUser(_ apiKey: String, userData: DataPointList, custodianUid: String?, metadata: String?,
                   callback: @escaping Result<ShiftUser, NSError>.Callback)
   func loginWith(_ apiKey: String,
                  verifications: [Verification],
@@ -71,13 +71,16 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
     self.transport = transport
   }
 
-  func createUser(_ apiKey: String, userData: DataPointList, custodianUid: String?,
+  func createUser(_ apiKey: String, userData: DataPointList, custodianUid: String?, metadata: String?,
                   callback: @escaping Result<ShiftUser, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.createUser)
     let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     var data: [String: AnyObject] = ["data_points": userData.jsonSerialize() as AnyObject]
     if let custodianUid = custodianUid {
       data["custodian_uid"] = custodianUid as AnyObject
+    }
+    if let metadata = metadata {
+      data["metadata"] = metadata as AnyObject
     }
     self.transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<ShiftUser, NSError> in

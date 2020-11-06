@@ -55,4 +55,17 @@ public enum Content: Equatable {
     }
     return false
   }
+
+  public var isEmpty: Bool {
+    switch self {
+    case .plainText(let text):
+      return text.isEmpty
+    case .markdown(let markdown):
+      return markdown.isEmpty
+    case .externalURL(_):
+      return false
+    case .nativeContent(_):
+      return false
+    }
+  }
 }

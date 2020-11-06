@@ -37,11 +37,8 @@ protocol CardApplicationsStorageProtocol {
   func issueCard(_ apiKey: String,
                  userToken: String,
                  applicationId: String,
-                 callback: @escaping Result<Card, NSError>.Callback)
-  func issueCard(_ apiKey: String,
-                 userToken: String,
-                 applicationId: String,
                  additionalFields: [String: AnyObject]?,
+                 metadata: String?,
                  callback: @escaping Result<Card, NSError>.Callback)
 }
 
@@ -169,19 +166,17 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     transport.delete(url, authorization: auth, parameters: nil, filterInvalidTokenResult: true, callback: callback)
   }
 
-  func issueCard(_ apiKey: String,
-                 userToken: String,
-                 applicationId: String,
+  func issueCard(_ apiKey: String, userToken: String, applicationId: String,
+                 additionalFields: [String : AnyObject]? = nil, metadata: String? = nil,
                  callback: @escaping Result<Card, NSError>.Callback) {
-    self.issueCard(apiKey, userToken: userToken, applicationId: applicationId, additionalFields: nil, callback: callback)
-  }
-  
-  func issueCard(_ apiKey: String, userToken: String, applicationId: String, additionalFields: [String : AnyObject]?, callback: @escaping Result<Card, NSError>.Callback) {
     var parameters = [
       "application_id": applicationId as AnyObject
     ]
     if let additionalFields = additionalFields {
       parameters["additional_fields"] = additionalFields as AnyObject
+    }
+    if let metadata = metadata {
+      parameters["metadata"] = metadata as AnyObject
     }
     let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.issueCard)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)

@@ -20,4 +20,5 @@ protocol StorageLocatorProtocol {
   func authenticatedLocalFileManager() -> LocalCacheFileManagerProtocol
   func localCacheFileManager() -> LocalCacheFileManagerProtocol
   func userPreferencesStorage() -> UserPreferencesStorageProtocol
+  func paymentSourcesStorage(transport: JSONTransport) -> PaymentSourcesStorageProtocol
 }

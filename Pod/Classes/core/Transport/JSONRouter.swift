@@ -50,6 +50,9 @@ public enum JSONRouter {
   case saveOauthUserData
   case fetchOauthUserData
   case voIPAuthorization
+  case paymentSources
+  case paymentSource
+  case paymentSourcesPushFunds
 
   var URLString: String {
     switch self {
@@ -93,6 +96,9 @@ public enum JSONRouter {
     case .saveOauthUserData: return "/oauth/userdata/save"
     case .fetchOauthUserData: return "/oauth/userdata/retrieve"
     case .voIPAuthorization: return "/voip/authorization"
+    case .paymentSource: return "/payment_sources/:paymentSourceId"
+    case .paymentSources: return "/payment_sources"
+    case .paymentSourcesPushFunds: return "/payment_sources/:paymentSourceId/push"
     }
   }
 

@@ -73,4 +73,8 @@ class StorageLocator: StorageLocatorProtocol {
     return UserPreferencesStorage(userDefaultsStorage: UserDefaultsStorage(),
                                   notificationHandler: serviceLocator.notificationHandler)
   }
+  
+  func paymentSourcesStorage(transport: JSONTransport) -> PaymentSourcesStorageProtocol {
+    PaymentSourcesStorage(transport: transport)
+  }
 }

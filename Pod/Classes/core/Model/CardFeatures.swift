@@ -65,6 +65,7 @@ public struct CardFeatures: Codable {
   public let allowedBalanceTypes: [AllowedBalanceType]?
   public let activation: FeatureAction?
   public let ivrSupport: IVR?
+  public let funding: Funding?
 }
 
 public enum FeatureStatus: String, Equatable, Codable {
@@ -75,6 +76,20 @@ public enum FeatureStatus: String, Equatable, Codable {
 public struct IVR: Codable {
   public let status: FeatureStatus
   public let phone: PhoneNumber
+}
+
+public struct Funding: Codable {
+  public let status: FeatureStatus
+  public let cardNetworks: [CardNetwork]
+  public let limits: FundingLimits
+}
+
+public struct FundingLimits: Codable {
+  public let daily: FundingSingleLimit
+}
+
+public struct FundingSingleLimit: Codable {
+  public let max: Amount
 }
 
 public struct AllowedBalanceType: Codable {
@@ -89,11 +104,34 @@ extension JSON {
     let allowedBalanceTypes = self["select_balance_store"]["allowed_balance_types"].linkObject as? [AllowedBalanceType]
     let activation = self["activation"].featureAction
     let ivrSupport = self["support"].ivr
+    let funding = self["add_funds"].funding
 
     return CardFeatures(setPin: setPin, getPin: getPin, allowedBalanceTypes: allowedBalanceTypes,
-                        activation: activation, ivrSupport: ivrSupport)
+                        activation: activation, ivrSupport: ivrSupport, funding: funding)
   }
-
+  
+  var funding: Funding? {
+    guard let rawStatus = self["status"].string,
+      let status = FeatureStatus(rawValue: rawStatus),
+      let cardNetworks = self["card_networks"].array?.compactMap({ CardNetwork.cardNetworkFrom(description: $0.string) }),
+      let limits = self["limits"].fundingLimits else { return nil }
+      return Funding(status: status, cardNetworks: cardNetworks, limits: limits)
+  }
+ 
+  var fundingLimits: FundingLimits? {
+    guard let daily = self["daily"].fundingSingleLimit else {
+      return nil
+    }
+    return FundingLimits(daily: daily)
+  }
+  
+  var fundingSingleLimit: FundingSingleLimit? {
+    guard let max = self["max"].amount else {
+      return nil
+    }
+    return FundingSingleLimit(max: max)
+  }
+  
   var ivr: IVR? {
     guard let rawStatus = self["status"].string,
           let status = FeatureStatus(rawValue: rawStatus),

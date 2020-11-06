@@ -70,6 +70,7 @@ open class BackendError: NSError {
     case invalidPhoneNumber = 9214
     case unreachablePhonenumber = 9215
     case invalidCalledPhoneNumber = 9216
+    case cardNotFound = 922
 
     var descriptionKey: String {
       switch self {
@@ -132,6 +133,7 @@ open class BackendError: NSError {
       case .unreachablePhonenumber: return "auth.input_phone.error.unreachable_phone_number"
       case .invalidCalledPhoneNumber: return "auth.input_phone.error.invalid_called_phone_number"
       case .balanceInsufficientFunds: return "select_balance_store.login.error_insufficient_funds.message"
+      case .cardNotFound: return "fetch_card.card_not_found"
       }
     }
   }

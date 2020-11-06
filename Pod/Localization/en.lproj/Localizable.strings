@@ -606,7 +606,7 @@
 
 "link-application-list.button.new-application" = "New Application";
 
-/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/ManageShiftCardViewControllerTheme1.swift */
+/* * ./Pod/Classes/shiftcardkit/ManageCardModule/ShiftCard/ManageCardViewControllerTheme1.swift */
 
 "manage.shift.card.title" = "Card";
 
@@ -636,7 +636,7 @@
 
 "manage_card.activate_physical_card.top_bar_item.title" = "Enable your physical card!";
 
-/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Views/ManageShiftCardMainViewTheme1.swift */
+/* * ./Pod/Classes/shiftcardkit/ManageCardModule/ShiftCard/Views/ManageCardMainViewTheme1.swift */
 
 "invalid-balance.title" = "Invalid funding source";
 
@@ -652,7 +652,7 @@
 
 "manage_card.activate_physical_card_overlay.title" = "Enable your physical card";
 
-"manage_card.activate_physical_card_overlay.message" = "Received your physical Shift Card? Nice! Tap here to enable it.";
+"manage_card.activate_physical_card_overlay.message" = "Received your physical Card? Nice! Tap here to enable it.";
 
 "manage_card.activate_physical_card_overlay.call_to_action.title" = "Enable now";
 
@@ -670,7 +670,7 @@
 
 "credit.card-number-copied" = "Copied to clipboard";
 
-/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ManageShiftCardBottomMenu/ManageShiftCardSettingsViewController.swift */
+/* * ./Pod/Classes/shiftcardkit/ManageCardModule/ManageCardBottomMenu/ManageCardSettingsViewController.swift */
 
 "manage.shift.card.bottom.menu.title" = "Card settings";
 
@@ -678,7 +678,7 @@
 
 "manage.shift.card.bottom.menu.show-card-info.title" = "Show Card Info";
 
-/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/ManageShiftCardBottomMenu/ChangePinView.swift */
+/* * ./Pod/Classes/shiftcardkit/ManageCardModule/ShiftCard/ManageCardBottomMenu/ChangePinView.swift */
 
 "change.pin.title" = "Change Card PIN";
 
@@ -732,7 +732,7 @@
 
 "funding-source-empty-case.action" = "Add funding source";
 
-/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/TransactionDetails/ShitCardTransactionDetailsViewController.swift */
+/* * ./Pod/Classes/shiftcardkit/ManageCardModule/TransactionDetails/ShitCardTransactionDetailsViewController.swift */
 
 "transaction_details.address.title" = "Direction";
 
@@ -878,7 +878,7 @@
 
 "email.lost-card.subject" = "Lost Card";
 
-/* * ./Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Views/ManageShiftCardView.swift */
+/* * ./Pod/Classes/shiftcardkit/ManageCardModule/ShiftCard/Views/ManageCardView.swift */
 
 "card.main.current-balance" = "CURRENT BALANCE";
 
@@ -1080,15 +1080,15 @@
 
 "select-financial-account.card-support.text" = "We support most major debit and pre-pay cards";
 
-/* * Pod/Classes/shiftcardkit/ManageShiftCardModule/ShiftCard/Actions/ReportLostCardAction.swift */
+/* * Pod/Classes/shiftcardkit/ManageCardModule/ShiftCard/Actions/ReportLostCardAction.swift */
 
-/* * Pod/Classes/shiftcardkit/ManageShiftCardModule/PhysicalCardActivationSucceed/PhysicalCardActivationSucceedViewController.swift */
+/* * Pod/Classes/shiftcardkit/ManageCardModule/PhysicalCardActivationSucceed/PhysicalCardActivationSucceedViewController.swift */
 
 "physical.card.activation.succeed.title" = "Physical Card";
 
 "manage_card.get_pin_nue.title" = "Congratulations!";
 
-"manage_card.get_pin_nue.explanation" = "Your physical Shift Card has been enabled. We've set a random PIN code for your card.";
+"manage_card.get_pin_nue.explanation" = "Your physical card has been enabled. We've set a random PIN code for your card.";
 
 "manage_card.get_pin_nue.call_to_action.title" = "Get my PIN";
 
@@ -1117,6 +1117,34 @@
 "auth.input_phone.error.unreachable_phone_number" = "Looks like we can’t send you your code as the number you’ve provided isn’t currently reachable by SMS. Please try again.";
 
 "auth.input_phone.error.invalid_called_phone_number" = "Looks like the phone number you’ve entered isn’t valid. Please try again.";
+
+/* Load funds */
+
+"load_funds.add_money.title" = "Add Money";
+"load_funds.add_money.change_card" = "Change";
+"load_funds.add_money.add_card" = "Add";
+"load_funds.add_money.no_payment_method" = "No payment method";
+"load_funds.add_money.primary_cta" = "Add";
+"load_funds.add_card.title" = "Debit Card";
+"load_funds.add_card.card_number.placeholder" = "Enter debit card number";
+"load_funds.add_card.date.placeholder" = "MM/YY";
+"load_funds.add_card.cvv.placeholder" = "CVV";
+"load_funds.add_card.zip.placeholder" = "ZIP code";
+"load_funds.add_card.primary_cta" = "Add Card";
+"load_funds.payment_methods.title" = "Payment methods";
+"load_funds.add_card.primary_cta" = "Add Card";
+"load_funds.add_card.secondary_cta" = "Instant deposit";
+"load_funds.transaction.primary_cta" = "Done";
+"load_funds.transaction.time" = "Time";
+"load_funds.transaction.from" = "From";
+"load_funds.transaction.authorization" = "Authorization";
+"load_funds.transaction.status.title" = "Status";
+"load_funds.transaction.successfull.description" = "You deposited <<VALUE>>";
+"load_funds.add_money.daily_max.title" = "Maximum daily deposit <<MAX>>";
+"load_funds.add_money.monthly_max.reached" = "You've reached monthly limit <<MAX>>";
+"load_funds_add_money_error_title" = "Error";
+"load_funds_add_money_error_message" = "We experienced an error while processing your transaction. Please try again or contact support for further assistance.";
+"load_funds_add_money_error_action" = "OK";
 
 /* * PIN verification */
 
@@ -1380,7 +1408,7 @@
 
 "manage_card.activate_physical_card.call_to_action.title" = "Activate Card";
 
-"manage_card.activate_physical_card.footer" = "Have questions? Please contact <a href='mailto:support@shiftpayments.com'>Customer Support</a>";
+"manage_card.activate_physical_card.footer" = "Have questions? Please contact <a href='mailto:support@aptopayments.com'>Customer Support</a>";
 
 "manage_card.activate_physical_card.card_not_activated" = "Your card could not be activated";
 
@@ -1402,7 +1430,7 @@
 
 "manage_card.kyc.call_to_action.title" = "Refresh";
 
-"manage_card.kyc.footer" = "Have questions? Please contact <a href='mailto:support@shiftpayments.com'>Customer Support</a>";
+"manage_card.kyc.footer" = "Have questions? Please contact <a href='mailto:support@aptopayments.com'>Customer Support</a>";
 
 /* * Card Settings */
 
@@ -1421,6 +1449,10 @@
 "card_settings.settings.card_details.title" = "Card Details";
 
 "card_settings.settings.card_details.description" = "Show account number, exp.date, and CVV";
+
+"card_settings.settings.card_add_funds.title" = "Add Money";
+
+"card_settings.settings.card_add_funds.description" = "Add funds to your balance";
 
 "card_settings.settings.lock_card.title" = "Suspend Card";
 
@@ -1580,9 +1612,9 @@
 
 "wait_list.wait_list.title" = "You're top of the waitlist!";
 
-"wait_list.wait_list.description.main" = "Very soon you'll be able to spend your crypto anywhere, using your contactless Shift Card.";
+"wait_list.wait_list.description.main" = "Very soon you'll be able to spend your crypto anywhere, using your contactless card.";
 
-"wait_list.wait_list.description.secondary" = "We'll be in touch the moment Shift Card launches; until then, let your friends know all about it by tapping below.";
+"wait_list.wait_list.description.secondary" = "We'll be in touch the moment the card launches; until then, let your friends know all about it by tapping below.";
 
 /* * Notification preferences */
 
@@ -1741,3 +1773,16 @@
 "biometric.permission.touch_id.disclosure" = "The TouchID assigned to this device can manage Card Settings";
 
 "biometric.permission.skip.title" = "Skip";
+
+"credit_card_view.input_code.message" = "Please enter the code we just sent you";
+
+"credit_card_view.input_code.ok_action" = "Ok";
+
+"credit_card_view.input_code.cancel_action" = "Cancel";
+
+"credit_card_view.wrong_code.message" = "Invalid code";
+
+"credit_card_view.wrong_code.ok_action" = "Ok";
+
+"fetch_card.card_not_found" = "Can't find the specified card";
+
