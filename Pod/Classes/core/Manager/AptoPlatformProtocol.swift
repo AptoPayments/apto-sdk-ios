@@ -115,6 +115,7 @@ public protocol AptoPlatformProtocol {
   func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback)
   func fetchCard(_ cardId: String, forceRefresh: Bool, retrieveBalances: Bool,
                  callback: @escaping Result<Card, NSError>.Callback)
+  /// Deprecated, please use Apto PCI-SDK instead
   func fetchCardDetails(_ cardId: String, callback: @escaping Result<CardDetails, NSError>.Callback)
   func activatePhysicalCard(_ cardId: String, code: String,
                             callback: @escaping Result<PhysicalCardActivationResult, NSError>.Callback)

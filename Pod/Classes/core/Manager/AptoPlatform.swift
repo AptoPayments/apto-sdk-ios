@@ -295,15 +295,6 @@ import Foundation
     configurationStorage.contextConfiguration(apiKey, forceRefresh: forceRefresh) { [weak self] result in
       callback(result)
       if let contextConfiguration = result.value {
-        // Check if the primary and secondary credentials are the same used to retrieve the current user's token. If
-        // they're not, invalidate that token
-        let token = self?.currentToken()
-        if let primaryCredential = token?.primaryCredential, let secondaryCredential = token?.secondaryCredential {
-          if (contextConfiguration.projectConfiguration.primaryAuthCredential != primaryCredential)
-               || (contextConfiguration.projectConfiguration.secondaryAuthCredential != secondaryCredential) {
-            self?.clearUserToken()
-          }
-        }
         if contextConfiguration.projectConfiguration.isTrackerActive == true {
           if let trackerAccessToken = contextConfiguration.projectConfiguration.trackerAccessToken {
             self?.serviceLocator.analyticsManager.initialize(accessToken: trackerAccessToken)
@@ -576,7 +567,7 @@ import Foundation
       }
     }
   }
-
+  @available(*, deprecated, message: "To show the card data to your users, please use the Apto PCI SDK.")
   public func fetchCardDetails(_ cardId: String, callback: @escaping Result<CardDetails, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))

@@ -1145,6 +1145,8 @@
 "load_funds_add_money_error_title" = "Error";
 "load_funds_add_money_error_message" = "We experienced an error while processing your transaction. Please try again or contact support for further assistance.";
 "load_funds_add_money_error_action" = "OK";
+"load_funds.transaction.bank_description" = "This transaction will appear in your bank account statement as: <<VALUE>>";
+"load_funds.transaction.learn_more" = "Learn more in the Cardholder Agreement";
 
 /* * PIN verification */
 

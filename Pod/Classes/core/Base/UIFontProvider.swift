@@ -69,6 +69,7 @@ public enum FontCustomizationOptions {
   var cardLargeValueFont: UIFont { get }
 
   var keyboardFont: UIFont { get }
+  var cardDetailsTextFont: UIFont { get }
 }
 
 public class UITheme1FontProvider: UIFontProviderProtocol {
@@ -76,7 +77,7 @@ public class UITheme1FontProvider: UIFontProviderProtocol {
   public lazy var formLabelFont = UIFont.systemFont(ofSize: 16, weight: .medium)
   public lazy var formListFont = UIFont.systemFont(ofSize: 16, weight: .regular)
   public lazy var formTextLink = UIFont.systemFont(ofSize: 13, weight: .regular)
-
+    
   public lazy var primaryCallToActionFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
   public lazy var primaryCallToActionFontSmall = UIFont.systemFont(ofSize: 14, weight: .semibold)
 
@@ -112,6 +113,7 @@ public class UITheme1FontProvider: UIFontProviderProtocol {
   // swiftlint:enable force_unwrapping
 
   public lazy var keyboardFont = UIFont.systemFont(ofSize: 32, weight: .regular)
+  public lazy var cardDetailsTextFont: UIFont = UIFont.systemFont(ofSize: 16, weight: .regular)
 }
 
 public class UITheme2FontProvider: UIFontProviderProtocol {
@@ -211,6 +213,11 @@ public class UITheme2FontProvider: UIFontProviderProtocol {
   public lazy var keyboardFont = {
     return UIFont(descriptor: fontDescriptors.regular, size: 32)
   }()
+
+  public lazy var cardDetailsTextFont = {
+    return UIFont(descriptor: fontDescriptors.regular, size: 16)
+  }()
+
 
   public init(fontDescriptors: ThemeFontDescriptors?) {
     let descriptors: ThemeFontDescriptors

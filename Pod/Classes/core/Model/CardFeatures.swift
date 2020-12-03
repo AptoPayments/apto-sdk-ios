@@ -82,6 +82,7 @@ public struct Funding: Codable {
   public let status: FeatureStatus
   public let cardNetworks: [CardNetwork]
   public let limits: FundingLimits
+  public let softDescriptor: String
 }
 
 public struct FundingLimits: Codable {
@@ -114,8 +115,9 @@ extension JSON {
     guard let rawStatus = self["status"].string,
       let status = FeatureStatus(rawValue: rawStatus),
       let cardNetworks = self["card_networks"].array?.compactMap({ CardNetwork.cardNetworkFrom(description: $0.string) }),
+      let softDescriptor = self["soft_descriptor"].string,
       let limits = self["limits"].fundingLimits else { return nil }
-      return Funding(status: status, cardNetworks: cardNetworks, limits: limits)
+    return Funding(status: status, cardNetworks: cardNetworks, limits: limits, softDescriptor: softDescriptor)
   }
  
   var fundingLimits: FundingLimits? {
