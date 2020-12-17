@@ -19,6 +19,7 @@ open class BackendError: NSError {
     case birthDateVerificationFailed
     case emailVerificationFailed
     case phoneVerificationFailed
+    case tooManyRequests
     case unknownSessionError = 3030
     case sessionExpired = 3031
     case invalidSession = 3032
@@ -134,6 +135,7 @@ open class BackendError: NSError {
       case .invalidCalledPhoneNumber: return "auth.input_phone.error.invalid_called_phone_number"
       case .balanceInsufficientFunds: return "select_balance_store.login.error_insufficient_funds.message"
       case .cardNotFound: return "fetch_card.card_not_found"
+      case .tooManyRequests: return "error.transport.rate_limit"
       }
     }
   }

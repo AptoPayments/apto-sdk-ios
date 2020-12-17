@@ -15,6 +15,7 @@ public enum JSONRouter {
   case login
   case userInfo
   case updateUserInfo
+  case primaryVerificationStart
   case verificationStart
   case verificationFinish
   case verificationStatus
@@ -32,6 +33,7 @@ public enum JSONRouter {
   case activatePhysicalCard
   case updateFinancialAccountState
   case updateFinancialAccountPIN
+  case setCardPassCode
   case financialAccountFundingSources
   case pushDevice
   case documentOCR
@@ -61,6 +63,7 @@ public enum JSONRouter {
     case .login: return "/user/login"
     case .userInfo: return "/user"
     case .updateUserInfo: return "/user"
+    case .primaryVerificationStart: return "/verifications/primary/start"
     case .verificationStart: return "/verifications/start"
     case .verificationFinish: return "/verifications/:verificationId/finish"
     case .verificationStatus: return "/verifications/:verificationId/status"
@@ -78,6 +81,7 @@ public enum JSONRouter {
     case .activatePhysicalCard: return "/user/accounts/:accountId/activate_physical"
     case .updateFinancialAccountState: return "/user/accounts/:accountId/:action"
     case .updateFinancialAccountPIN: return "/user/accounts/:accountId/pin"
+    case .setCardPassCode: return "/user/accounts/:cardId/passcode"
     case .financialAccountFundingSources: return "/user/accounts/:accountId/balances"
     case .pushDevice: return "/user/pushdevice"
     case .documentOCR: return "/documents/ocr"

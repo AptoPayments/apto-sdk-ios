@@ -51,6 +51,7 @@ extension FeatureSource: Codable {
     case ivr
     case api
     case voIP
+    case passCode
   }
 }
 
@@ -66,6 +67,7 @@ public struct CardFeatures: Codable {
   public let activation: FeatureAction?
   public let ivrSupport: IVR?
   public let funding: Funding?
+  public let passCode: PassCode?
 }
 
 public enum FeatureStatus: String, Equatable, Codable {
@@ -98,6 +100,12 @@ public struct AllowedBalanceType: Codable {
   public let baseUri: String
 }
 
+public struct PassCode: Codable {
+  public let status: FeatureStatus
+  public let passCodeSet: Bool
+  public let verificationRequired: Bool
+}
+
 extension JSON {
   var cardFeatures: CardFeatures? {
     let setPin = self["set_pin"].featureAction
@@ -106,9 +114,10 @@ extension JSON {
     let activation = self["activation"].featureAction
     let ivrSupport = self["support"].ivr
     let funding = self["add_funds"].funding
+    let passCode = self["passCode"].passCode
 
     return CardFeatures(setPin: setPin, getPin: getPin, allowedBalanceTypes: allowedBalanceTypes,
-                        activation: activation, ivrSupport: ivrSupport, funding: funding)
+                        activation: activation, ivrSupport: ivrSupport, funding: funding, passCode: passCode)
   }
   
   var funding: Funding? {
@@ -132,6 +141,19 @@ extension JSON {
       return nil
     }
     return FundingSingleLimit(max: max)
+  }
+
+  var passCode: PassCode? {
+    guard let rawStatus = self["status"].string,
+          let status = FeatureStatus(rawValue: rawStatus),
+          let passCodeSet = self["passcode_set"].bool,
+          let verificationRequired = self["verification_required"].bool else {
+      ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                            reason: "Can't parse PassCode \(self)"))
+      return nil
+    }
+
+    return PassCode(status: status, passCodeSet: passCodeSet, verificationRequired: verificationRequired)
   }
   
   var ivr: IVR? {

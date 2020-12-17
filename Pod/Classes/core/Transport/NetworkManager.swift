@@ -129,6 +129,8 @@ final class NetworkManager: NetworkManagerProtocol {
       return processInvalidSession(response: response)
     case 412:
       return processSDKDeprecated(response: response)
+    case 429:
+        return processServerError(with: .tooManyRequests, response: response)
     case 503:
       return processServerMaintenance(response: response)
     case .some(400..<500):
@@ -182,6 +184,11 @@ final class NetworkManager: NetworkManagerProtocol {
     let error = BackendError(code: .serverMaintenance)
     return .failure(error)
   }
+
+    private func processServerError(with code: BackendError.ErrorCodes, response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
+        let error = BackendError(code: code)
+        return .failure(error)
+    }
 
   private func process500(response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
     switch response.result {

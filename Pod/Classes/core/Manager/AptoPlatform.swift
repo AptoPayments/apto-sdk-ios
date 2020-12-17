@@ -21,7 +21,8 @@ import Foundation
 }
 
 /// AptoPlatform is the main entry point into our SDK
-@objc public class AptoPlatform: NSObject, AptoPlatformProtocol { // swiftlint:disable:this type_body_length
+@objc public class AptoPlatform: NSObject, AptoPlatformProtocol {
+  // swiftlint:disable:this type_body_length
 
   // MARK: Authentication attributes
 
@@ -402,6 +403,18 @@ import Foundation
     }
   }
   
+  /// Starts a new verification of the user's primary credential
+  /// - Parameters:
+  ///   - callback: callback with `Verification` entity or optional error
+  public func startPrimaryVerification(callback: @escaping Result<Verification, NSError>.Callback) {
+    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+      let error = BackendError(code: .invalidSession, reason: nil)
+      callback(.failure(error))
+      return
+    }
+    userStorage.startPrimaryVerification(apiKey, userToken: accessToken.token, callback: callback)
+  }
+
   /// Starts a new phone user verification
   /// - Parameters:
   ///   - phone: `PhoneNumber` entity with desired phone number
@@ -441,7 +454,7 @@ import Foundation
     }
     userStorage.startBirthDateVerification(apiKey, birthDate: birthDate, callback: callback)
   }
-  
+
   /// Starts document id verification
   /// - Parameters:
   ///   - documentImages: array of `UIImage` with document id
@@ -694,6 +707,22 @@ import Foundation
         return .success(card)
       })
     }
+  }
+
+  /// Sets a passcode to the card
+  /// - Parameters:
+  ///   - cardId: the id of the card
+  ///   - passCode: the code to be set for this card
+  ///   - verificationId (optional): If setting a passcode requires a passed primary credential verification, pass its id here.
+  ///   - callback: this method will be called when the operation finished with a result.
+  public func setCardPassCode(_ cardId: String, passCode: String, verificationId: String? = nil,
+                              callback: @escaping Result<Void, NSError>.Callback) {
+    guard let projectKey = self.apiKey, let accessToken = currentToken() else {
+      callback(.failure(BackendError(code: .invalidSession)))
+      return
+    }
+    financialAccountsStorage.setCardPassCode(projectKey, userToken: accessToken.token, cardId: cardId,
+                                             passCode: passCode, verificationId: verificationId, callback: callback)
   }
   
   /// Retrieve a  list of transactions of a given card

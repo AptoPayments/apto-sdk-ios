@@ -112,6 +112,12 @@ protocol FinancialAccountsStorageProtocol {
                                  accountId: String,
                                  pin: String,
                                  callback: @escaping Result<FinancialAccount, NSError>.Callback)
+  func setCardPassCode(_ apiKey: String,
+                       userToken: String,
+                       cardId: String,
+                       passCode: String,
+                       verificationId: String?,
+                       callback: @escaping Result<Void, NSError>.Callback)
   func financialAccountFundingSources(_ apiKey: String,
                                       userToken: String,
                                       accountId: String,
@@ -493,6 +499,29 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol { // swiftlint:
           return .failure(ServiceError(code: .jsonError))
         }
         return .success(financialAccount)
+      })
+    }
+  }
+
+  func setCardPassCode(_ apiKey: String,
+                       userToken: String,
+                       cardId: String,
+                       passCode: String,
+                       verificationId: String? = nil,
+                       callback: @escaping Result<Void, NSError>.Callback) {
+    let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
+                         url: JSONRouter.setCardPassCode,
+                         urlParameters: [":cardId": cardId])
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
+                                                             userToken: userToken)
+    var data = [String: AnyObject]()
+    data["passcode"] = passCode as AnyObject
+    if let verificationId = verificationId {
+      data["verification_id"] = verificationId as AnyObject
+    }
+    self.transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
+      callback(result.flatMap { json -> Result<Void, NSError> in
+        return .success(Void())
       })
     }
   }

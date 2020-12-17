@@ -666,6 +666,14 @@
 
 "manage_card.activate_physical_card_code.cancel" = "Cancel";
 
+"manage_card.set_passcode.start.title" = "Set Secure Passcode";
+
+"manage_card.set_passcode.start.description" = "Some online transactions using your card require a secure passcode verification. This is different from your PIN used in physical card transactions. You can set your passcode here.\n\nBefore we set your passcode, we first need to verify you with a one time code.\n\nOnce your passcode is set, you can update it at any time.";
+
+"manage_card.set_passcode.start.primary_cta" = "Set Passcode";
+
+"manage_card.set_passcode.start.secondary_cta" = "Cancel";
+
 /* * ./Pod/Classes/ledgeaccountskit/SelectFinancialAccountModule/Add Card/CreditCardView.swift */
 
 "credit.card-number-copied" = "Copied to clipboard";
@@ -1053,6 +1061,8 @@
 "issue_card.issue_card.error_insufficient_application_limit.description" = "We can't charge the card issuance fee. Please contact customer support";
 "issue_card.issue_card.error_insufficient_application_limit.primary_cta" = "Try again";
 "issue_card.issue_card.error_insufficient_application_limit.secondary_cta" = "";
+
+"error.transport.rate_limit" = "Error. Please try again in one minute.";
 
 /* * ./Pod/Classes/ledgeaccountskit/SelectBalanceStoreModule/SelectBalanceStoreModule.swift */
 
@@ -1448,6 +1458,10 @@
 
 "card_settings.settings.set_pin.description" = "Set a new PIN code for your card";
 
+"card_settings.settings.passcode.title" = "Set Secure Passcode";
+
+"card_settings.settings.passcode.subtitle" = "Set passcode used in online transactions";
+
 "card_settings.settings.card_details.title" = "Card Details";
 
 "card_settings.settings.card_details.description" = "Show account number, exp.date, and CVV";
@@ -1681,6 +1695,28 @@
 "manage_card.confirm_pin.pin_updated.title" = "Congrats!";
 
 "manage_card.confirm_pin.pin_updated.message" = "You've successfully changed your PIN.";
+
+/* * Set card Pass Code */
+
+"manage_card.confirm_pass_code.card_not_active.message" = "Please enable your card before setting the Passcode";
+
+"manage_card.confirm_pass_code.card_not_active.title" = "";
+
+"manage_card.set_pass_code.title" = "Set Passcode";
+
+"manage_card.set_pass_code.explanation" = "Set a passcode for use in online transactions";
+
+"manage_card.confirm_pass_code.title" = "Confirm Passcode";
+
+"manage_card.confirm_pass_code.explanation" = "Re-enter your passcode.\nYour passcode will be effective immediately";
+
+"manage_card.confirm_pass_code.error_wrong_code.title" = "Oops!";
+
+"manage_card.confirm_pass_code.error_wrong_code.message" = "Your Passcode didn't match. Please try again.";
+
+"manage_card.confirm_pass_code.pin_updated.title" = "Congrats!";
+
+"manage_card.confirm_pass_code.pin_updated.message" = "You've successfully set your Passcode.";
 
 /* * VoIP */
 

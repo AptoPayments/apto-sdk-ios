@@ -30,6 +30,9 @@ protocol UserStorageProtocol {
   func startBirthDateVerification(_ apiKey: String,
                                   birthDate: BirthDate,
                                   callback: @escaping Result<Verification, NSError>.Callback)
+  func startPrimaryVerification(_ apiKey: String,
+                                userToken: String,
+                                callback: @escaping Result<Verification, NSError>.Callback)
   func startDocumentVerification(_ apiKey: String,
                                  userToken: String,
                                  documentImages: [UIImage],
@@ -237,6 +240,22 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
       ] as [String: AnyObject]
     ] as [String: AnyObject]
     self.transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
+      callback(result.flatMap { json -> Result<Verification, NSError> in
+        guard let verification = json.verification else {
+          return .failure(ServiceError(code: .jsonError))
+        }
+        AutomationStorage.verificationSecret = verification.secret
+        return .success(verification)
+      })
+    }
+  }
+
+  func startPrimaryVerification(_ apiKey: String,
+                                userToken: String,
+                                callback: @escaping Result<Verification, NSError>.Callback) {
+    let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.primaryVerificationStart)
+    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+    self.transport.post(url, authorization: auth, parameters: nil, filterInvalidTokenResult: true) { result in
       callback(result.flatMap { json -> Result<Verification, NSError> in
         guard let verification = json.verification else {
           return .failure(ServiceError(code: .jsonError))

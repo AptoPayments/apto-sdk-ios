@@ -84,6 +84,7 @@ public protocol AptoPlatformProtocol {
   func fetchOAuthData(_ custodian: Custodian, callback: @escaping Result<OAuthUserData, NSError>.Callback)
   
   // Verifications
+  func startPrimaryVerification(callback: @escaping Result<Verification, NSError>.Callback)
   func startPhoneVerification(_ phone: PhoneNumber, callback: @escaping Result<Verification, NSError>.Callback)
   func startEmailVerification(_ email: Email, callback: @escaping Result<Verification, NSError>.Callback)
   func startBirthDateVerification(_ birthDate: BirthDate, callback: @escaping Result<Verification, NSError>.Callback)
@@ -123,6 +124,8 @@ public protocol AptoPlatformProtocol {
   func unlockCard(_ cardId: String, callback: @escaping Result<Card, NSError>.Callback)
   func lockCard(_ cardId: String, callback: @escaping Result<Card, NSError>.Callback)
   func changeCardPIN(_ cardId: String, pin: String, callback: @escaping Result<Card, NSError>.Callback)
+  func setCardPassCode(_ cardId: String, passCode: String, verificationId: String?,
+                       callback: @escaping Result<Void, NSError>.Callback)
   func fetchCardTransactions(_ cardId: String, filters: TransactionListFilters, forceRefresh: Bool,
                              callback: @escaping Result<[Transaction], NSError>.Callback)
   @available(*, deprecated, renamed: "fetchMonthlySpending(cardId:month:year:callback:)")
