@@ -169,7 +169,7 @@ class UserTokenStorage: UserTokenStorageProtocol {
 
 }
 
-private extension String {
+internal extension String {
   static let tokenKey = "com.aptopayments.user.token"
 }
 

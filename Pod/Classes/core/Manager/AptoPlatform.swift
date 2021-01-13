@@ -129,6 +129,9 @@ import Foundation
 
     // Configure reachability notification observers
     self.setUpNotificationObservers()
+    
+    // On first time run, ensure no token is stored into keychain
+    firstRunClean()
   }
 
   /// Initialise the SDK in order to authenticate with our system and start making API calls
@@ -975,6 +978,11 @@ import Foundation
   @objc private func didLoseConnectionToServer() {
     delegate?.serverMaintenanceError?()
   }
+    
+    private func firstRunClean() {
+        let cleaner = UserTokenCleaner(localStorage: UserDefaultsStorage(), keychainStorage: KeychainOS())
+        cleaner.start()
+    }
 }
 
 // MARK: - Push Notifications management

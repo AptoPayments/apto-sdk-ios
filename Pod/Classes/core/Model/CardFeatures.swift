@@ -114,7 +114,7 @@ extension JSON {
     let activation = self["activation"].featureAction
     let ivrSupport = self["support"].ivr
     let funding = self["add_funds"].funding
-    let passCode = self["passCode"].passCode
+    let passCode = self["passcode"].passCode
 
     return CardFeatures(setPin: setPin, getPin: getPin, allowedBalanceTypes: allowedBalanceTypes,
                         activation: activation, ivrSupport: ivrSupport, funding: funding, passCode: passCode)
