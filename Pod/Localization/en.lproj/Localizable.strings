@@ -1157,6 +1157,17 @@
 "load_funds_add_money_error_action" = "OK";
 "load_funds.transaction.bank_description" = "This transaction will appear in your bank account statement as: <<VALUE>>";
 "load_funds.transaction.learn_more" = "Learn more in the Cardholder Agreement";
+"load_funds.selector_dialog.title" = "Add Money";
+"load_funds.selector_dialog.card.title" = "Debit Card Transfer";
+"load_funds.selector_dialog.card.description" = "Instant deposit with a debit card";
+"load_funds.selector_dialog.direct_deposit.title" = "Direct Deposit";
+"load_funds.selector_dialog.direct_deposit.description" = "Receive paycheck into <<VALUE>> account";
+"load_funds.direct_deposit.bank_name.title" = "Bank Name";
+"load_funds.direct_deposit.bank_name.description" = "Evolve Bank & Trust";
+"load_funds.direct_deposit.ach_number.title" = "ACH Account Number";
+"load_funds.direct_deposit.routing_number.title" = "Routing Number";
+"load_funds.direct_deposit.footer.description" = "The <<APP_NAME>> account is offered by Evolve Bank & Trust.";
+"load_funds_direct_deposit_instructions_description" = "You can set up direct deposit online by entering this information into your payroll website, and your future paycheck will automatically deposit into your <<APP_NAME>> account.";
 
 /* * PIN verification */
 

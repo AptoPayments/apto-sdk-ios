@@ -55,7 +55,10 @@ public enum JSONRouter {
   case paymentSources
   case paymentSource
   case paymentSourcesPushFunds
-
+    case bankAccountDetails
+    case assignBankAccount
+    case recordAgreementAction
+    
   var URLString: String {
     switch self {
     case .contextConfig:return "/config"
@@ -103,6 +106,9 @@ public enum JSONRouter {
     case .paymentSource: return "/payment_sources/:paymentSourceId"
     case .paymentSources: return "/payment_sources"
     case .paymentSourcesPushFunds: return "/payment_sources/:paymentSourceId/push"
+    case .bankAccountDetails: return "/balances/:balance_id/bank-account"
+    case .assignBankAccount: return "/balances/:balance_id/bank-account"
+    case .recordAgreementAction: return "/agreements"
     }
   }
 

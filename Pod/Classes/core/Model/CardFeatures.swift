@@ -68,6 +68,7 @@ public struct CardFeatures: Codable {
   public let ivrSupport: IVR?
   public let funding: Funding?
   public let passCode: PassCode?
+    public let bankAccount: BankAccountFeature?
 }
 
 public enum FeatureStatus: String, Equatable, Codable {
@@ -115,9 +116,9 @@ extension JSON {
     let ivrSupport = self["support"].ivr
     let funding = self["add_funds"].funding
     let passCode = self["passcode"].passCode
-
+    let bankAccount = self["bank_account"].bankAccount
     return CardFeatures(setPin: setPin, getPin: getPin, allowedBalanceTypes: allowedBalanceTypes,
-                        activation: activation, ivrSupport: ivrSupport, funding: funding, passCode: passCode)
+                        activation: activation, ivrSupport: ivrSupport, funding: funding, passCode: passCode, bankAccount: bankAccount)
   }
   
   var funding: Funding? {
@@ -205,4 +206,18 @@ extension JSON {
     }
     return FeatureAction(source: type, status: status)
   }
+    
+    var bankAccount: BankAccountFeature? {
+      guard let rawStatus = self["status"].string,
+            let status = FeatureStatus(rawValue: rawStatus),
+            let isAccountProvisioned = self["account_provisioned"].bool,
+            let accountDetails = self["account_details"].bankAccountDetails else {
+        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                              reason: "Can't parse PassCode \(self)"))
+        return nil
+      }
+
+      return BankAccountFeature(status: status, isAccountProvisioned: isAccountProvisioned, bankAccountDetails: accountDetails)
+    }
+
 }

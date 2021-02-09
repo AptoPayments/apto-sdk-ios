@@ -70,6 +70,9 @@ public enum FontCustomizationOptions {
 
   var keyboardFont: UIFont { get }
   var cardDetailsTextFont: UIFont { get }
+    
+    var footerTextFont: UIFont { get }
+
 }
 
 public class UITheme1FontProvider: UIFontProviderProtocol {
@@ -77,6 +80,7 @@ public class UITheme1FontProvider: UIFontProviderProtocol {
   public lazy var formLabelFont = UIFont.systemFont(ofSize: 16, weight: .medium)
   public lazy var formListFont = UIFont.systemFont(ofSize: 16, weight: .regular)
   public lazy var formTextLink = UIFont.systemFont(ofSize: 13, weight: .regular)
+    public lazy var footerTextFont = UIFont.systemFont(ofSize: 13, weight: .regular)
     
   public lazy var primaryCallToActionFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
   public lazy var primaryCallToActionFontSmall = UIFont.systemFont(ofSize: 14, weight: .semibold)
@@ -132,6 +136,11 @@ public class UITheme2FontProvider: UIFontProviderProtocol {
     return UIFont(descriptor: fontDescriptors.semibold, size: 14)
   }()
 
+    public lazy var footerTextFont = {
+      return UIFont(descriptor: fontDescriptors.regular, size: 13)
+    }()
+    
+    
   public lazy var primaryCallToActionFont = {
     return UIFont(descriptor: fontDescriptors.medium, size: 18)
   }()

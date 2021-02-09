@@ -39,7 +39,8 @@ import Foundation
 
 public protocol AptoPlatformProtocol {
   var delegate: AptoPlatformDelegate? { get set }
-  
+    var currentPCIAuthenticationType: PCIAuthType { get }
+
   func initializeWithApiKey(_ apiKey: String, environment: AptoPlatformEnvironment, setupCertPinning: Bool)
   func initializeWithApiKey(_ apiKey: String, environment: AptoPlatformEnvironment)
   func initializeWithApiKey(_ apiKey: String)
@@ -53,6 +54,7 @@ public protocol AptoPlatformProtocol {
   func fetchCardProduct(cardProductId: String, forceRefresh: Bool,
                         callback: @escaping Result<CardProduct, NSError>.Callback)
   func isFeatureEnabled(_ featureKey: FeatureKey) -> Bool
+    func isAuthTypePinOrBiometricsEnabled() -> Bool
   func isShowDetailedCardActivityEnabled() -> Bool
   func setShowDetailedCardActivityEnabled(_ isEnabled: Bool)
   func isBiometricEnabled() -> Bool

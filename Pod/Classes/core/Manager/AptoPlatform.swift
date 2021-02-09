@@ -46,6 +46,10 @@ import Foundation
 
   // MARK: Storage
 
+    public var currentPCIAuthenticationType: PCIAuthType {
+        featuresStorage.currentPCIAuthType
+    }
+    
   // swiftlint:disable implicitly_unwrapped_optional
   private var userStorage: UserStorageProtocol!
   private var configurationStorage: ConfigurationStorageProtocol!
@@ -178,6 +182,9 @@ import Foundation
     configurationStorage.cardOptions = cardOptions
     if let features = cardOptions?.features {
       featuresStorage.update(features: features)
+    }
+    if let authType = cardOptions?.authenticateOnPCI {
+        featuresStorage.updateAuthenticationType(authType)
     }
   }
   
@@ -315,6 +322,10 @@ import Foundation
     return featuresStorage.isFeatureEnabled(featureKey)
   }
 
+    public func isAuthTypePinOrBiometricsEnabled() -> Bool {
+        featuresStorage.isAuthenticationTypeEquals(to: .pinOrBiometrics)
+    }
+    
   public func isShowDetailedCardActivityEnabled() -> Bool {
     return userPreferencesStorage.shouldShowDetailedCardActivity
   }

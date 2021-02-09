@@ -82,7 +82,8 @@ class FinancialAccountCache: FinancialAccountCacheProtocol {
 
   func saveCard(_ financialAccount: FinancialAccount) {
     guard let card = financialAccount as? Card else { return }
-    DispatchQueue.global().async { [unowned self] in
+    DispatchQueue.global().async { [weak self] in
+        guard let self = self else { return }
       var cards = self.cachedCards() ?? [String: Card]()
       cards[card.accountId] = card
       do {

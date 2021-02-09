@@ -14,14 +14,21 @@
   case showAccountSettingsButton
   case showMonthlyStatementsOption
   case authenticateOnStartUp
-  case authenticateWithPINOnPCI
   case supportDarkMode
+}
+
+@objc public enum PCIAuthType: Int {
+    case pinOrBiometrics
+    case biometrics
+    case none
 }
 
 @objc public class CardOptions: NSObject {
   var features: [FeatureKey: Bool]
   public var fontCustomizationOptions: FontCustomizationOptions?
 
+    public var authenticateOnPCI: PCIAuthType
+    
   override init() {
     self.features = [
       .showActivateCardButton: true,
@@ -32,20 +39,21 @@
       .showAccountSettingsButton: true,
       .showMonthlyStatementsOption: true,
       .authenticateOnStartUp: false,
-      .authenticateWithPINOnPCI: false,
       .supportDarkMode: false
     ]
     self.fontCustomizationOptions = nil
+    authenticateOnPCI = .none
     super.init()
   }
 
-  public convenience init(features: [FeatureKey: Bool], fontCustomizationOptions: FontCustomizationOptions? = nil) {
-    self.init()
-    for (key, value) in features {
-      self.features[key] = value
+    public convenience init(features: [FeatureKey: Bool], fontCustomizationOptions: FontCustomizationOptions? = nil, authenticateOnPCI: PCIAuthType = .none) {
+        self.init()
+        for (key, value) in features {
+            self.features[key] = value
+        }
+        self.fontCustomizationOptions = fontCustomizationOptions
+        self.authenticateOnPCI = authenticateOnPCI
     }
-    self.fontCustomizationOptions = fontCustomizationOptions
-  }
 
   @objc public convenience init(features: NSDictionary, fontDescriptors: ThemeFontDescriptors) {
     self.init()
