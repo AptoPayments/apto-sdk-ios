@@ -22,7 +22,8 @@ open class BackendError: NSError {
     case tooManyRequests
     case unknownSessionError = 3030
     case sessionExpired = 3031
-    case invalidSession = 3032
+    case sessionAuthenticationFailure = 3032
+    case invalidSession = 3045
     case emptySession = 3033
     case agentSessionExpired = 3040
     case agentInvalidSession = 3041
@@ -136,6 +137,7 @@ open class BackendError: NSError {
       case .balanceInsufficientFunds: return "select_balance_store.login.error_insufficient_funds.message"
       case .cardNotFound: return "fetch_card.card_not_found"
       case .tooManyRequests: return "error.transport.rate_limit"
+      case .sessionAuthenticationFailure: return "error.transport.authenticationFailure"
       }
     }
   }
@@ -206,6 +208,14 @@ open class BackendError: NSError {
   public var isCardDisableError: Bool {
     return code == ErrorCodes.shiftCardDisableError.rawValue
   }
+    
+    public var isSessionAuthError: Bool {
+        code == ErrorCodes.sessionAuthenticationFailure.rawValue
+    }
+    
+    public var isEmptySession: Bool {
+        code == ErrorCodes.emptySession.rawValue
+    }
 }
 
 extension NSError {

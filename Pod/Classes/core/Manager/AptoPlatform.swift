@@ -60,6 +60,7 @@ import Foundation
   private var notificationPreferencesStorage: NotificationPreferencesStorageProtocol!
   private var voIPStorage: VoIPStorageProtocol!
   private var paymentSourcesStorage: PaymentSourcesStorageProtocol!
+    private var agreementStorage: AgreementStorageProtocol?
   // swiftlint:enable implicitly_unwrapped_optional
   private lazy var featuresStorage = serviceLocator.storageLocator.featuresStorage()
   private lazy var userPreferencesStorage = serviceLocator.storageLocator.userPreferencesStorage()
@@ -124,7 +125,7 @@ import Foundation
     self.notificationPreferencesStorage = storageLocator.notificationPreferencesStorage(transport: transport)
     self.voIPStorage = storageLocator.voIPStorage(transport: transport)
     self.paymentSourcesStorage = storageLocator.paymentSourcesStorage(transport: transport)
-
+    self.agreementStorage = storageLocator.bankAccountAgreementStorage(transport: transport)
     self.featureFlag.initialize()
     
     // Notify the delegate that the manager has already been initialized
@@ -312,6 +313,30 @@ import Foundation
     }
   }
   
+    /// Records whether a user accepted or declined a certain agreement.
+    /// - Parameters:
+    ///   - request: agreement keys and actions that a user took on the agreements.
+    ///   - callback: callback with `[AgreementDetail]` or optional error
+    public func acceptBankAccountAgreements(_ request: AgreementRequest, callback: @escaping (RecordedAgreementsResult) -> Void) {
+        guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+            let error = BackendError(code: .invalidSession, reason: nil)
+            callback(.failure(error))
+            return
+        }
+
+        agreementStorage?.recordAgreement(apiKey,
+                                          userToken: accessToken.token,
+                                          agreementRequest: request,
+                                          completion: { result in
+                                            switch result {
+                                            case .failure(let error):
+                                                callback(.failure(error))
+                                            case .success(let agreements):
+                                                callback(.success(agreements))
+                                            }
+                                          })
+    }
+    
   /// Retrieve `UIConfig` entity from cache
   /// - Returns: returns nil if the configuration is not available yet
   public func fetchUIConfig() -> UIConfig? {

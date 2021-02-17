@@ -158,7 +158,7 @@ final class NetworkManager: NetworkManagerProtocol {
   private func processInvalidSession(response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
     let json = JSON(response.value ?? "")
     let error = json.backendError ?? BackendError(code: .invalidSession)
-    if error.invalidSessionError() || error.unknownSessionError() {
+    if isInvalidSession(error) {
       notificationHandler.postNotification(.UserTokenSessionInvalidNotification, userInfo: ["error": error])
     }
     else if error.sessionExpiredError() {
@@ -168,6 +168,11 @@ final class NetworkManager: NetworkManagerProtocol {
     return .failure(error)
   }
 
+    private func isInvalidSession(_ error: BackendError) -> Bool {
+        error.unknownSessionError() || error.isSessionAuthError ||
+            error.isEmptySession || error.invalidSessionError()
+    }
+    
   private func processSDKDeprecated(response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
     let error = BackendError(code: .sdkDeprecated)
     ErrorLogger.defaultInstance().log(error: error)

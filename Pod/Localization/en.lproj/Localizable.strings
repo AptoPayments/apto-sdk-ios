@@ -1167,7 +1167,7 @@
 "load_funds.direct_deposit.ach_number.title" = "ACH Account Number";
 "load_funds.direct_deposit.routing_number.title" = "Routing Number";
 "load_funds.direct_deposit.footer.description" = "The <<APP_NAME>> account is offered by Evolve Bank & Trust.";
-"load_funds_direct_deposit_instructions_description" = "You can set up direct deposit online by entering this information into your payroll website, and your future paycheck will automatically deposit into your <<APP_NAME>> account.";
+"load_funds.direct_deposit.instructions_description" = "You can set up direct deposit online by entering this information into your payroll website, and your future paycheck will automatically deposit into your <<APP_NAME>> account.";
 
 /* * PIN verification */
 

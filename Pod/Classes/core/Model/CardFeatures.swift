@@ -208,16 +208,29 @@ extension JSON {
   }
     
     var bankAccount: BankAccountFeature? {
-      guard let rawStatus = self["status"].string,
-            let status = FeatureStatus(rawValue: rawStatus),
-            let isAccountProvisioned = self["account_provisioned"].bool,
-            let accountDetails = self["account_details"].bankAccountDetails else {
-        ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                                              reason: "Can't parse PassCode \(self)"))
-        return nil
-      }
-
-      return BankAccountFeature(status: status, isAccountProvisioned: isAccountProvisioned, bankAccountDetails: accountDetails)
+        guard let rawStatus = self["status"].string,
+              let status = FeatureStatus(rawValue: rawStatus),
+              let isAccountProvisioned = self["account_provisioned"].bool,
+              let accountDetails = self["account_details"].bankAccountDetails,
+              let disclaimer = self["disclaimer"].disclaimer else {
+            ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                                  reason: "Can't parse bank account \(self)"))
+            return nil
+        }
+        return BankAccountFeature(status: status,
+                                  isAccountProvisioned: isAccountProvisioned,
+                                  disclaimer: disclaimer,
+                                  bankAccountDetails: accountDetails)
     }
-
+    
+    var disclaimer: BankAccountDisclaimer? {
+        guard let agreementKeysJSON = self["agreements_keys"].array,
+              let content = self["content"].content else {
+            ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                                  reason: "Can't parse bank account disclaimer \(self)"))
+            return nil
+        }
+        let agreementKeys = agreementKeysJSON.map { $0.stringValue }
+        return BankAccountDisclaimer(agreementKeys: agreementKeys, content: content)
+    }
 }

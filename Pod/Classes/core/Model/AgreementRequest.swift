@@ -15,4 +15,13 @@ public enum UserActionType: String {
 public struct AgreementRequest {
     public let key: [String]
     public let userAction: UserActionType
+    
+    public static let agreementsACH: AgreementRequest = {
+        AgreementRequest(key: ["evolve_eua", "evolve_privacy"], userAction: .accepted)
+    }()
+    
+    public init(key: [String], userAction: UserActionType) {
+        self.key = key
+        self.userAction = userAction
+    }
 }

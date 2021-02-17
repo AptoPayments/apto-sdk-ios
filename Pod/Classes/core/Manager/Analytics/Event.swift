@@ -82,4 +82,5 @@ public enum Event: String {
   case changePasscodeStart = "biometric.change_pin.start"
   case biometricPermissionStart = "biometric.request_permission.start"
     case directDepositStart = "manage_card.direct_deposit.instructions.start"
+    case addFundsSelectorStart = "manage_card.add_funds.selector.start"
 }

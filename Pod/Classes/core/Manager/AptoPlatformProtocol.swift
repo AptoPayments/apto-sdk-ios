@@ -157,6 +157,9 @@ public protocol AptoPlatformProtocol {
   func fetchVoIPToken(cardId: String, actionSource: VoIPActionSource,
                       callback: @escaping Result<VoIPToken, NSError>.Callback)
   
+    // Bank account handling
+    func acceptBankAccountAgreements(_ request: AgreementRequest, callback: @escaping (RecordedAgreementsResult) -> Void)
+    
   // MARK: - Payment Sources
   
   /// Adds a payment source for Loading funds into the account

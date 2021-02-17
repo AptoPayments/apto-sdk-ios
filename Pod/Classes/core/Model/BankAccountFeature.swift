@@ -10,5 +10,6 @@ import Foundation
 public struct BankAccountFeature: Codable {
     public let status: FeatureStatus?
     public let isAccountProvisioned: Bool?
+    public let disclaimer: BankAccountDisclaimer?
     public let bankAccountDetails: BankAccountDetails?
 }

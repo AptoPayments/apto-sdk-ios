@@ -6,7 +6,7 @@
 //
 //
 
-public struct NativeContent: Equatable {
+public struct NativeContent: Equatable, Codable {
   public let asset: String?
   public let backgroundImage: String?
   public let backgroundColor: String?
@@ -68,4 +68,50 @@ public enum Content: Equatable {
       return false
     }
   }
+}
+
+extension Content: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case plainText, markdown, externalURL, nativeContent
+    }
+    
+    enum ContentCodingError: Error {
+        case decoding(String)
+    }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        if let value = try? values.decode(String.self, forKey: .plainText) {
+            self = .plainText(value)
+            return
+        }
+        if let value = try? values.decode(String.self, forKey: .markdown) {
+            self = .markdown(value)
+            return
+        }
+        if let value = try? values.decode(URL.self, forKey: .externalURL) {
+            self = .externalURL(value)
+            return
+        }
+        if let value = try? values.decode(NativeContent.self, forKey: .nativeContent) {
+            self = .nativeContent(value)
+            return
+        }
+
+        throw ContentCodingError.decoding("\(dump(values))")
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .plainText(let text):
+            try container.encode(text, forKey: .plainText)
+        case .markdown(let value):
+            try container.encode(value, forKey: .markdown)
+        case .externalURL(let url):
+            try container.encode(url, forKey: .externalURL)
+        case .nativeContent(let value):
+            try container.encode(value, forKey: .nativeContent)
+        }
+    }
 }
