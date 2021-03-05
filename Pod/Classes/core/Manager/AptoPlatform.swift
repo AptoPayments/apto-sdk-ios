@@ -61,13 +61,13 @@ import Foundation
   private var voIPStorage: VoIPStorageProtocol!
   private var paymentSourcesStorage: PaymentSourcesStorageProtocol!
     private var agreementStorage: AgreementStorageProtocol?
+    private var achAccountStorage: ACHAccountStorageProtocol?
   // swiftlint:enable implicitly_unwrapped_optional
   private lazy var featuresStorage = serviceLocator.storageLocator.featuresStorage()
   private lazy var userPreferencesStorage = serviceLocator.storageLocator.userPreferencesStorage()
   private lazy var userTokenStorage = serviceLocator.storageLocator.userTokenStorage()
   private let pushNotificationsManager = PushNotificationsManager()
   private lazy var serviceLocator: ServiceLocatorProtocol = ServiceLocator.shared
-  private lazy var featureFlag: LaunchDarkly = .shared
   
   init(serviceLocator: ServiceLocatorProtocol = ServiceLocator.shared) {
     super.init()
@@ -125,8 +125,8 @@ import Foundation
     self.notificationPreferencesStorage = storageLocator.notificationPreferencesStorage(transport: transport)
     self.voIPStorage = storageLocator.voIPStorage(transport: transport)
     self.paymentSourcesStorage = storageLocator.paymentSourcesStorage(transport: transport)
-    self.agreementStorage = storageLocator.bankAccountAgreementStorage(transport: transport)
-    self.featureFlag.initialize()
+    self.agreementStorage = storageLocator.achAccountAgreementStorage(transport: transport)
+    self.achAccountStorage = storageLocator.achAccountStorage(transport: transport)
     
     // Notify the delegate that the manager has already been initialized
     self.initialized = true
@@ -317,7 +317,7 @@ import Foundation
     /// - Parameters:
     ///   - request: agreement keys and actions that a user took on the agreements.
     ///   - callback: callback with `[AgreementDetail]` or optional error
-    public func acceptBankAccountAgreements(_ request: AgreementRequest, callback: @escaping (RecordedAgreementsResult) -> Void) {
+    public func reviewAgreement(_ request: AgreementRequest, callback: @escaping (RecordedAgreementsResult) -> Void) {
         guard let apiKey = self.apiKey, let accessToken = currentToken() else {
             let error = BackendError(code: .invalidSession, reason: nil)
             callback(.failure(error))
@@ -335,6 +335,30 @@ import Foundation
                                                 callback(.success(agreements))
                                             }
                                           })
+    }
+    
+    /// Assigns a bank account to this funding source. If the required agreements haven't been accepted, this will return an error.
+    /// - Parameters:
+    ///   - balanceId: agreement keys and actions that a user took on the agreements.
+    ///   - callback: callback with `[ACHAccountResult]` or optional error
+    public func assignAchAccount(balanceId: String, callback: @escaping (ACHAccountResult) -> Void) {
+        guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+            let error = BackendError(code: .invalidSession, reason: nil)
+            callback(.failure(error))
+            return
+        }
+
+        achAccountStorage?.assignACHAccount(apiKey,
+                                             userToken: accessToken.token,
+                                             balanceId: balanceId,
+                                             completion: { result in
+                                                switch result {
+                                                case .failure(let error):
+                                                    callback(.failure(error))
+                                                case .success(let agreements):
+                                                    callback(.success(agreements))
+                                                }
+                                             })
     }
     
   /// Retrieve `UIConfig` entity from cache

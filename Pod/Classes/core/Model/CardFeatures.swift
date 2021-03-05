@@ -68,7 +68,7 @@ public struct CardFeatures: Codable {
   public let ivrSupport: IVR?
   public let funding: Funding?
   public let passCode: PassCode?
-    public let bankAccount: BankAccountFeature?
+    public let achAccount: ACHAccountFeature?
 }
 
 public enum FeatureStatus: String, Equatable, Codable {
@@ -116,9 +116,9 @@ extension JSON {
     let ivrSupport = self["support"].ivr
     let funding = self["add_funds"].funding
     let passCode = self["passcode"].passCode
-    let bankAccount = self["bank_account"].bankAccount
+    let achAccount = self["ach"].achAccount
     return CardFeatures(setPin: setPin, getPin: getPin, allowedBalanceTypes: allowedBalanceTypes,
-                        activation: activation, ivrSupport: ivrSupport, funding: funding, passCode: passCode, bankAccount: bankAccount)
+                        activation: activation, ivrSupport: ivrSupport, funding: funding, passCode: passCode, achAccount: achAccount)
   }
   
   var funding: Funding? {
@@ -207,30 +207,32 @@ extension JSON {
     return FeatureAction(source: type, status: status)
   }
     
-    var bankAccount: BankAccountFeature? {
+    var achAccount: ACHAccountFeature? {
         guard let rawStatus = self["status"].string,
-              let status = FeatureStatus(rawValue: rawStatus),
-              let isAccountProvisioned = self["account_provisioned"].bool,
-              let accountDetails = self["account_details"].bankAccountDetails,
-              let disclaimer = self["disclaimer"].disclaimer else {
+              let status = FeatureStatus(rawValue: rawStatus)
+        else {
             ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                                   reason: "Can't parse bank account \(self)"))
             return nil
         }
-        return BankAccountFeature(status: status,
+        let accountDetails = self["account_details"].achAccountDetails
+        let isAccountProvisioned = self["account_provisioned"].boolValue
+        let disclaimer = self["disclaimer"].disclaimer
+
+        return ACHAccountFeature(status: status,
                                   isAccountProvisioned: isAccountProvisioned,
                                   disclaimer: disclaimer,
-                                  bankAccountDetails: accountDetails)
+                                  achAccountDetails: accountDetails)
     }
     
-    var disclaimer: BankAccountDisclaimer? {
-        guard let agreementKeysJSON = self["agreements_keys"].array,
+    var disclaimer: Disclaimer? {
+        guard let agreementKeysJSON = self["agreement_keys"].array,
               let content = self["content"].content else {
             ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                                   reason: "Can't parse bank account disclaimer \(self)"))
             return nil
         }
         let agreementKeys = agreementKeysJSON.map { $0.stringValue }
-        return BankAccountDisclaimer(agreementKeys: agreementKeys, content: content)
+        return Disclaimer(agreementKeys: agreementKeys, content: content)
     }
 }

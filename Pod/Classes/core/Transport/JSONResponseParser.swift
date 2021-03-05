@@ -129,8 +129,6 @@ extension JSON {
       return self.notificationGroup
     case "card_product_summary":
       return self.cardProductSummary
-    case "account_details":
-        return self.bankAccountDetails
     default:
       return nil
     }

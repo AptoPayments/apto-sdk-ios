@@ -16,12 +16,15 @@ public struct AgreementRequest {
     public let key: [String]
     public let userAction: UserActionType
     
-    public static let agreementsACH: AgreementRequest = {
-        AgreementRequest(key: ["evolve_eua", "evolve_privacy"], userAction: .accepted)
-    }()
-    
     public init(key: [String], userAction: UserActionType) {
         self.key = key
         self.userAction = userAction
+    }
+    
+    public func toJSON() -> [String: AnyObject] {
+        [
+            "agreements_keys": key as AnyObject,
+            "user_action": userAction.rawValue as AnyObject
+        ]
     }
 }

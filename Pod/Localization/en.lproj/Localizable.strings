@@ -1160,14 +1160,19 @@
 "load_funds.selector_dialog.title" = "Add Money";
 "load_funds.selector_dialog.card.title" = "Debit Card Transfer";
 "load_funds.selector_dialog.card.description" = "Instant deposit with a debit card";
-"load_funds.selector_dialog.direct_deposit.title" = "Direct Deposit";
-"load_funds.selector_dialog.direct_deposit.description" = "Receive paycheck into <<VALUE>> account";
+"load_funds.selector_dialog.direct_deposit.title" = "Direct Deposit (ACH)";
+"load_funds.selector_dialog.direct_deposit.description" = "ACH transfer from an external account (2–3 days)";
+"load_funds.direct_deposit.title" = "Direct deposit or ACH";
 "load_funds.direct_deposit.bank_name.title" = "Bank Name";
 "load_funds.direct_deposit.bank_name.description" = "Evolve Bank & Trust";
-"load_funds.direct_deposit.ach_number.title" = "ACH Account Number";
+"load_funds.direct_deposit.ach_number.title" = "Account Number";
 "load_funds.direct_deposit.routing_number.title" = "Routing Number";
 "load_funds.direct_deposit.footer.description" = "The <<APP_NAME>> account is offered by Evolve Bank & Trust.";
-"load_funds.direct_deposit.instructions_description" = "You can set up direct deposit online by entering this information into your payroll website, and your future paycheck will automatically deposit into your <<APP_NAME>> account.";
+"load_funds.direct_deposit.instructions_description" = "Login to your external account to submit a direct deposit account request or ACH bank transfer. You'll need the information below to complete the set up:";
+"load_funds.ach_account_details.copied_to_clipboard" = "Value copied to clipboard";
+"load_funds.direct_deposit.disclaimer.call_to_action.title" = "Accept";
+"load_funds.direct_deposit.disclaimer.cancel_action.title" = "Decline";
+"load_funds.direct_deposit.disclaimer.title" = "Legal";
 
 /* * PIN verification */
 
@@ -1353,15 +1358,15 @@
 
 /* * Disclaimer */
 
-"disclaimer.disclaimer.title" = "Cardholder agreement";
+"disclaimer.disclaimer.title" = "Legal agreement";
 
-"disclaimer.disclaimer.call_to_action.title" = "I Agree";
+"disclaimer.disclaimer.call_to_action.title" = "Accept";
 
-"disclaimer.disclaimer.cancel_action.button" = "I do not agree to the cardholder agreement";
+"disclaimer.disclaimer.cancel_action.button" = "Decline";
 
-"disclaimer.disclaimer.cancel_action.title" = "Cardholder agreement";
+"disclaimer.disclaimer.cancel_action.title" = "Are you sure?";
 
-"disclaimer.disclaimer.cancel_action.message" = "Are you sure you do not want to agree to the Cardholder agreement?";
+"disclaimer.disclaimer.cancel_action.message" = "If you reject the agreement, then you will not be able to fund your card using ACH.";
 
 "disclaimer.disclaimer.cancel_action.ok_button" = "Confirm";
 

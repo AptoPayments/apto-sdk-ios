@@ -78,7 +78,11 @@ class StorageLocator: StorageLocatorProtocol {
     PaymentSourcesStorage(transport: transport)
   }
     
-    func bankAccountAgreementStorage(transport: JSONTransport) -> AgreementStorageProtocol {
+    func achAccountAgreementStorage(transport: JSONTransport) -> AgreementStorageProtocol {
         AgreementStorage(transport: transport)
+    }
+
+    func achAccountStorage(transport: JSONTransport) -> ACHAccountStorageProtocol {
+        ACHAccountStorage(transport: transport)
     }
 }

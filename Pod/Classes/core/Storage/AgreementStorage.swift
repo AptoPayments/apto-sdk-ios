@@ -34,7 +34,7 @@ public struct AgreementStorage: AgreementStorageProtocol {
 
         transport.post(url,
                        authorization: auth,
-                       parameters: nil,
+                       parameters: agreementRequest.toJSON(),
                        filterInvalidTokenResult: true) { result in
             switch result {
             case .success(let json):
@@ -59,10 +59,10 @@ extension JSON {
     
     func userAgreement(with key: String = "user_agreement") -> AgreementDetail? {
         guard let source = self[key].dictionary,
-              let idStr = source["id_str"]?.string,
+              let idStr = source["id"]?.string,
               let agreementKey = source["agreement_key"]?.string,
-              let action = source["user_action"]?.string, let userAction = UserActionType(rawValue: action),
-              let actionRecorded = source["user_action_recorded_at"]?.string,
+              let action = source["action"]?.string, let userAction = UserActionType(rawValue: action),
+              let actionRecorded = source["recorded_at"]?.string,
               let recordedAt = Date.dateFromISO8601(string: actionRecorded) else {
             ErrorLogger
                 .defaultInstance()

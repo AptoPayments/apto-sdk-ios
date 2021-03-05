@@ -158,7 +158,10 @@ public protocol AptoPlatformProtocol {
                       callback: @escaping Result<VoIPToken, NSError>.Callback)
   
     // Bank account handling
-    func acceptBankAccountAgreements(_ request: AgreementRequest, callback: @escaping (RecordedAgreementsResult) -> Void)
+    func reviewAgreement(_ request: AgreementRequest, callback: @escaping (RecordedAgreementsResult) -> Void)
+    
+    // Assign a ACH account
+    func assignAchAccount(balanceId: String, callback: @escaping (ACHAccountResult) -> Void)
     
   // MARK: - Payment Sources
   

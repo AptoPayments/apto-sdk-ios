@@ -1,5 +1,5 @@
 //
-//  BankAccountStorage.swift
+//  ACHAccountStorage.swift
 //  AptoSDK
 //
 //  Created by Fabio Cuomo on 18/1/21.
@@ -8,37 +8,37 @@
 import Foundation
 import SwiftyJSON
 
-public typealias BankAccountResult = Result<BankAccountDetails, NSError>
+public typealias ACHAccountResult = Result<ACHAccountDetails, NSError>
 
-protocol BankAccountReadProtocol {
-    func loadBankAccount(_ apiKey: String,
+protocol ACHAccountReadProtocol {
+    func loadACHAccount(_ apiKey: String,
                          userToken: String,
                          balanceId: String,
-                         completion: @escaping (BankAccountResult) -> Void)
+                         completion: @escaping (ACHAccountResult) -> Void)
 }
 
-protocol BankAccountWriteProtocol {
-    func assignBankAccount(_ apiKey: String,
+protocol ACHAccountWriteProtocol {
+    func assignACHAccount(_ apiKey: String,
                            userToken: String,
                            balanceId: String,
-                           completion: @escaping (BankAccountResult) -> Void)
+                           completion: @escaping (ACHAccountResult) -> Void)
 }
 
-typealias BankAccountStorageProtocol = BankAccountReadProtocol & BankAccountWriteProtocol
+typealias ACHAccountStorageProtocol = ACHAccountReadProtocol & ACHAccountWriteProtocol
 
-public struct BankAccountStorage: BankAccountStorageProtocol {
+public struct ACHAccountStorage: ACHAccountStorageProtocol {
     private let transport: JSONTransport
     
     public init(transport: JSONTransport) {
         self.transport = transport
     }
     
-    public func loadBankAccount(_ apiKey: String,
+    public func loadACHAccount(_ apiKey: String,
                                 userToken: String,
                                 balanceId: String,
-                                completion: @escaping (BankAccountResult) -> Void) {
+                                completion: @escaping (ACHAccountResult) -> Void) {
         let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
-                             url: .bankAccountDetails,
+                             url: .achAccountDetails,
                              urlParameters: [":balance_id": balanceId])
         let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                                  userToken: userToken)
@@ -51,7 +51,7 @@ public struct BankAccountStorage: BankAccountStorageProtocol {
                       filterInvalidTokenResult: true) { result in
             switch result {
             case .success(let json):
-                guard let period = json.bankAccountDetails else {
+                guard let period = json["account_details"].achAccountDetails else {
                   completion(.failure(ServiceError(code: .jsonError)))
                   return
                 }
@@ -63,12 +63,12 @@ public struct BankAccountStorage: BankAccountStorageProtocol {
         }
     }
 
-    public func assignBankAccount(_ apiKey: String,
+    public func assignACHAccount(_ apiKey: String,
                                   userToken: String,
                                   balanceId: String,
-                                  completion: @escaping (BankAccountResult) -> Void) {
+                                  completion: @escaping (ACHAccountResult) -> Void) {
         let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
-                             url: .bankAccountDetails,
+                             url: .achAccountDetails,
                              urlParameters: [":balance_id": balanceId])
         let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                                  userToken: userToken)
@@ -79,7 +79,7 @@ public struct BankAccountStorage: BankAccountStorageProtocol {
                        filterInvalidTokenResult: true) { result in
             switch result {
             case .success(let json):
-                guard let period = json.bankAccountDetails else {
+                guard let period = json["account_details"].achAccountDetails else {
                   completion(.failure(ServiceError(code: .jsonError)))
                   return
                 }
@@ -93,15 +93,15 @@ public struct BankAccountStorage: BankAccountStorageProtocol {
 }
 
 extension JSON {
-    var bankAccountDetails: BankAccountDetails? {
+    var achAccountDetails: ACHAccountDetails? {
         guard let routingNumber = self["routing_number"].string,
               let accountNumber = self["account_number"].string else {
             ErrorLogger
                 .defaultInstance()
                 .log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
-                                         reason: "Can't parse BankAccountDetails \(self)"))
+                                         reason: "Can't parse ACHAccountDetails \(self)"))
             return nil
         }
-        return BankAccountDetails(routingNumber: routingNumber, accountNumber: accountNumber)
+        return ACHAccountDetails(routingNumber: routingNumber, accountNumber: accountNumber)
     }
 }
