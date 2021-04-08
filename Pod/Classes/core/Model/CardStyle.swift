@@ -45,15 +45,18 @@ public struct CardStyle: Codable {
   public let background: CardBackgroundStyle
   public let textColor: String?
   public let balanceSelectorImage: String?
-  
+    public let cardLogo: URL?
+    
   public init(
     background: CardBackgroundStyle,
     textColor: String?,
-    balanceSelectorImage: String?)
+    balanceSelectorImage: String?,
+    cardLogo: URL?)
   {
     self.background = background
     self.textColor = textColor
     self.balanceSelectorImage = balanceSelectorImage
+    self.cardLogo = cardLogo
   }
 }
 
@@ -66,7 +69,9 @@ extension JSON {
     }
     let textColor = self["text_color"].string
     let balanceSelectorImage = self["balance_selector_asset"].string
-    return CardStyle(background: background, textColor: textColor, balanceSelectorImage: balanceSelectorImage)
+    let logo = self["card_logo"].string ?? ""
+    let cardLogo = !logo.isEmpty ? URL(string: logo) : nil
+    return CardStyle(background: background, textColor: textColor, balanceSelectorImage: balanceSelectorImage, cardLogo: cardLogo)
   }
 
   var cardBackgroundStyle: CardBackgroundStyle? {

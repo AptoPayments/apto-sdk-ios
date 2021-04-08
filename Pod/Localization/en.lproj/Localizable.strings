@@ -1063,6 +1063,9 @@
 "issue_card.issue_card.error_insufficient_application_limit.secondary_cta" = "";
 
 "error.transport.rate_limit" = "Error. Please try again in one minute.";
+"error.auth.invalid_api_key" = "We couldn’t connect to you card program.";
+"error.physical_card.card_already_ordered" = "Your physical card has been already ordered.";
+"error.physical_card.order_not_supported" = "Your card does not support this operation.";
 
 /* * ./Pod/Classes/ledgeaccountskit/SelectBalanceStoreModule/SelectBalanceStoreModule.swift */
 
@@ -1114,11 +1117,11 @@
 
 "auth.input_phone.title" = "Get Started";
 
-"auth.input_phone.explanation" = "Enter your phone number";
+"auth.input_phone.explanation" = "To ensure the security of your account, please enter your phone number below and we will send you a unique code to authenticate you.";
 
 "auth.input_phone.call_to_action.title" = "Next";
 
-"phone-collector.phone.placeholder" = "phone number";
+"phone-collector.phone.placeholder" = "Phone number";
 
 "auth.input_phone.error.can_not_send_sms" = "Looks like we can’t send you a code, as you’ve already requested to stop receiving SMS messages from us. Chat to our team for more help.";
 
@@ -1167,7 +1170,7 @@
 "load_funds.direct_deposit.bank_name.description" = "Evolve Bank & Trust";
 "load_funds.direct_deposit.ach_number.title" = "Account Number";
 "load_funds.direct_deposit.routing_number.title" = "Routing Number";
-"load_funds.direct_deposit.footer.description" = "The <<APP_NAME>> account is offered by Evolve Bank & Trust.";
+"load_funds.direct_deposit.footer.description" = "Please note at this time you can only use the direct deposit method to add funds to your account. No withdrawals are permitted except for verification purposes. This account is powered by Evolve Bank & Trust.";
 "load_funds.direct_deposit.instructions_description" = "Login to your external account to submit a direct deposit account request or ACH bank transfer. You'll need the information below to complete the set up:";
 "load_funds.ach_account_details.copied_to_clipboard" = "Value copied to clipboard";
 "load_funds.direct_deposit.disclaimer.call_to_action.title" = "Accept";
@@ -1176,13 +1179,13 @@
 
 /* * PIN verification */
 
-"auth.verify_phone.title" = "Verify phone number";
+"auth.verify_phone.title" = "Verify your account";
 
-"auth.verify_phone.explanation" = "Enter the code sent to";
+"auth.verify_phone.explanation" = "Enter the six-digit verification code below. It may take up to a few minutes.";
 
-"auth.verify_phone.footer" = "Having problems entering your code?";
+"auth.verify_phone.footer" = "Didn’t receive a code?";
 
-"auth.verify_phone.resend_button.title" = "Re-send Code";
+"auth.verify_phone.resend_button.title" = "Tap here to send another code";
 
 "auth.verify_phone.resent_wait_text" = "Resend your code if it doesn't arrive in <<WAIT_TIME>>";
 
@@ -1198,11 +1201,11 @@
 
 /* * Verify birth date */
 
-"auth.verify_birthdate.title" = "Security check";
+"auth.verify_birthdate.title" = "Enter your birthday";
 
-"auth.verify_birthdate.explanation" = "Please enter your birth date";
+"auth.verify_birthdate.explanation" = "";
 
-"auth.verify_birthdate.placeholder" = "your date of birth";
+"auth.verify_birthdate.placeholder" = "Your date of birth";
 
 "auth.verify_birthdate.call_to_action.title" = "Submit";
 
@@ -1380,7 +1383,7 @@
 
 /* * User data collector */
 
-"collect_user_data.personal_info.title" = "Info";
+"collect_user_data.personal_info.title" = "Enter your name";
 
 "collect_user_data.personal_info.first_name.title" = "First Name";
 
@@ -1402,7 +1405,7 @@
 
 "collect_user_data.personal_info.phone.placeholder" = "phone number";
 
-"collect_user_data.dob.title" = "Date of birth";
+"collect_user_data.dob.title" = "Personal information";
 
 "collect_user_data.dob.dob.title" = "Birthdate";
 
@@ -1418,11 +1421,11 @@
 
 "collect_user_data.dob.doc_id.not-specified.title" = "I don't have a document";
 
-"collect_user_data.address.title" = "Address";
+"collect_user_data.address.title" = "Enter your home address";
 
-"collect_user_data.address.address.title" = "Where do you live?";
+"collect_user_data.address.address.title" = "Please enter your permanent legal address. This address will also be used for mailing purposes (i.e. sending physical card).";
 
-"collect_user_data.address.address.placeholder" = "your current address";
+"collect_user_data.address.address.placeholder" = "Your current address";
 
 "collect_user_data.address.apt_unit.title" = "Apt/Unit #";
 
@@ -1439,6 +1442,30 @@
 "manage_card.activate_physical_card.footer" = "Have questions? Please contact <a href='mailto:support@aptopayments.com'>Customer Support</a>";
 
 "manage_card.activate_physical_card.card_not_activated" = "Your card could not be activated";
+
+/* * Order physical card */
+
+"order_physical_card.order_screen.header" = "Order a physical card?";
+
+"order_physical_card.order_screen.intro" = "The card will be sent to the address on file. Contact support if you need to make updates.";
+
+"order_physical_card.order_screen.order_fee_title" = "Card fee";
+
+"order_physical_card.order_screen_order.order_action" = "Order physical card";
+
+"order_physical_card.order_screen_order.cancel_action" = "No, I don’t need a physical card";
+
+"order_physical_card.order_screen.error_title" = "Insufficient funds";
+
+"order_physical_card.order_screen.error_description" = "Please add sufficient funds to your active wallet to proceed.";
+
+"order_physical_card.success_title" = "You‘re all set!";
+
+"order_physical_card.success_description" = "Your card should arrive within 2 weeks.";
+
+"order_physical_card.done" = "Done";
+
+"card_settings.settings.order_physical.title" = "Order physical card";
 
 /* * KYC */
 
@@ -1597,6 +1624,8 @@
 "account_settings.logout.confirm_logout.cancel_button" = "Cancel";
 
 "account_settings.app.version.title" = "App Version";
+
+"account_settings.help.email_not_configured" = "To send an email, you have to connect an account: Mail app and Gmail are supported";
 
 /* * Help & Support */
 

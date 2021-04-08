@@ -25,6 +25,7 @@ open class BackendError: NSError {
     case sessionAuthenticationFailure = 3032
     case invalidSession = 3045
     case emptySession = 3033
+    case invalidApiKey = 3035
     case agentSessionExpired = 3040
     case agentInvalidSession = 3041
     case agentEmptySession = 3042
@@ -73,7 +74,9 @@ open class BackendError: NSError {
     case unreachablePhonenumber = 9215
     case invalidCalledPhoneNumber = 9216
     case cardNotFound = 922
-
+    case physicalCardAlreadyOrdered = 90230
+    case orderPhysicalCardNotSupported = 90231
+    
     var descriptionKey: String {
       switch self {
       case .undefinedError: return "error.transport.undefined"
@@ -138,6 +141,9 @@ open class BackendError: NSError {
       case .cardNotFound: return "fetch_card.card_not_found"
       case .tooManyRequests: return "error.transport.rate_limit"
       case .sessionAuthenticationFailure: return "error.transport.authenticationFailure"
+      case .invalidApiKey: return "error.auth.invalid_api_key"
+      case .physicalCardAlreadyOrdered: return "error.physical_card.card_already_ordered"
+      case .orderPhysicalCardNotSupported: return "error.physical_card.order_not_supported"
       }
     }
   }

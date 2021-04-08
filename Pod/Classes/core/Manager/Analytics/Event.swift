@@ -83,4 +83,10 @@ public enum Event: String {
   case biometricPermissionStart = "biometric.request_permission.start"
     case directDepositStart = "manage_card.direct_deposit.instructions.start"
     case addFundsSelectorStart = "manage_card.add_funds.selector.start"
+    case orderPhysicalCardStart = "order_physical_card.start"
+    case orderPhysicalCardRequested = "order_physical_card.ordered"
+    case orderPhysicalCardDiscarded = "order_physical_card.discarded"
+    case orderPhysicalCardInsufficientFunds = "order_physical_card.insufficient_funds"
+    case orderPhysicalCardError = "order_physical_card.error"
+    case orderPhysicalCardDone = "order_physical_card.end"
 }

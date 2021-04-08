@@ -137,6 +137,9 @@ protocol FinancialAccountsStorageProtocol {
   func issueCard(_ apiKey: String, userToken: String, cardProduct: CardProduct, custodian: Custodian?,
                  additionalFields: [String: AnyObject]?, initialFundingSourceId: String?,
                  callback: @escaping Result<Card, NSError>.Callback)
+    
+    func orderPhysicalCard(_ apiKey: String, userToken: String, accountId: String, completion: @escaping (Result<Card, NSError>) -> Void)
+    func getOrderPhysicalCardConfig(_ apiKey: String, userToken: String, accountId: String, completion: @escaping (Result<PhysicalCardConfig, NSError>) -> Void)
 }
 
 extension FinancialAccountsStorageProtocol {
@@ -662,4 +665,56 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol { // swiftlint:
       }
     }
   }
+    
+    func orderPhysicalCard(_ apiKey: String,
+                              userToken: String,
+                              accountId: String,
+                              completion: @escaping (Result<Card, NSError>) -> Void) {
+        let urlParameters: [String: String] = [
+          ":account_id": accountId,
+        ]
+        let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
+                             url: JSONRouter.orderPhysicalCard,
+                             urlParameters: urlParameters)
+        let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+        transport.post(url, authorization: auth, parameters: nil, filterInvalidTokenResult: true) { result in
+            switch result {
+            case .success(let json):
+                if let card = json.card {
+                    completion(.success(card))
+                } else {
+                    completion(.failure(ServiceError(code: .jsonError)))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func getOrderPhysicalCardConfig(_ apiKey: String,
+                                    userToken: String,
+                                    accountId: String,
+                                    completion: @escaping (Result<PhysicalCardConfig, NSError>) -> Void) {
+        let urlParameters: [String: String] = [
+          ":account_id": accountId,
+        ]
+        let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
+                             url: JSONRouter.orderPhysicalCardConfig,
+                             urlParameters: urlParameters)
+        let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+        self.transport.get(url, authorization: auth, parameters: nil, headers: nil,
+                           acceptRedirectTo: nil,
+                           filterInvalidTokenResult: true) { result in
+            switch result {
+            case .success(let json):
+                do {
+                    try completion(.success(PhysicalCardConfigMapper.map(json)))
+                } catch {
+                    completion(.failure(ServiceError(code: .jsonError)))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }

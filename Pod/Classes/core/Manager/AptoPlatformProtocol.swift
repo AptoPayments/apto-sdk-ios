@@ -148,6 +148,9 @@ public protocol AptoPlatformProtocol {
   func addCardFundingSource(cardId: String, custodian: Custodian,
                             callback: @escaping Result<FundingSource, NSError>.Callback)
   
+    func orderPhysicalCard(_ cardId: String, callback: @escaping (Result<Card, NSError>) -> Void)
+    func getOrderPhysicalCardConfig(_ cardId: String, callback: @escaping (Result<PhysicalCardConfig, NSError>) -> Void)
+    
   // Notification preferences handling
   func fetchNotificationPreferences(callback: @escaping Result<NotificationPreferences, NSError>.Callback)
   func updateNotificationPreferences(_ preferences: NotificationPreferences,

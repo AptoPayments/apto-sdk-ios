@@ -578,7 +578,30 @@ import Foundation
     userStorage.verificationStatus(apiKey, verificationId: verification.verificationId, callback: callback)
   }
 
-  
+    /// Performs a request order of a physical card with the same PAN of the current virtual card that will be sent by mail to the cardholder.
+    /// - Parameters:
+    ///   - cardId: the card identifier
+    ///   - callback: callback block with a ``Card`` or an optional ``Error``
+    public func orderPhysicalCard(_ cardId: String, callback: @escaping (Result<Card, NSError>) -> Void) {
+        guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+            callback(.failure(BackendError(code: .invalidSession)))
+            return
+        }
+        financialAccountsStorage.orderPhysicalCard(apiKey, userToken: accessToken.token, accountId: cardId, completion: callback)
+    }
+    
+    /// Retrieves the configuration for an ordered physical card
+    /// - Parameters:
+    ///   - cardId: the card identifier
+    ///   - callback: callback block with a ``PhysicalCardConfig`` or an optional ``Error``
+    public func getOrderPhysicalCardConfig(_ cardId: String, callback: @escaping (Result<PhysicalCardConfig, NSError>) -> Void) {
+        guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+            callback(.failure(BackendError(code: .invalidSession)))
+            return
+        }
+        financialAccountsStorage.getOrderPhysicalCardConfig(apiKey, userToken: accessToken.token, accountId: cardId, completion: callback)
+    }
+    
   /// Retrieve a list of issued cards for current user
   /// - Parameters:
   ///   - page: index page
@@ -924,6 +947,7 @@ import Foundation
                                         additionalFields: additionalFields, metadata: metadata, callback: callback)
   }
 
+    @available(*, deprecated, message: "Please use issueCard with applicationId")
   public func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,
                         initialFundingSourceId: String? = nil, callback: @escaping Result<Card, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {

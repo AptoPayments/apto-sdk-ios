@@ -58,7 +58,9 @@ public enum JSONRouter {
     case achAccountDetails
     case assignACHAccount
     case recordAgreementAction
-    
+    case orderPhysicalCard
+    case orderPhysicalCardConfig
+
   var URLString: String {
     switch self {
     case .contextConfig:return "/config"
@@ -109,6 +111,8 @@ public enum JSONRouter {
     case .achAccountDetails: return "/balances/:balance_id/ach"
     case .assignACHAccount: return "/balances/:balance_id/ach"
     case .recordAgreementAction: return "/agreements"
+    case .orderPhysicalCard: return "/user/accounts/:account_id/order_physical"
+    case .orderPhysicalCardConfig: return "/user/accounts/:account_id/order_physical/config"
     }
   }
 
