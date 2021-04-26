@@ -36,6 +36,7 @@ public struct CardProduct {
   public let waitListBackgroundColor: String?
   public let waitListDarkBackgroundColor: String?
   public let waitListAsset: String?
+  public let exchangeRates: Content?
 }
 
 // Useful extension to easily create a CardProduct in the ObjC wrapper issueCard method
@@ -59,6 +60,7 @@ public extension CardProduct {
     self.waitListBackgroundColor = nil
     self.waitListDarkBackgroundColor = nil
     self.waitListAsset = nil
+    self.exchangeRates = nil
   }
 }
 

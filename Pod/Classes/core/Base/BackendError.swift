@@ -76,6 +76,7 @@ open class BackendError: NSError {
     case cardNotFound = 922
     case physicalCardAlreadyOrdered = 90230
     case orderPhysicalCardNotSupported = 90231
+    case invalidPaymentSourceDuplicate = 200074
     
     var descriptionKey: String {
       switch self {
@@ -144,6 +145,7 @@ open class BackendError: NSError {
       case .invalidApiKey: return "error.auth.invalid_api_key"
       case .physicalCardAlreadyOrdered: return "error.physical_card.card_already_ordered"
       case .orderPhysicalCardNotSupported: return "error.physical_card.order_not_supported"
+      case .invalidPaymentSourceDuplicate: return "load_funds.add_card.error.duplicate"
       }
     }
   }

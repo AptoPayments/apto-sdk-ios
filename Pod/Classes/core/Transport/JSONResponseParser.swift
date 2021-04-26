@@ -395,6 +395,7 @@ extension JSON {
     let waitListBackgroundColor = self["wait_list_background_color"].string
     let waitListDarkBackgroundColor = self["wait_list_dark_background_color"].string
     let waitListAsset = self["wait_list_asset"].string
+    let exchangeRates = self["exchange_rates"].content
 
     return CardProduct(id: id,
                        teamId: teamId,
@@ -412,7 +413,8 @@ extension JSON {
                        waitListBackgroundImage: waitListBackgroundImage,
                        waitListBackgroundColor: waitListBackgroundColor,
                        waitListDarkBackgroundColor: waitListDarkBackgroundColor,
-                       waitListAsset: waitListAsset)
+                       waitListAsset: waitListAsset,
+                       exchangeRates : exchangeRates)
   }
 
   var cardApplication: CardApplication? {
@@ -704,6 +706,7 @@ extension JSON {
     let nameOnCard = self["name_on_card"].string
     let cardholder = nameOnCard ?? (firstName + " " + lastName)
     let isInWaitList = self["wait_list"].bool
+    let metadata = self["metadata"].string ?? ""
 
     return Card(accountId: id,
                 cardProductId: cardProductId,
@@ -722,7 +725,8 @@ extension JSON {
                 features: cardFeatures,
                 cardStyle: cardStyle,
                 verified: verified,
-                isInWaitList: isInWaitList)
+                isInWaitList: isInWaitList,
+                metadata: metadata)
   }
 
   var cardDetails: CardDetails? {

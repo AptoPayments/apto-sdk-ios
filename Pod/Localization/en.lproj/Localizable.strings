@@ -1147,6 +1147,7 @@
 "load_funds.payment_methods.title" = "Payment methods";
 "load_funds.add_card.primary_cta" = "Add Card";
 "load_funds.add_card.secondary_cta" = "Instant deposit";
+"load_funds.add_card.error.duplicate" = "This card has already been added previously.";
 "load_funds.transaction.primary_cta" = "Done";
 "load_funds.transaction.time" = "Time";
 "load_funds.transaction.from" = "From";
@@ -1582,6 +1583,10 @@
 "card_settings.transactions.detailed_card_activity.title" = "Detailed card activity";
 
 "card_settings.transactions.detailed_card_activity.description" = "Show all activity: declines, balance inquiries, etc.";
+
+"card_settings.legal.exchange_rates.title" = "Foreign exchange rates";
+
+"card_settings.legal.exchange_rates.description" = "Compare the crossborder fees";
 
 /* * Account Settings */
 

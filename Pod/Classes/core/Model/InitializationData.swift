@@ -14,7 +14,9 @@ import Foundation
     public var cardMetadata: String? = nil
     /// A string that identifies the custodian uid. Optional parameter.
     public var custodianId: String? = nil
-    
+    /// An object taht contains additional design information
+    public var design: IssueCardDesign? = nil
+
     /**
      Initializes a new Metadata with the provided additional data.
 
@@ -25,9 +27,10 @@ import Foundation
 
      - Returns: A new instance of Metadata.
      */
-    public init(userMetadata: String?, cardMetadata: String?, custodianId: String?) {
+    public init(userMetadata: String?, cardMetadata: String?, custodianId: String?, design: IssueCardDesign?) {
         self.userMetadata = userMetadata
         self.cardMetadata = cardMetadata
         self.custodianId = custodianId
+        self.design = design
     }
 }

@@ -937,15 +937,23 @@ import Foundation
                                                   callback: callback)
   }
 
-  public func issueCard(applicationId: String, additionalFields: [String: AnyObject]? = nil, metadata: String? = nil,
-                        callback: @escaping Result<Card, NSError>.Callback) {
-    guard let projectKey = self.apiKey, let accessToken = currentToken() else {
-        callback(.failure(BackendError(code: .invalidSession)))
-        return
-      }
-      cardApplicationsStorage.issueCard(projectKey, userToken: accessToken.token, applicationId: applicationId,
-                                        additionalFields: additionalFields, metadata: metadata, callback: callback)
-  }
+    public func issueCard(applicationId: String,
+                          additionalFields: [String: AnyObject]? = nil,
+                          metadata: String? = nil,
+                          design: IssueCardDesign? = nil,
+                          callback: @escaping Result<Card, NSError>.Callback) {
+        guard let projectKey = self.apiKey, let accessToken = currentToken() else {
+            callback(.failure(BackendError(code: .invalidSession)))
+            return
+        }
+        cardApplicationsStorage.issueCard(projectKey,
+                                          userToken: accessToken.token,
+                                          applicationId: applicationId,
+                                          additionalFields: additionalFields,
+                                          metadata: metadata,
+                                          design: design,
+                                          callback: callback)
+    }
 
     @available(*, deprecated, message: "Please use issueCard with applicationId")
   public func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,

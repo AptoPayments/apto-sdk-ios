@@ -39,6 +39,7 @@ protocol CardApplicationsStorageProtocol {
                  applicationId: String,
                  additionalFields: [String: AnyObject]?,
                  metadata: String?,
+                 design: IssueCardDesign?,
                  callback: @escaping Result<Card, NSError>.Callback)
 }
 
@@ -166,30 +167,37 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     transport.delete(url, authorization: auth, parameters: nil, filterInvalidTokenResult: true, callback: callback)
   }
 
-  func issueCard(_ apiKey: String, userToken: String, applicationId: String,
-                 additionalFields: [String : AnyObject]? = nil, metadata: String? = nil,
-                 callback: @escaping Result<Card, NSError>.Callback) {
-    var parameters = [
-      "application_id": applicationId as AnyObject
-    ]
-    if let additionalFields = additionalFields {
-      parameters["additional_fields"] = additionalFields as AnyObject
-    }
-    if let metadata = metadata {
-      parameters["metadata"] = metadata as AnyObject
-    }
-    let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.issueCard)
-    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
-    transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
-      switch result {
-      case .failure(let error):
-        callback(.failure(error))
-      case .success(let json):
-        guard let application = json.linkObject as? Card else {
-          return callback(.failure(ServiceError(code: .jsonError)))
+    func issueCard(_ apiKey: String,
+                   userToken: String,
+                   applicationId: String,
+                   additionalFields: [String : AnyObject]? = nil,
+                   metadata: String? = nil,
+                   design: IssueCardDesign? = nil,
+                   callback: @escaping Result<Card, NSError>.Callback) {
+        var parameters = [
+            "application_id": applicationId as AnyObject
+        ]
+        if let additionalFields = additionalFields {
+            parameters["additional_fields"] = additionalFields as AnyObject
         }
-        callback(.success(application))
-      }
+        if let metadata = metadata {
+            parameters["metadata"] = metadata as AnyObject
+        }
+        if let design = design {
+            parameters["design"] = IssueCardDesignRequestMapper.map(from: design).toJSON() as AnyObject
+        }
+        let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.issueCard)
+        let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+        transport.post(url, authorization: auth, parameters: parameters, filterInvalidTokenResult: true) { result in
+            switch result {
+            case .failure(let error):
+                callback(.failure(error))
+            case .success(let json):
+                guard let application = json.linkObject as? Card else {
+                    return callback(.failure(ServiceError(code: .jsonError)))
+                }
+                callback(.success(application))
+            }
+        }
     }
-  }
 }

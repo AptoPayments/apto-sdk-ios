@@ -109,8 +109,11 @@ public protocol AptoPlatformProtocol {
   func acceptDisclaimer(workflowObject: WorkflowObject, workflowAction: WorkflowAction,
                         callback: @escaping Result<Void, NSError>.Callback)
   func cancelCardApplication(_ applicationId: String, callback: @escaping Result<Void, NSError>.Callback)
-  func issueCard(applicationId: String, additionalFields: [String: AnyObject]?, metadata: String?,
-                 callback: @escaping Result<Card, NSError>.Callback)
+    func issueCard(applicationId: String,
+                   additionalFields: [String: AnyObject]?,
+                   metadata: String?,
+                   design: IssueCardDesign?,
+                   callback: @escaping Result<Card, NSError>.Callback)
   func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]?,
                  initialFundingSourceId: String?, callback: @escaping Result<Card, NSError>.Callback)
   

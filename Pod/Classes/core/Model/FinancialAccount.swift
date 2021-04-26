@@ -216,7 +216,8 @@ public enum OrderedStatus: String, Codable {
   public let cardStyle: CardStyle?
   public let isInWaitList: Bool?
   var details: CardDetails?
-
+    public let metadata: String?
+    
   public init(accountId: String,
               cardProductId: String?,
               cardNetwork: CardNetwork?,
@@ -236,7 +237,8 @@ public enum OrderedStatus: String, Codable {
               cvvToken: String? = nil,
               cardStyle: CardStyle? = nil,
               verified: Bool? = false,
-              isInWaitList: Bool? = nil) {
+              isInWaitList: Bool? = nil,
+              metadata: String? = nil) {
     self.cardProductId = cardProductId
     self.cardNetwork = cardNetwork
     self.cardIssuer = cardIssuer
@@ -254,6 +256,7 @@ public enum OrderedStatus: String, Codable {
     self.features = features
     self.cardStyle = cardStyle
     self.isInWaitList = isInWaitList
+    self.metadata = metadata
     super.init(accountId: accountId, type: .card, state: state, verified: verified)
   }
 
@@ -287,6 +290,7 @@ public enum OrderedStatus: String, Codable {
     self.cardStyle = try container.decodeIfPresent(CardStyle.self, forKey: .cardStyle)
     self.fundingSource = try container.decodeIfPresent(FundingSource.self, forKey: .fundingSource)
     self.isInWaitList = try container.decodeIfPresent(Bool.self, forKey: .isInWaitList)
+    self.metadata = try container.decodeIfPresent(String.self, forKey: .metadata)
     try super.init(from: decoder)
   }
 
@@ -311,6 +315,7 @@ public enum OrderedStatus: String, Codable {
     try container.encode(cardStyle, forKey: .cardStyle)
     try container.encode(fundingSource, forKey: .fundingSource)
     try container.encode(isInWaitList, forKey: .isInWaitList)
+    try container.encode(metadata, forKey: .metadata)
   }
 
   private enum CodingKeys: String, CodingKey {
@@ -332,6 +337,7 @@ public enum OrderedStatus: String, Codable {
     case cardStyle
     case fundingSource
     case isInWaitList
+    case metadata
   }
 }
 
