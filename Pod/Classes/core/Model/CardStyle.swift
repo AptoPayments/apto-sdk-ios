@@ -69,8 +69,8 @@ extension JSON {
     }
     let textColor = self["text_color"].string
     let balanceSelectorImage = self["balance_selector_asset"].string
-    let logo = self["card_logo"].string ?? ""
-    let cardLogo = !logo.isEmpty ? URL(string: logo) : nil
+    let logo = self["background"]["card_logo"].string ?? ""
+        let cardLogo = !logo.isEmpty ? URL(string: logo) : nil
     return CardStyle(background: background, textColor: textColor, balanceSelectorImage: balanceSelectorImage, cardLogo: cardLogo)
   }
 

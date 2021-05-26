@@ -8,7 +8,7 @@
 
 import SwiftyJSON
 
-public let kBackendErrorDomain = "com.ledge.ledgelink.backend"
+public let kBackendErrorDomain = "com.aptopayments.sdk.backend"
 
 open class BackendError: NSError {
   public let rawCode: Int?
@@ -77,6 +77,7 @@ open class BackendError: NSError {
     case physicalCardAlreadyOrdered = 90230
     case orderPhysicalCardNotSupported = 90231
     case invalidPaymentSourceDuplicate = 200074
+    case dateOfBirthInvalid = 200035
     
     var descriptionKey: String {
       switch self {
@@ -146,6 +147,7 @@ open class BackendError: NSError {
       case .physicalCardAlreadyOrdered: return "error.physical_card.card_already_ordered"
       case .orderPhysicalCardNotSupported: return "error.physical_card.order_not_supported"
       case .invalidPaymentSourceDuplicate: return "load_funds.add_card.error.duplicate"
+      case .dateOfBirthInvalid: return "auth.verify_birthday.error.invalid_age"
       }
     }
   }
@@ -256,7 +258,7 @@ extension JSON {
       return BackendError(code: code, reason: self["message"].string)
     }
     else if let rawCode = self["code"].int {
-      return BackendError(code: .undefinedError, rawCode: rawCode)
+      return BackendError(code: .undefinedError, rawCode: rawCode, reason: self["message"].string)
     }
     return nil
   }

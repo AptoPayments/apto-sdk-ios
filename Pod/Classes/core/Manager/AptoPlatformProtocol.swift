@@ -110,7 +110,6 @@ public protocol AptoPlatformProtocol {
                         callback: @escaping Result<Void, NSError>.Callback)
   func cancelCardApplication(_ applicationId: String, callback: @escaping Result<Void, NSError>.Callback)
     func issueCard(applicationId: String,
-                   additionalFields: [String: AnyObject]?,
                    metadata: String?,
                    design: IssueCardDesign?,
                    callback: @escaping Result<Card, NSError>.Callback)
@@ -121,8 +120,6 @@ public protocol AptoPlatformProtocol {
   func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback)
   func fetchCard(_ cardId: String, forceRefresh: Bool, retrieveBalances: Bool,
                  callback: @escaping Result<Card, NSError>.Callback)
-  /// Deprecated, please use Apto PCI-SDK instead
-  func fetchCardDetails(_ cardId: String, callback: @escaping Result<CardDetails, NSError>.Callback)
   func activatePhysicalCard(_ cardId: String, code: String,
                             callback: @escaping Result<PhysicalCardActivationResult, NSError>.Callback)
   func activateCard(_ cardId: String, callback: @escaping Result<Card, NSError>.Callback)
@@ -133,8 +130,6 @@ public protocol AptoPlatformProtocol {
                        callback: @escaping Result<Void, NSError>.Callback)
   func fetchCardTransactions(_ cardId: String, filters: TransactionListFilters, forceRefresh: Bool,
                              callback: @escaping Result<[Transaction], NSError>.Callback)
-  @available(*, deprecated, renamed: "fetchMonthlySpending(cardId:month:year:callback:)")
-  func cardMonthlySpending(_ cardId: String, date: Date, callback: @escaping Result<MonthlySpending, NSError>.Callback)
   func fetchMonthlySpending(cardId: String, month: Int, year: Int,
                             callback: @escaping Result<MonthlySpending, NSError>.Callback)
   func fetchMonthlyStatementsPeriod(callback: @escaping Result<MonthlyStatementsPeriod, NSError>.Callback)
@@ -187,10 +182,6 @@ public protocol AptoPlatformProtocol {
   func runPendingNetworkRequests()
 
   // MARK: Deprecated
-
-  /// Deprecated, please use fetchCard instead
-  func fetchFinancialAccount(_ accountId: String, forceRefresh: Bool, retrieveBalances: Bool,
-                             callback: @escaping Result<FinancialAccount, NSError>.Callback)
 }
 
 public extension AptoPlatformProtocol {

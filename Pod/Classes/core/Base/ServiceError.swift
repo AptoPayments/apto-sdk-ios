@@ -8,7 +8,7 @@
 
 import Foundation
 
-public let kServiceErrorDomain = "com.ledge.ledgelink.service"
+public let kServiceErrorDomain = "com.aptopayments.sdk.service"
 
 public final class ServiceError: NSError {
 

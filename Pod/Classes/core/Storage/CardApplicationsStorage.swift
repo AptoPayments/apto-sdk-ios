@@ -37,7 +37,6 @@ protocol CardApplicationsStorageProtocol {
   func issueCard(_ apiKey: String,
                  userToken: String,
                  applicationId: String,
-                 additionalFields: [String: AnyObject]?,
                  metadata: String?,
                  design: IssueCardDesign?,
                  callback: @escaping Result<Card, NSError>.Callback)
@@ -170,16 +169,12 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
     func issueCard(_ apiKey: String,
                    userToken: String,
                    applicationId: String,
-                   additionalFields: [String : AnyObject]? = nil,
                    metadata: String? = nil,
                    design: IssueCardDesign? = nil,
                    callback: @escaping Result<Card, NSError>.Callback) {
         var parameters = [
             "application_id": applicationId as AnyObject
         ]
-        if let additionalFields = additionalFields {
-            parameters["additional_fields"] = additionalFields as AnyObject
-        }
         if let metadata = metadata {
             parameters["metadata"] = metadata as AnyObject
         }

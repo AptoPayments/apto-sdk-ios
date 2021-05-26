@@ -36,12 +36,6 @@ extension JSONTransportImpl: JSONTransport {
                   acceptRedirectTo: ((String) -> Bool)? = nil,
                   filterInvalidTokenResult: Bool = true,
                   callback: @escaping Swift.Result<JSON, NSError>.Callback) {
-    networkManager.delegate.taskWillPerformHTTPRedirection = { _, _, _, request in
-      guard let function = acceptRedirectTo, request.url != nil else {
-        return request
-      }
-      return function("") == true ? request : nil
-    }
     var requestHeaders = self.completeHeaders(self.authorizationHeader(authorization))
     if let headers = headers {
       requestHeaders += headers
@@ -50,8 +44,7 @@ extension JSONTransportImpl: JSONTransport {
                                  method: .get,
                                  parameters: parameters,
                                  headers: requestHeaders,
-                                 filterInvalidTokenResult: filterInvalidTokenResult) { [weak self] result in
-      self?.networkManager.delegate.taskWillPerformHTTPRedirection = nil
+                                 filterInvalidTokenResult: filterInvalidTokenResult) { result in
       callback(result)
     }
     networkManager.request(request)

@@ -651,28 +651,6 @@ import Foundation
     }
   }
 
-  @available(*, deprecated, message: "Please use fetchCard instead.")
-  public func fetchFinancialAccount(_ accountId: String, forceRefresh: Bool = true, retrieveBalances: Bool = false,
-                                      callback: @escaping Result<FinancialAccount, NSError>.Callback) {
-    fetchCard(accountId, forceRefresh: forceRefresh, retrieveBalances: retrieveBalances) { result in
-      switch result {
-      case .failure(let error):
-        callback(.failure(error))
-      case .success(let card):
-        callback(.success(card))
-      }
-    }
-  }
-  @available(*, deprecated, message: "To show the card data to your users, please use the Apto PCI SDK.")
-  public func fetchCardDetails(_ cardId: String, callback: @escaping Result<CardDetails, NSError>.Callback) {
-    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
-      callback(.failure(BackendError(code: .invalidSession)))
-      return
-    }
-    financialAccountsStorage.getCardDetails(apiKey, userToken: accessToken.token, accountId: cardId,
-                                            callback: callback)
-  }
-
   public func fetchNotificationPreferences(callback: @escaping Result<NotificationPreferences, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
@@ -938,7 +916,6 @@ import Foundation
   }
 
     public func issueCard(applicationId: String,
-                          additionalFields: [String: AnyObject]? = nil,
                           metadata: String? = nil,
                           design: IssueCardDesign? = nil,
                           callback: @escaping Result<Card, NSError>.Callback) {
@@ -949,7 +926,6 @@ import Foundation
         cardApplicationsStorage.issueCard(projectKey,
                                           userToken: accessToken.token,
                                           applicationId: applicationId,
-                                          additionalFields: additionalFields,
                                           metadata: metadata,
                                           design: design,
                                           callback: callback)
@@ -965,11 +941,6 @@ import Foundation
     financialAccountsStorage.issueCard(apiKey, userToken: accessToken.token, cardProduct: cardProduct,
                                        custodian: custodian, additionalFields: additionalFields,
                                        initialFundingSourceId: initialFundingSourceId, callback: callback)
-  }
-
-  public func cardMonthlySpending(_ cardId: String, date: Date,
-                                  callback: @escaping Result<MonthlySpending, NSError>.Callback) {
-    fetchMonthlySpending(cardId: cardId, month: date.month, year: date.year, callback: callback)
   }
 
   public func fetchMonthlySpending(cardId: String, month: Int, year: Int,

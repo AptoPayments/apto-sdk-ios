@@ -29,7 +29,7 @@ public protocol NetworkManagerProtocol {
 }
 
 final class NetworkManager: NetworkManagerProtocol {
-  private let manager: SessionManager
+  private let manager: Session
   private let reachabilityManager: NetworkReachabilityManager?
   private let notificationHandler: NotificationHandler
   private var configuration: URLSessionConfiguration = {
@@ -56,21 +56,18 @@ final class NetworkManager: NetworkManagerProtocol {
        allowSelfSignedCertificate: Bool = false, notificationHandler: NotificationHandler) {
     self.notificationHandler = notificationHandler
     if let baseURL = baseURL, let host = baseURL.host, allowSelfSignedCertificate {
-      let serverTrustPolicies: [String: ServerTrustPolicy] = [
-        "\(host)": .disableEvaluation
+      let serverTrustPolicies: [String: ServerTrustEvaluating] = [
+        "\(host)": DisabledTrustEvaluator()
       ]
-      let serverTrustPolicyManager = ServerTrustPolicyManager(policies: serverTrustPolicies)
-      self.manager = SessionManager(
-        configuration: self.configuration,
-        serverTrustPolicyManager: serverTrustPolicyManager)
+      let serverTrustManager = ServerTrustManager(evaluators: serverTrustPolicies)
+        self.manager = Session(configuration: self.configuration, serverTrustManager: serverTrustManager)
       self.reachabilityManager = NetworkReachabilityManager(host: baseURL.absoluteString)
     }
     else {
-      self.manager = SessionManager(configuration: configuration)
+      self.manager = Session(configuration: self.configuration)
       self.reachabilityManager = NetworkReachabilityManager()
     }
-    self.reachabilityManager?.listener = self.networkStatusChanged
-    self.reachabilityManager?.startListening()
+    self.reachabilityManager?.startListening(onUpdatePerforming: networkStatusChanged(_:))
     if let certPinningConfig = certPinningConfig {
       self.setupCertificatePinning(certPinningConfig)
     }
@@ -81,11 +78,12 @@ final class NetworkManager: NetworkManagerProtocol {
   }
 
   func request(_ request: NetworkRequest) {
+    let httpHeaders =  HTTPHeaders(completeHeaders(request.headers))
     manager.request(request.url,
                     method: request.method,
                     parameters: request.parameters,
                     encoding: JSONEncoding.default,
-                    headers: completeHeaders(request.headers))
+                    headers: httpHeaders)
       .responseJSON { [unowned self] response in
         let processedResponse = self.processResponse(response).map { json -> JSON in JSON(json) }
         switch processedResponse {
@@ -119,7 +117,7 @@ final class NetworkManager: NetworkManagerProtocol {
     return retVal
   }
 
-  private func processResponse(_ response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
+  private func processResponse(_ response: DataResponse<Any, AFError>) -> Swift.Result<AnyObject, NSError> {
     if let originalError = response.error {
       ErrorLogger.defaultInstance().log(error: originalError)
     }
@@ -142,7 +140,7 @@ final class NetworkManager: NetworkManagerProtocol {
     }
   }
 
-  private func processSuccess(response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
+  private func processSuccess(response: DataResponse<Any, AFError>) -> Swift.Result<AnyObject, NSError> {
     if response.result.error != nil {
       debugPrint(response)
     }
@@ -155,7 +153,7 @@ final class NetworkManager: NetworkManagerProtocol {
     }
   }
 
-  private func processInvalidSession(response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
+  private func processInvalidSession(response: DataResponse<Any, AFError>) -> Swift.Result<AnyObject, NSError> {
     let json = JSON(response.value ?? "")
     let error = json.backendError ?? BackendError(code: .invalidSession)
     if isInvalidSession(error) {
@@ -173,29 +171,29 @@ final class NetworkManager: NetworkManagerProtocol {
             error.isEmptySession || error.invalidSessionError()
     }
     
-  private func processSDKDeprecated(response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
+  private func processSDKDeprecated(response: DataResponse<Any, AFError>) -> Swift.Result<AnyObject, NSError> {
     let error = BackendError(code: .sdkDeprecated)
     ErrorLogger.defaultInstance().log(error: error)
     return .failure(error)
   }
 
-  private func process400(response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
+  private func process400(response: DataResponse<Any, AFError>) -> Swift.Result<AnyObject, NSError> {
     let json = JSON(response.value ?? "")
     let error = json.backendError ?? BackendError(code: .incorrectParameters)
     return .failure(error)
   }
 
-  private func processServerMaintenance(response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
+  private func processServerMaintenance(response: DataResponse<Any, AFError>) -> Swift.Result<AnyObject, NSError> {
     let error = BackendError(code: .serverMaintenance)
     return .failure(error)
   }
 
-    private func processServerError(with code: BackendError.ErrorCodes, response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
+    private func processServerError(with code: BackendError.ErrorCodes, response: DataResponse<Any, AFError>) -> Swift.Result<AnyObject, NSError> {
         let error = BackendError(code: code)
         return .failure(error)
     }
 
-  private func process500(response: DataResponse<Any>) -> Swift.Result<AnyObject, NSError> {
+  private func process500(response: DataResponse<Any, AFError>) -> Swift.Result<AnyObject, NSError> {
     switch response.result {
     case .success(let data):
       if let dict = data as? [String: Any], let rawCode = dict["code"] as? Int,
