@@ -60,7 +60,8 @@ public enum JSONRouter {
     case recordAgreementAction
     case orderPhysicalCard
     case orderPhysicalCardConfig
-
+    case applePayInAppProvisioning
+    
   var URLString: String {
     switch self {
     case .contextConfig:return "/config"
@@ -113,6 +114,7 @@ public enum JSONRouter {
     case .recordAgreementAction: return "/agreements"
     case .orderPhysicalCard: return "/user/accounts/:account_id/order_physical"
     case .orderPhysicalCardConfig: return "/user/accounts/:account_id/order_physical/config"
+    case .applePayInAppProvisioning: return "/user/accounts/:account_id/provision/applepay/"
     }
   }
 

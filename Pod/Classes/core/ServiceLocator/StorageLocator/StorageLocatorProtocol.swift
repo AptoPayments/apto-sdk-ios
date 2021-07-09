@@ -23,4 +23,5 @@ protocol StorageLocatorProtocol {
   func paymentSourcesStorage(transport: JSONTransport) -> PaymentSourcesStorageProtocol
     func achAccountAgreementStorage(transport: JSONTransport) -> AgreementStorageProtocol
     func achAccountStorage(transport: JSONTransport) -> ACHAccountStorageProtocol
+    func applePayIAPStorage(transport: JSONTransport) -> ApplePayIAPStorageProtocol
 }

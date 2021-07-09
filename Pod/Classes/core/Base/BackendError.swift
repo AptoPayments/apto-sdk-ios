@@ -78,7 +78,13 @@ open class BackendError: NSError {
     case orderPhysicalCardNotSupported = 90231
     case invalidPaymentSourceDuplicate = 200074
     case dateOfBirthInvalid = 200035
-    
+    case cardTypeNotSupported = 200058
+    case invalidCardNumber = 200059
+    case invalidCVV = 200060
+    case invalidExpirationDate = 200061
+    case invalidPostalCode = 200062
+    case geographyNotSupported = 200063
+
     var descriptionKey: String {
       switch self {
       case .undefinedError: return "error.transport.undefined"
@@ -148,6 +154,12 @@ open class BackendError: NSError {
       case .orderPhysicalCardNotSupported: return "error.physical_card.order_not_supported"
       case .invalidPaymentSourceDuplicate: return "load_funds.add_card.error.duplicate"
       case .dateOfBirthInvalid: return "auth.verify_birthday.error.invalid_age"
+      case .cardTypeNotSupported: return "load_funds.add_card.error.card_type"
+      case .invalidCardNumber: return "load_funds.add_card.error.number"
+      case .invalidCVV: return "load_funds.add_card.error.cvv"
+      case .invalidExpirationDate: return "load_funds.add_card.error.expiration"
+      case .invalidPostalCode: return "load_funds.add_card.error.postal_code"
+      case .geographyNotSupported: return "load_funds.add_card.error.address"
       }
     }
   }

@@ -69,6 +69,7 @@ public struct CardFeatures: Codable {
   public let funding: Funding?
   public let passCode: PassCode?
     public let achAccount: ACHAccountFeature?
+    public let inAppProvisioning: InAppProvisioning?
 }
 
 public enum FeatureStatus: String, Equatable, Codable {
@@ -117,8 +118,10 @@ extension JSON {
     let funding = self["add_funds"].funding
     let passCode = self["passcode"].passCode
     let achAccount = self["ach"].achAccount
+    let inAppProvisioning = self["in_app_provisioning"].inAppProvisioning
     return CardFeatures(setPin: setPin, getPin: getPin, allowedBalanceTypes: allowedBalanceTypes,
-                        activation: activation, ivrSupport: ivrSupport, funding: funding, passCode: passCode, achAccount: achAccount)
+                        activation: activation, ivrSupport: ivrSupport, funding: funding, passCode: passCode,
+                        achAccount: achAccount, inAppProvisioning: inAppProvisioning)
   }
   
   var funding: Funding? {
@@ -234,5 +237,16 @@ extension JSON {
         }
         let agreementKeys = agreementKeysJSON.map { $0.stringValue }
         return Disclaimer(agreementKeys: agreementKeys, content: content)
+    }
+    
+    var inAppProvisioning: InAppProvisioning? {
+        guard let rawStatus = self["status"].string,
+              let status = FeatureStatus(rawValue: rawStatus)
+        else {
+            ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                                  reason: "Can't parse in app provisionig \(self)"))
+            return nil
+        }
+        return InAppProvisioning(status: status)
     }
 }

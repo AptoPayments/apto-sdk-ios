@@ -85,4 +85,8 @@ class StorageLocator: StorageLocatorProtocol {
     func achAccountStorage(transport: JSONTransport) -> ACHAccountStorageProtocol {
         ACHAccountStorage(transport: transport)
     }
+    
+    func applePayIAPStorage(transport: JSONTransport) -> ApplePayIAPStorageProtocol {
+        ApplePayIAPStorage(transport: transport)
+    }
 }

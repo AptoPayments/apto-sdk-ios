@@ -57,6 +57,7 @@ public enum FontCustomizationOptions {
   var topBarTitleFont: UIFont { get }
   var topBarTitleBigFont: UIFont { get }
   var topBarItemFont: UIFont { get }
+    var topBarTitleHugeFont: UIFont { get }
 
   var largeTitleFont: UIFont { get }
 
@@ -103,6 +104,7 @@ public class UITheme1FontProvider: UIFontProviderProtocol {
   public lazy var topBarTitleFont = UIFont.systemFont(ofSize: 17, weight: .medium)
   public lazy var topBarTitleBigFont = UIFont.systemFont(ofSize: 20, weight: .regular)
   public lazy var topBarItemFont = UIFont.systemFont(ofSize: 10, weight: .regular)
+    public lazy var topBarTitleHugeFont = UIFont.systemFont(ofSize: 34, weight: .regular)
 
   public lazy var largeTitleFont = UIFont.systemFont(ofSize: 28, weight: .black)
 
@@ -195,6 +197,9 @@ public class UITheme2FontProvider: UIFontProviderProtocol {
   public lazy var topBarTitleBigFont = {
     return UIFont(descriptor: fontDescriptors.bold, size: 26)
   }()
+    public lazy var topBarTitleHugeFont = {
+      return UIFont(descriptor: fontDescriptors.bold, size: 34)
+    }()
   public lazy var topBarItemFont = {
     return UIFont(descriptor: fontDescriptors.regular, size: 10)
   }()

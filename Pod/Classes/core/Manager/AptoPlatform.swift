@@ -62,6 +62,7 @@ import Foundation
   private var paymentSourcesStorage: PaymentSourcesStorageProtocol!
     private var agreementStorage: AgreementStorageProtocol?
     private var achAccountStorage: ACHAccountStorageProtocol?
+    private var applePayIAPStorage: ApplePayIAPStorageProtocol?
   // swiftlint:enable implicitly_unwrapped_optional
   private lazy var featuresStorage = serviceLocator.storageLocator.featuresStorage()
   private lazy var userPreferencesStorage = serviceLocator.storageLocator.userPreferencesStorage()
@@ -127,7 +128,7 @@ import Foundation
     self.paymentSourcesStorage = storageLocator.paymentSourcesStorage(transport: transport)
     self.agreementStorage = storageLocator.achAccountAgreementStorage(transport: transport)
     self.achAccountStorage = storageLocator.achAccountStorage(transport: transport)
-    
+    self.applePayIAPStorage = storageLocator.applePayIAPStorage(transport: transport)
     // Notify the delegate that the manager has already been initialized
     self.initialized = true
     self.delegate?.sdkInitialized(apiKey: apiKey)
@@ -359,6 +360,44 @@ import Foundation
                                                     callback(.success(agreements))
                                                 }
                                              })
+    }
+    
+    /// Starts the In App Provisioning process needed to add the digital card to Apple Wallet.
+    ///
+    /// Use the responsePayload to validate the in app provisioning process as described in the Apple
+    /// Pay documentation.
+    /// - Parameters:
+    ///   - cardId: the card identifier
+    ///   - certificates: an array of `Data`, containing the Apple Public Certificates.
+    ///   - nonce: a `Data` for the nonce value.
+    ///   - nonceSignature: a `Data` for the nonce signature.
+    ///   - callback: callback with `[ApplePayIAPResult]` or optional error
+    ///
+    public func startApplePayInAppProvisioning(cardId: String,
+                                               certificates: [Data],
+                                               nonce: Data,
+                                               nonceSignature: Data,
+                                               callback: @escaping (ApplePayIAPResult) -> Void) {
+        guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+            let error = BackendError(code: .invalidSession, reason: nil)
+            callback(.failure(error))
+            return
+        }
+
+        let payload = ApplePayIAPInputData(certificates: certificates.map { $0.base64EncodedString() },
+                                           nonce: nonce.base64EncodedString(),
+                                           nonceSignature: nonceSignature.base64EncodedString())
+        applePayIAPStorage?.inAppProvisioning(apiKey,
+                                              userToken: accessToken.token,
+                                              cardId: cardId,
+                                              payload: payload, completion: { result in
+                                                switch result {
+                                                case .success(let responsePayload):
+                                                    callback(.success(responsePayload))
+                                                case .failure(let error):
+                                                    callback(.failure(error))
+                                                }
+                                              })
     }
     
   /// Retrieve `UIConfig` entity from cache

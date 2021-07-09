@@ -300,7 +300,13 @@
 
 "birthday-collector.id-document.number.placeholder" = "the document number";
 
-"birthday-collector.id-document.invalid" = "The document number is required and must be a valid format.";
+"ssn-collector.id-document.invalid" = "The document number is required and must be a valid format.";
+
+"ssn-collector.id-card.invalid" = "The ID card number cannot be empty.";
+
+"ssn-collector.driver-license.invalid" = "The driver license number cannot be empty.";
+
+"ssn-collector.passport.invalid" = "The Passport cannot be empty.";
 
 "birthday-collector.id-document.not-specified.title" = "I don't have a document";
 
@@ -1179,6 +1185,10 @@
 "load_funds.direct_deposit.disclaimer.call_to_action.title" = "Accept";
 "load_funds.direct_deposit.disclaimer.cancel_action.title" = "Decline";
 "load_funds.direct_deposit.disclaimer.title" = "Legal";
+"load_funds.add_card.onboarding.title" = "Debit Card";
+"load_funds.add_card.onboarding.explanation" = "You can instantly transfer funds from your existing bank debit card to your <<VALUE>> card account. Please note that transfers are reviewed and they can be delayed or declined if we suspect risks.";
+"load_funds.add_card.onboarding.explanation_2" = "This transaction will appear in your bank account statement as: <<VALUE>>";
+"load_funds.add_card.onboarding.primary_cta" = "Continue";
 
 /* * PIN verification */
 
@@ -1593,6 +1603,21 @@
 "card_settings.legal.exchange_rates.title" = "Foreign exchange rates";
 
 "card_settings.legal.exchange_rates.description" = "Compare the crossborder fees";
+"card_settings.apple_pay.add_to_wallet.title" = "Add to Apple Wallet";
+
+"card_settings.apple_pay.add_to_watch_wallet.title" = "Add to Apple Watch";
+
+"load_funds.add_card.error.card_type" = "Card type not supported";
+
+"load_funds.add_card.error.number" = "Invalid card number";
+
+"load_funds.add_card.error.cvv" = "Invalid CVV";
+
+"load_funds.add_card.error.expiration" = "Invalid expiration date";
+
+"load_funds.add_card.error.postal_code" = "Invalid postal Code";
+
+"load_funds.add_card.error.address" = "This geography is not currently supported. Please contact support for assistance";
 
 /* * Account Settings */
 
@@ -1879,4 +1904,3 @@
 "credit_card_view.wrong_code.ok_action" = "Ok";
 
 "fetch_card.card_not_found" = "Can't find the specified card";
-

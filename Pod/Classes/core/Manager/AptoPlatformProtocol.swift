@@ -164,6 +164,9 @@ public protocol AptoPlatformProtocol {
     // Assign a ACH account
     func assignAchAccount(balanceId: String, callback: @escaping (ACHAccountResult) -> Void)
     
+    // Start the In App Provisioning process
+    func startApplePayInAppProvisioning(cardId: String, certificates: [Data], nonce: Data, nonceSignature: Data, callback: @escaping (ApplePayIAPResult) -> Void)
+    
   // MARK: - Payment Sources
   
   /// Adds a payment source for Loading funds into the account
