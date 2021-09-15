@@ -1600,12 +1600,14 @@
 
 "card_settings.transactions.detailed_card_activity.description" = "Show all activity: declines, balance inquiries, etc.";
 
+"card_settings.apple_pay.add_to_wallet.title" = "Add to Apple Wallet";
+
+"card_settings.apple_pay.add_to_watch.title" = "Add to Wallet on Apple Watch";
+
+"card_settings.apple_pay.add_to_watch_wallet.title" = "Add to Apple Watch";
 "card_settings.legal.exchange_rates.title" = "Foreign exchange rates";
 
 "card_settings.legal.exchange_rates.description" = "Compare the crossborder fees";
-"card_settings.apple_pay.add_to_wallet.title" = "Add to Apple Wallet";
-
-"card_settings.apple_pay.add_to_watch_wallet.title" = "Add to Apple Watch";
 
 "load_funds.add_card.error.card_type" = "Card type not supported";
 

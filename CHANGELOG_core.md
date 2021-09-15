@@ -1,5 +1,8 @@
 ## CHANGELOG AptoSDK
 
+# 2021-09-15 Version 3.6.0
+- feature: added In-App Provisioning
+
 # 2021-07-09 Version 3.5.0
 - chore(improvement): update error codes and provide a localisable descriptions.
 
