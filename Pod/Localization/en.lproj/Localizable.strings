@@ -1552,6 +1552,26 @@
 
 "card_settings.help.title" = "Help and Support";
 
+"card_settings.shipping.first.title" = "Your card was ordered";
+
+"card_settings.shipping.first.description" = "It should arrive between <<MIN>> and <<MAX>>";
+
+"card_settings.shipping.second.title" = "Cards typically ship out now";
+
+"card_settings.shipping.second.description" = "Yours should arrive between <<MIN>> and <<MAX>>";
+
+"card_settings.shipping.third.title" = "Cards are typically in transit now";
+
+"card_settings.shipping.third.description" = "Yours should arrive between <<MIN>> and <<MAX>>";
+
+"card_settings.shipping.fourth.title" = "Your card should be arriving soon";
+
+"card_settings.shipping.fourth.description" = "Estimated delivery is between <<MIN>> and <<MAX>>";
+
+"card_settings.shipping.fifth.title" = "Your card should have arrived by now";
+
+"card_settings.shipping.fifth.description" = "Please contact support if you haven't received it.";
+
 "card_settings.help.ivr_support.title" = "Get help";
 
 "card_settings.help.contact_support.title" = "Contact Support";
@@ -1602,9 +1622,8 @@
 
 "card_settings.apple_pay.add_to_wallet.title" = "Add to Apple Wallet";
 
-"card_settings.apple_pay.add_to_watch.title" = "Add to Wallet on Apple Watch";
+"card_settings.apple_pay.added_to_wallet.title" = "Added to Apple Wallet";
 
-"card_settings.apple_pay.add_to_watch_wallet.title" = "Add to Apple Watch";
 "card_settings.legal.exchange_rates.title" = "Foreign exchange rates";
 
 "card_settings.legal.exchange_rates.description" = "Compare the crossborder fees";

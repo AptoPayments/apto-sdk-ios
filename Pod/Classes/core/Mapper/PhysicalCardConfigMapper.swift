@@ -8,10 +8,11 @@
 import Foundation
 import SwiftyJSON
 
+enum MappingError: Error {
+    case jsonError
+}
+
 struct PhysicalCardConfigMapper {
-    enum MappingError: Error {
-        case jsonError
-    }
     static func map(_ json: JSON) throws -> PhysicalCardConfig {
         guard let issuanceFee = json["issuance_fee"].amount,
               let userAddress = json["user_address"].address else {

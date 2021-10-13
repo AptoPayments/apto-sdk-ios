@@ -1,5 +1,5 @@
 //
-//  ShiftUser.swift
+//  AptoUser.swift
 //  AptoSDK
 //
 //  Created by Ivan Oliver Martínez on 12/10/2016.
@@ -9,7 +9,7 @@
 import Foundation
 import Bond
 
-@objc open class ShiftUser: NSObject {
+@objc open class AptoUser: NSObject {
   public let userId: String
   open var userData = DataPointList()
   open var metadata: String?
@@ -26,7 +26,7 @@ import Bond
   }
 }
 
-extension ShiftUser {
+extension AptoUser {
   public func cardList() -> [Card] {
     var retVal = [Card]()
     guard let financialAccounts = self.userData.getDataPointsOf(type: .financialAccount) as? [FinancialAccount] else {

@@ -33,8 +33,9 @@ class FinancialAccountCache: FinancialAccountCacheProtocol {
   }
 
   func saveFundingSource(_ fundingSource: FundingSource, accountId: String) {
-    DispatchQueue.global().async { [unowned self] in
+    DispatchQueue.global().async { [weak self] in
       do {
+        guard let self = self else { return }
         var fundingSources = self.cachedFundingSources() ?? [String: FundingSource]()
         fundingSources[accountId] = fundingSource
         let data = try PropertyListEncoder().encode(fundingSources)
@@ -176,8 +177,9 @@ class FinancialAccountCache: FinancialAccountCacheProtocol {
   }
 
   func saveFundingSources(_ fundingSources: [FundingSource], accountId: String) {
-    DispatchQueue.global().async { [unowned self] in
+    DispatchQueue.global().async { [weak self] in
       do {
+        guard let self = self else { return }
         var current = self.cachedFundingSourceList() ?? [String: [FundingSource]]()
         current[accountId] = fundingSources
         let data = try PropertyListEncoder().encode(current)
@@ -192,8 +194,9 @@ class FinancialAccountCache: FinancialAccountCacheProtocol {
   // MARK: - Private methods
 
   private func store(transactions: [Transaction], accountId: String, currentContent: [String: [Transaction]]) {
-    DispatchQueue.global().async { [unowned self] in
+    DispatchQueue.global().async { [weak self] in
       do {
+        guard let self = self else { return }
         var content = currentContent
         content[accountId] = transactions
         let data = try PropertyListEncoder().encode(content)

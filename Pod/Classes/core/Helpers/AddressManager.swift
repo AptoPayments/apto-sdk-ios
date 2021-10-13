@@ -28,7 +28,7 @@ open class AddressManager {
     GKQuery.provideAPIKey(apiKey)
   }
 
-  open func validate(address: Address, result: @escaping Result<ShiftGeocoderPlace, NSError>.Callback) {
+  open func validate(address: Address, result: @escaping Result<AptoGeocoderPlace, NSError>.Callback) {
     self.geocode(address: address) { locations in
       switch locations {
       case .failure(let error):
@@ -39,8 +39,8 @@ open class AddressManager {
     }
   }
 
-  open func geocode(address: Address, result: @escaping Result<ShiftGeocoderPlace, NSError>.Callback) {
-    let query = ShiftGeocoderQuery()
+  open func geocode(address: Address, result: @escaping Result<AptoGeocoderPlace, NSError>.Callback) {
+    let query = AptoGeocoderQuery()
     guard let addressDescription = address.addressDescription() else {
       result(.failure(ServiceError(code: .invalidAddress)))
       return
@@ -55,7 +55,7 @@ open class AddressManager {
         result(Result.failure(error as NSError))
       }
       else {
-        guard let results = results as? [ShiftGeocoderPlace], !results.isEmpty else {
+        guard let results = results as? [AptoGeocoderPlace], !results.isEmpty else {
           result(.failure(ServiceError(code: .invalidAddress)))
           return
         }
@@ -186,7 +186,7 @@ open class AddressManager {
   let stateStorage = StateStorage()
 }
 
-open class ShiftGeocoderPlace: GKGeocoderPlace {
+open class AptoGeocoderPlace: GKGeocoderPlace {
   var types: [String]?
 
   override init(dictionary: [AnyHashable: Any]) {
@@ -212,7 +212,7 @@ open class ShiftGeocoderPlace: GKGeocoderPlace {
   }
 }
 
-open class ShiftGeocoderQuery: GKGeocoderQuery {
+open class AptoGeocoderQuery: GKGeocoderQuery {
   // swiftlint:disable:next implicitly_unwrapped_optional
   override open func handleQueryResponse(_ response: [AnyHashable: Any]!, error: Error!) {
     if error != nil {
@@ -236,9 +236,9 @@ open class ShiftGeocoderQuery: GKGeocoderQuery {
       return
     }
 
-    var places = [ShiftGeocoderPlace]()
+    var places = [AptoGeocoderPlace]()
     for result in results {
-      places.append(ShiftGeocoderPlace(dictionary: result))
+      places.append(AptoGeocoderPlace(dictionary: result))
     }
 
     DispatchQueue.main.async {

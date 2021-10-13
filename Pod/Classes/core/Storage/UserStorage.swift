@@ -11,16 +11,16 @@ import SwiftyJSON
 
 protocol UserStorageProtocol {
   func createUser(_ apiKey: String, userData: DataPointList, custodianUid: String?, metadata: String?,
-                  callback: @escaping Result<ShiftUser, NSError>.Callback)
+                  callback: @escaping Result<AptoUser, NSError>.Callback)
   func loginWith(_ apiKey: String,
                  verifications: [Verification],
-                 callback: @escaping Result<ShiftUser, NSError>.Callback)
+                 callback: @escaping Result<AptoUser, NSError>.Callback)
   func getUserData(_ apiKey: String, userToken: String, filterInvalidTokenResult: Bool,
-                   callback: @escaping Result<ShiftUser, NSError>.Callback)
+                   callback: @escaping Result<AptoUser, NSError>.Callback)
   func updateUserData(_ apiKey: String,
                       userToken: String,
                       userData: DataPointList,
-                      callback: @escaping Result<ShiftUser, NSError>.Callback)
+                      callback: @escaping Result<AptoUser, NSError>.Callback)
   func startPhoneVerification(_ apiKey: String,
                               phone: PhoneNumber,
                               callback: @escaping Result<Verification, NSError>.Callback)
@@ -75,7 +75,7 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
   }
 
   func createUser(_ apiKey: String, userData: DataPointList, custodianUid: String?, metadata: String?,
-                  callback: @escaping Result<ShiftUser, NSError>.Callback) {
+                  callback: @escaping Result<AptoUser, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.createUser)
     let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
     var data: [String: AnyObject] = ["data_points": userData.jsonSerialize() as AnyObject]
@@ -86,7 +86,7 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
       data["metadata"] = metadata as AnyObject
     }
     self.transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
-      callback(result.flatMap { json -> Result<ShiftUser, NSError> in
+      callback(result.flatMap { json -> Result<AptoUser, NSError> in
         guard let user = json.user else {
           return .failure(ServiceError(code: .jsonError))
         }
@@ -97,7 +97,7 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
 
   func loginWith(_ apiKey: String,
                  verifications: [Verification],
-                 callback: @escaping Result<ShiftUser, NSError>.Callback) {
+                 callback: @escaping Result<AptoUser, NSError>.Callback) {
     guard let firstVerification = verifications.first, let secondVerification = verifications.last else {
       callback(.failure(BackendError(code: .incorrectParameters, reason: nil)))
       return
@@ -113,7 +113,7 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
     ]
     let data: [String: AnyObject] = ["verifications": verificationsDictionary as AnyObject]
     self.transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
-      callback(result.flatMap { json -> Result<ShiftUser, NSError> in
+      callback(result.flatMap { json -> Result<AptoUser, NSError> in
         guard let user = json.user else {
           return .failure(ServiceError(code: .jsonError))
         }
@@ -123,7 +123,7 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
   }
 
   func getUserData(_ apiKey: String, userToken: String, filterInvalidTokenResult: Bool,
-                   callback: @escaping Result<ShiftUser, NSError>.Callback) {
+                   callback: @escaping Result<AptoUser, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.userInfo)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
@@ -133,7 +133,7 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
                        headers: nil,
                        acceptRedirectTo: nil,
                        filterInvalidTokenResult: filterInvalidTokenResult) { result in
-      callback(result.flatMap { json -> Result<ShiftUser, NSError> in
+      callback(result.flatMap { json -> Result<AptoUser, NSError> in
         guard let user = json.user else {
           return .failure(ServiceError(code: .jsonError))
         }
@@ -145,7 +145,7 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
   func updateUserData(_ apiKey: String,
                       userToken: String,
                       userData: DataPointList,
-                      callback: @escaping Result<ShiftUser, NSError>.Callback) {
+                      callback: @escaping Result<AptoUser, NSError>.Callback) {
     let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(), url: JSONRouter.updateUserInfo)
     let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                              userToken: userToken)
@@ -171,7 +171,7 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
     }
     let data: [String: AnyObject] = ["data_points": dataPointList.jsonSerialize() as AnyObject]
     self.transport.put(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
-      callback(result.flatMap { json -> Result<ShiftUser, NSError> in
+      callback(result.flatMap { json -> Result<AptoUser, NSError> in
         guard let user = json.user else {
           return .failure(ServiceError(code: .jsonError))
         }

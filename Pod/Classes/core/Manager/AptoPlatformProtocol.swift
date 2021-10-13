@@ -33,7 +33,7 @@ import Foundation
    */
   @objc optional func serverMaintenanceError()
  
-  /// This method is called when a network request fails because the current SDK version has been deprecated. To know the version of the SDK use `ShiftSDK.version`.
+  /// This method is called when a network request fails because the current SDK version has been deprecated. To know the version of the SDK use `AptoSDK.version`.
   @objc func sdkDeprecated()
 }
 
@@ -69,11 +69,11 @@ public protocol AptoPlatformProtocol {
   // User handling
   func createUser(userData: DataPointList, custodianUid: String?,
                   metadata: String?,
-                  callback: @escaping Result<ShiftUser, NSError>.Callback)
-  func loginUserWith(verifications: [Verification], callback: @escaping Result<ShiftUser, NSError>.Callback)
+                  callback: @escaping Result<AptoUser, NSError>.Callback)
+  func loginUserWith(verifications: [Verification], callback: @escaping Result<AptoUser, NSError>.Callback)
   func fetchCurrentUserInfo(forceRefresh: Bool, filterInvalidTokenResult: Bool,
-                            callback: @escaping Result<ShiftUser, NSError>.Callback)
-  func updateUserInfo(_ userData: DataPointList, callback: @escaping Result<ShiftUser, NSError>.Callback)
+                            callback: @escaping Result<AptoUser, NSError>.Callback)
+  func updateUserInfo(_ userData: DataPointList, callback: @escaping Result<AptoUser, NSError>.Callback)
   func logout()
   
   // Oauth handling
@@ -117,7 +117,9 @@ public protocol AptoPlatformProtocol {
                  initialFundingSourceId: String?, callback: @escaping Result<Card, NSError>.Callback)
   
   // Card handling
-  func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback)
+    @available(*, deprecated, message: "use fetchCards(pagination:callback:) instead.")
+    func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback)
+    
   func fetchCard(_ cardId: String, forceRefresh: Bool, retrieveBalances: Bool,
                  callback: @escaping Result<Card, NSError>.Callback)
   func activatePhysicalCard(_ cardId: String, code: String,
@@ -154,6 +156,8 @@ public protocol AptoPlatformProtocol {
   func updateNotificationPreferences(_ preferences: NotificationPreferences,
                                      callback: @escaping Result<NotificationPreferences, NSError>.Callback)
   
+    func fetchCards(pagination: PaginationQuery?, callback: @escaping (Result<PaginatedCardList, NSError>) -> Void)
+    
   // VoIP
   func fetchVoIPToken(cardId: String, actionSource: VoIPActionSource,
                       callback: @escaping Result<VoIPToken, NSError>.Callback)
@@ -199,12 +203,12 @@ public extension AptoPlatformProtocol {
   }
   
   func createUser(userData: DataPointList, custodianUid: String? = nil, metadata: String? = nil,
-                  callback: @escaping Result<ShiftUser, NSError>.Callback) {
+                  callback: @escaping Result<AptoUser, NSError>.Callback) {
     createUser(userData: userData, custodianUid: custodianUid, metadata: metadata, callback: callback)
   }
   
   func fetchCurrentUserInfo(forceRefresh: Bool = false, filterInvalidTokenResult: Bool = false,
-                            callback: @escaping Result<ShiftUser, NSError>.Callback) {
+                            callback: @escaping Result<AptoUser, NSError>.Callback) {
     fetchCurrentUserInfo(forceRefresh: forceRefresh, filterInvalidTokenResult: filterInvalidTokenResult,
                          callback: callback)
   }

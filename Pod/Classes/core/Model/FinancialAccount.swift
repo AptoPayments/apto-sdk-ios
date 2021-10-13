@@ -212,6 +212,7 @@ public enum OrderedStatus: String, Codable {
   public var fundingSource: FundingSource?
   public let kyc: KYCState?
   public let orderedStatus: OrderedStatus
+  public let issuedAt: Date?
   public let features: CardFeatures?
   public let cardStyle: CardStyle?
   public let isInWaitList: Bool?
@@ -232,6 +233,7 @@ public enum OrderedStatus: String, Codable {
               nativeTotalBalance: Amount?,
               kyc: KYCState?,
               orderedStatus: OrderedStatus,
+              issuedAt: Date?,
               features: CardFeatures? = nil,
               panToken: String? = nil,
               cvvToken: String? = nil,
@@ -253,6 +255,7 @@ public enum OrderedStatus: String, Codable {
     self.cvvToken = cvvToken
     self.cardBrand = cardBrand
     self.orderedStatus = orderedStatus
+    self.issuedAt = issuedAt
     self.features = features
     self.cardStyle = cardStyle
     self.isInWaitList = isInWaitList
@@ -284,6 +287,7 @@ public enum OrderedStatus: String, Codable {
     self.nativeTotalBalance = try container.decodeIfPresent(Amount.self, forKey: .nativeTotalBalance)
     self.kyc = try container.decodeIfPresent(KYCState.self, forKey: .kyc)
     self.orderedStatus = try container.decode(OrderedStatus.self, forKey: .orderedStatus)
+    self.issuedAt = try container.decode(Date.self, forKey: .issuedAt)
     self.features = try container.decodeIfPresent(CardFeatures.self, forKey: .features)
     self.panToken = try container.decodeIfPresent(String.self, forKey: .panToken)
     self.cvvToken = try container.decodeIfPresent(String.self, forKey: .cvvToken)
@@ -309,6 +313,7 @@ public enum OrderedStatus: String, Codable {
     try container.encode(nativeTotalBalance, forKey: .nativeTotalBalance)
     try container.encode(kyc, forKey: .kyc)
     try container.encode(orderedStatus, forKey: .orderedStatus)
+    try container.encode(issuedAt, forKey: .issuedAt)
     try container.encode(features, forKey: .features)
     try container.encode(panToken, forKey: .panToken)
     try container.encode(cvvToken, forKey: .cvvToken)
@@ -333,6 +338,7 @@ public enum OrderedStatus: String, Codable {
     case cvvToken
     case cardBrand
     case orderedStatus
+    case issuedAt
     case features
     case cardStyle
     case fundingSource

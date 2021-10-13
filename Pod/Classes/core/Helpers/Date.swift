@@ -84,4 +84,59 @@ extension Date {
     guard let startOfMonth = self.startOfMonth else { return nil }
     return Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth)
   }
+  
+  func nextDay(in calendar: Calendar) -> Date? {
+      return calendar.date(byAdding: .day, value: 1, to: self)
+  }
+  
+  public func dateBySubstractingDays(days: Int) -> Date? {
+    return Calendar.current.date(byAdding: .day, value: -1 * days , to: self)
+  }
+
+  public func weekdaysBetween(endDate: Date) -> Int {
+    var calendar = Calendar(identifier: .gregorian)
+    if let utcTimeZone = TimeZone(abbreviation: "UTC") {
+      calendar.timeZone = utcTimeZone
+    }
+    var weekDays = 0
+    var date = self
+    if calendar.isDate(date, inSameDayAs: endDate) {
+      return 0
+    }
+    date = calendar.startOfDay(for: (date))
+    while date < endDate {
+        if !calendar.isDateInWeekend(date) {
+            weekDays += 1
+        }
+
+        guard let nextDay = date.nextDay(in: calendar) else {
+            fatalError("Failed to instantiate a next day")
+        }
+
+        date = nextDay
+    }
+
+    return weekDays - 1
+  }
+  
+  public func addBusinessDays(days: Int) -> Date {
+    let calendar = Calendar.current
+    var dayPos = 0
+    var currentDate = self
+    while dayPos < days {
+      guard let nextDate = currentDate.nextDay(in: calendar) else {
+          fatalError("Failed to instantiate a next day")
+      }
+      if !calendar.isDateInWeekend(nextDate) {
+        dayPos += 1
+      }
+      currentDate = nextDate
+    }
+    return currentDate
+  }
+
+  public static func currentDate() -> Date {
+    return Date()
+  }
+  
 }

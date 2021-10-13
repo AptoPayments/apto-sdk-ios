@@ -44,19 +44,19 @@ extension DateFormatter {
 }
 
 extension Date {
-  func format(dateFormat: String) -> String {
+  public func format(dateFormat: String) -> String {
     let formatter = DateFormatter.customDateFormatter(dateFormat: dateFormat)
     let retVal = formatter.string(from: self)
     return retVal
   }
 
-  func formatDateOnly() -> String {
+  public func formatDateOnly() -> String {
     let formatter = DateFormatter.dateOnlyFormatter()
     let retVal = formatter.string(from: self)
     return retVal
   }
 
-  func formatDateAndTime() -> String {
+  public func formatDateAndTime() -> String {
     let formatter = DateFormatter.dateTimeFormatter()
     let retVal = formatter.string(from: self)
     return retVal

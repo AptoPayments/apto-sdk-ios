@@ -6,7 +6,7 @@
 //
 //
 
-public final class ShiftSDK {
+public final class AptoSDK {
   private static let internalVersion = "0.0.0"
 
   private static var _version: String?
@@ -14,7 +14,7 @@ public final class ShiftSDK {
     if let loadedVersion = _version {
       return loadedVersion
     }
-    let bundle = Bundle(for: ShiftSDK.self)
+    let bundle = Bundle(for: AptoSDK.self)
     if let bundleVersion = bundle.infoDictionary?["CFBundleShortVersionString"] as? String {
       _version = bundleVersion
       return bundleVersion

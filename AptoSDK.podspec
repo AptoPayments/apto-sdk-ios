@@ -8,15 +8,15 @@
 
 Pod::Spec.new do |s|
   s.name             = "AptoSDK"
-  s.version          = "3.6.0"
+  s.version          = "3.7.0"
   s.summary          = "The Apto core platform iOS SDK."
   s.description      = <<-DESC
                         Apto iOS Core SDK
                        DESC
-  s.homepage         = "https://github.com/AptoPayments/apto-sdk-ios-private.git"
+  s.homepage         = "https://github.com/AptoPayments/apto-sdk-ios.git"
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.authors          = { "Ivan Oliver" => "ivan@aptopayments.com", "Takeichi Kanzaki" => "takeichi@aptopayments.com" }
-  s.source           = { :git => "https://github.com/AptoPayments/apto-sdk-ios-private.git", :tag => "3.6.0" }
+  s.authors          = { "Apto Payments" => "mobile@aptopayments.com" }
+  s.source           = { :git => "https://github.com/AptoPayments/apto-sdk-ios.git", :tag => "3.7.0" }
 
   s.platform = :ios
   s.ios.deployment_target = '10.0'

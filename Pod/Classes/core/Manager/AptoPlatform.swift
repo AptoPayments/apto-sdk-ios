@@ -34,7 +34,7 @@ import Foundation
   /// Check if the SDK has been initialised, by default this value is `false`
   public private(set) var initialized = false
   // swiftlint:enable implicitly_unwrapped_optional
-  private var internalCurrentUser: ShiftUser?
+  private var internalCurrentUser: AptoUser?
 
   // MARK: Delegate
 
@@ -220,7 +220,7 @@ import Foundation
   ///   - custodianUid: custodian uid. Optional parameter
   ///   - callback: callback with created user or optional error
   public func createUser(userData: DataPointList, custodianUid: String? = nil, metadata: String? = nil,
-                         callback: @escaping Result<ShiftUser, NSError>.Callback) {
+                         callback: @escaping Result<AptoUser, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
@@ -256,8 +256,8 @@ import Foundation
   /// Once the primary and secondary credentials have been verified, you can use the following SDK method to obtain a user token for an existing user
   /// - Parameters:
   ///   - verifications: verification methods to authenticate user
-  ///   - callback: callback with the `ShiftUser` entity or optional error
-  public func loginUserWith(verifications: [Verification], callback: @escaping Result<ShiftUser, NSError>.Callback) {
+  ///   - callback: callback with the `AptoUser` entity or optional error
+  public func loginUserWith(verifications: [Verification], callback: @escaping Result<AptoUser, NSError>.Callback) {
     guard let apiKey = self.apiKey else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
@@ -443,12 +443,12 @@ import Foundation
     configurationStorage.cardProducts(apiKey, userToken: accessToken.token, callback: callback)
   }
 
-  /// Retrieve current `ShiftUser`
+  /// Retrieve current `AptoUser`
   /// - Parameters:
   ///   - forceRefresh: avoid cache results
-  ///   - callback: callback with `ShiftUser` entity or optional error
+  ///   - callback: callback with `AptoUser` entity or optional error
   public func fetchCurrentUserInfo(forceRefresh: Bool, filterInvalidTokenResult: Bool,
-                                   callback: @escaping Result<ShiftUser, NSError>.Callback) {
+                                   callback: @escaping Result<AptoUser, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
       return
@@ -480,8 +480,8 @@ import Foundation
   /// Update user information with new user data
   /// - Parameters:
   ///   - userData: `DataPointList` entity
-  ///   - callback: callback with the updated `ShiftUser` entity or optional error
-  public func updateUserInfo(_ userData: DataPointList, callback: @escaping Result<ShiftUser, NSError>.Callback) {
+  ///   - callback: callback with the updated `AptoUser` entity or optional error
+  public func updateUserInfo(_ userData: DataPointList, callback: @escaping Result<AptoUser, NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {
       let error = BackendError(code: .invalidSession, reason: nil)
       callback(.failure(error))
@@ -641,23 +641,41 @@ import Foundation
         financialAccountsStorage.getOrderPhysicalCardConfig(apiKey, userToken: accessToken.token, accountId: cardId, completion: callback)
     }
     
-  /// Retrieve a list of issued cards for current user
-  /// - Parameters:
-  ///   - page: index page
-  ///   - rows: number of cards per page
-  ///   - callback: callback block with an array of ``Card`` or an optional ``Error``
-  public func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback) {
-    next(financialAccountsOfType: .card, page: page, rows: rows) { result in
-      switch result {
-      case .failure(let error):
-        callback(.failure(error))
-      case .success(let financialAccounts):
-        let cards = financialAccounts.compactMap { $0 as? Card }
-        callback(.success(cards))
-      }
+    /// Retrieve a list of issued cards for current user
+    /// - Parameters:
+    ///   - page: index page
+    ///   - rows: number of cards per page
+    ///   - callback: callback block with an array of ``Card`` or an optional ``Error``
+    @available(*, deprecated, message: "use fetchCards(pagination:callback:) instead.")
+    public func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback) {
+        next(financialAccountsOfType: .card, page: page, rows: rows) { result in
+            switch result {
+            case .failure(let error):
+                callback(.failure(error))
+            case .success(let financialAccounts):
+                let cards = financialAccounts.compactMap { $0 as? Card }
+                callback(.success(cards))
+            }
+        }
     }
-  }
 
+    public func fetchCards(pagination: PaginationQuery? = nil, callback: @escaping (Result<PaginatedCardList, NSError>) -> Void) {
+        guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+          callback(.failure(BackendError(code: .invalidSession)))
+          return
+        }
+        financialAccountsStorage.getUserCardsList(apiKey,
+                                                  userToken: accessToken.token,
+                                                  pagination: pagination) { result in
+            switch result {
+            case .success(let cards):
+                callback(.success(cards))
+            case .failure(let error):
+                callback(.failure(error))
+            }
+        }
+    }
+    
   private func next(financialAccountsOfType: FinancialAccountType, page: Int, rows: Int,
                     callback: @escaping Result<[FinancialAccount], NSError>.Callback) {
     guard let apiKey = self.apiKey, let accessToken = currentToken() else {

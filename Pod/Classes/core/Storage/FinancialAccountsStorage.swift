@@ -8,6 +8,9 @@
 
 import Foundation
 
+public typealias PaginatedCardList = ListWithPagination<Card>
+public typealias CardsListResult = ((Result<PaginatedCardList, NSError>) -> Void)
+
 public struct TransactionListFilters {
   let page: Int?
   let rows: Int?
@@ -140,6 +143,8 @@ protocol FinancialAccountsStorageProtocol {
     
     func orderPhysicalCard(_ apiKey: String, userToken: String, accountId: String, completion: @escaping (Result<Card, NSError>) -> Void)
     func getOrderPhysicalCardConfig(_ apiKey: String, userToken: String, accountId: String, completion: @escaping (Result<PhysicalCardConfig, NSError>) -> Void)
+    
+    func getUserCardsList(_ apiKey: String, userToken: String, pagination: PaginationQuery?, completion: @escaping CardsListResult)
 }
 
 extension FinancialAccountsStorageProtocol {
@@ -716,5 +721,46 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol { // swiftlint:
                 completion(.failure(error))
             }
         }
+    }
+    
+    func getUserCardsList(_ apiKey: String, userToken: String, pagination: PaginationQuery?, completion: @escaping CardsListResult) {
+        let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
+                             url: JSONRouter.financialAccounts,
+                             urlParameters: paginationQueryStringParameters(pagination))
+        let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
+        self.transport.get(url, authorization: auth, parameters: nil, headers: nil,
+                           acceptRedirectTo: nil,
+                           filterInvalidTokenResult: true) { result in
+            switch result {
+            case .success(let json):
+                do {
+                    try completion(.success(ListCardMapper.map(json)))
+                } catch {
+                    completion(.failure(ServiceError(code: .jsonError)))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    // MARK: Private methods
+    private func paginationQueryStringParameters(_ pagination: PaginationQuery?) -> [String: String]? {
+        if pagination?.limit == nil &&
+            pagination?.startingAfter == nil &&
+            pagination?.endingBefore == nil {
+            return nil
+        }
+        var params = [String:String]()
+        if  let limit = pagination?.limit {
+            params["limit"] = String(limit)
+        }
+        if let startingAfter = pagination?.startingAfter {
+            params["starting_after"] = startingAfter
+        }
+        if  let endingBefore = pagination?.endingBefore {
+            params["ending_before"] = endingBefore
+        }
+        return params
     }
 }

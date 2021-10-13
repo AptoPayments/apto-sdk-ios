@@ -454,7 +454,7 @@ extension JSON {
     return self.cardApplication
   }
 
-  var user: ShiftUser? {
+  var user: AptoUser? {
     guard let userId = self["user_id"].string else {
       ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                                             reason: "Can't parse user \(self)"))
@@ -474,7 +474,7 @@ extension JSON {
     let accessToken = self.accessToken
     let metadata = self["metadata"].string
 
-    let retVal = ShiftUser(userId: userId,
+    let retVal = AptoUser(userId: userId,
                            metadata: metadata,
                            accessToken: accessToken)
     retVal.userData = dataPoints
@@ -699,6 +699,10 @@ extension JSON {
     if let rawOrderedStatus = self["ordered_status"].string {
       orderedStatus = OrderedStatus(rawValue: rawOrderedStatus) ?? .notApplicable
     }
+    var issuedAt: Date? = nil
+    if let rawIssuedAt = self["issued_at"].string {
+      issuedAt = Date.timeFromISO8601(rawIssuedAt)
+    }
     let cardFeatures = self["features"].cardFeatures
     let cardStyle = self["card_style"].cardStyle
     let firstName = self["cardholder_first_name"].string ?? ""
@@ -721,7 +725,8 @@ extension JSON {
                 totalBalance: totalBalance,
                 nativeTotalBalance: nativeTotalBalance,
                 kyc: self.kyc,
-                orderedStatus: orderedStatus,
+                orderedStatus: orderedStatus, 
+                issuedAt: issuedAt,
                 features: cardFeatures,
                 cardStyle: cardStyle,
                 verified: verified,

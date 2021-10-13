@@ -3,7 +3,7 @@
 //  AptoSDK
 //
 //  Created by Ivan Oliver Martínez on 18/01/16.
-//  Copyright © 2018 Shift. All rights reserved.
+//  Copyright © 2018 Apto. All rights reserved.
 //
 
 import Foundation

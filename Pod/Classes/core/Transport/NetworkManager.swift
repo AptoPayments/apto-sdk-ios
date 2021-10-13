@@ -111,7 +111,7 @@ final class NetworkManager: NetworkManagerProtocol {
   private func completeHeaders(_ headers: [String: String]) -> [String: String] {
     var retVal = headers
     retVal["X-Api-Version"] = "1.0"
-    retVal["X-SDK-Version"] = ShiftSDK.version
+    retVal["X-SDK-Version"] = AptoSDK.version
     retVal["X-Device"] = "iOS"
     retVal["X-Device-Version"] = "\(UIDevice.current.platform) - \(UIDevice.current.systemVersion)"
     return retVal
