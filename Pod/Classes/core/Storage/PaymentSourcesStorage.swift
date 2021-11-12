@@ -64,6 +64,7 @@ struct PaymentSourcesStorage: PaymentSourcesStorageProtocol {
   func deletePaymentSource(_ apiKey: String, userToken: String, paymentSourceId: String, callback: @escaping Result<Void, NSError>.Callback) {
    let url = URLWrapper(baseUrl: transport.environment.baseUrl(),
                         url: JSONRouter.paymentSources,
+                        urlTrailing: paymentSourceId,
                         urlParameters: nil)
    let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey, userToken: userToken)
     transport.delete(url, authorization: auth, parameters: ["payment_source_id": paymentSourceId as AnyObject], filterInvalidTokenResult: true) { result in

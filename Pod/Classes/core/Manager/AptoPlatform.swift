@@ -62,6 +62,7 @@ import Foundation
   private var paymentSourcesStorage: PaymentSourcesStorageProtocol!
     private var agreementStorage: AgreementStorageProtocol?
     private var achAccountStorage: ACHAccountStorageProtocol?
+    private var p2pTransferStorage: P2PTransferProtocol?
     private var applePayIAPStorage: ApplePayIAPStorageProtocol?
   // swiftlint:enable implicitly_unwrapped_optional
   private lazy var featuresStorage = serviceLocator.storageLocator.featuresStorage()
@@ -97,6 +98,7 @@ import Foundation
   @objc public func initializeWithApiKey(_ apiKey: String,
                                          environment: AptoPlatformEnvironment,
                                          setupCertPinning: Bool) {
+      guard apiKey != self.apiKey, environment != self.environment else { return }
     let certPinningConfig: [String: [String: AnyObject]]? = nil
     self.apiKey = apiKey
     self.environment = environment
@@ -128,6 +130,7 @@ import Foundation
     self.paymentSourcesStorage = storageLocator.paymentSourcesStorage(transport: transport)
     self.agreementStorage = storageLocator.achAccountAgreementStorage(transport: transport)
     self.achAccountStorage = storageLocator.achAccountStorage(transport: transport)
+    self.p2pTransferStorage = storageLocator.p2pTransferStorage(transport: transport)
     self.applePayIAPStorage = storageLocator.applePayIAPStorage(transport: transport)
     // Notify the delegate that the manager has already been initialized
     self.initialized = true
@@ -362,6 +365,38 @@ import Foundation
                                              })
     }
     
+    /// Retrieves a cardholder's data to do a P2P transfer in case it exist, otherwise returns a not found error
+    /// - Parameters:
+    ///   - phone, `PhoneNumber` of the user you want to find
+    ///   - email, of the user you want to find
+    ///   - callback: callback with `P2PTransferRecipientResult` or optional error
+    public func p2pFindRecipient(phone: PhoneNumber?,
+                                 email: String?,
+                                 callback: @escaping (P2PTransferRecipientResult) -> Void) {
+        guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+            let error = BackendError(code: .invalidSession, reason: nil)
+            callback(.failure(error))
+            return
+        }
+        var phoneCode: String?
+        if let code = phone?.countryCode.value {
+            phoneCode = String(code)
+        }
+        p2pTransferStorage?.getRecipient(apiKey,
+                                         userToken: accessToken.token,
+                                         phoneCode: phoneCode,
+                                         phoneNumber: phone?.phoneNumber.value,
+                                         email: email,
+                                         completion: { result in
+                                            switch result {
+                                            case .failure(let error):
+                                                callback(.failure(error))
+                                            case .success(let recipientResult):
+                                                callback(.success(recipientResult))
+                                            }
+                                         })
+    }
+
     /// Starts the In App Provisioning process needed to add the digital card to Apple Wallet.
     ///
     /// Use the responsePayload to validate the in app provisioning process as described in the Apple
@@ -399,7 +434,31 @@ import Foundation
                                                 }
                                               })
     }
-    
+
+    /// Makes a money transfer to a specific user
+    /// - Parameters:
+    ///   - transferRequest, `P2PTransferRequest` the object that abstracts the request
+    ///   - callback: callback with `P2PTransferResult` or optional error
+    public func p2pMakeTransfer(transferRequest: P2PTransferRequest,
+                                callback: @escaping (P2PTransferResult) -> Void) {
+        guard let apiKey = self.apiKey, let accessToken = currentToken() else {
+            let error = BackendError(code: .invalidSession, reason: nil)
+            callback(.failure(error))
+            return
+        }
+        p2pTransferStorage?.transfer(apiKey,
+                                     userToken: accessToken.token,
+                                     transferRequest: transferRequest,
+                                     completion: { result in
+                                        switch result {
+                                        case .failure(let error):
+                                            callback(.failure(error))
+                                        case .success(let response):
+                                            callback(.success(response))
+                                        }
+                                     })
+    }
+
   /// Retrieve `UIConfig` entity from cache
   /// - Returns: returns nil if the configuration is not available yet
   public func fetchUIConfig() -> UIConfig? {
@@ -914,16 +973,6 @@ import Foundation
                                            cardProductId: cardProductId, callback: callback)
   }
 
-  public func nextCardApplications(page: Int, rows: Int,
-                                   callback: @escaping Result<[CardApplication], NSError>.Callback) {
-    guard let projectKey = self.apiKey, let accessToken = currentToken() else {
-      callback(.failure(BackendError(code: .invalidSession)))
-      return
-    }
-    cardApplicationsStorage.nextApplications(projectKey, userToken: accessToken.token, page: page, rows: rows,
-                                             callback: callback)
-  }
-
   public func applyToCard(cardProduct: CardProduct, callback: @escaping Result<CardApplication, NSError>.Callback) {
     guard let projectKey = self.apiKey, let accessToken = currentToken() else {
       callback(.failure(BackendError(code: .invalidSession)))
@@ -987,18 +1036,6 @@ import Foundation
                                           design: design,
                                           callback: callback)
     }
-
-    @available(*, deprecated, message: "Please use issueCard with applicationId")
-  public func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,
-                        initialFundingSourceId: String? = nil, callback: @escaping Result<Card, NSError>.Callback) {
-    guard let apiKey = self.apiKey, let accessToken = currentToken() else {
-      callback(.failure(BackendError(code: .invalidSession)))
-      return
-    }
-    financialAccountsStorage.issueCard(apiKey, userToken: accessToken.token, cardProduct: cardProduct,
-                                       custodian: custodian, additionalFields: additionalFields,
-                                       initialFundingSourceId: initialFundingSourceId, callback: callback)
-  }
 
   public func fetchMonthlySpending(cardId: String, month: Int, year: Int,
                                    callback: @escaping Result<MonthlySpending, NSError>.Callback) {

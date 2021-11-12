@@ -7,11 +7,6 @@
 //
 
 protocol CardApplicationsStorageProtocol {
-  func nextApplications(_ apiKey: String,
-                        userToken: String,
-                        page: Int,
-                        rows: Int,
-                        callback: @escaping Result<[CardApplication], NSError>.Callback)
   func createApplication(_ apiKey: String,
                          userToken: String,
                          cardProduct: CardProduct,
@@ -48,14 +43,6 @@ class CardApplicationsStorage: CardApplicationsStorageProtocol {
 
   init(transport: JSONTransport) {
     self.transport = transport
-  }
-
-  func nextApplications(_ apiKey: String,
-                        userToken: String,
-                        page: Int,
-                        rows: Int,
-                        callback: @escaping Result<[CardApplication], NSError>.Callback) {
-    // TODO: Pending server side implementation
   }
 
   func createApplication(_ apiKey: String,

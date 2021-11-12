@@ -100,7 +100,6 @@ public protocol AptoPlatformProtocol {
   func completeVerification(_ verification: Verification, callback: @escaping Result<Verification, NSError>.Callback)
   
   // Card application handling
-  func nextCardApplications(page: Int, rows: Int, callback: @escaping Result<[CardApplication], NSError>.Callback)
   func applyToCard(cardProduct: CardProduct, callback: @escaping Result<CardApplication, NSError>.Callback)
   func fetchCardApplicationStatus(_ applicationId: String,
                                   callback: @escaping Result<CardApplication, NSError>.Callback)
@@ -113,9 +112,7 @@ public protocol AptoPlatformProtocol {
                    metadata: String?,
                    design: IssueCardDesign?,
                    callback: @escaping Result<Card, NSError>.Callback)
-  func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]?,
-                 initialFundingSourceId: String?, callback: @escaping Result<Card, NSError>.Callback)
-  
+
   // Card handling
     @available(*, deprecated, message: "use fetchCards(pagination:callback:) instead.")
     func fetchCards(page: Int, rows: Int, callback: @escaping Result<[Card], NSError>.Callback)
@@ -188,6 +185,14 @@ public protocol AptoPlatformProtocol {
   // Miscelaneous
   func runPendingNetworkRequests()
 
+    // P2P
+    func p2pFindRecipient(phone: PhoneNumber?,
+                          email: String?,
+                          callback: @escaping (P2PTransferRecipientResult) -> Void)
+    
+    func p2pMakeTransfer(transferRequest: P2PTransferRequest,
+                         callback: @escaping (P2PTransferResult) -> Void)
+    
   // MARK: Deprecated
 }
 
@@ -211,12 +216,6 @@ public extension AptoPlatformProtocol {
                             callback: @escaping Result<AptoUser, NSError>.Callback) {
     fetchCurrentUserInfo(forceRefresh: forceRefresh, filterInvalidTokenResult: filterInvalidTokenResult,
                          callback: callback)
-  }
-  
-  func issueCard(cardProduct: CardProduct, custodian: Custodian?, additionalFields: [String: AnyObject]? = nil,
-                 initialFundingSourceId: String? = nil, callback: @escaping Result<Card, NSError>.Callback) {
-    issueCard(cardProduct: cardProduct, custodian: custodian, additionalFields: additionalFields,
-              initialFundingSourceId: initialFundingSourceId, callback: callback)
   }
   
   func fetchCard(_ cardId: String, forceRefresh: Bool = true, retrieveBalances: Bool = false,

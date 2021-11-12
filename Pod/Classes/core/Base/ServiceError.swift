@@ -19,6 +19,7 @@ public final class ServiceError: NSError {
     case wrongSessionState
     case invalidAddress
     case incompleteApplicationData
+    case invalidRequestData
     case aborted
 
     var descriptionKey: String {
@@ -30,6 +31,7 @@ public final class ServiceError: NSError {
       case .invalidAddress:             return "error.service.invalidAddress"
       case .incompleteApplicationData:  return "error.service.incompleteApplicationData"
       case .aborted:                    return "error.service.aborted"
+      case .invalidRequestData:         return "error.service.invalidRequestData"
       }
     }
   }

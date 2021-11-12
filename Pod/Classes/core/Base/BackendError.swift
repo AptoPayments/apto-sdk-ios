@@ -84,7 +84,9 @@ open class BackendError: NSError {
     case invalidExpirationDate = 200061
     case invalidPostalCode = 200062
     case geographyNotSupported = 200063
-
+    case recipientNotFound = 200116
+    case cannotDeletePreferredPaymentSource = 200070
+    
     var descriptionKey: String {
       switch self {
       case .undefinedError: return "error.transport.undefined"
@@ -160,6 +162,8 @@ open class BackendError: NSError {
       case .invalidExpirationDate: return "load_funds.add_card.error.expiration"
       case .invalidPostalCode: return "load_funds.add_card.error.postal_code"
       case .geographyNotSupported: return "load_funds.add_card.error.address"
+      case .recipientNotFound: return "p2p_transfer.search_recipient.not_found"
+      case .cannotDeletePreferredPaymentSource: return "load_funds.remove_card.error.preferred"
       }
     }
   }

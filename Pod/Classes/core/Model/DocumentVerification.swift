@@ -226,4 +226,16 @@ open class DocumentVerificationResult: NSObject {
                                       faceSimilarityRatio: faceSimilarityRatio,
                                       userData: userData?.copyWithZone(zone) as? DataPointList)
   }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        if let obj = object as? DocumentVerificationResult {
+            return obj.faceComparisonResult == faceComparisonResult &&
+            obj.docAuthenticity == docAuthenticity &&
+            obj.docCompletionStatus == docCompletionStatus &&
+            obj.faceSimilarityRatio == faceSimilarityRatio
+        } else {
+            return false
+        }
+    }
+
 }

@@ -13,7 +13,7 @@ import Bond
 private var customCurrencySymbols = ["MXN": "MXN"]
 private var currencySymbols: [String: String] = [:]
 
-@objc open class Amount: NSObject, Codable {
+public class Amount: Codable, Equatable {
   open var amount: Observable<Double?> = Observable(0)
   open var currency: Observable<String?> = Observable("USD")
   open var currencySymbol: String? {
@@ -90,7 +90,7 @@ private var currencySymbols: [String: String] = [:]
     return "\(formattedValue) \(currencySymbol)".trimmingCharacters(in: CharacterSet.whitespaces)
   }
 
-  override public init() {
+  public init() {
     self.amount.send(nil)
     self.currency.send(nil)
   }
@@ -139,6 +139,10 @@ private var currencySymbols: [String: String] = [:]
     case amount
     case currency
   }
+    
+    public static func == (lhs: Amount, rhs: Amount) -> Bool {
+        lhs.amount.value == rhs.amount.value && lhs.currency.value == rhs.currency.value
+    }
 }
 
 public struct Country: Hashable, Codable {
@@ -170,7 +174,8 @@ extension Country {
   init(isoCode: String) {
     let currentLocale = NSLocale.current as NSLocale
     guard let name = currentLocale.localizedString(forCountryCode: isoCode) else {
-      fatalError("Wrong country code: \(isoCode)")
+      self.init(isoCode: "", name: "")
+      return
     }
     self.init(isoCode: isoCode, name: name)
   }

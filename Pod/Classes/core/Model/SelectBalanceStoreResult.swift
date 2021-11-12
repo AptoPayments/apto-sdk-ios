@@ -32,7 +32,7 @@ public enum SelectBalanceStoreResultType: String {
   case invalid
 }
 
-public struct SelectBalanceStoreResult {
+public struct SelectBalanceStoreResult: Equatable {
   public let result: SelectBalanceStoreResultType
   public let errorCode: Int?
   private let errorMessageKeys: [String]?

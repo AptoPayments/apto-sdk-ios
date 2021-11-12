@@ -78,6 +78,18 @@ public protocol CountryRestrictedDataPoint {
     }
     return retVal
   }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        if let obj = object as? DataPoint {
+            return obj.type == type &&
+            obj.verification == verification &&
+            obj.verified == verified &&
+            obj.notSpecified == notSpecified
+        } else {
+            return false
+        }
+    }
+
 }
 
 @objc open class PersonalName: DataPoint {
@@ -126,6 +138,12 @@ public protocol CountryRestrictedDataPoint {
     return retVal
   }
 }
+
+public typealias AptoPhoneNumber = PhoneNumber
+public typealias AptoEmail = Email
+public typealias AptoBirthDate = BirthDate
+public typealias AptoDocument = IdDocument
+public typealias AptoAddress = Address
 
 @objc open class PhoneNumber: DataPoint, CountryRestrictedDataPoint, Codable {
   private let disposeBag = DisposeBag()

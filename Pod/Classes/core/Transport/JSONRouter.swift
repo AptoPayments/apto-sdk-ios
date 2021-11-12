@@ -60,6 +60,9 @@ public enum JSONRouter {
     case recordAgreementAction
     case orderPhysicalCard
     case orderPhysicalCardConfig
+    case p2pRecipient
+    case p2pInvite
+    case p2pTransfer
     case applePayInAppProvisioning
     
   var URLString: String {
@@ -114,6 +117,9 @@ public enum JSONRouter {
     case .recordAgreementAction: return "/agreements"
     case .orderPhysicalCard: return "/user/accounts/:account_id/order_physical"
     case .orderPhysicalCardConfig: return "/user/accounts/:account_id/order_physical/config"
+    case .p2pRecipient: return "/p2p/recipient"
+    case .p2pInvite: return "/p2p/invite"
+    case .p2pTransfer: return "/p2p/transfer"
     case .applePayInAppProvisioning: return "/user/accounts/:account_id/provision/applepay/"
     }
   }

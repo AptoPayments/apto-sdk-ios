@@ -70,6 +70,7 @@ public struct CardFeatures: Codable {
   public let passCode: PassCode?
     public let achAccount: ACHAccountFeature?
     public let inAppProvisioning: InAppProvisioning?
+    public let p2pTransfer: P2PTransferFeature?
 }
 
 public enum FeatureStatus: String, Equatable, Codable {
@@ -119,9 +120,10 @@ extension JSON {
     let passCode = self["passcode"].passCode
     let achAccount = self["ach"].achAccount
     let inAppProvisioning = self["in_app_provisioning"].inAppProvisioning
+    let p2pTransfer = self["supports_p2p_transfers"].p2pTransfer
     return CardFeatures(setPin: setPin, getPin: getPin, allowedBalanceTypes: allowedBalanceTypes,
-                        activation: activation, ivrSupport: ivrSupport, funding: funding, passCode: passCode,
-                        achAccount: achAccount, inAppProvisioning: inAppProvisioning)
+                        activation: activation, ivrSupport: ivrSupport, funding: funding,
+                        passCode: passCode, achAccount: achAccount, inAppProvisioning: inAppProvisioning, p2pTransfer: p2pTransfer)
   }
   
   var funding: Funding? {
@@ -239,6 +241,19 @@ extension JSON {
         return Disclaimer(agreementKeys: agreementKeys, content: content)
     }
     
+    
+    var p2pTransfer: P2PTransferFeature? {
+        guard let rawStatus = self["status"].string,
+              let status = FeatureStatus(rawValue: rawStatus)
+        else {
+            ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
+                                                                reason: "Can't parse in app provisionig \(self)"))
+            return nil
+        }
+        return P2PTransferFeature(status: status)
+    }
+
+
     var inAppProvisioning: InAppProvisioning? {
         guard let rawStatus = self["status"].string,
               let status = FeatureStatus(rawValue: rawStatus)

@@ -14,7 +14,7 @@ public enum CardApplicationStatus: String {
   case rejected
 }
 
-public struct CardApplication: WorkflowObject {
+public struct CardApplication: WorkflowObject, Equatable {
   public let id: String
   public let status: CardApplicationStatus
   public let applicationDate: Date

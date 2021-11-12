@@ -39,6 +39,19 @@ open class Verification: NSObject {
     return Verification(verificationId: verificationId, verificationType: verificationType, status: status,
                         secret: secret, secondaryCredential: secondaryCredential)
   }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        if let obj = object as? Verification {
+            return obj.verificationId == verificationId &&
+            obj.secret == secret &&
+            obj.status == status &&
+            obj.verificationType == verificationType &&
+            obj.secondaryCredential == secondaryCredential &&
+            obj.documentVerificationResult == documentVerificationResult
+        } else {
+            return false
+        }
+    }
 }
 
 // swiftlint:disable:next operator_whitespace

@@ -69,6 +69,18 @@ public class WorkflowAction: NSObject {
     self.actionType = actionType
     self.configuration = configuration
   }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        if let obj = object as? WorkflowAction {
+            return obj.actionId == actionId &&
+            obj.name == name &&
+            obj.order == order &&
+            obj.status == status &&
+            obj.actionType == actionType
+        } else {
+            return false
+        }
+    }
 }
 
 public struct CollectUserDataActionConfiguration: WorkflowActionConfiguration {

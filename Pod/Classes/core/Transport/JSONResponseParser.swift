@@ -419,8 +419,8 @@ extension JSON {
 
   var cardApplication: CardApplication? {
     guard let id = self["id"].string, let rawStatus = self["status"].string,
-          let status = CardApplicationStatus(rawValue: rawStatus), let createTime = self["create_time"].double,
-          let applicationDate = Date.timeFromJSONAPIFormat(createTime),
+          let status = CardApplicationStatus(rawValue: rawStatus),
+          let applicationDate = Date.timeFromJSONAPIFormat(self["create_time"].doubleValue),
           let nextAction = self["next_action"].workflowAction,
           let workflowObjectId = self["workflow_object_id"].string else {
       ErrorLogger.defaultInstance().log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
@@ -699,6 +699,10 @@ extension JSON {
     if let rawOrderedStatus = self["ordered_status"].string {
       orderedStatus = OrderedStatus(rawValue: rawOrderedStatus) ?? .notApplicable
     }
+    var format: Format = .unknown
+    if let rawFormat = self["format"].string {
+      format = Format(rawValue: rawFormat) ?? .unknown
+    }
     var issuedAt: Date? = nil
     if let rawIssuedAt = self["issued_at"].string {
       issuedAt = Date.timeFromISO8601(rawIssuedAt)
@@ -725,7 +729,8 @@ extension JSON {
                 totalBalance: totalBalance,
                 nativeTotalBalance: nativeTotalBalance,
                 kyc: self.kyc,
-                orderedStatus: orderedStatus, 
+                orderedStatus: orderedStatus,
+                format: format,
                 issuedAt: issuedAt,
                 features: cardFeatures,
                 cardStyle: cardStyle,
