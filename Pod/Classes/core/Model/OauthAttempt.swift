@@ -7,16 +7,16 @@
 //
 
 public struct OauthAttempt: Equatable {
-  public enum Status: String {
-    case pending
-    case passed
-    case failed
-  }
+    public enum Status: String {
+        case pending
+        case passed
+        case failed
+    }
 
-  public let id: String
-  public let status: OauthAttempt.Status
-  public let url: URL?
-  public let credentials: OauthCredential?
-  public let error: String?
-  public let errorMessage: String?
+    public let id: String
+    public let status: OauthAttempt.Status
+    public let url: URL?
+    public let credentials: OauthCredential?
+    public let error: String?
+    public let errorMessage: String?
 }

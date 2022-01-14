@@ -8,6 +8,6 @@
 
 import Foundation
 
-public class AutomationStorage {
-  public static var verificationSecret: String?
+public enum AutomationStorage {
+    public static var verificationSecret: String?
 }

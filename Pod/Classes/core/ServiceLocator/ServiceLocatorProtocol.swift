@@ -6,11 +6,11 @@
 //
 //
 
-protocol ServiceLocatorProtocol: class {
-  var networkLocator: NetworkLocatorProtocol { get }
-  var storageLocator: StorageLocatorProtocol { get }
+protocol ServiceLocatorProtocol: AnyObject {
+    var networkLocator: NetworkLocatorProtocol { get }
+    var storageLocator: StorageLocatorProtocol { get }
 
-  var platform: AptoPlatformProtocol { get }
-  var analyticsManager: AnalyticsServiceProtocol { get }
-  var notificationHandler: NotificationHandler { get }
+    var platform: AptoPlatformProtocol { get }
+    var analyticsManager: AnalyticsServiceProtocol { get }
+    var notificationHandler: NotificationHandler { get }
 }

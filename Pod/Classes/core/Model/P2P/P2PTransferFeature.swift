@@ -38,4 +38,3 @@ public struct P2PTransferResponse: Equatable {
     public let recipientLastName: String?
     public let createdAt: Date?
 }
-

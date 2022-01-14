@@ -9,27 +9,27 @@
 import Foundation
 
 public extension Result {
-  typealias Callback = (_ result: Result<Success, Failure>) -> Void
+    typealias Callback = (_ result: Result<Success, Failure>) -> Void
 
-  var value: Success? {
-    guard case .success(let value) = self else {
-      return nil
+    var value: Success? {
+        guard case let .success(value) = self else {
+            return nil
+        }
+        return value
     }
-    return value
-  }
 
-  var error: Failure? {
-    guard case .failure(let error) = self else {
-      return nil
+    var error: Failure? {
+        guard case let .failure(error) = self else {
+            return nil
+        }
+        return error
     }
-    return error
-  }
 
-  var isSuccess: Bool {
-    return self.value != nil ? true : false
-  }
+    var isSuccess: Bool {
+        return value != nil ? true : false
+    }
 
-  var isFailure: Bool {
-    return !isSuccess
-  }
+    var isFailure: Bool {
+        return !isSuccess
+    }
 }

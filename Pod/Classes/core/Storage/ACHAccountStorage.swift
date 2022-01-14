@@ -12,32 +12,33 @@ public typealias ACHAccountResult = Result<ACHAccountDetails, NSError>
 
 protocol ACHAccountReadProtocol {
     func loadACHAccount(_ apiKey: String,
-                         userToken: String,
-                         balanceId: String,
-                         completion: @escaping (ACHAccountResult) -> Void)
+                        userToken: String,
+                        balanceId: String,
+                        completion: @escaping (ACHAccountResult) -> Void)
 }
 
 protocol ACHAccountWriteProtocol {
     func assignACHAccount(_ apiKey: String,
-                           userToken: String,
-                           balanceId: String,
-                           completion: @escaping (ACHAccountResult) -> Void)
+                          userToken: String,
+                          balanceId: String,
+                          completion: @escaping (ACHAccountResult) -> Void)
 }
 
 typealias ACHAccountStorageProtocol = ACHAccountReadProtocol & ACHAccountWriteProtocol
 
 public struct ACHAccountStorage: ACHAccountStorageProtocol {
     private let transport: JSONTransport
-    
+
     public init(transport: JSONTransport) {
         self.transport = transport
     }
-    
+
     public func loadACHAccount(_ apiKey: String,
-                                userToken: String,
-                                balanceId: String,
-                                completion: @escaping (ACHAccountResult) -> Void) {
-        let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
+                               userToken: String,
+                               balanceId: String,
+                               completion: @escaping (ACHAccountResult) -> Void)
+    {
+        let url = URLWrapper(baseUrl: transport.environment.baseUrl(),
                              url: .achAccountDetails,
                              urlParameters: [":balance_id": balanceId])
         let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
@@ -50,24 +51,25 @@ public struct ACHAccountStorage: ACHAccountStorageProtocol {
                       acceptRedirectTo: nil,
                       filterInvalidTokenResult: true) { result in
             switch result {
-            case .success(let json):
+            case let .success(json):
                 guard let period = json["account_details"].achAccountDetails else {
-                  completion(.failure(ServiceError(code: .jsonError)))
-                  return
+                    completion(.failure(ServiceError(code: .jsonError)))
+                    return
                 }
                 completion(.success(period))
 
-            case .failure(let error):
+            case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
     public func assignACHAccount(_ apiKey: String,
-                                  userToken: String,
-                                  balanceId: String,
-                                  completion: @escaping (ACHAccountResult) -> Void) {
-        let url = URLWrapper(baseUrl: self.transport.environment.baseUrl(),
+                                 userToken: String,
+                                 balanceId: String,
+                                 completion: @escaping (ACHAccountResult) -> Void)
+    {
+        let url = URLWrapper(baseUrl: transport.environment.baseUrl(),
                              url: .achAccountDetails,
                              urlParameters: [":balance_id": balanceId])
         let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
@@ -78,14 +80,14 @@ public struct ACHAccountStorage: ACHAccountStorageProtocol {
                        parameters: nil,
                        filterInvalidTokenResult: true) { result in
             switch result {
-            case .success(let json):
+            case let .success(json):
                 guard let period = json["account_details"].achAccountDetails else {
-                  completion(.failure(ServiceError(code: .jsonError)))
-                  return
+                    completion(.failure(ServiceError(code: .jsonError)))
+                    return
                 }
                 completion(.success(period))
 
-            case .failure(let error):
+            case let .failure(error):
                 completion(.failure(error))
             }
         }
@@ -95,7 +97,8 @@ public struct ACHAccountStorage: ACHAccountStorageProtocol {
 extension JSON {
     var achAccountDetails: ACHAccountDetails? {
         guard let routingNumber = self["routing_number"].string,
-              let accountNumber = self["account_number"].string else {
+              let accountNumber = self["account_number"].string
+        else {
             ErrorLogger
                 .defaultInstance()
                 .log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,

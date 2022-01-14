@@ -19,15 +19,16 @@ protocol AgreementStorageProtocol {
 
 public struct AgreementStorage: AgreementStorageProtocol {
     private let transport: JSONTransport
-    
+
     public init(transport: JSONTransport) {
         self.transport = transport
     }
-    
+
     public func recordAgreement(_ apiKey: String,
                                 userToken: String,
                                 agreementRequest: AgreementRequest,
-                                completion: @escaping (RecordedAgreementsResult) -> Void) {
+                                completion: @escaping (RecordedAgreementsResult) -> Void)
+    {
         let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .recordAgreementAction)
         let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                                  userToken: userToken)
@@ -37,14 +38,14 @@ public struct AgreementStorage: AgreementStorageProtocol {
                        parameters: agreementRequest.toJSON(),
                        filterInvalidTokenResult: true) { result in
             switch result {
-            case .success(let json):
-                guard let agreements = json.userAgreements, agreements.count > 0 else {
-                  completion(.failure(ServiceError(code: .jsonError)))
-                  return
+            case let .success(json):
+                guard let agreements = json.userAgreements, !agreements.isEmpty else {
+                    completion(.failure(ServiceError(code: .jsonError)))
+                    return
                 }
                 completion(.success(agreements))
 
-            case .failure(let error):
+            case let .failure(error):
                 completion(.failure(error))
             }
         }
@@ -56,22 +57,24 @@ extension JSON {
         let agreements = self["user_agreements"].arrayValue
         return agreements.compactMap { $0.userAgreement() }
     }
-    
+
     func userAgreement(with key: String = "user_agreement") -> AgreementDetail? {
         guard let source = self[key].dictionary,
               let idStr = source["id"]?.string,
               let agreementKey = source["agreement_key"]?.string,
               let action = source["action"]?.string, let userAction = UserActionType(rawValue: action),
               let actionRecorded = source["recorded_at"]?.string,
-              let recordedAt = Date.dateFromISO8601(string: actionRecorded) else {
+              let recordedAt = Date.dateFromISO8601(string: actionRecorded)
+        else {
             ErrorLogger
                 .defaultInstance()
                 .log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
                                          reason: "Can't parse AgreementDetail \(self)"))
             return nil
         }
-        return AgreementDetail(idStr: idStr, agreementKey: agreementKey, userAction: userAction, actionRecordedAt: recordedAt)
+        return AgreementDetail(idStr: idStr,
+                               agreementKey: agreementKey,
+                               userAction: userAction,
+                               actionRecordedAt: recordedAt)
     }
 }
-
-

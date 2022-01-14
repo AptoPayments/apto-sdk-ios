@@ -19,18 +19,21 @@ public typealias ApplePayIAPResult = Result<ApplePayIAPIssuerResponse, NSError>
 
 public struct ApplePayIAPStorage: ApplePayIAPStorageProtocol {
     private let transport: JSONTransport
-    
+
     public init(transport: JSONTransport) {
         self.transport = transport
     }
-    
+
     public func inAppProvisioning(_ apiKey: String,
-                           userToken: String,
-                           cardId: String,
-                           payload: ApplePayIAPInputData,
-                           completion: @escaping (ApplePayIAPResult) -> Void) {
+                                  userToken: String,
+                                  cardId: String,
+                                  payload: ApplePayIAPInputData,
+                                  completion: @escaping (ApplePayIAPResult) -> Void)
+    {
         let urlParameters = [":account_id": cardId]
-        let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: .applePayInAppProvisioning, urlParameters: urlParameters)
+        let url = URLWrapper(baseUrl: transport.environment.baseUrl(),
+                             url: .applePayInAppProvisioning,
+                             urlParameters: urlParameters)
         let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                                  userToken: userToken)
 
@@ -39,13 +42,13 @@ public struct ApplePayIAPStorage: ApplePayIAPStorageProtocol {
                        parameters: ApplePayIAPInputDataMapper.toJSON(payload),
                        filterInvalidTokenResult: true) { result in
             switch result {
-            case .success(let json):
+            case let .success(json):
                 if let response = json.issuerResponse {
                     completion(.success(response))
                 } else {
                     completion(.failure(ServiceError(code: .jsonError)))
                 }
-            case .failure(let error):
+            case let .failure(error):
                 completion(.failure(error))
             }
         }
@@ -56,7 +59,8 @@ extension JSON {
     var issuerResponse: ApplePayIAPIssuerResponse? {
         guard let epd = self["encrypted_pass_data"].string,
               let ad = self["activation_data"].string,
-              let epk = self["ephemeral_public_key"].string else {
+              let epk = self["ephemeral_public_key"].string
+        else {
             ErrorLogger
                 .defaultInstance()
                 .log(error: ServiceError(code: ServiceError.ErrorCodes.jsonError,
@@ -71,4 +75,3 @@ extension JSON {
                                          ephemeralPublicKey: ephemeralPublicKey)
     }
 }
-

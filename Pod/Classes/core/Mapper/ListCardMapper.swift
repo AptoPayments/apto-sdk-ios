@@ -16,7 +16,7 @@ public struct ListWithPagination<T> {
     public let totalCount: Int?
 }
 
-struct ListCardMapper {
+enum ListCardMapper {
     static func map(_ json: JSON) throws -> ListWithPagination<Card> {
         guard let list = json.linkObject as? [Card] else {
             throw MappingError.jsonError

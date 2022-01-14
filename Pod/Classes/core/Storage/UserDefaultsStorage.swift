@@ -8,23 +8,23 @@
 import Foundation
 
 protocol UserDefaultsStorageProtocol {
-  func object(forKey key: String) -> Any?
-  func set(_ value: Bool, forKey key: String)
-  func removeObject(forKey key: String)
+    func object(forKey key: String) -> Any?
+    func set(_ value: Bool, forKey key: String)
+    func removeObject(forKey key: String)
 }
 
 class UserDefaultsStorage: UserDefaultsStorageProtocol {
-  private let userDefaults = UserDefaults.standard
+    private let userDefaults = UserDefaults.standard
 
-  func object(forKey key: String) -> Any? {
-    return userDefaults.object(forKey: key)
-  }
+    func object(forKey key: String) -> Any? {
+        return userDefaults.object(forKey: key)
+    }
 
-  func set(_ value: Bool, forKey key: String) {
-    userDefaults.set(value, forKey: key)
-  }
+    func set(_ value: Bool, forKey key: String) {
+        userDefaults.set(value, forKey: key)
+    }
 
-  func removeObject(forKey key: String) {
-    userDefaults.removeObject(forKey: key)
-  }
+    func removeObject(forKey key: String) {
+        userDefaults.removeObject(forKey: key)
+    }
 }

@@ -7,8 +7,8 @@
 
 import Foundation
 
-func += <K, V> (left: inout [K: V], right: [K: V]) {
-  for (key, value) in right {
-    left[key] = value
-  }
+func += <K, V>(left: inout [K: V], right: [K: V]) {
+    for (key, value) in right {
+        left[key] = value
+    }
 }

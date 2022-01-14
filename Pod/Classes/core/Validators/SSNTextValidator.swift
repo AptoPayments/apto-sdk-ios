@@ -8,9 +8,9 @@
 import Foundation
 
 public class SSNTextValidator: PatternTextValidator {
-  static let unknownValidSSN = "   -  -    "
+    static let unknownValidSSN = "   -  -    "
 
-  init(failReasonMessage: String) {
-    super.init(validPatterns: ["^\\d{3}-\\d{2}-\\d{4}$", "^   -  -    $"], failReasonMessage: failReasonMessage)
-  }
+    init(failReasonMessage: String) {
+        super.init(validPatterns: ["^\\d{3}-\\d{2}-\\d{4}$", "^   -  -    $"], failReasonMessage: failReasonMessage)
+    }
 }

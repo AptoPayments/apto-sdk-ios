@@ -354,6 +354,8 @@
 
 "error.transport.agentEmptySession" = "For your security, your session has timed out due to inactivity.";
 
+"error.transport.account_creation_prohibited" = "We’re temporarily holding back new activations. Sorry for the inconvenience. If you have any questions, please do not hesitate to contact our support team.";
+
 "error.transport.loginErrorInvalidCredentials" = "Error. Please re-enter your credentials.";
 
 "error.transport.loginErrorUnverifiedDatapoints" = "Error. Please verify your login information.";
@@ -443,7 +445,7 @@
 "issue_card.issue_card.error_insufficient_application_limit.secondary_cta" = "";
 
 "error.transport.rate_limit" = "Error. Please try again in one minute.";
-"error.auth.invalid_api_key" = "We couldn’t connect to you card program.";
+"error.auth.invalid_api_key" = "We couldn’t connect to your card program.";
 "error.physical_card.card_already_ordered" = "Your physical card has been already ordered.";
 "error.physical_card.order_not_supported" = "Your card does not support this operation.";
 
@@ -459,6 +461,8 @@
 "manage_card.get_pin_nue.explanation" = "Your physical card has been enabled. We've set a random PIN code for your card.";
 
 "manage_card.get_pin_nue.call_to_action.title" = "Get my PIN";
+
+"manage_card.set_pin_new.call_to_action.title" = "Set my PIN";
 
 "manage_card.get_pin_nue.footer" = "PIN is obtained via phone call and charge may be applied by your mobile network operator.";
 
@@ -492,6 +496,7 @@
 "load_funds.add_money.no_payment_method" = "No payment method";
 "load_funds.add_money.primary_cta" = "Add";
 "load_funds.remove_card.error.preferred" = "You can't delete your preferred payment source. Please finishing adding funds to change your preferred payment source.";
+"load_funds.add_money.error_amount_exceeded" = "Daily limit reached";
 "load_funds.add_card.title" = "Debit Card";
 "load_funds.add_card.card_number.placeholder" = "Enter debit card number";
 "load_funds.add_card.date.placeholder" = "MM/YY";
@@ -560,6 +565,7 @@
 "p2p_transfer.transfer_funds.success.time.title" = "Time";
 "p2p_transfer.transfer_funds.amount_exceeded.error.message" = "Maximum allowed amount <<MAX>>";
 "p2p_transfer.transfer_funds.screen.title" = "Transfer Money";
+"p2p_transfer.error.self_transfer" = "You cannot transfer money to yourself.";
 
 /* * PIN verification */
 
@@ -1013,9 +1019,9 @@
 
 "account_settings.help.title" = "Support";
 
-"account_settings.help.contact_support.title" = "Help center";
+"account_settings.help.contact_support.title" = "Contact support";
 
-"account_settings.help.contact_support.description" = "Contact directly with customer care";
+"account_settings.help.contact_support.description" = "Email our Customer Support team";
 
 "account_settings.logout.title" = "Logout";
 
@@ -1117,7 +1123,7 @@
 
 /* * Select card product */
 
-"select_card_product.select_country.title" = "Country of residence 🏠";
+"select_card_product.select_country.title" = "Country of residence";
 
 "select_card_product.select_country.explanation" = "Select your country of tax residence.";
 

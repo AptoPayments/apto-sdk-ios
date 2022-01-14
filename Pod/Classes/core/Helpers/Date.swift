@@ -8,135 +8,133 @@
 
 import Foundation
 
-extension Date {
-
-  func differenceTo(date: Date, units: Calendar.Component) -> Int {
-    let cal = Calendar.current
-    let components = cal.dateComponents([units], from: self, to: date)
-    // swiftlint:disable force_unwrapping
-    switch units {
-    case Calendar.Component.year:
-      return components.year!
-    case Calendar.Component.month:
-      return components.month!
-    case Calendar.Component.day:
-      return components.day!
-    case Calendar.Component.hour:
-      return components.hour!
-    case Calendar.Component.minute:
-      return components.minute!
-    case Calendar.Component.second:
-      return components.second!
-    default:
-      return 0
+public extension Date {
+    internal func differenceTo(date: Date, units: Calendar.Component) -> Int {
+        let cal = Calendar.current
+        let components = cal.dateComponents([units], from: self, to: date)
+        // swiftlint:disable force_unwrapping
+        switch units {
+        case Calendar.Component.year:
+            return components.year!
+        case Calendar.Component.month:
+            return components.month!
+        case Calendar.Component.day:
+            return components.day!
+        case Calendar.Component.hour:
+            return components.hour!
+        case Calendar.Component.minute:
+            return components.minute!
+        case Calendar.Component.second:
+            return components.second!
+        default:
+            return 0
+        }
+        // swiftlint:enable force_unwrapping
     }
-    // swiftlint:enable force_unwrapping
-  }
 
-  public func isGreaterThanDate(_ dateToCompare: Date) -> Bool {
-    var isGreater = false
-    if self.compare(dateToCompare) == ComparisonResult.orderedDescending {
-      isGreater = true
+    func isGreaterThanDate(_ dateToCompare: Date) -> Bool {
+        var isGreater = false
+        if compare(dateToCompare) == ComparisonResult.orderedDescending {
+            isGreater = true
+        }
+        return isGreater
     }
-    return isGreater
-  }
 
-  public func isLessThanDate(_ dateToCompare: Date) -> Bool {
-    var isLess = false
-    if self.compare(dateToCompare) == ComparisonResult.orderedAscending {
-      isLess = true
+    func isLessThanDate(_ dateToCompare: Date) -> Bool {
+        var isLess = false
+        if compare(dateToCompare) == ComparisonResult.orderedAscending {
+            isLess = true
+        }
+        return isLess
     }
-    return isLess
-  }
 
-  func equalToDate(_ dateToCompare: Date) -> Bool {
-    var isEqualTo = false
-    if self.compare(dateToCompare) == ComparisonResult.orderedSame {
-      isEqualTo = true
+    internal func equalToDate(_ dateToCompare: Date) -> Bool {
+        var isEqualTo = false
+        if compare(dateToCompare) == ComparisonResult.orderedSame {
+            isEqualTo = true
+        }
+        return isEqualTo
     }
-    return isEqualTo
-  }
 
-  public func add(_ count: Int, units: Calendar.Component) -> Date? {
-    var components: DateComponents = DateComponents()
-    components.setValue(count, for: units)
-    return Calendar.current.date(byAdding: components, to: self)
-  }
-
-  public var year: Int {
-    return Calendar.current.component(.year, from: self)
-  }
-
-  public var month: Int {
-    return Calendar.current.component(.month, from: self)
-  }
-
-  var day: Int {
-    return Calendar.current.component(.day, from: self)
-  }
-
-  public var startOfMonth: Date? {
-    let calendar = Calendar.current
-    return calendar.date(from: calendar.dateComponents([.year, .month], from: calendar.startOfDay(for: self)))
-  }
-
-  public var endOfMonth: Date? {
-    guard let startOfMonth = self.startOfMonth else { return nil }
-    return Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth)
-  }
-  
-  func nextDay(in calendar: Calendar) -> Date? {
-      return calendar.date(byAdding: .day, value: 1, to: self)
-  }
-  
-  public func dateBySubstractingDays(days: Int) -> Date? {
-    return Calendar.current.date(byAdding: .day, value: -1 * days , to: self)
-  }
-
-  public func weekdaysBetween(endDate: Date) -> Int {
-    var calendar = Calendar(identifier: .gregorian)
-    if let utcTimeZone = TimeZone(abbreviation: "UTC") {
-      calendar.timeZone = utcTimeZone
+    func add(_ count: Int, units: Calendar.Component) -> Date? {
+        var components = DateComponents()
+        components.setValue(count, for: units)
+        return Calendar.current.date(byAdding: components, to: self)
     }
-    var weekDays = 0
-    var date = self
-    if calendar.isDate(date, inSameDayAs: endDate) {
-      return 0
+
+    var year: Int {
+        return Calendar.current.component(.year, from: self)
     }
-    date = calendar.startOfDay(for: (date))
-    while date < endDate {
-        if !calendar.isDateInWeekend(date) {
-            weekDays += 1
+
+    var month: Int {
+        return Calendar.current.component(.month, from: self)
+    }
+
+    internal var day: Int {
+        return Calendar.current.component(.day, from: self)
+    }
+
+    var startOfMonth: Date? {
+        let calendar = Calendar.current
+        return calendar.date(from: calendar.dateComponents([.year, .month], from: calendar.startOfDay(for: self)))
+    }
+
+    var endOfMonth: Date? {
+        guard let startOfMonth = startOfMonth else { return nil }
+        return Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth)
+    }
+
+    internal func nextDay(in calendar: Calendar) -> Date? {
+        return calendar.date(byAdding: .day, value: 1, to: self)
+    }
+
+    func dateBySubstractingDays(days: Int) -> Date? {
+        return Calendar.current.date(byAdding: .day, value: -1 * days, to: self)
+    }
+
+    func weekdaysBetween(endDate: Date) -> Int {
+        var calendar = Calendar(identifier: .gregorian)
+        if let utcTimeZone = TimeZone(abbreviation: "UTC") {
+            calendar.timeZone = utcTimeZone
+        }
+        var weekDays = 0
+        var date = self
+        if calendar.isDate(date, inSameDayAs: endDate) {
+            return 0
+        }
+        date = calendar.startOfDay(for: date)
+        while date < endDate {
+            if !calendar.isDateInWeekend(date) {
+                weekDays += 1
+            }
+
+            guard let nextDay = date.nextDay(in: calendar) else {
+                fatalError("Failed to instantiate a next day")
+            }
+
+            date = nextDay
         }
 
-        guard let nextDay = date.nextDay(in: calendar) else {
-            fatalError("Failed to instantiate a next day")
+        return weekDays - 1
+    }
+
+    func addBusinessDays(days: Int) -> Date {
+        let calendar = Calendar.current
+        var dayPos = 0
+        var currentDate = self
+        while dayPos < days {
+            guard let nextDate = currentDate.nextDay(in: calendar) else {
+                fatalError("Failed to instantiate a next day")
+            }
+            if !calendar.isDateInWeekend(nextDate) {
+                dayPos += 1
+            }
+            currentDate = nextDate
         }
-
-        date = nextDay
+        return currentDate
     }
 
-    return weekDays - 1
-  }
-  
-  public func addBusinessDays(days: Int) -> Date {
-    let calendar = Calendar.current
-    var dayPos = 0
-    var currentDate = self
-    while dayPos < days {
-      guard let nextDate = currentDate.nextDay(in: calendar) else {
-          fatalError("Failed to instantiate a next day")
-      }
-      if !calendar.isDateInWeekend(nextDate) {
-        dayPos += 1
-      }
-      currentDate = nextDate
+    static func currentDate() -> Date {
+        return Date()
     }
-    return currentDate
-  }
-
-  public static func currentDate() -> Date {
-    return Date()
-  }
-  
 }

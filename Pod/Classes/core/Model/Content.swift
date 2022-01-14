@@ -7,74 +7,74 @@
 //
 
 public struct NativeContent: Equatable, Codable {
-  public let asset: String?
-  public let backgroundImage: String?
-  public let backgroundColor: String?
-  public let darkBackgroundColor: String?
+    public let asset: String?
+    public let backgroundImage: String?
+    public let backgroundColor: String?
+    public let darkBackgroundColor: String?
 }
 
 public extension NativeContent {
-  var dynamicBackgroundColor: UIColor? {
-    guard let color = UIColor.colorFromHexString(backgroundColor),
-      let darkColor = UIColor.colorFromHexString(darkBackgroundColor) else {
-        return nil
+    var dynamicBackgroundColor: UIColor? {
+        guard let color = UIColor.colorFromHexString(backgroundColor),
+              let darkColor = UIColor.colorFromHexString(darkBackgroundColor)
+        else {
+            return nil
+        }
+        return UIColor.dynamicColor(light: color, dark: darkColor)
     }
-    return UIColor.dynamicColor(light: color, dark: darkColor)
-  }
 }
 
 public enum Content: Equatable {
-  case plainText(String)
-  case markdown(String)
-  case externalURL(URL)
-  case nativeContent(NativeContent)
+    case plainText(String)
+    case markdown(String)
+    case externalURL(URL)
+    case nativeContent(NativeContent)
 
-  mutating func replaceInURL(string: String, with: String?) {
-    switch self {
-    case .externalURL(let url):
-      if let with = with {
-        guard let newURL = URL(string: url.absoluteString.replace([string: with])) else {
-          return
+    mutating func replaceInURL(string: String, with: String?) {
+        switch self {
+        case let .externalURL(url):
+            if let with = with {
+                guard let newURL = URL(string: url.absoluteString.replace([string: with])) else {
+                    return
+                }
+                self = .externalURL(newURL)
+            } else {
+                guard let newURL = URL(string: url.absoluteString.replace([string: ""])) else {
+                    return
+                }
+                self = .externalURL(newURL)
+            }
+        default:
+            return
         }
-        self = .externalURL(newURL)
-      }
-      else {
-        guard let newURL = URL(string: url.absoluteString.replace([string: ""])) else {
-          return
+    }
+
+    var isPlainText: Bool {
+        if case .plainText = self {
+            return true
         }
-        self = .externalURL(newURL)
-      }
-    default:
-      return
+        return false
     }
-  }
 
-  var isPlainText: Bool {
-    if case .plainText = self {
-      return true
+    public var isEmpty: Bool {
+        switch self {
+        case let .plainText(text):
+            return text.isEmpty
+        case let .markdown(markdown):
+            return markdown.isEmpty
+        case .externalURL:
+            return false
+        case .nativeContent:
+            return false
+        }
     }
-    return false
-  }
-
-  public var isEmpty: Bool {
-    switch self {
-    case .plainText(let text):
-      return text.isEmpty
-    case .markdown(let markdown):
-      return markdown.isEmpty
-    case .externalURL(_):
-      return false
-    case .nativeContent(_):
-      return false
-    }
-  }
 }
 
 extension Content: Codable {
     private enum CodingKeys: String, CodingKey {
         case plainText, markdown, externalURL, nativeContent
     }
-    
+
     enum ContentCodingError: Error {
         case decoding(String)
     }
@@ -104,13 +104,13 @@ extension Content: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
-        case .plainText(let text):
+        case let .plainText(text):
             try container.encode(text, forKey: .plainText)
-        case .markdown(let value):
+        case let .markdown(value):
             try container.encode(value, forKey: .markdown)
-        case .externalURL(let url):
+        case let .externalURL(url):
             try container.encode(url, forKey: .externalURL)
-        case .nativeContent(let value):
+        case let .nativeContent(value):
             try container.encode(value, forKey: .nativeContent)
         }
     }

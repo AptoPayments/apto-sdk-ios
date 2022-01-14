@@ -14,7 +14,11 @@ public struct IssueCardDesign {
     public let imageURL: String?
     public let additionalImageURL: String?
 
-    public init(designKey: String?, qrCode: String?, extraEmbossingLine: String?, imageURL: String?, additionalImageURL: String?) {
+    public init(designKey: String?,
+                qrCode: String?,
+                extraEmbossingLine: String?,
+                imageURL: String?, additionalImageURL: String?)
+    {
         self.designKey = designKey
         self.qrCode = qrCode
         self.extraEmbossingLine = extraEmbossingLine

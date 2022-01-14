@@ -8,10 +8,10 @@
 import UIKit
 
 public protocol WorkflowObject {
-  var workflowObjectId: String { get }
-  var nextAction: WorkflowAction { get }
+    var workflowObjectId: String { get }
+    var nextAction: WorkflowAction { get }
 }
 
 public protocol WorkflowObjectStatusRequester {
-  func getStatusOf(workflowObject: WorkflowObject, completion: @escaping (Result<WorkflowObject, NSError>.Callback))
+    func getStatusOf(workflowObject: WorkflowObject, completion: @escaping (Result<WorkflowObject, NSError>.Callback))
 }

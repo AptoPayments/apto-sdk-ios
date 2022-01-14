@@ -6,18 +6,17 @@
 //
 
 class StringLocalizationStorage {
-  private var cache: [String: String] = [:]
+    private var cache: [String: String] = [:]
 
-  static let shared = StringLocalizationStorage()
+    static let shared = StringLocalizationStorage()
 
-  private init() {
-  }
+    private init() {}
 
-  func append(_ content: [String: String]) {
-    cache.merge(content) { (_, new) in new }
-  }
+    func append(_ content: [String: String]) {
+        cache.merge(content) { _, new in new }
+    }
 
-  func localizedString(for key: String) -> String? {
-    return cache[key]
-  }
+    func localizedString(for key: String) -> String? {
+        return cache[key]
+    }
 }

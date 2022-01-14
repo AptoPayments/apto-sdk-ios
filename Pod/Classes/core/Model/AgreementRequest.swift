@@ -15,16 +15,16 @@ public enum UserActionType: String {
 public struct AgreementRequest {
     public let key: [String]
     public let userAction: UserActionType
-    
+
     public init(key: [String], userAction: UserActionType) {
         self.key = key
         self.userAction = userAction
     }
-    
+
     public func toJSON() -> [String: AnyObject] {
         [
             "agreements_keys": key as AnyObject,
-            "user_action": userAction.rawValue as AnyObject
+            "user_action": userAction.rawValue as AnyObject,
         ]
     }
 }

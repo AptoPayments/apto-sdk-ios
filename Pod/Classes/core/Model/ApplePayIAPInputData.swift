@@ -13,15 +13,15 @@ public struct ApplePayIAPInputData {
     let nonceSignature: String
 }
 
-public struct ApplePayIAPInputDataMapper {
+public enum ApplePayIAPInputDataMapper {
     public static func toJSON(_ data: ApplePayIAPInputData) -> [String: AnyObject] {
         [
             "data":
-                ([
+                [
                     "certificates": data.certificates as AnyObject,
                     "nonce": data.nonce as AnyObject,
-                    "nonce_signature": data.nonceSignature as AnyObject
-                ]) as AnyObject
+                    "nonce_signature": data.nonceSignature as AnyObject,
+                ] as AnyObject,
         ]
     }
 }

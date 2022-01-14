@@ -8,11 +8,11 @@
 import Foundation
 
 extension Int {
-  init?(_ str: String?) {
-    guard let str = str else {
-      return nil
-    }
+    init?(_ str: String?) {
+        guard let str = str else {
+            return nil
+        }
 
-    self.init(str)
-  }
+        self.init(str)
+    }
 }

@@ -12,10 +12,11 @@ enum MappingError: Error {
     case jsonError
 }
 
-struct PhysicalCardConfigMapper {
+enum PhysicalCardConfigMapper {
     static func map(_ json: JSON) throws -> PhysicalCardConfig {
         guard let issuanceFee = json["issuance_fee"].amount,
-              let userAddress = json["user_address"].address else {
+              let userAddress = json["user_address"].address
+        else {
             throw MappingError.jsonError
         }
         return PhysicalCardConfig(issuanceFee: issuanceFee, userAddress: userAddress)

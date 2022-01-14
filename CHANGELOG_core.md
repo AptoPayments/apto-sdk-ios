@@ -1,5 +1,8 @@
 ## CHANGELOG AptoSDK
 
+# 2022-12-01 Version 3.8.1
+- improvement: Minor updates to improve onboarding experience..
+
 # 2021-10-11 Version 3.8.0
 - improvement: added format field to Card object with default fallback of virtual.
 - improvement: new `fetchCards` method support pagination.

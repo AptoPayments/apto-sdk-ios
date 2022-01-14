@@ -9,5 +9,5 @@
 import Foundation
 
 @objc public enum Product: Int {
-  case link
+    case link
 }

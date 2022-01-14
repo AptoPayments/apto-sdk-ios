@@ -9,20 +9,20 @@ import Foundation
 
 @objc public class InitializationData: NSObject {
     /// A string up to 256 characters that will be attached to the user after signing up.  Optional parameter.
-    public var userMetadata: String? = nil
+    public var userMetadata: String?
     /// A string up to 256 characters that will be attached to the card after issuance.  Optional parameter.
-    public var cardMetadata: String? = nil
+    public var cardMetadata: String?
     /// A string that identifies the custodian uid. Optional parameter.
-    public var custodianId: String? = nil
+    public var custodianId: String?
     /// An object taht contains additional design information
-    public var design: IssueCardDesign? = nil
+    public var design: IssueCardDesign?
 
     /**
      Initializes a new Metadata with the provided additional data.
 
      - Parameters:
-        - userMetadata: A string up to 256 characters that will be attached to the user after signing up. Optional parameter.
-        - cardMetadata: A string up to 256 characters that will be attached to the card after issuance. Optional parameter.
+        - userMetadata: A string up to 256 characters that will be attached to the user after signing up. Optional.
+        - cardMetadata: A string up to 256 characters that will be attached to the card after issuance. Optional.
         - custodianId: A string that identifies the custodian uid. Optional parameter.
 
      - Returns: A new instance of Metadata.
