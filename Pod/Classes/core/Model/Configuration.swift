@@ -80,6 +80,7 @@ open class ProjectConfiguration {
     public let allowedCountries: [Country]
     public let welcomeScreenAction: WorkflowAction
     let defaultCountryCode: Int
+    let requiredSignedPayloads: Bool
     let products: [Product]
     let isTrackerActive: Bool?
     let trackerAccessToken: String?
@@ -92,6 +93,7 @@ open class ProjectConfiguration {
          skipSteps: Bool,
          strictAddressValidation: Bool,
          defaultCountryCode: Int,
+         requiredSignedPayloads: Bool,
          products: [Product],
          welcomeScreenAction: WorkflowAction,
          supportEmailAddress: String?,
@@ -108,6 +110,7 @@ open class ProjectConfiguration {
         self.skipSteps = skipSteps
         self.strictAddressValidation = strictAddressValidation
         self.defaultCountryCode = defaultCountryCode
+        self.requiredSignedPayloads = requiredSignedPayloads
         self.products = products
         self.welcomeScreenAction = welcomeScreenAction
         self.supportEmailAddress = supportEmailAddress

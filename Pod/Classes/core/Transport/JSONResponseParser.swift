@@ -350,6 +350,7 @@ extension JSON {
         let isTrackerActive = self["tracker_active"].bool
         let trackerAccessToken = self["tracker_access_token"].string
 
+        let requiredSignedPayloads = self["required_signed_payloads"].bool ?? true
         return ProjectConfiguration(name: name,
                                     summary: summary,
                                     allowUserLogin: allowUserLogin,
@@ -358,6 +359,7 @@ extension JSON {
                                     skipSteps: skipSteps,
                                     strictAddressValidation: strictAddressValidation,
                                     defaultCountryCode: defaultCountryCode,
+                                    requiredSignedPayloads: requiredSignedPayloads,
                                     products: products,
                                     welcomeScreenAction: welcomeScreenAction,
                                     supportEmailAddress: supportEmailAddress,

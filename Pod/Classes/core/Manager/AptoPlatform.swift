@@ -40,6 +40,10 @@ import Foundation
 
     public weak var delegate: AptoPlatformDelegate?
 
+    // MARK: Web Token Provider
+
+    public weak var tokenProvider: AptoPlatformWebTokenProvider?
+
     // MARK: Transport
 
     private var transportEnvironment: JSONTransportEnvironment! // swiftlint:disable:this implicitly_unwrapped_optional
@@ -70,6 +74,8 @@ import Foundation
     private lazy var userTokenStorage = serviceLocator.storageLocator.userTokenStorage()
     private let pushNotificationsManager = PushNotificationsManager()
     private lazy var serviceLocator: ServiceLocatorProtocol = ServiceLocator.shared
+
+    private var requireSignedPayloads = true
 
     init(serviceLocator: ServiceLocatorProtocol = ServiceLocator.shared) {
         super.init()
@@ -234,30 +240,68 @@ import Foundation
             return
         }
 
-        userStorage.createUser(apiKey,
-                               userData: userData,
-                               custodianUid: custodianUid,
-                               metadata: metadata) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case let .failure(error): callback(.failure(error))
-            case let .success(user):
-                self.configurationStorage.contextConfiguration(apiKey) { [weak self] result in
-                    guard let self = self else { return }
-                    switch result {
-                    case let .failure(error): callback(.failure(error))
-                    case let .success(contextConfiguration):
-                        let token = user.accessToken! // swiftlint:disable:this force_unwrapping
-                        self.serviceLocator.analyticsManager.createUser(userId: user.userId)
-                        let projectConfiguration = contextConfiguration.projectConfiguration
-                        self.userTokenStorage.setCurrent(token: token.token,
-                                                         withPrimaryCredential: projectConfiguration.primaryAuthCredential,
-                                                         andSecondaryCredential: projectConfiguration.secondaryAuthCredential)
-                        self.notifyPushTokenIfNeeded()
-                        self.internalCurrentUser = user
-                        callback(.success(user))
-                        self.delegate?.newUserTokenReceived(token.token)
+        if requireSignedPayloads, let provider = tokenProvider {
+            var data: [String: AnyObject] = ["data_points": userData.jsonSerialize() as AnyObject]
+            if let custodianUid = custodianUid {
+                data["custodian_uid"] = custodianUid as AnyObject
+            }
+            if let metadata = metadata {
+                data["metadata"] = metadata as AnyObject
+            }
+
+            provider.getToken(data) { [weak self] results in
+                guard let self = self else {
+                    return
+                }
+                guard let webToken = results.value else {
+                    callback(.failure(results.error ?? WebTokenError()))
+                    return
+                }
+                
+                self.userStorage.createUser(apiKey, webToken: webToken) { [weak self] result in
+                    guard let self = self else {
+                        return
                     }
+                    self.handleCreateUser(result: result, callback: callback)
+                }
+            }
+        } else {
+            userStorage.createUser(apiKey, userData: userData, custodianUid: custodianUid, metadata: metadata) { [weak self] result in
+                guard let self = self else {
+                    return
+                }
+                self.handleCreateUser(result: result, callback: callback)
+            }
+        }
+    }
+
+    private func handleCreateUser(result: Result<AptoUser, NSError>, callback: @escaping  Result<AptoUser, NSError>.Callback) {
+        guard let apiKey = apiKey else {
+            let error = BackendError(code: .invalidSession, reason: nil)
+            callback(.failure(error))
+            return
+        }
+
+        switch result {
+        case let .failure(error): callback(.failure(error))
+        case let .success(user):
+            configurationStorage.contextConfiguration(apiKey) { [weak self] result in
+                guard let self = self else {
+                    return
+                }
+                switch result {
+                case let .failure(error): callback(.failure(error))
+                case let .success(contextConfiguration):
+                    let token = user.accessToken! // swiftlint:disable:this force_unwrapping
+                    self.serviceLocator.analyticsManager.createUser(userId: user.userId)
+                    let projectConfiguration = contextConfiguration.projectConfiguration
+                    self.userTokenStorage.setCurrent(token: token.token,
+                            withPrimaryCredential: projectConfiguration.primaryAuthCredential,
+                            andSecondaryCredential: projectConfiguration.secondaryAuthCredential)
+                    self.notifyPushTokenIfNeeded()
+                    self.internalCurrentUser = user
+                    callback(.success(user))
+                    self.delegate?.newUserTokenReceived(token.token)
                 }
             }
         }
@@ -321,6 +365,7 @@ import Foundation
                     if let trackerAccessToken = contextConfiguration.projectConfiguration.trackerAccessToken {
                         self?.serviceLocator.analyticsManager.initialize(accessToken: trackerAccessToken)
                     }
+                    self?.requireSignedPayloads = contextConfiguration.projectConfiguration.requiredSignedPayloads
                 }
             }
         }

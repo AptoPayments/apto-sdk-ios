@@ -40,8 +40,14 @@ import Foundation
     @objc func sdkDeprecated()
 }
 
+public protocol AptoPlatformWebTokenProvider: AnyObject {
+    // call this with a payload you want to encrypt into the web token
+    func getToken(_ payload: [String: Any], callback: @escaping (_ result: Result<String, NSError>) -> Void)
+}
+
 public protocol AptoPlatformProtocol {
     var delegate: AptoPlatformDelegate? { get set }
+    var tokenProvider: AptoPlatformWebTokenProvider? { get set }
     var currentPCIAuthenticationType: PCIAuthType { get }
 
     func initializeWithApiKey(_ apiKey: String, environment: AptoPlatformEnvironment, setupCertPinning: Bool)

@@ -45,6 +45,7 @@ extension JSONTransportImpl: JSONTransport {
         let request = NetworkRequest(url: url,
                                      method: .get,
                                      parameters: parameters,
+                                     body: nil,
                                      headers: requestHeaders,
                                      filterInvalidTokenResult: filterInvalidTokenResult) { result in
             callback(result)
@@ -62,9 +63,31 @@ extension JSONTransportImpl: JSONTransport {
         let request = NetworkRequest(url: url,
                                      method: .post,
                                      parameters: parameters,
+                                     body: nil,
                                      headers: headers,
                                      filterInvalidTokenResult: filterInvalidTokenResult,
                                      callback: callback)
+        networkManager.request(request)
+    }
+
+    func post(_ url: URLConvertible,
+              authorization: JSONTransportAuthorization,
+              body: String?,
+              headers: [String: String]?,
+              filterInvalidTokenResult: Bool,
+              callback: @escaping Swift.Result<JSON, NSError>.Callback)
+    {
+        var requestHeaders = completeHeaders(authorizationHeader(authorization))
+        if let headers = headers {
+            requestHeaders += headers
+        }
+        let request = NetworkRequest(url: url,
+                method: .post,
+                parameters: nil,
+                body: body,
+                headers: requestHeaders,
+                filterInvalidTokenResult: filterInvalidTokenResult,
+                callback: callback)
         networkManager.request(request)
     }
 
@@ -78,6 +101,7 @@ extension JSONTransportImpl: JSONTransport {
         let request = NetworkRequest(url: url,
                                      method: .put,
                                      parameters: parameters,
+                                     body: nil,
                                      headers: headers,
                                      filterInvalidTokenResult: filterInvalidTokenResult,
                                      callback: callback)
@@ -94,6 +118,7 @@ extension JSONTransportImpl: JSONTransport {
         let request = NetworkRequest(url: url,
                                      method: .delete,
                                      parameters: parameters,
+                                     body: nil,
                                      headers: headers,
                                      filterInvalidTokenResult: filterInvalidTokenResult) { result in
             switch result {

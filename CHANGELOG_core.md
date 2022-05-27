@@ -1,5 +1,8 @@
 ## CHANGELOG AptoSDK
 
+# 2022-05-27 Version 3.19.0
+- feat: Origin Verification added
+
 # 2022-12-01 Version 3.8.1
 - improvement: Minor updates to improve onboarding experience..
 

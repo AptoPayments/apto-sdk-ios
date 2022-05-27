@@ -12,6 +12,7 @@ import SwiftyJSON
 protocol UserStorageProtocol {
     func createUser(_ apiKey: String, userData: DataPointList, custodianUid: String?, metadata: String?,
                     callback: @escaping Result<AptoUser, NSError>.Callback)
+    func createUser(_ apiKey: String, webToken: String, callback: @escaping Result<AptoUser, NSError>.Callback)
     func loginWith(_ apiKey: String,
                    verifications: [Verification],
                    callback: @escaping Result<AptoUser, NSError>.Callback)
@@ -87,6 +88,21 @@ class UserStorage: UserStorageProtocol { // swiftlint:disable:this type_body_len
             data["metadata"] = metadata as AnyObject
         }
         transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
+            callback(result.flatMap { json -> Result<AptoUser, NSError> in
+                guard let user = json.user else {
+                    return .failure(ServiceError(code: .jsonError))
+                }
+                return .success(user)
+            })
+        }
+    }
+
+    func createUser(_ apiKey: String, webToken: String, callback: @escaping Result<AptoUser, NSError>.Callback)
+    {
+        let url = URLWrapper(baseUrl: transport.environment.baseUrl(), url: JSONRouter.createUser)
+        let auth = JSONTransportAuthorization.accessToken(projectToken: apiKey)
+        let headers: [String : String] = ["Content-Type": "application/jwt"]
+        transport.post(url, authorization: auth, body: webToken, headers: headers, filterInvalidTokenResult: true) { result in
             callback(result.flatMap { json -> Result<AptoUser, NSError> in
                 guard let user = json.user else {
                     return .failure(ServiceError(code: .jsonError))

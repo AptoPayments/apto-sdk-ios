@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "AptoSDK"
-  s.version          = "3.8.1"
+  s.version          = "3.19.0"
   s.summary          = "The Apto core platform iOS SDK."
   s.description      = <<-DESC
                         Apto iOS Core SDK
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.homepage         = "https://github.com/AptoPayments/apto-sdk-ios.git"
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.authors          = { "Apto Payments" => "mobile@aptopayments.com" }
-  s.source           = { :git => "https://github.com/AptoPayments/apto-sdk-ios.git", :tag => "3.8.1" }
+  s.source           = { :git => "https://github.com/AptoPayments/apto-sdk-ios.git", :tag => "3.19.0" }
 
   s.platform = :ios
   s.ios.deployment_target = '10.0'
@@ -36,5 +36,5 @@ Pod::Spec.new do |s|
   s.dependency 'TrustKit', '~> 1.6'
   s.dependency 'FTLinearActivityIndicator', '1.2.1'
   s.dependency 'AlamofireNetworkActivityIndicator', '~> 3.1'
-  s.dependency 'Mixpanel-swift', '~> 2.7'
+  s.dependency 'Mixpanel-swift', '~> 3.2.0'
 end

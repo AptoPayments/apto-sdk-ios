@@ -89,7 +89,7 @@ open class BackendError: NSError {
         case cannotDeletePreferredPaymentSource = 200_070
         case loadFundsDailyLimitExceeded = 200_069
         case transferMoneyToYourself = 200115
-      
+        
         var descriptionKey: String {
             switch self {
             case .undefinedError: return "error.transport.undefined"

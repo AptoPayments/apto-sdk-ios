@@ -53,6 +53,13 @@ public protocol JSONTransport {
               filterInvalidTokenResult: Bool,
               callback: @escaping Swift.Result<JSON, NSError>.Callback)
 
+    func post(_ url: URLConvertible,
+              authorization: JSONTransportAuthorization,
+              body: String?,
+              headers: [String: String]?,
+              filterInvalidTokenResult: Bool,
+              callback: @escaping Swift.Result<JSON, NSError>.Callback)
+
     func put(_ url: URLConvertible,
              authorization: JSONTransportAuthorization,
              parameters: [String: AnyObject]?,

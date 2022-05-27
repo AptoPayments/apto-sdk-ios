@@ -16,6 +16,7 @@ public struct NetworkRequest {
     let url: URLConvertible
     let method: HTTPMethod
     let parameters: [String: Any]?
+    let body: String?
     let headers: [String: String]
     let filterInvalidTokenResult: Bool
     let callback: Swift.Result<JSON, NSError>.Callback
@@ -78,6 +79,11 @@ final class NetworkManager: NetworkManagerProtocol {
     }
 
     func request(_ request: NetworkRequest) {
+        if (request.body != nil) {
+            bodyRequest(request)
+            return
+        }
+
         let httpHeaders = HTTPHeaders(completeHeaders(request.headers))
         manager.request(request.url,
                         method: request.method,
@@ -93,6 +99,27 @@ final class NetworkManager: NetworkManagerProtocol {
                     request.callback(processedResponse)
                 }
             }
+    }
+
+    private func bodyRequest(_ request: NetworkRequest) {
+        guard let body = request.body, let url = try? request.url.asURL() else {
+            return
+        }
+
+        var urlReq = URLRequest(url: url)
+        urlReq.httpMethod = request.method.rawValue
+        urlReq.headers = HTTPHeaders(request.headers)
+        urlReq.httpBody = (body).data(using: .utf8)
+
+        manager.request(urlReq).responseJSON{[unowned self] response in
+            let processedResponse = self.processResponse(response).map { json -> JSON in JSON(json) }
+            switch processedResponse {
+            case .failure:
+                self.processErrorResponse(processedResponse, request: request)
+            case .success:
+                request.callback(processedResponse)
+            }
+        }
     }
 
     func runPendingRequests() {
