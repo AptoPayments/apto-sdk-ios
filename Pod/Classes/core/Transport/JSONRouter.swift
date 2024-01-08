@@ -31,7 +31,6 @@ public enum JSONRouter {
     case issueVirtualCard
     case activatePhysicalCard
     case updateFinancialAccountState
-    case updateFinancialAccountPIN
     case setCardPassCode
     case financialAccountFundingSources
     case pushDevice
@@ -88,7 +87,6 @@ public enum JSONRouter {
         case .issueVirtualCard: return "/user/accounts/issuecard"
         case .activatePhysicalCard: return "/user/accounts/:accountId/activate_physical"
         case .updateFinancialAccountState: return "/user/accounts/:accountId/:action"
-        case .updateFinancialAccountPIN: return "/user/accounts/:accountId/pin"
         case .setCardPassCode: return "/user/accounts/:cardId/passcode"
         case .financialAccountFundingSources: return "/user/accounts/:accountId/balances"
         case .pushDevice: return "/user/pushdevice"

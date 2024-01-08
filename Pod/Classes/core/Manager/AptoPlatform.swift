@@ -956,23 +956,6 @@ import Foundation
         }
     }
 
-    @available(*, deprecated, message: "This method has been deprecated. Change card PIN uses AptoPCI sdk.")
-    public func changeCardPIN(_ cardId: String, pin: String, callback: @escaping Result<Card, NSError>.Callback) {
-        guard let projectKey = apiKey, let accessToken = currentToken() else {
-            callback(.failure(BackendError(code: .invalidSession)))
-            return
-        }
-        financialAccountsStorage.updateFinancialAccountPIN(projectKey, userToken: accessToken.token,
-                                                           accountId: cardId, pin: pin) { result in
-            callback(result.flatMap { financialAccount -> Result<Card, NSError> in
-                guard let card = financialAccount as? Card else {
-                    return .failure(ServiceError(code: .jsonError))
-                }
-                return .success(card)
-            })
-        }
-    }
-
     /// Sets a passcode to the card
     /// - Parameters:
     ///   - cardId: the id of the card

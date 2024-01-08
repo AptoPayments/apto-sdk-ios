@@ -111,11 +111,6 @@ protocol FinancialAccountsStorageProtocol {
                                      accountId: String,
                                      state: FinancialAccountState,
                                      callback: @escaping Result<FinancialAccount, NSError>.Callback)
-    func updateFinancialAccountPIN(_ apiKey: String,
-                                   userToken: String,
-                                   accountId: String,
-                                   pin: String,
-                                   callback: @escaping Result<FinancialAccount, NSError>.Callback)
     func setCardPassCode(_ apiKey: String,
                          userToken: String,
                          cardId: String,
@@ -501,29 +496,6 @@ class FinancialAccountsStorage: FinancialAccountsStorageProtocol { // swiftlint:
         let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
                                                                  userToken: userToken)
         transport.post(url, authorization: auth, parameters: nil, filterInvalidTokenResult: true) { result in
-            callback(result.flatMap { json -> Result<FinancialAccount, NSError> in
-                guard let financialAccount = json.linkObject as? FinancialAccount else {
-                    return .failure(ServiceError(code: .jsonError))
-                }
-                return .success(financialAccount)
-            })
-        }
-    }
-
-    func updateFinancialAccountPIN(_ apiKey: String,
-                                   userToken: String,
-                                   accountId: String,
-                                   pin: String,
-                                   callback: @escaping Result<FinancialAccount, NSError>.Callback)
-    {
-        let url = URLWrapper(baseUrl: transport.environment.baseUrl(),
-                             url: JSONRouter.updateFinancialAccountPIN,
-                             urlParameters: [":accountId": accountId])
-        let auth = JSONTransportAuthorization.accessAndUserToken(projectToken: apiKey,
-                                                                 userToken: userToken)
-        var data = [String: AnyObject]()
-        data["pin"] = pin as AnyObject
-        transport.post(url, authorization: auth, parameters: data, filterInvalidTokenResult: true) { result in
             callback(result.flatMap { json -> Result<FinancialAccount, NSError> in
                 guard let financialAccount = json.linkObject as? FinancialAccount else {
                     return .failure(ServiceError(code: .jsonError))

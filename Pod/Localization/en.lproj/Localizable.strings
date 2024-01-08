@@ -438,7 +438,7 @@
 "issue_card.issue_card.error_email_sends_disabled.description" = "Sending funds is disabled in your account. Please contact customer support";
 "issue_card.issue_card.error_email_sends_disabled.primary_cta" = "Try again";
 "issue_card.issue_card.error_email_sends_disabled.secondary_cta" = "";
- 
+
 "issue_card.issue_card.error_insufficient_application_limit.title" = "Card issuance fee";
 "issue_card.issue_card.error_insufficient_application_limit.description" = "We can't charge the card issuance fee. Please contact customer support";
 "issue_card.issue_card.error_insufficient_application_limit.primary_cta" = "Try again";
@@ -526,10 +526,10 @@
 "load_funds.selector_dialog.direct_deposit.description" = "ACH transfer from an external account (2–3 days)";
 "load_funds.direct_deposit.title" = "Direct deposit or ACH";
 "load_funds.direct_deposit.bank_name.title" = "Bank Name";
-"load_funds.direct_deposit.bank_name.description" = "Evolve Bank & Trust";
+"load_funds.direct_deposit.bank_name.description" = "Patriot Bank, N.A.";
 "load_funds.direct_deposit.ach_number.title" = "Account Number";
 "load_funds.direct_deposit.routing_number.title" = "Routing Number";
-"load_funds.direct_deposit.footer.description" = "Please note at this time you can only use the direct deposit method to add funds to your account. No withdrawals are permitted except for verification purposes. This account is powered by Evolve Bank & Trust.";
+"load_funds.direct_deposit.footer.description" = "Please note at this time you can only use the direct deposit method to add funds to your account. No withdrawals are permitted except for verification purposes. This account is powered by Patriot Bank, N.A..";
 "load_funds.direct_deposit.instructions_description" = "Login to your external account to submit a direct deposit account request or ACH bank transfer. You'll need the information below to complete the set up:";
 "load_funds.ach_account_details.copied_to_clipboard" = "Value copied to clipboard";
 "load_funds.direct_deposit.disclaimer.call_to_action.title" = "Accept";

@@ -134,7 +134,6 @@ public protocol AptoPlatformProtocol {
     func unlockCard(_ cardId: String, callback: @escaping Result<Card, NSError>.Callback)
     func lockCard(_ cardId: String, callback: @escaping Result<Card, NSError>.Callback)
     @available(*, deprecated, message: "This method has been deprecated. Change card PIN uses AptoPCI sdk.")
-    func changeCardPIN(_ cardId: String, pin: String, callback: @escaping Result<Card, NSError>.Callback)
     func setCardPassCode(_ cardId: String, passCode: String, verificationId: String?,
                          callback: @escaping Result<Void, NSError>.Callback)
     func fetchCardTransactions(_ cardId: String, filters: TransactionListFilters, forceRefresh: Bool,
